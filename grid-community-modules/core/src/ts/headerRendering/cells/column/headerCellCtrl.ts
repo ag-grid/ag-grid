@@ -28,10 +28,10 @@ import { HorizontalDirection } from "../../../constants/direction";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 import {WithoutGridCommon} from "../../../interfaces/iCommon";
 import {
-    ColumnHeaderClickedEvent,
-    ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
-    GridColumnsChangedEvent
+    ColumnHeaderMouseLeaveEvent,
+    ColumnHeaderClickedEvent,
+    ColumnHeaderRightClickedEvent,
 } from "../../../events";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
@@ -733,18 +733,23 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private addActiveHeaderMouseListeners(): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
-        const clickListener = (event: MouseEvent) => this.handleColumnHeaderClick(event, false);
-        const doubleClickListener = (event: MouseEvent) => this.handleColumnHeaderClick(event, true);
+        const clickListener = (event: MouseEvent) => this.handleColumnClick(event);
+        const rightClickListener = (event: MouseEvent) => {
+            // Require secondary mouse button click / ignore keyboard context menu key!
+            if (event.button === 2) { this.handleColumnClick(event, true); }
+        }
 
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
         this.addManagedListener(this.getGui(), 'click', clickListener);
-        this.addManagedListener(this.getGui(), 'dblclick', doubleClickListener);
+        this.addManagedListener(this.getGui(), 'contextmenu', rightClickListener);
     }
 
     private handleMouseOverChange(mouseOver: boolean): void {
         this.setActiveHeader(mouseOver);
-        const eventType = mouseOver ? Events.EVENT_COLUMN_HEADER_MOUSE_OVER : Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE
+        const eventType = mouseOver ?
+            Events.EVENT_COLUMN_HEADER_MOUSE_OVER : Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
+
         const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
             type: eventType,
             source: eventType,
@@ -755,11 +760,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.eventService.dispatchEvent(event);
     }
 
-    private handleColumnHeaderClick(e: MouseEvent, isDoubleClick: boolean): void {
-        const eventType = isDoubleClick ?
-            Events.EVENT_COLUMN_HEADER_DOUBLE_CLICKED : Events.EVENT_COLUMN_HEADER_CLICKED;
+    private handleColumnClick(mouseEvent: MouseEvent, isRightClick: boolean = false): void {
+        const eventType = isRightClick ? Events.EVENT_COLUMN_HEADER_RIGHT_CLICKED : Events.EVENT_COLUMN_HEADER_CLICKED;
 
-        const event: WithoutGridCommon<ColumnHeaderClickedEvent> = {
+        // We don't show the browser's context menu on right click
+        if (eventType === Events.EVENT_COLUMN_HEADER_RIGHT_CLICKED) {
+            mouseEvent.preventDefault();
+        }
+
+        const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderRightClickedEvent> = {
             type: eventType,
             source: eventType,
             column: this.column,

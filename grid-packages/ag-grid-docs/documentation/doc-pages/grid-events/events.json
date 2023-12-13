@@ -320,7 +320,7 @@
         "columnHeaderMouseOver": {},
         "columnHeaderMouseLeave": {},
         "columnHeaderClicked": {},
-        "columnHeaderDoubleClicked": {}
+        "columnHeaderRightClicked": {}
     },
     "rowGrouping": {
         "meta": {

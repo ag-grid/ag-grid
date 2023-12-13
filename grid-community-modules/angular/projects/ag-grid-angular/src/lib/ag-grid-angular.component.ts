@@ -50,9 +50,9 @@ import {
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
-    ColumnHeaderDoubleClickedEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
+    ColumnHeaderRightClickedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
     ColumnPivotChangeRequestEvent,
@@ -1579,21 +1579,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<ColumnEverythingChangedEvent<TData>>();
     /** A mouse cursor is initially moved over a column header.
-         * @param event
          */
     @Output() public columnHeaderMouseOver: EventEmitter<ColumnHeaderMouseOverEvent<TData>> = new EventEmitter<ColumnHeaderMouseOverEvent<TData>>();
     /** A mouse cursor is moved out of a column header.
-         * @param event
          */
     @Output() public columnHeaderMouseLeave: EventEmitter<ColumnHeaderMouseLeaveEvent<TData>> = new EventEmitter<ColumnHeaderMouseLeaveEvent<TData>>();
-    /** A mouse button is pressed down on a column header.
-         * @param event
+    /** A right click is performed on a column header.
          */
     @Output() public columnHeaderClicked: EventEmitter<ColumnHeaderClickedEvent<TData>> = new EventEmitter<ColumnHeaderClickedEvent<TData>>();
-    /** A double-click is performed on a column header.
-         * @param event
+    /** A right click is performed on a column header.
          */
-    @Output() public columnHeaderDoubleClicked: EventEmitter<ColumnHeaderDoubleClickedEvent<TData>> = new EventEmitter<ColumnHeaderDoubleClickedEvent<TData>>();
+    @Output() public columnHeaderRightClicked: EventEmitter<ColumnHeaderRightClickedEvent<TData>> = new EventEmitter<ColumnHeaderRightClickedEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
          * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
          */

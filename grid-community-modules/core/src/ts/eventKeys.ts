@@ -64,8 +64,8 @@ export class Events {
     /** Column header clicked */
     public static EVENT_COLUMN_HEADER_CLICKED: 'columnHeaderClicked' = 'columnHeaderClicked';
 
-    /** Column header double-clicked */
-    public static EVENT_COLUMN_HEADER_DOUBLE_CLICKED: 'columnHeaderDoubleClicked' = 'columnHeaderDoubleClicked';
+    /** Column header right-clicked */
+    public static EVENT_COLUMN_HEADER_RIGHT_CLICKED: 'columnHeaderRightClicked' = 'columnHeaderRightClicked';
 
     /** Async Transactions Executed */
     public static EVENT_ASYNC_TRANSACTIONS_FLUSHED: 'asyncTransactionsFlushed' = 'asyncTransactionsFlushed';

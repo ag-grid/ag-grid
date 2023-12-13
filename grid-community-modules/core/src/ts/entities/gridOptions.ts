@@ -88,7 +88,7 @@ import {
     ColumnHeaderMouseOverEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderClickedEvent,
-    ColumnHeaderDoubleClickedEvent,
+    ColumnHeaderRightClickedEvent,
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -1862,27 +1862,23 @@ export interface GridOptions<TData = any> {
 
     /**
      * A mouse cursor is initially moved over a column header.
-     * @param event
      */
     onColumnHeaderMouseOver?(event: ColumnHeaderMouseOverEvent<TData>): void;
 
     /**
      * A mouse cursor is moved out of a column header.
-     * @param event
      */
     onColumnHeaderMouseLeave?(event: ColumnHeaderMouseLeaveEvent<TData>): void;
 
     /**
-     * A mouse button is pressed down on a column header.
-     * @param event
+     * A right click is performed on a column header.
      */
     onColumnHeaderClicked?(event: ColumnHeaderClickedEvent<TData>): void;
 
     /**
-     * A double-click is performed on a column header.
-     * @param event
+     * A right click is performed on a column header.
      */
-    onColumnHeaderDoubleClicked?(event: ColumnHeaderDoubleClickedEvent<TData>): void;
+    onColumnHeaderRightClicked?(event: ColumnHeaderRightClickedEvent<TData>): void;
 
     // *** Components *** //
     /**

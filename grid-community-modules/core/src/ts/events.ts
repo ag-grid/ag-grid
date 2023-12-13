@@ -508,7 +508,7 @@ export type ColumnEventType =
     "columnHeaderMouseOver" |
     "columnHeaderMouseLeave" |
     "columnHeaderClicked" |
-    "columnHeaderDoubleClicked";
+    "columnHeaderRightClicked";
 
 export interface ColumnEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The impacted column, only set if action was on one column */
@@ -555,7 +555,7 @@ export interface ColumnHeaderMouseLeaveEvent<TData = any, TContext = any> extend
 
 export interface ColumnHeaderClickedEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
 
-export interface ColumnHeaderDoubleClickedEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
+export interface ColumnHeaderRightClickedEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
 
 /**------------*/
 

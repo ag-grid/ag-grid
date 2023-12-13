@@ -125,11 +125,11 @@
                 "returnType": "void"
             }
         },
-        "columnHeaderDoubleClicked": {
-            "description": "A column header was double clicked.",
+        "columnHeaderRightClicked": {
+            "description": "A column header was right-clicked.",
             "type": {
                 "arguments": {
-                    "event": "ColumnHeaderDoubleClickedEvent"
+                    "event": "ColumnHeaderRightClickedEvent"
                 },
                 "returnType": "void"
             }
