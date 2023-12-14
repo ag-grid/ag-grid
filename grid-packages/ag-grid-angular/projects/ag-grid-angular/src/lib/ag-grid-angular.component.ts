@@ -50,7 +50,7 @@ import {
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
-    ColumnHeaderRightClickedEvent,
+    ColumnHeaderContextMenuEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
     ColumnMovedEvent,
@@ -1593,7 +1593,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** A double-click is performed on a column header.
          * @param event
          */
-    @Output() public columnHeaderRightClicked: EventEmitter<ColumnHeaderRightClickedEvent<TData>> = new EventEmitter<ColumnHeaderRightClickedEvent<TData>>();
+    @Output() public columnHeaderContextMenu: EventEmitter<ColumnHeaderContextMenuEvent<TData>> = new EventEmitter<ColumnHeaderContextMenuEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
          * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
          */
@@ -1793,8 +1793,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent<TData>> = new EventEmitter<ColumnAggFuncChangeRequestEvent<TData>>();
 
 
-    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' 
-    // https://angular.io/guide/template-typecheck#input-setter-coercion 
+    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"'
+    // https://angular.io/guide/template-typecheck#input-setter-coercion
     static ngAcceptInputType_suppressMakeColumnVisibleAfterUnGroup: boolean | null | '';
     static ngAcceptInputType_suppressRowClickSelection: boolean | null | '';
     static ngAcceptInputType_suppressCellFocus: boolean | null | '';

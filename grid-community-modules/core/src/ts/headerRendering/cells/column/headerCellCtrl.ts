@@ -31,7 +31,7 @@ import {
     ColumnHeaderMouseOverEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderClickedEvent,
-    ColumnHeaderRightClickedEvent,
+    ColumnHeaderContextMenuEvent,
 } from "../../../events";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
@@ -733,16 +733,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private addActiveHeaderMouseListeners(): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
-        const clickListener = (event: MouseEvent) => this.handleColumnClick(event);
-        const rightClickListener = (event: MouseEvent) => {
-            // Require secondary mouse button click / ignore keyboard context menu key!
-            if (event.button === 2) { this.handleColumnClick(event, true); }
-        }
+        const clickListener = (event: MouseEvent) => this.handleColumnClick(event, false);
+        const contextMenuListener = (event: MouseEvent) => this.handleColumnClick(event, true);
 
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
         this.addManagedListener(this.getGui(), 'click', clickListener);
-        this.addManagedListener(this.getGui(), 'contextmenu', rightClickListener);
+        this.addManagedListener(this.getGui(), 'contextmenu', contextMenuListener);
     }
 
     private handleMouseOverChange(mouseOver: boolean): void {
@@ -760,15 +757,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.eventService.dispatchEvent(event);
     }
 
-    private handleColumnClick(mouseEvent: MouseEvent, isRightClick: boolean = false): void {
-        const eventType = isRightClick ? Events.EVENT_COLUMN_HEADER_RIGHT_CLICKED : Events.EVENT_COLUMN_HEADER_CLICKED;
+    private handleColumnClick(mouseEvent: MouseEvent, isContextMenuEvent: boolean): void {
+        const eventType = isContextMenuEvent ?
+            Events.EVENT_COLUMN_HEADER_CONTEXT_MENU : Events.EVENT_COLUMN_HEADER_CLICKED;
 
-        // We don't show the browser's context menu on right click
-        if (eventType === Events.EVENT_COLUMN_HEADER_RIGHT_CLICKED) {
+        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
             mouseEvent.preventDefault();
         }
 
-        const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderRightClickedEvent> = {
+        const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
             type: eventType,
             source: eventType,
             column: this.column,

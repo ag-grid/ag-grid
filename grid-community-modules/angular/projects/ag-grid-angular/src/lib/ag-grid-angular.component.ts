@@ -50,9 +50,9 @@ import {
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
+    ColumnHeaderContextMenuEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
-    ColumnHeaderRightClickedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
     ColumnPivotChangeRequestEvent,
@@ -1584,12 +1584,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** A mouse cursor is moved out of a column header.
          */
     @Output() public columnHeaderMouseLeave: EventEmitter<ColumnHeaderMouseLeaveEvent<TData>> = new EventEmitter<ColumnHeaderMouseLeaveEvent<TData>>();
-    /** A right click is performed on a column header.
+    /** A click is performed on a column header.
          */
     @Output() public columnHeaderClicked: EventEmitter<ColumnHeaderClickedEvent<TData>> = new EventEmitter<ColumnHeaderClickedEvent<TData>>();
-    /** A right click is performed on a column header.
+    /** A context menu action, such as right-click or context menu key press, is performed on a column header.
          */
-    @Output() public columnHeaderRightClicked: EventEmitter<ColumnHeaderRightClickedEvent<TData>> = new EventEmitter<ColumnHeaderRightClickedEvent<TData>>();
+    @Output() public columnHeaderContextMenu: EventEmitter<ColumnHeaderContextMenuEvent<TData>> = new EventEmitter<ColumnHeaderContextMenuEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
          * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
          */

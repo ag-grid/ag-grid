@@ -64,8 +64,8 @@ export class Events {
     /** Column header clicked */
     public static EVENT_COLUMN_HEADER_CLICKED: 'columnHeaderClicked' = 'columnHeaderClicked';
 
-    /** Column header right-clicked */
-    public static EVENT_COLUMN_HEADER_RIGHT_CLICKED: 'columnHeaderRightClicked' = 'columnHeaderRightClicked';
+    /** Column header context menu event (right click or context menu key) */
+    public static EVENT_COLUMN_HEADER_CONTEXT_MENU: 'columnHeaderContextMenu' = 'columnHeaderContextMenu';
 
     /** Async Transactions Executed */
     public static EVENT_ASYNC_TRANSACTIONS_FLUSHED: 'asyncTransactionsFlushed' = 'asyncTransactionsFlushed';

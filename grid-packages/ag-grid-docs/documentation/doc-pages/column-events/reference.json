@@ -125,11 +125,11 @@
                 "returnType": "void"
             }
         },
-        "columnHeaderRightClicked": {
-            "description": "A column header was right-clicked.",
+        "columnHeaderContextMenu": {
+            "description": "A context menu action, such as right-click or context menu key press, was performed on a column header.",
             "type": {
                 "arguments": {
-                    "event": "ColumnHeaderRightClickedEvent"
+                    "event": "ColumnHeaderContextMenuEvent"
                 },
                 "returnType": "void"
             }

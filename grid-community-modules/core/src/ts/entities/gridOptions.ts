@@ -88,7 +88,7 @@ import {
     ColumnHeaderMouseOverEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderClickedEvent,
-    ColumnHeaderRightClickedEvent,
+    ColumnHeaderContextMenuEvent,
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -1871,14 +1871,14 @@ export interface GridOptions<TData = any> {
     onColumnHeaderMouseLeave?(event: ColumnHeaderMouseLeaveEvent<TData>): void;
 
     /**
-     * A right click is performed on a column header.
+     * A click is performed on a column header.
      */
     onColumnHeaderClicked?(event: ColumnHeaderClickedEvent<TData>): void;
 
     /**
-     * A right click is performed on a column header.
+     * A context menu action, such as right-click or context menu key press, is performed on a column header.
      */
-    onColumnHeaderRightClicked?(event: ColumnHeaderRightClickedEvent<TData>): void;
+    onColumnHeaderContextMenu?(event: ColumnHeaderContextMenuEvent<TData>): void;
 
     // *** Components *** //
     /**
