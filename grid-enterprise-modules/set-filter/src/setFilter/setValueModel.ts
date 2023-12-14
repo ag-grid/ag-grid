@@ -16,7 +16,8 @@ import {
     ValueFormatterParams,
     GridOptionsService,
     ColumnModel,
-    ValueService
+    ValueService,
+    AgEventListener
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
@@ -199,11 +200,11 @@ export class SetValueModel<V> implements IEventEmitter {
         this.updateAllValues().then(updatedKeys => this.resetSelectionState(updatedKeys || []));
     }
 
-    public addEventListener(eventType: string, listener: Function, async?: boolean): void {
+    public addEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
         this.localEventService.addEventListener(eventType, listener, async);
     }
 
-    public removeEventListener(eventType: string, listener: Function, async?: boolean): void {
+    public removeEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
         this.localEventService.removeEventListener(eventType, listener, async);
     }
 
