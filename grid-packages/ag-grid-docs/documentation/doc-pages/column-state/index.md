@@ -162,17 +162,6 @@ The only exception is with regards to Column Width. For width, both `undefined`
 and `null` will skip the attribute. This is because width is mandatory - there
 is no such thing as a Column with no width.
 
-### Width and Flex
-
-When Flex is active on a Column, the grid ignores the `width` attribute when setting the width.
-
-When `getColumnState()` is called, both `width` and `flex` are returned.
-When `applyColumnState()` is called, if `flex` is present then `width` is
-ignored.
-
-If you want to restore a Column's width to the exact same pixel width as specified in the Column State,
-set `flex=null` for that Column's state to turn Flex off.
-
 ### Row Group and Pivot
 
 There are two attributes representing both Row Group and Pivot. First using the boolean attributes
