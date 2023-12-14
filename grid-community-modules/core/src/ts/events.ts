@@ -545,6 +545,26 @@ export interface ColumnPinnedEvent<TData = any, TContext = any> extends ColumnEv
     pinned: ColumnPinnedType;
 }
 
+export interface ColumnHeaderMouseOverEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
+
+export interface ColumnHeaderMouseLeaveEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
+
+export interface ColumnHeaderClickedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
+
+export interface ColumnHeaderContextMenuEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
+
 /**------------*/
 
 /** ROW EVENTS */

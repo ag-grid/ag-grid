@@ -84,7 +84,11 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
-    StateUpdatedEvent
+    StateUpdatedEvent,
+    ColumnHeaderMouseOverEvent,
+    ColumnHeaderMouseLeaveEvent,
+    ColumnHeaderClickedEvent,
+    ColumnHeaderContextMenuEvent,
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -1853,6 +1857,28 @@ export interface GridOptions<TData = any> {
      * Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.
      */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
+
+    // *** Column Header *** //
+
+    /**
+     * A mouse cursor is initially moved over a column header.
+     */
+    onColumnHeaderMouseOver?(event: ColumnHeaderMouseOverEvent<TData>): void;
+
+    /**
+     * A mouse cursor is moved out of a column header.
+     */
+    onColumnHeaderMouseLeave?(event: ColumnHeaderMouseLeaveEvent<TData>): void;
+
+    /**
+     * A click is performed on a column header.
+     */
+    onColumnHeaderClicked?(event: ColumnHeaderClickedEvent<TData>): void;
+
+    /**
+     * A context menu action, such as right-click or context menu key press, is performed on a column header.
+     */
+    onColumnHeaderContextMenu?(event: ColumnHeaderContextMenuEvent<TData>): void;
 
     // *** Components *** //
     /**
