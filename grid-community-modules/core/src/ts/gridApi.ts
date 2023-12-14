@@ -42,7 +42,7 @@ import {
     TabToNextHeaderParams
 } from "./interfaces/iCallbackParams";
 import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
-import { AgEvent, ColumnEventType, FilterChangedEventSourceType, AgEventListener, AgGlobalEventListener, GridPreDestroyedEvent, SelectionEventSourceType } from "./events";
+import { AgEvent, AgEventListener, AgGlobalEventListener, ColumnEventType, FilterChangedEventSourceType, GridPreDestroyedEvent, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
 import { FocusService } from "./focusService";
@@ -1045,26 +1045,26 @@ export class GridApi<TData = any> {
      * Works similar to `addEventListener` for a browser DOM element.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    public addEventListener(eventType: string, listener: AgEventListener): void {
-        this.apiEventService.addEventListener(eventType, listener);
+    public addEventListener(eventType: string, listener: Function): void {
+        this.apiEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /**
      * Add an event listener for all event types coming from the grid.
      * Listeners will be automatically removed when the grid is destroyed.
      */
-    public addGlobalListener(listener: AgGlobalEventListener<TData>): void {
-        this.apiEventService.addGlobalListener(listener);
+    public addGlobalListener(listener: Function): void {
+        this.apiEventService.addGlobalListener(listener as AgGlobalEventListener);
     }
 
     /** Remove an event listener. */
-    public removeEventListener(eventType: string, listener: AgEventListener<TData>): void {
-        this.apiEventService.removeEventListener(eventType, listener);
+    public removeEventListener(eventType: string, listener: Function): void {
+        this.apiEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove a global event listener. */
-    public removeGlobalListener(listener: AgGlobalEventListener): void {
-        this.apiEventService.removeGlobalListener(listener);
+    public removeGlobalListener(listener: Function): void {
+        this.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
     }
 
     public dispatchEvent(event: AgEvent): void {
