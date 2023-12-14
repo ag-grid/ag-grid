@@ -167,6 +167,7 @@ export class StateService extends BeanStub {
 
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () => this.updateCachedState('filter', this.getFilterState()));
         this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()));
+        this.addManagedListener(this.eventService, Events.EVENT_EXPAND_COLLAPSE_ALL, () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()));
         this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, () => this.updateCachedState('rowSelection', this.getRowSelectionState()));
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event: PaginationChangedEvent) => {
             if (event.newPage || event.newPageSize) {
