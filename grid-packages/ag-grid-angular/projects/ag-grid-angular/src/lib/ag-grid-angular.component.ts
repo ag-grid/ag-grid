@@ -4,6 +4,7 @@ import {
     ElementRef,
     EventEmitter,
     Input,
+    NgZone,
     OnChanges,
     OnDestroy,
     Output,
@@ -213,54 +214,65 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     constructor(elementDef: ElementRef,
         private viewContainerRef: ViewContainerRef,
         private angularFrameworkOverrides: AngularFrameworkOverrides,
-        private frameworkComponentWrapper: AngularFrameworkComponentWrapper) {
+        private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
+        private ngZone: NgZone
+    ) {
         this._nativeElement = elementDef.nativeElement;
+    }
 
+    runOutsideAngular<T>(callback: () => T): T {
+        // Check if ngZone exists, as it won't be present when running zoneless. 
+        return this.ngZone ? this.ngZone.runOutsideAngular(callback) : callback();
     }
 
     ngAfterViewInit(): void {
-        this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
-        this.angularFrameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
+      // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
+      this.runOutsideAngular(() => {
+          this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.ngZone);
+          const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
 
-        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
+          this.gridParams = {
+               globalEventListener: this.globalEventListener.bind(this),
+               frameworkOverrides: this.angularFrameworkOverrides,
+               providedBeanInstances: {
+                    frameworkComponentWrapper: this.frameworkComponentWrapper,
+               },
+               modules: (this.modules || []) as any,
+          };
 
-        this.gridParams = {
-            globalEventListener: this.globalEventListener.bind(this),
-            frameworkOverrides: this.angularFrameworkOverrides,
-            providedBeanInstances: {
-                frameworkComponentWrapper: this.frameworkComponentWrapper
-            },
-            modules: (this.modules || []) as any
-        };
+          const api = createGrid(this._nativeElement, mergedGridOps, this.gridParams);
+          if (api) {
+               this.api = api;
+               this.columnApi = new ColumnApi(api);
+          }
 
-        const api = createGrid(this._nativeElement, mergedGridOps, this.gridParams);
+          if (this.gridPreDestroyed.observers.length > 0) {
+               console.warn(
+                    'AG Grid: gridPreDestroyed event listener registered via (gridPreDestroyed)="method($event)" will be ignored! ' +
+                         'Please assign via gridOptions.gridPreDestroyed and pass to the grid as [gridOptions]="gridOptions"'
+               );
+          }
 
-        if (api) {
-            this.api = api;
-            this.columnApi = new ColumnApi(api);
-        }
+          this._initialised = true;
 
-        if (this.gridPreDestroyed.observers.length > 0) {
-            console.warn('AG Grid: gridPreDestroyed event listener registered via (gridPreDestroyed)="method($event)" will be ignored! ' +
-                'Please assign via gridOptions.gridPreDestroyed and pass to the grid as [gridOptions]="gridOptions"');
-        }
-
-        this._initialised = true;
-
-        // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
-        // this ties these together so that gridReady will always fire after agGridAngular's ngAfterViewInit
-        // the actual containing component's ngAfterViewInit will fire just after agGridAngular's
-        this._fullyReady.resolveNow(null, resolve => resolve);
-    }
+          // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
+          // this ties these together so that gridReady will always fire after agGridAngular's ngAfterViewInit
+          // the actual containing component's ngAfterViewInit will fire just after agGridAngular's
+          this._fullyReady.resolveNow(null, (resolve) => resolve);
+       });
+     }
 
     public ngOnChanges(changes: any): void {
-        if (this._initialised) {
-          const gridOptions: GridOptions = {};
-          Object.entries(changes).forEach(([key, value]: [string, any]) => {
-               gridOptions[key as keyof GridOptions] = value.currentValue;
-          });
-          ComponentUtil.processOnChange(gridOptions, this.api);
-        }
+         if (this._initialised) {
+               // Run the changes outside of angular so any event handlers that are created do not trigger change detection
+             this.runOutsideAngular(() => {
+                 const gridOptions: GridOptions = {};
+                 Object.entries(changes).forEach(([key, value]: [string, any]) => {
+                     gridOptions[key as keyof GridOptions] = value.currentValue;
+                 });
+                 ComponentUtil.processOnChange(gridOptions, this.api);
+             });
+         }
     }
 
     public ngOnDestroy(): void {
@@ -296,14 +308,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         // generically look up the eventType
         const emitter = <EventEmitter<any>>(<any>this)[eventType];
         if (emitter && this.isEmitterUsed(eventType)) {
+
+            // Make sure we emit within the angular zone, so change detection works properly
+            const fireEmitter = () => this.ngZone.run(() => emitter.emit(event));
+
             if (eventType === 'gridReady') {
-                // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit the
-                // gridReady event
-                this._fullyReady.then((result => {
-                    emitter.emit(event);
-                }));
+                // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit then gridReady event
+                this._fullyReady.then(() => fireEmitter());
             } else {
-                emitter.emit(event);
+                fireEmitter();
             }
         }
     }
