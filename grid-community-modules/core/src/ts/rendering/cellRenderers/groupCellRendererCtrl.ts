@@ -410,7 +410,9 @@ export class GroupCellRendererCtrl extends BeanStub {
                 console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
             }
         } else {
-            footerValue = 'Total ' + (this.params.value != null ? this.params.value : '');
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const footerTotalPrefix = localeTextFunc('footerTotal', 'Total');
+            footerValue = footerTotalPrefix + ' ' + (this.params.value != null ? this.params.value : '');
         }
 
         const innerCompDetails = this.getInnerCompDetails(this.params);
