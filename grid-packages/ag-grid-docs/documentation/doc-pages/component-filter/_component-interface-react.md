@@ -31,5 +31,5 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom filters, however this will involve declaring your React component imperatively, and is not recommend. See [Imperative Filter Component](/component-filter-imperative-react/).</note>
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom filters, however this will involve declaring your React component imperatively, and is not recommend. See [Imperative Filter Component](../component-filter-imperative-react/).</note>
 </framework-specific-section>

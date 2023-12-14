@@ -1,22 +1,21 @@
-import { IDoesFilterPassParams } from '@ag-grid-community/core';
-import { CustomFilterProps, useGridFilter } from '@ag-grid-community/react';
-import React, { ChangeEvent, forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+import { useGridFilter } from '@ag-grid-community/react';
+import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
-export default forwardRef(({ model, onModelChange, getValue }: CustomFilterProps< any, any, { value: string }>, ref) => {
+export default forwardRef(({ model, onModelChange, getValue }, ref) => {
     const refInput = useRef(null);
 
-    const doesFilterPass = useCallback(({ node }: IDoesFilterPassParams) => {
+    const doesFilterPass = useCallback(({ node }) => {
         const value = getValue(node).toString().toLowerCase();
 
-        return model!.value.toLowerCase()
+        return model.value.toLowerCase()
             .split(' ')
             .every(filterWord => value.indexOf(filterWord) >= 0);
     }, [model]);
 
-    const afterGuiAttached = useCallback(() => {
+    const afterGuiAttached = useCallback((params) => {
         window.setTimeout(() => {
-            const container = ReactDOM.findDOMNode(refInput.current) as HTMLElement;
+            const container = ReactDOM.findDOMNode(refInput.current);
             if (container) {
                 container.focus();
             }
@@ -30,13 +29,13 @@ export default forwardRef(({ model, onModelChange, getValue }: CustomFilterProps
 
     useImperativeHandle(ref, () => {
         return {
-            componentMethod(message: string) {
+            componentMethod(message) {
                 alert(`Alert from PartialMatchFilterComponent: ${message}`);
             }
         };
     });
 
-    const onChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+    const onChange = ({ target: { value } }) => {
         onModelChange({ value });
     }
 

@@ -38,11 +38,14 @@ const jsxEditorProxy = (
 
     const props = compProxy!.getProps();
 
+    const isStateless = isComponentStateless(CellEditorClass);
+
     return (
         <CustomContext.Provider value={{
             setMethods: (methods: CustomCellEditorCallbacks) => compProxy!.setMethods(methods)
         }}>
-            <CellEditorClass {...props}/>
+            {isStateless && <CellEditorClass {...props}/>}
+            {!isStateless && <CellEditorClass {...props} ref={(ref: any) => compProxy!.setRef(ref)}/>}
         </CustomContext.Provider>
     );
 }
@@ -416,7 +419,13 @@ const CellComp = (props: {
                     }
                 } else {
                     // stop editing
-                    setEditDetails(undefined);
+                    setEditDetails(editDetails => {
+                        if (editDetails?.compProxy) {
+                            // if we're using the proxy, we have to manually clear the ref
+                            cellEditorRef.current = undefined;
+                        }
+                        return undefined;
+                    });
                 }
             }
         };

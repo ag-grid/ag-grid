@@ -82,10 +82,13 @@ There are two ways you can get fix this problem:
   This is the best solution, but you can only do this if you are writing the component yourself.
 - Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](/component-date/#example-custom-date-component)
 
-<framework-specific-section frameworks="angular">
-| ## Accessing the Angular Component Instance
-|
+## Accessing the Component Instance
+
+<framework-specific-section frameworks="angular,vue,javascript">
 | AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+|AG Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. This returns a wrapper component that matches the provided grid filter components that implement `IFilter`. To get the React custom filter component, the helper function `getInstance` can be used with this. As React components are created asynchronously, it is necessary to use a callback for both methods.
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -113,21 +116,35 @@ There are two ways you can get fix this problem:
 | }
 </snippet>
 </framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-| The example below illustrates how a custom filter component can be accessed and methods on it invoked:
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<grid-example title='Angular Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "angular", "includeNgFormsModule" : true }'></grid-example>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-| ## Accessing the VueJS Component Instance
+<framework-specific-section frameworks="react">
+<snippet transform={false} language="ts">
+|// let's assume a React component as follows
+|export default forwardRef((props, ref) => {
+|    useImperativeHandle(ref, () => {
+|        return {
+|            ... // required filter methods
 |
-| AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
+|            // put a custom method on the filter
+|            myMethod() {
+|                // does something
+|            }
+|        }
+|    });
+|
+|    ... // rest of component
+|}
+|
+|// later in your app, if you want to execute myMethod()...
+|laterOnInYourApplicationSomewhere() {
+|    // get reference to the AG Grid Filter component on name column
+|    api.getFilterInstance('name', filterInstance => {
+|        getInstance(filterInstance, comp => if (comp != null) {
+|            comp.myMethod();
+|        });
+|    });
+|}
+</snippet>
 </framework-specific-section>
-
 <framework-specific-section frameworks="vue">
 <snippet transform={false} language="ts">
 | // let's assume a VueJS component as follows
@@ -151,10 +168,6 @@ There are two ways you can get fix this problem:
 </snippet>
 </framework-specific-section>
 
-<framework-specific-section frameworks="vue">
-| The example below illustrates how a custom filter component can be accessed and methods on it invoked:
-</framework-specific-section>
+The example below illustrates how a custom filter component can be accessed and methods on it invoked:
 
-<framework-specific-section frameworks="vue">
-<grid-example title='Vue Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "vue" }'></grid-example>
-</framework-specific-section>
+<grid-example title='Filter Component Instance' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "includeNgFormsModule" : true }'></grid-example>

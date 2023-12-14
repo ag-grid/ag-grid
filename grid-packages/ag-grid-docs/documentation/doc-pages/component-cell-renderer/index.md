@@ -33,7 +33,12 @@ md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
+<framework-specific-section frameworks="javascript,angular,vue">
 <interface-documentation interfaceName='ICellRendererParams' config='{"hideHeader":false, "headerLevel": 3}' ></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomCellRendererProps' config='{"hideHeader":false, "headerLevel": 3}' ></interface-documentation>
+</framework-specific-section>
 
 md-include:params_vue.md
 
@@ -48,55 +53,48 @@ Component Refresh needs a bit more explanation. Here we go through some of the f
 ### Events Causing Refresh
 
 <framework-specific-section frameworks="javascript,angular,vue">
-| The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh method
-| of your cell renderer getting called. The following items are those that **do** cause refresh to be called:
-|
-| - Calling `rowNode.setDataValue(colKey, value)` to set a value directly onto the `rowNode`. This is the preferred API way to change one value from outside of the grid.
-| - When editing a cell and editing is stopped, so that cell displays new value after editing.
-| - Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](/view-refresh/)).
-|
-| If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the `refresh()` method will be called.
+|The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh method
+|of your cell renderer getting called.
 </framework-specific-section>
-
 <framework-specific-section frameworks="react">
-|When the grid can refresh a cell (instead of replacing it altogether) then the update will occur as follows:
-|
-|- For class components, `componentWillReceiveProps`, `getDerivedStateFromProps` will get called and the function re-rendered.
-|- For functional components, the function will get called again with new props.
-|
 |The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh of your cell renderer.
-|
-|The following items are those that **do** cause refresh to be called:
-|
-|- Calling `rowNode.setDataValue(colKey, value)` to set a value directly onto the `rowNode`. This is the preferred API way to change one value from outside the grid.
-|- When editing a cell and editing is stopped, so that cell displays new value after editing.
-|- Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](/view-refresh/)).
-|
-|If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the Cell Renderer is refreshed.
 </framework-specific-section>
 
-The following will **not** result in the cell renderer's refresh method being called:
+The following items are those that **do** cause refresh to be called:
+
+- Calling `rowNode.setDataValue(colKey, value)` to set a value directly onto the `rowNode`. This is the preferred API way to change one value from outside of the grid.
+- When editing a cell and editing is stopped, so that cell displays the new value after editing.
+- Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](/view-refresh/)).
+
+<framework-specific-section frameworks="javascript,angular,vue">
+|If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the `refresh()` method will be called.
+|
+|The following will **not** result in the cell renderer's refresh method being called:
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+|If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the Cell Renderer is refreshed.
+|
+|The following will **not** result in the Cell Renderer being refreshed:
+</framework-specific-section>
 
 - Calling `rowNode.setData(data)` to set new data into a `rowNode`. When you set the data for the whole row, the whole row in the DOM is recreated again from scratch.
 - Scrolling the grid vertically causes columns (and their containing cells) to be removed and inserted due to column virtualisation.
 
 All of the above will result in the component being destroyed and recreated.
 
-### Grid vs Component Refresh
+<framework-specific-section frameworks="javascript,angular,vue">
+<h3 id="grid-vs-component-refresh">Grid vs Component Refresh</h3>
+</framework-specific-section>
 
 <framework-specific-section frameworks="javascript,angular,vue">
-| The refresh method returns back a boolean value. If you do not want to handle the refresh in the cell renderer, just return back `false` from an otherwise empty method. This will indicate to the grid that you did not refresh and the grid will instead destroy the component and create another instance of your component from scratch instead.
+|The refresh method returns back a boolean value. If you do not want to handle the refresh in the cell renderer, just return back `false` from an otherwise empty method. This will indicate to the grid that you did not refresh and the grid will instead destroy the component and create another instance of your component from scratch instead.
+|
+|The example below demonstrates handling the refresh, where the Gold, Silver and Bronze column cell renderers refresh when the Update Data button is clicked.
 </framework-specific-section>
 
-<framework-specific-section frameworks="react">
-|If you choose to implement the `refresh` method, then note that this method returns a boolean value. If you do not
-|want to handle the refresh in the cell renderer, just return `false` from an otherwise empty method. This will
-|indicate to the grid that you did not refresh and the grid will instead destroy the component and create another instance of your component from scratch instead.
-</framework-specific-section>
-
-The example below demonstrates handling the refresh, where the Gold, Silver and Bronze column cell renderers refresh when the Update Data button is clicked.
-
+<framework-specific-section frameworks="javascript,angular,vue">
 <grid-example title='Component Refresh' name='component-refresh' type='mixed'></grid-example>
+</framework-specific-section>
 
 ### Change Detection
 
