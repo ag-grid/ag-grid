@@ -64,7 +64,7 @@ export class Events {
     /** Column header clicked */
     public static EVENT_COLUMN_HEADER_CLICKED: 'columnHeaderClicked' = 'columnHeaderClicked';
 
-    /** Column header context menu event (right click or context menu key) */
+    /** Column header context menu event, such as right-click or context menu key press */
     public static EVENT_COLUMN_HEADER_CONTEXT_MENU: 'columnHeaderContextMenu' = 'columnHeaderContextMenu';
 
     /** Async Transactions Executed */

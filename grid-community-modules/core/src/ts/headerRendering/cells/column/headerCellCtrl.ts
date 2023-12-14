@@ -742,16 +742,17 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.addManagedListener(this.getGui(), 'contextmenu', contextMenuListener);
     }
 
-    private handleMouseOverChange(mouseOver: boolean): void {
-        this.setActiveHeader(mouseOver);
-        const eventType = mouseOver ?
-            Events.EVENT_COLUMN_HEADER_MOUSE_OVER : Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
+    private handleMouseOverChange(isMouseOver: boolean): void {
+        this.setActiveHeader(isMouseOver);
+        const eventType = isMouseOver ?
+            Events.EVENT_COLUMN_HEADER_MOUSE_OVER :
+            Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
 
         const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
             type: eventType,
             source: eventType,
             column: this.column,
-            columns: [this.column],
+            columns: null,
         };
 
         this.eventService.dispatchEvent(event);
@@ -759,7 +760,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private handleColumnClick(mouseEvent: MouseEvent, isContextMenuEvent: boolean): void {
         const eventType = isContextMenuEvent ?
-            Events.EVENT_COLUMN_HEADER_CONTEXT_MENU : Events.EVENT_COLUMN_HEADER_CLICKED;
+            Events.EVENT_COLUMN_HEADER_CONTEXT_MENU :
+            Events.EVENT_COLUMN_HEADER_CLICKED;
 
         if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
             mouseEvent.preventDefault();
@@ -769,7 +771,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             type: eventType,
             source: eventType,
             column: this.column,
-            columns: [this.column],
+            columns: null,
         };
 
         this.eventService.dispatchEvent(event);
