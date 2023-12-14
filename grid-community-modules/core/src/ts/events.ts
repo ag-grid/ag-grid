@@ -504,11 +504,7 @@ export type ColumnEventType =
     "pivotChart" |
     "columnRowGroupChanged" |
     "cellDataTypeInferred" |
-    "viewportSizeFeature" |
-    "columnHeaderMouseOver" |
-    "columnHeaderMouseLeave" |
-    "columnHeaderClicked" |
-    "columnHeaderContextMenu";
+    "viewportSizeFeature";
 
 export interface ColumnEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The impacted column, only set if action was on one column */
@@ -549,13 +545,25 @@ export interface ColumnPinnedEvent<TData = any, TContext = any> extends ColumnEv
     pinned: ColumnPinnedType;
 }
 
-export interface ColumnHeaderMouseOverEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
+export interface ColumnHeaderMouseOverEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
 
-export interface ColumnHeaderMouseLeaveEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
+export interface ColumnHeaderMouseLeaveEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
 
-export interface ColumnHeaderClickedEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
+export interface ColumnHeaderClickedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
 
-export interface ColumnHeaderContextMenuEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
+export interface ColumnHeaderContextMenuEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Column or column-group related to the header that triggered the event */
+    column: Column | ProvidedColumnGroup;
+}
 
 /**------------*/
 

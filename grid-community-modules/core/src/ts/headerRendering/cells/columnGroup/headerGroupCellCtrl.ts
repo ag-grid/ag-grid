@@ -32,7 +32,7 @@ import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 import { HorizontalDirection } from "../../../constants/direction";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HeaderPosition } from "../../common/headerPosition";
-import {WithoutGridCommon} from "../../../interfaces/iCommon";
+import { WithoutGridCommon } from "../../../interfaces/iCommon";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     setResizableDisplayed(displayed: boolean): void;
@@ -65,7 +65,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.setupExpandable();
         this.setupTooltip();
         this.setupUserComp();
-        this.addActiveHeaderMouseListeners();
+        this.addHeaderMouseListeners();
 
         const pinned = this.getParentRowCtrl().getPinned();
         const leafCols = this.column.getProvidedColumnGroup().getLeafColumns();
@@ -189,7 +189,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.comp.setUserCompDetails(compDetails);
     }
 
-    private addActiveHeaderMouseListeners(): void {
+    private addHeaderMouseListeners(): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
         const clickListener = (event: MouseEvent) => this.handleColumnClick(event, false);
         const contextMenuListener = (event: MouseEvent) => this.handleColumnClick(event, true);
@@ -207,9 +207,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
 
         const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
             type: eventType,
-            source: eventType,
-            column: null,
-            columns: this.column.getLeafColumns(),
+            column: this.column.getProvidedColumnGroup(),
         };
 
         this.eventService.dispatchEvent(event);
@@ -220,15 +218,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             Events.EVENT_COLUMN_HEADER_CONTEXT_MENU :
             Events.EVENT_COLUMN_HEADER_CLICKED;
 
-        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+        if (isContextMenuEvent && this.gridOptionsService.get('preventDefaultOnContextMenu')) {
             mouseEvent.preventDefault();
         }
 
         const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
             type: eventType,
-            source: eventType,
-            column: null,
-            columns: this.column.getLeafColumns(),
+            column: this.column.getProvidedColumnGroup(),
         };
 
         this.eventService.dispatchEvent(event);

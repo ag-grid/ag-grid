@@ -26,7 +26,7 @@ import { SortDirection } from "../../../entities/colDef";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
-import {WithoutGridCommon} from "../../../interfaces/iCommon";
+import { WithoutGridCommon } from "../../../interfaces/iCommon";
 import {
     ColumnHeaderMouseOverEvent,
     ColumnHeaderMouseLeaveEvent,
@@ -750,9 +750,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
             type: eventType,
-            source: eventType,
             column: this.column,
-            columns: null,
         };
 
         this.eventService.dispatchEvent(event);
@@ -763,15 +761,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             Events.EVENT_COLUMN_HEADER_CONTEXT_MENU :
             Events.EVENT_COLUMN_HEADER_CLICKED;
 
-        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+        if (isContextMenuEvent && this.gridOptionsService.get('preventDefaultOnContextMenu')) {
             mouseEvent.preventDefault();
         }
 
         const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
             type: eventType,
-            source: eventType,
             column: this.column,
-            columns: null,
         };
 
         this.eventService.dispatchEvent(event);
