@@ -96,7 +96,6 @@ export class CellCtrl extends BeanStub {
     private cellPosition: CellPosition;
     private editing: boolean;
     
-    private isCellRenderer: boolean;
     private includeSelection: boolean;
     private includeDndSource: boolean;
     private includeRowDrag: boolean;
@@ -126,7 +125,6 @@ export class CellCtrl extends BeanStub {
         if (!this.beans.gridOptionsService.get('suppressCellFocus')) {
             this.tabIndex = -1;
         }
-        this.isCellRenderer = colDef.cellRenderer != null || colDef.cellRendererSelector != null;
 
         this.createCellPosition();
         this.addFeatures();
@@ -335,8 +333,9 @@ export class CellCtrl extends BeanStub {
     public getTabIndex(): number | undefined {
         return this.tabIndex;
     }
-    public getIsCellRenderer(): boolean {
-        return this.isCellRenderer;
+    public isCellRenderer(): boolean {
+        const colDef = this.column.getColDef();
+        return colDef.cellRenderer != null || colDef.cellRendererSelector != null;
     }
     public getValueToDisplay(): any {
         return this.valueFormatted != null ? this.valueFormatted : this.value;
@@ -345,7 +344,7 @@ export class CellCtrl extends BeanStub {
     private showValue(forceNewCellRendererInstance = false): void {
         const valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
-        if (this.isCellRenderer) {
+        if (this.isCellRenderer()) {
             const params = this.createCellRendererParams();
             compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
         }
