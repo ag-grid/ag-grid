@@ -57,7 +57,7 @@ md-include:component-interface-vue.md
 <framework-specific-section frameworks="react">
 |### Filter Callbacks
 |
-|The following callbacks can be passed to the `useGridFilter` hook (`CustomFilterCallbacks` interface):
+|The following callbacks can be passed to the `useGridFilter` hook (`CustomFilterCallbacks` interface). The hook must be used for filters to work. The `doesFilterPass` callback is mandatory, but all others are optional.
 </framework-specific-section>
 <framework-specific-section frameworks="react">
 <interface-documentation interfaceName='CustomFilterCallbacks' config='{ "description": "" }'></interface-documentation>

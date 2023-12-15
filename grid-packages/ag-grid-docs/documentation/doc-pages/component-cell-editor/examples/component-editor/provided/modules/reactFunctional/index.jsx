@@ -1,17 +1,15 @@
 'use strict';
 
-import React, { forwardRef, useEffect, useImperativeHandle, useMemo, memo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, memo, useRef, useState, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
-
+import { AgGridReact, useGridCellEditor } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
-
-import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -21,85 +19,76 @@ const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
-const DoublingEditor = memo(forwardRef((props, ref) => {
-    const [value, setValue] = useState(parseInt(props.value));
+// this simple editor doubles any value entered into the input
+const DoublingEditor = memo(({ value, onValueChange }) => {
     const refInput = useRef(null);
 
     useEffect(() => {
         // focus on the input
-        refInput.current.focus()
+        refInput.current?.focus();
+
+        onValueChange(value * 2);
     }, []);
 
-    /* Component Editor Lifecycle methods */
-    useImperativeHandle(ref, () => {
-        return {
-            // the final value to send to the grid, on completion of editing
-            getValue() {
-                // this simple editor doubles any value entered into the input
-                return value * 2;
-            },
+    // Gets called once before editing starts, to give editor a chance to
+    // cancel the editing before it even starts.
+    const isCancelBeforeStart = useCallback(() => {
+        return false;
+    }, []);
 
-            // Gets called once before editing starts, to give editor a chance to
-            // cancel the editing before it even starts.
-            isCancelBeforeStart() {
-                return false;
-            },
+    // Gets called once when editing is finished (eg if Enter is pressed).
+    // If you return true, then the result of the edit will be ignored.
+    const isCancelAfterEnd = useCallback(() => {
+        // our editor will reject any value greater than 1000
+        return (value / 2) > 1000;
+    }, [value]);
 
-            // Gets called once when editing is finished (eg if Enter is pressed).
-            // If you return true, then the result of the edit will be ignored.
-            isCancelAfterEnd() {
-                // our editor will reject any value greater than 1000
-                return value > 1000;
-            }
-        };
+    /* Pass Component Editor Lifecycle callbacks to the grid */
+    useGridCellEditor({
+        isCancelBeforeStart,
+        isCancelAfterEnd,
     });
 
     return (
         <input type="number"
             ref={refInput}
-            value={value}
-            onChange={event => setValue(event.target.value)}
+            value={value / 2}
+            onChange={({ target: { value: newValue }}) => onValueChange(parseInt(newValue) * 2)}
             className="doubling-input"
         />
     );
-}));
+});
 
-const MoodRenderer = memo(props => {
-    const imageForMood = mood => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
+const MoodRenderer = memo(({ value }) => {
+    const imageForMood = (mood) => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
 
-    const mood = useMemo(() => imageForMood(props.value), [props.value]);
+    const mood = useMemo(() => imageForMood(value), [value]);
 
     return (
         <img width="20px" src={mood} />
     );
 });
 
-const MoodEditor = memo(forwardRef((props, ref) => {
-    const isHappy = value => value === 'Happy';
+const MoodEditor = memo(({ value, onValueChange, stopEditing }) => {
+    const isHappy = (value) => value === 'Happy';
 
     const [ready, setReady] = useState(false);
-    const [happy, setHappy] = useState(isHappy(props.value));
-    const [done, setDone] = useState(false);
     const refContainer = useRef(null);
 
     const checkAndToggleMoodIfLeftRight = (event) => {
         if (ready) {
             if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
                 const isLeft = event.key === 'ArrowLeft';
-                setHappy(isLeft);
+                onValueChange(isLeft ? 'Happy' : 'Sad');
                 event.stopPropagation();
             }
         }
     };
 
     useEffect(() => {
-        if (done) props.stopEditing();
-    }, [done]);
-
-    useEffect(() => {
-        ReactDOM.findDOMNode(refContainer.current).focus();
+        (ReactDOM.findDOMNode(refContainer.current)).focus();
         setReady(true);
-    }, []);
+    }, [])
 
     useEffect(() => {
         window.addEventListener('keydown', checkAndToggleMoodIfLeftRight);
@@ -109,13 +98,10 @@ const MoodEditor = memo(forwardRef((props, ref) => {
         };
     }, [checkAndToggleMoodIfLeftRight, ready]);
 
-    useImperativeHandle(ref, () => {
-        return {
-            getValue() {
-                return happy ? 'Happy' : 'Sad';
-            }
-        };
-    });
+    const onClick = (happy) => {
+        onValueChange(happy ? 'Happy' : 'Sad');
+        stopEditing();
+    };
 
     const mood = {
         borderRadius: 15,
@@ -140,31 +126,28 @@ const MoodEditor = memo(forwardRef((props, ref) => {
         padding: 4
     };
 
-    const happyStyle = happy ? selected : unselected;
-    const sadStyle = !happy ? selected : unselected;
+    const happyStyle = isHappy(value) ? selected : unselected;
+    const sadStyle = !isHappy(value) ? selected : unselected;
 
     return (
         <div ref={refContainer}
             style={mood}
             tabIndex={1} // important - without this the key presses wont be caught
         >
-            <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
-                setHappy(true);
-                setDone(true);
-            }} style={happyStyle} />
-            <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
-                setHappy(false);
-                setDone(true);
-            }} style={sadStyle} />
+            <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => onClick(true)} style={happyStyle} />
+            <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => onClick(false)} style={sadStyle} />
         </div>
     );
-}));
+});
 
-const NumericEditor = memo(forwardRef((props, ref) => {
-    const createInitialState = () => {
+const NumericEditor = memo(({ value, onValueChange, eventKey, stopEditing }) => {
+    const updateValue = (val) => {
+        onValueChange(val === '' ? null : parseInt(val));
+    };
+
+    useEffect(() => {
         let startValue;
         let highlightAllOnFocus = true;
-        const eventKey = props.eventKey;
 
         if (eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
@@ -175,32 +158,22 @@ const NumericEditor = memo(forwardRef((props, ref) => {
             highlightAllOnFocus = false;
         } else {
             // otherwise we start with the current value
-            startValue = props.value;
-            if (props.eventKey === KEY_F2) {
+            startValue = value;
+            if (eventKey === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }
+        if (startValue == null) {
+            startValue = '';
+        }
 
-        return {
-            value: startValue,
-            highlightAllOnFocus
-        };
-    };
+        updateValue(startValue);
 
-    const initialState = createInitialState();
-    const [value, setValue] = useState(initialState.value);
-    const [highlightAllOnFocus, setHighlightAllOnFocus] = useState(initialState.highlightAllOnFocus);
-    const refInput = useRef(null);
-
-    // focus on the input
-    useEffect(() => {
         // get ref from React component
         const eInput = refInput.current;
         eInput.focus();
         if (highlightAllOnFocus) {
             eInput.select();
-
-            setHighlightAllOnFocus(false);
         } else {
             // when we started editing, we want the caret at the end, not the start.
             // this comes into play in two scenarios: 
@@ -213,32 +186,31 @@ const NumericEditor = memo(forwardRef((props, ref) => {
         }
     }, []);
 
-    /* Utility Methods */
-    const cancelBeforeStart = props.eventKey && props.eventKey.length === 1 && ('1234567890'.indexOf(props.eventKey) < 0);
+    const refInput = useRef<HTMLInputElement>(null);
 
-    const isLeftOrRight = event => {
+    const isLeftOrRight = (event) => {
         return ['ArrowLeft', 'ArrowLeft'].indexOf(event.key) > -1;
     };
 
-    const isCharNumeric = charStr => {
+    const isCharNumeric = (charStr) => {
         return !!/\d/.test(charStr);
     };
 
-    const isNumericKey = event => {
+    const isNumericKey = (event) => {
         const charStr = event.key;
         return isCharNumeric(charStr);
     };
 
-    const isBackspace = event => {
+    const isBackspace = (event) => {
         return event.key === KEY_BACKSPACE;
     };
 
-    const finishedEditingPressed = event => {
+    const finishedEditingPressed = (event) => {
         const key = event.key;
         return key === KEY_ENTER || key === KEY_TAB;
     };
 
-    const onKeyDown = event => {
+    const onKeyDown = (event) => {
         if (isLeftOrRight(event) || isBackspace(event)) {
             event.stopPropagation();
             return;
@@ -249,44 +221,38 @@ const NumericEditor = memo(forwardRef((props, ref) => {
         }
 
         if (finishedEditingPressed(event)) {
-            props.stopEditing();
+            stopEditing();
         }
     };
 
-    /* Component Editor Lifecycle methods */
-    useImperativeHandle(ref, () => {
-        return {
-            // the final value to send to the grid, on completion of editing
-            getValue() {
-                return value === '' || value == null ? null : parseInt(value);
-            },
+    // Gets called once before editing starts, to give editor a chance to
+    // cancel the editing before it even starts.
+    const isCancelBeforeStart = useCallback(() => {
+        return !!eventKey && eventKey.length === 1 && ('1234567890'.indexOf(eventKey) < 0);
+    }, [eventKey]);
 
-            // Gets called once before editing starts, to give editor a chance to
-            // cancel the editing before it even starts.
-            isCancelBeforeStart() {
-                return cancelBeforeStart;
-            },
+    // Gets called once when editing is finished (eg if Enter is pressed).
+    // If you return true, then the result of the edit will be ignored.
+    const isCancelAfterEnd = useCallback(() => {
+        // will reject the number if it greater than 1,000,000
+        // not very practical, but demonstrates the method.
+        return value != null && value > 1000000;
+    }, [value]);
 
-            // Gets called once when editing is finished (eg if Enter is pressed).
-            // If you return true, then the result of the edit will be ignored.
-            isCancelAfterEnd() {
-                // will reject the number if it greater than 1,000,000
-                // not very practical, but demonstrates the method.
-                const finalValue = this.getValue();
-                return finalValue != null && finalValue > 1000000;
-            }
-        };
+    useGridCellEditor({
+        isCancelBeforeStart,
+        isCancelAfterEnd,
     });
 
     return (
         <input ref={refInput}
             value={value}
-            onChange={event => setValue(event.target.value)}
-            onKeyDown={event => onKeyDown(event)}
+            onChange={(event) => updateValue(event.target.value)}
+            onKeyDown={(event) => onKeyDown(event)}
             className="numeric-input"
         />
     );
-}));
+});
 
 const GridExample = () => {
     const [rowData] = useState([
@@ -328,7 +294,7 @@ const GridExample = () => {
             editable: true,
             width: 280,
         },
-    ], []);
+    ], [])
 
     const defaultColDef = useMemo(() => ({
         editable: true,
@@ -344,11 +310,13 @@ const GridExample = () => {
                     height: '100%',
                     width: '100%'
                 }}
-                className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     columnDefs={columnDefs}
                     rowData={rowData}
-                    defaultColDef={defaultColDef} />
+                    defaultColDef={defaultColDef}
+                    reactiveCustomComponents
+                />
             </div>
         </div>
     );

@@ -14,12 +14,18 @@ export class NewReactComponent extends ReactComponent {
     private oldPortal: ReactPortal | null = null;
     private reactElement: any;
     private params: any;
+    protected instanceCreated: AgPromise<boolean>;
+    private resolveInstanceCreated?: (value: boolean) => void;
 
     constructor(reactComponent: any, parentComponent: PortalManager, componentType: ComponentType) {
         super(reactComponent, parentComponent, componentType);
 
         this.key = generateNewKey();
         this.portalKey = generateNewKey();
+
+        this.instanceCreated = this.isStatelessComponent() ? AgPromise.resolve(false) : new AgPromise(resolve => {
+            this.resolveInstanceCreated = resolve;
+        })
     }
 
     public init(params: any): AgPromise<void> {
@@ -37,6 +43,8 @@ export class NewReactComponent extends ReactComponent {
             params.ref = (element: any) => {
                 this.componentInstance = element;
                 this.addParentContainerStyleAndClasses();
+                this.resolveInstanceCreated?.(true);
+                this.resolveInstanceCreated = undefined;
             };
         }
 

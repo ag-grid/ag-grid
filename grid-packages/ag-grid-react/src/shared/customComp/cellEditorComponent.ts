@@ -1,9 +1,14 @@
-import { ICellEditor, ICellEditorParams } from "ag-grid-community";
+import { AgPromise, ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { addOptionalMethods } from "./customComponent";
 import { CustomCellEditorCallbacks, CustomCellEditorProps } from "./interfaces";
 
 export class CellEditorComponent implements ICellEditor {
     private value: any;
+    private componentInstance?: any;
+    private resolveInstanceCreated?: () => void;
+    private instanceCreated: AgPromise<void> = new AgPromise(resolve => {
+        this.resolveInstanceCreated = resolve;
+    });
 
     constructor(private cellEditorParams: ICellEditorParams, private readonly refreshProps: () => void) {
         this.value = cellEditorParams.value;
@@ -29,6 +34,16 @@ export class CellEditorComponent implements ICellEditor {
 
     public setMethods(methods: CustomCellEditorCallbacks): void {
         addOptionalMethods(this.getOptionalMethods(), methods, this);
+    }
+
+    public getInstance(): AgPromise<any> {
+        return this.instanceCreated.then(() => this.componentInstance);
+    }
+
+    public setRef(componentInstance: any): void {
+        this.componentInstance = componentInstance;
+        this.resolveInstanceCreated?.();
+        this.resolveInstanceCreated = undefined;
     }
 
     private getOptionalMethods(): string[] {

@@ -36,6 +36,14 @@ export class CustomComponent<TInputParams, TOutputParams, TMethods> extends NewR
         // do nothing
     }
 
+    public getInstance(): AgPromise<any> {
+        return this.instanceCreated.then(() => this.componentInstance);
+    }
+
+    public getFrameworkComponentInstance(): any {
+        return this;
+    }
+
     protected createElement(reactComponent: any, props: TOutputParams): any {
         return super.createElement(this.wrapperComponent, {
             initialProps: props,

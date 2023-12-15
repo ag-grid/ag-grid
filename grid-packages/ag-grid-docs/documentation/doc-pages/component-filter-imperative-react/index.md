@@ -133,16 +133,13 @@ The interface for a custom filter component is as follows:
 </snippet>
 
 <note>
-|Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the
-|grid will call (for example, the `doesFilterPass` callback from an Editor Component), then you'll need to expose them with
+|Note that you will need to expose the lifecycle/callback methods (for example, the `doesFilterPass` callback) with
 |`forwardRef` & `useImperativeHandle`.
-|
-|Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
 </note>
 
 ### Custom Filter Parameters
 
-When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
+When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and
 row values available to you via `props` - the interface for what is provided is documented below.
 
 If custom params are provided via the `colDef.filterParams` property, these
