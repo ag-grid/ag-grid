@@ -2,7 +2,6 @@ import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionEventSourceType }
 import { EventService } from "../eventService";
 import { DetailGridInfo } from "../gridApi";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { IServerSideStore } from "../interfaces/IServerSideStore";

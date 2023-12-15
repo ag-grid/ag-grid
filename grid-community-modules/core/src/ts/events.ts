@@ -13,6 +13,16 @@ import { RowPinnedType, IRowNode } from './interfaces/iRowNode';
 import { GridState } from './interfaces/gridState';
 export { Events } from './eventKeys';
 
+export interface AgEvent {
+    /** Event identifier */
+    type: string;
+}
+
+export interface AgGridEvent<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, AgEvent { }
+
+export type AgEventListener<TData = any,TContext = any> = (event: AgGridEvent<TData, TContext>) => void
+export type AgGlobalEventListener<TData = any, TContext = any> = (eventType: string, event: AgGridEvent<TData, TContext>) => void
+
 export interface ModelUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** If true, the grid will try and animate the rows to the new positions */
     animate: boolean | undefined;
@@ -43,13 +53,6 @@ export interface PaginationChangedEvent<TData = any, TContext = any> extends AgG
     /** True if user changed the page size */
     newPageSize?: boolean;
 }
-
-export interface AgEvent {
-    /** Event identifier */
-    type: string;
-}
-
-export interface AgGridEvent<TData = any, TContext = any> extends AgGridCommon<TData, TContext>, AgEvent { }
 
 export interface ToolPanelVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api';
@@ -721,6 +724,7 @@ export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends 
 
 export interface CssVariablesChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 
+
 /**-----------------*/
 /** Internal EVENTS */
 /**-----------------*/
@@ -737,3 +741,4 @@ export interface FieldValueEvent<TData = any, TContext = any> extends AgGridEven
 export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> extends FieldValueEvent {
     fromEnterKey: boolean;
 }
+

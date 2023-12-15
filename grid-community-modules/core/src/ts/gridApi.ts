@@ -42,7 +42,7 @@ import {
     TabToNextHeaderParams
 } from "./interfaces/iCallbackParams";
 import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
-import { AgEvent, ColumnEventType, FilterChangedEventSourceType, GridPreDestroyedEvent, SelectionEventSourceType } from "./events";
+import { AgEvent, ColumnEventType, FilterChangedEventSourceType, AgEventListener, AgGlobalEventListener, GridPreDestroyedEvent, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
 import { FocusService } from "./focusService";
@@ -540,7 +540,7 @@ export class GridApi<TData = any> {
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
-        this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
+        this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);
     }
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */

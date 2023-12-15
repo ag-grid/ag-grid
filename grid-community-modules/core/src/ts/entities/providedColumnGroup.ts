@@ -1,10 +1,10 @@
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { ColGroupDef } from "./colDef";
-import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
+import { ColumnGroupShowType } from "./columnGroup";
 import { Column, getNextColInstanceId } from "./column";
 import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { AgEvent } from "../events";
+import { AgEvent, AgEventListener } from "../events";
 import { PreDestroy } from "../context/context";
 
 export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
@@ -237,11 +237,11 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
         this.setExpandable();
     }
 
-    public addEventListener(eventType: string, listener: Function): void {
+    public addEventListener(eventType: string, listener: AgEventListener): void {
         this.localEventService.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: string, listener: AgEventListener): void {
         this.localEventService.removeEventListener(eventType, listener);
     }
 }

@@ -31,7 +31,7 @@ import { exists, toStringOrNull } from '../utils/generic';
 import { ValueFormatterService } from '../rendering/valueFormatterService';
 import { IRowNode } from '../interfaces/iRowNode';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date';
-import { DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
+import { AgEventListener, AgGridEvent, DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
 import { ColumnUtils } from './columnUtils';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 
@@ -328,7 +328,7 @@ export class DataTypeService extends BeanStub {
         if (!this.isWaitingForRowData) { return; }
         const columnStateUpdates = this.columnStateUpdatesPendingInference[column.getColId()];
         if (!columnStateUpdates) { return; }
-        const columnListener = (event: { key: keyof ColumnStateParams }) => {
+        const columnListener: AgEventListener = (event: AgGridEvent & { key: keyof ColumnStateParams }) => {
             columnStateUpdates.add(event.key);
         };
         column.addEventListener(Column.EVENT_STATE_UPDATED, columnListener);

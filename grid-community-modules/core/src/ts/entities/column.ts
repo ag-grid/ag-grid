@@ -1,7 +1,7 @@
 import { ColumnState } from "../columns/columnModel";
 import { ColumnUtils } from "../columns/columnUtils";
 import { Autowired, PostConstruct } from "../context/context";
-import { AgEvent, ColumnEvent, ColumnEventType } from "../events";
+import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from "../events";
 import { EventService } from "../eventService";
 import { GridOptionsService } from "../gridOptionsService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";

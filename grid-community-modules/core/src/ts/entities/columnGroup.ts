@@ -5,7 +5,7 @@ import { AbstractColDef } from "./colDef";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { EventService } from "../eventService";
 import { Autowired } from "../context/context";
-import { AgEvent } from "../events";
+import { AgEvent, AgEventListener } from "../events";
 import { last } from "../utils/array";
 import { GridOptionsService } from "../gridOptionsService";
 
