@@ -2,7 +2,6 @@ import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { includes } from "./utils/array";
 import { AgPromise } from "./utils";
 
-const OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'mousemove'];
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
 /** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
@@ -22,8 +21,6 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
         });
     }
 
-    public isOutsideAngular = (eventType:string) => includes(OUTSIDE_ANGULAR_EVENTS, eventType);
-
     // for Vanilla JS, we just add the event to the element
     public addEventListener(
         element: HTMLElement,
@@ -35,9 +32,12 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
         element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
     }
 
-    // for Vanilla JS, we just execute the listener
-    dispatchEvent(eventType: string, listener: () => {}, global = false): void {
+    dispatchEvent(listener: () => void): void {
         listener();
+    }
+
+    wrapOutgoing<T>( callback: () => T): T {
+        return callback();
     }
 
     frameworkComponent(name: string): any {

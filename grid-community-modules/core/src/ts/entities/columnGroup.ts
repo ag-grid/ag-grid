@@ -128,11 +128,11 @@ export class ColumnGroup implements IHeaderColumn {
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        this.localEventService.addEventListener(eventType, listener);
+        this.localEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
-        this.localEventService.removeEventListener(eventType, listener);
+        this.localEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     public getGroupId(): string {

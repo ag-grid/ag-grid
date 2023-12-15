@@ -79,7 +79,7 @@ export class ResizeObserverService extends BeanStub {
         };
 
         this.polyfillScheduled = true;
-        this.getFrameworkOverrides().setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
+        window.setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
     }
 
 }
