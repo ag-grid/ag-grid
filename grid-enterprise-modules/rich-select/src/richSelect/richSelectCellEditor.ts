@@ -2,6 +2,7 @@ import {
     AgRichSelect,
     Events,
     ICellEditor,
+    ICellEditorParams,
     KeyCreatorParams,
     RichSelectParams,
     PopupComponent,
@@ -96,7 +97,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         let valuesPromise;
 
         if (typeof values === 'function') {
-            valuesResult = values(this.params);
+            valuesResult = values(this.params as ICellEditorParams);
         } else {
             valuesResult = values ?? [];
         }
