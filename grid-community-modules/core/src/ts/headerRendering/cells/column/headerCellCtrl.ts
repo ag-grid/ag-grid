@@ -26,6 +26,13 @@ import { SortDirection } from "../../../entities/colDef";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
+import { WithoutGridCommon } from "../../../interfaces/iCommon";
+import {
+    ColumnHeaderMouseOverEvent,
+    ColumnHeaderMouseLeaveEvent,
+    ColumnHeaderClickedEvent,
+    ColumnHeaderContextMenuEvent,
+} from "../../../events";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -725,9 +732,45 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private addActiveHeaderMouseListeners(): void {
-        const listener = (e: MouseEvent) => this.setActiveHeader(e.type === 'mouseenter');
+        const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
+        const clickListener = (event: MouseEvent) => this.handleColumnClick(event, false);
+        const contextMenuListener = (event: MouseEvent) => this.handleColumnClick(event, true);
+
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
+        this.addManagedListener(this.getGui(), 'click', clickListener);
+        this.addManagedListener(this.getGui(), 'contextmenu', contextMenuListener);
+    }
+
+    private handleMouseOverChange(isMouseOver: boolean): void {
+        this.setActiveHeader(isMouseOver);
+        const eventType = isMouseOver ?
+            Events.EVENT_COLUMN_HEADER_MOUSE_OVER :
+            Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
+
+        const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
+            type: eventType,
+            column: this.column,
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private handleColumnClick(mouseEvent: MouseEvent, isContextMenuEvent: boolean): void {
+        const eventType = isContextMenuEvent ?
+            Events.EVENT_COLUMN_HEADER_CONTEXT_MENU :
+            Events.EVENT_COLUMN_HEADER_CLICKED;
+
+        if (isContextMenuEvent && this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+            mouseEvent.preventDefault();
+        }
+
+        const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
+            type: eventType,
+            column: this.column,
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     private setActiveHeader(active: boolean): void {

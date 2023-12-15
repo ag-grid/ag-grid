@@ -539,8 +539,8 @@ export class GridApi<TData = any> {
      * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
-    public addRenderedRowListener(eventName: string, rowIndex: number, callback: AgEventListener) {
-        this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
+    public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
+        this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);
     }
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */

@@ -190,6 +190,7 @@ const AG_GRID_LOCALE_EN = {
     firstPage: 'First Page',
     previousPage: 'Previous Page',
     pageSizeSelectorLabel: 'Page Size:',
+    footerTotal: 'Total',
 
     // Pivoting
     pivotColumnGroupTotals: 'Total',

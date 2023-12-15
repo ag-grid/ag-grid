@@ -64,9 +64,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private clientSideRowModel: IClientSideRowModel;
     private eContainer: HTMLElement;
     private isMultiRowDrag: boolean = false;
-    private isGridSorted: boolean = false;
-    private isGridFiltered: boolean = false;
-    private isRowGroupActive: boolean = false;
     private lastDraggingEvent: DraggingEvent;
     private autoScrollService: AutoScrollService;
 
@@ -81,21 +78,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        const refreshStatus = () => {
-            this.onSortChanged();
-            this.onFilterChanged();
-            this.onRowGroupChanged();
-        };
-
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => {
-            refreshStatus();
-        });
-
-        refreshStatus();
-
         this.ctrlsService.whenReady(() => {
             const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
             this.autoScrollService = new AutoScrollService({
@@ -108,18 +90,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         });
     }
 
-    private onSortChanged(): void {
-        this.isGridSorted = this.sortController.isSortActive();
-    }
-
-    private onFilterChanged(): void {
-        this.isGridFiltered = this.filterManager.isAnyFilterPresent();
-    }
-
-    private onRowGroupChanged(): void {
-        const rowGroups = this.columnModel.getRowGroupColumns();
-        this.isRowGroupActive = !missingOrEmpty(rowGroups);
-    }
 
     public getContainer(): HTMLElement {
         return this.eContainer;
@@ -140,7 +110,19 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public shouldPreventRowMove(): boolean {
-        return this.isGridSorted || this.isGridFiltered || this.isRowGroupActive;
+        const rowGroupCols = this.columnModel.getRowGroupColumns();
+        if (rowGroupCols.length) {
+            return true;
+        }
+        const isFilterPresent = this.filterManager.isAnyFilterPresent();
+        if (isFilterPresent) {
+            return true;
+        }
+        const isSortActive = this.sortController.isSortActive();
+        if (isSortActive) {
+            return true;
+        }
+        return false;
     }
 
     private getRowNodes(draggingEvent: DraggingEvent): RowNode[] {
