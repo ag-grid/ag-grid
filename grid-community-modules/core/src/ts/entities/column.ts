@@ -326,13 +326,13 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     /** Add an event listener to the column. */
-    public addEventListener(eventType: ColumnEventName, listener: AgEventListener): void {
-        this.eventService.addEventListener(eventType, listener);
+    public addEventListener(eventType: ColumnEventName, listener: Function): void {
+        this.eventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove event listener from the column. */
-    public removeEventListener(eventType: ColumnEventName, listener: AgEventListener): void {
-        this.eventService.removeEventListener(eventType, listener);
+    public removeEventListener(eventType: ColumnEventName, listener: Function): void {
+        this.eventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
