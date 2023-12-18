@@ -11,7 +11,6 @@ import { PopupEditorWrapper } from "./../cellEditors/popupEditorWrapper";
 import { DndSourceComp } from "./../dndSourceComp";
 import { TooltipParentComp } from "../../widgets/customTooltipFeature";
 import { setAriaRole } from "../../utils/aria";
-import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
 import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from "../../utils/dom";
 import { CellCtrl, ICellComp } from "./cellCtrl";
@@ -73,7 +72,9 @@ export class CellComp extends Component implements TooltipParentComp {
         this.eRow = eRow;
         this.cellCtrl = cellCtrl;
 
-        this.setTemplate(/* html */`<div comp-id="${this.getCompId()}"/>`);
+        const cellDiv = document.createElement('div');
+        cellDiv.setAttribute('comp-id', this.getCompId().toString());
+        this.setTemplateFromElement(cellDiv);
 
         const eGui = this.getGui();
 
@@ -266,9 +267,8 @@ export class CellComp extends Component implements TooltipParentComp {
         const eParent = this.getParentOfValue();
         clearElement(eParent);
 
-        const escapedValue = valueToDisplay != null ? escapeString(valueToDisplay) : null;
-        if (escapedValue != null) {
-            eParent.innerHTML = escapedValue;
+        if (valueToDisplay != null) {
+            eParent.innerText = valueToDisplay;
         }
     }
 
