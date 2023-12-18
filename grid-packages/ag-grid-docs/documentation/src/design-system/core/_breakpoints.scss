@@ -1,7 +1,5 @@
 // All breakpoints have $breakpoint prefix
 // E.g. @media screen and (min-width: $breakpoint-site-header-small) {}
-$page-margin-padding: 520px;
-
 $site-header-small: 820px;
 $site-header-large: 1400px;
 
@@ -43,6 +41,8 @@ $pricing-large: 1260px;
 
 $changelog-pipeline-large: 980px;
 
+$policy-page-extra-large: 1400px;
+
 $videos-extra-small: 480px;
 $videos-small: 630px;
 $videos-medium: $docs-nav-medium;
@@ -53,3 +53,10 @@ $alert-flag-small: 660px;
 $table-small: 640px;
 
 $code-line-numbers: 820px;
+
+$gallery-small: 820px;
+$gallery-large: 1340px;
+
+$options-medium: 820px;
+$options-large: 1200px;
+$options-extra-large: 1800px;

@@ -1,0 +1,64 @@
+@use '../core' as *;
+
+.link {
+    --link-border-color: var(--color-util-brand-100);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--link-border-color);
+
+    &::after {
+        $border-width: 2px;
+
+        content: '';
+        position: absolute;
+        top: $border-width * -1;
+        right: $border-width * -1;
+        bottom: $border-width * -1;
+        left: $border-width * -1;
+        border-radius: calc(var(--radius-sm) + 1px);
+        border: $border-width solid var(--color-link-hover);
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    &:hover::after {
+        opacity: 1;
+    }
+
+    > div {
+        border-radius: var(--radius-sm);
+    }
+
+    span {
+        display: block;
+        flex-grow: 1;
+        padding: $spacing-size-2 $spacing-size-4;
+        font-size: 12px;
+        line-height: var(--text-lh-tight);
+        border-top: 1px solid var(--link-border-color);
+    }
+
+    #{$selector-darkmode} & {
+        --link-border-color: color-mix(in srgb, var(--color-bg-primary), white 10%);
+
+        background-color: var(--color-bg-secondary);
+    }
+}
+
+.layout-3-col {
+    --columns: 1;
+
+    width: calc(100% / var(--columns) - #{$spacing-size-6} / var(--columns) * (var(--columns) - 1));
+    max-width: 520px;
+
+    @media screen and (min-width: 720px) {
+        --columns: 2;
+    }
+
+    @media screen and (min-width: 1120px) {
+        --columns: 3;
+    }
+}

@@ -1,20 +1,20 @@
 @use '../core' as *;
 
-ul#{$exclude-grid-selector},
-ol#{$exclude-grid-selector} {
+ul#{$selector-exclude-grid},
+ol#{$selector-exclude-grid} {
     padding-left: 2.25em;
 
     &:where(:not(:last-child)) {
-        margin-bottom: $size-2;
+        margin-bottom: $spacing-size-4;
     }
 }
 
 li:where(:not(:last-child)) {
-    margin-bottom: $size-1;
+    margin-bottom: $spacing-size-2;
 }
 
-li > ol#{$exclude-grid-selector},
-li > ul#{$exclude-grid-selector} {
+li > ol#{$selector-exclude-grid},
+li > ul#{$selector-exclude-grid} {
     padding-left: 1.5em;
 }
 
@@ -25,31 +25,28 @@ ol.list-style-none,
     padding-left: 0;
     list-style: none;
 
-    li:not(:last-child) {
+    li:where(:not(:last-child)) {
         margin-bottom: 0;
     }
 }
 
-pre#{$exclude-grid-selector} {
-    --font-family: #{$monospace-font-family};
-
-    background-color: var(--neutral-200);
-    padding: $size-1 $size-2;
-    border-radius: var(--border-radius);
-
-    #{$darkmode-selector} & {
-        background-color: var(--background-200);
-    }
+pre#{$selector-exclude-grid} {
+    padding: $spacing-size-2 $spacing-size-4;
+    font-family: var(--text-monospace-font-family);
+    font-size: 15px;
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
+    background-color: var(--color-bg-secondary);
 }
 
-hr#{$exclude-grid-selector} {
+hr#{$selector-exclude-grid} {
     height: 2px;
     border-radius: 1px;
-    background-color: var(--border-color);
+    background-color: var(--color-border-primary);
     border: 0;
 }
 
-address#{$exclude-grid-selector} {
+address#{$selector-exclude-grid} {
     font-style: inherit;
     line-height: inherit;
 }

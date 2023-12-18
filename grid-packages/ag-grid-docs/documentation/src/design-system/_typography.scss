@@ -1,123 +1,80 @@
-@use "sass:math";
-@use "core" as *;
+@use 'sass:math';
+@use 'core' as *;
 
-html#{$exclude-grid-selector},
-h1#{$exclude-grid-selector},
-h2#{$exclude-grid-selector},
-h3#{$exclude-grid-selector},
-h4#{$exclude-grid-selector},
-h5#{$exclude-grid-selector},
-h6#{$exclude-grid-selector},
-.font-size-gargantuan,
-.font-size-gigantic,
-.font-size-massive,
-.font-size-extra-large,
-.font-size-large,
-.font-size-medium,
-.font-size-small,
-.font-size-extra-small {
-    font-family: var(--font-family);
-    font-size: var(--font-size);
-    line-height: var(--line-height);
-    font-weight: var(--font-weight);
+.text-2xs {
+    font-size: var(--text-fs-2xs);
+    line-height: var(--text-lh-2xs);
 }
 
-.font-size-gargantuan {
-    --font-size: var(--font-size-gargantuan);
-    --line-height: var(--line-height-tight);
+h6#{$selector-exclude-grid},
+.text-xs {
+    font-size: var(--text-fs-xs);
+    line-height: var(--text-lh-xs);
 }
 
-h1#{$exclude-grid-selector},
-.font-size-gigantic {
-    --font-size: var(--font-size-gigantic);
-    --line-height: var(--line-height-tight);
+h5#{$selector-exclude-grid},
+.text-sm {
+    font-size: var(--text-fs-sm);
+    line-height: var(--text-lh-sm);
 }
 
-h2#{$exclude-grid-selector},
-.font-size-massive {
-    --font-size: var(--font-size-massive);
-    --line-height: var(--line-height-tight);
+h4#{$selector-exclude-grid},
+.text-base {
+    font-size: var(--text-fs-base);
+    line-height: var(--text-lh-base);
 }
 
-h3#{$exclude-grid-selector},
-.font-size-extra-large {
-    --font-size: var(--font-size-extra-large);
+h3#{$selector-exclude-grid},
+.text-lg {
+    font-size: var(--text-fs-lg);
+    line-height: var(--text-lh-lg);
 }
 
-.font-size-large {
-    --font-size: var(--font-size-large);
+h2#{$selector-exclude-grid},
+.text-xl {
+    font-size: var(--text-fs-xl);
+    line-height: var(--text-lh-xl);
 }
 
-h4#{$exclude-grid-selector},
-.font-size-medium {
-    --font-size: var(--font-size-medium);
+h1#{$selector-exclude-grid},
+.text-2xl {
+    font-size: var(--text-fs-2xl);
+    line-height: var(--text-lh-2xl);
 }
 
-h5#{$exclude-grid-selector},
-.font-size-small {
-    --font-size: var(--font-size-small);
+.text-3xl {
+    font-size: var(--text-fs-3xl);
+    line-height: var(--text-lh-3xl);
 }
 
-h6#{$exclude-grid-selector},
-.font-size-extra-small {
-    --font-size: var(--font-size-extra-small);
-}
-
-h1#{$exclude-grid-selector},
-.font-size-gargantuan,
-.font-size-gigantic,
-.font-size-massive {
-    --line-height: var(--line-height-tight);
-}
-
-.font-size-responsive {
-    @media screen and (min-width: $max-page-width) {
-        @include font-size-responsive();
-    }
-}
-
-h1#{$exclude-grid-selector},
-h2#{$exclude-grid-selector},
-h3#{$exclude-grid-selector},
-h4#{$exclude-grid-selector},
-h5#{$exclude-grid-selector},
-h6#{$exclude-grid-selector},
-b#{$exclude-grid-selector},
-strong#{$exclude-grid-selector},
+h1#{$selector-exclude-grid},
+h2#{$selector-exclude-grid},
+h3#{$selector-exclude-grid},
+h4#{$selector-exclude-grid},
+h5#{$selector-exclude-grid},
+h6#{$selector-exclude-grid},
+b#{$selector-exclude-grid},
+strong#{$selector-exclude-grid},
 .bold-text {
-    --font-weight: var(--font-weight-bold);
-
-    font-weight: var(--font-weight-bold);
-}
-
-.thin-text {
-    font-weight: var(--font-weight-thin);
-}
-
-.normal-weight-text {
-    font-weight: var(--font-weight);
+    font-weight: var(--text-semibold);
 }
 
 .monospace-text {
-    font-family: var(--monospace-font-family);
+    font-family: var(--text-monospace-font-family);
 }
 
-h1:not(:last-child),
-h2:not(:last-child),
-h3:not(:last-child),
-h4:not(:last-child),
-h5:not(:last-child),
-h6:not(:last-child) {
-    margin-bottom: $size-2;
+h1:where(:not(:last-child)),
+h2:where(:not(:last-child)),
+h3:where(:not(:last-child)),
+h4:where(:not(:last-child)),
+h5:where(:not(:last-child)),
+h6:where(:not(:last-child)) {
+    margin-bottom: $spacing-size-4;
 }
 
 p:where(:not(:last-child)),
 ul:where(:not(:last-child)),
 ol:where(:not(:last-child)),
 blockquote:where(:not(:last-child)) {
-    margin-bottom: $size-3;
-}
-
-.max-text-length {
-    max-width: 40em;
+    margin-bottom: $spacing-size-6;
 }

@@ -1,8 +1,5 @@
-@forward "variables";
-@forward "breakpoints" as breakpoint-*;
+@forward 'variables';
+@forward 'old-variables'; // remove after refactor
+@forward 'breakpoints' as breakpoint-*;
 
-@forward "utils";
-
-@forward "mixins/layout-mixins";
-@forward "mixins/table-mixins";
-@forward "mixins/typography-mixins";
+@forward 'utils';
