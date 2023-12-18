@@ -8,7 +8,7 @@
     justify-content: space-between;
 
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
-        @include page-horizontal-margins();
+        // @include page-horizontal-margins(); // Commented out for refactor
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) and (max-width: $breakpoint-docs-nav-large) {
@@ -30,7 +30,7 @@
 
     #{$darkmode-selector} & {
         --text-color: var(--active-color);
-        }
+    }
 }
 
 .doc-page {
@@ -90,7 +90,7 @@
     }
 
     enterprise-icon::after {
-        @extend %enterprise-icon;        
+        @extend %enterprise-icon;
 
         width: 1rem;
         margin-left: 0.25rem;
@@ -168,7 +168,7 @@
 
     :global(.icon) {
         --icon-size: 1.25em;
-        --text-color: var(--enterprise-icon-color) ;
+        --text-color: var(--enterprise-icon-color);
 
         position: relative;
         top: -0.1em;
@@ -228,7 +228,7 @@
     > table,
     > hr {
         @media screen and (min-width: $max-page-width) {
-            @include font-size-responsive();
+            // @include font-size-responsive(); // Commented out for refactor
         }
     }
 }

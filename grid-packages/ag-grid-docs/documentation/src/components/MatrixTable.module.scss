@@ -8,7 +8,7 @@
     table-layout: fixed;
 
     @container (max-width: #{$breakpoint-table-small}) {
-        @include stack-table();
+        // @include stack-table(); // Commented out for refactor
 
         div {
             display: inline;

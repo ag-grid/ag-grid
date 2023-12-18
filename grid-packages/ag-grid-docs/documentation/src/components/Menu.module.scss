@@ -41,7 +41,7 @@
     border-bottom: 1px solid var(--border-color);
 
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
-        @include page-horizontal-margins();
+        // @include page-horizontal-margins(); // Commented out for refactor
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
@@ -257,8 +257,6 @@ button:not([class^='ag-']).sectionHeader {
     #{$darkmode-selector} & {
         border-left: 1px solid #394755;
     }
-    
-
 }
 
 .menuGroup .groupLabel {

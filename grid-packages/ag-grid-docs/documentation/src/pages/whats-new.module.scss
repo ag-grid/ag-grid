@@ -10,10 +10,8 @@
 
     #{$darkmode-selector} & {
         background: #122835;
-       border: 1px solid #394755;
-
+        border: 1px solid #394755;
     }
-   
 
     header {
         display: flex;
@@ -102,9 +100,9 @@
     color: var(--link-hover-color) !important;
     padding: 2px 8px;
     font-weight: 500;
- }
+}
 
- .latest-tag {
+.latest-tag {
     border: 1px solid var(--default-text-color) !important;
     border-radius: 24px;
     padding: 2px 8px;
@@ -114,8 +112,7 @@
     #{$darkmode-selector} & {
         border: 1px solid #c3cad3 !important;
     }
-
- }
+}
 
 //  .major .buttonSecondary {
 //     border: 1px solid rgb(254 136 0 / 31%) !important;
@@ -127,7 +124,7 @@
     border-bottom: 1px solid var(--border-color);
 
     #{$darkmode-selector} & {
-       border-bottom: 1px solid #394755;
+        border-bottom: 1px solid #394755;
     }
 }
 
@@ -151,14 +148,15 @@
     padding-left: $size-2;
     padding-right: $size-2;
 
-    @media screen and (min-width: $breakpoint-page-margin-padding) {
-        padding-left: var(--horizontal-margin);
-        padding-right: var(--horizontal-margin);
-    }
+    // Commented out for refactor
+    // @media screen and (min-width: $breakpoint-page-margin-padding) {
+    //     padding-left: var(--horizontal-margin);
+    //     padding-right: var(--horizontal-margin);
+    // }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         padding-left: 0;
-        padding-right: $size-4
+        padding-right: $size-4;
     }
 }
 
@@ -193,10 +191,7 @@
     #{$darkmode-selector} & {
         background: #2a343e;
     }
-
 }
-
-
 
 .bloglink {
     width: 100%;
