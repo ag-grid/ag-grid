@@ -74,8 +74,8 @@ const HOMEPAGE_FEATURES_ICON_MAP = {
 };
 
 export const ICON_MAP = {
-    info: CarbonIcon.InformationFilled,
-    warning: CarbonIcon.WarningAltFilled,
+    info: CarbonIcon.Information,
+    warning: CarbonIcon.WarningAlt,
     email: CarbonIcon.Email,
     creditCard: CarbonIcon.Purchase,
     lightBulb: CarbonIcon.Idea,
