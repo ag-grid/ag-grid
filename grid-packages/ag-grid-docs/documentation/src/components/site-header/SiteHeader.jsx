@@ -177,8 +177,8 @@ const HeaderNav = ({ path, currentFramework }) => {
 export const SiteHeader = ({ path, currentFramework }) => {
     const [isLogoHover, setIsLogoHover] = useState(false);
     return (
-        <><PromoBanner /><header className={styles.header, 'site-header'}>
-            <div className={styles.headerInner, 'layout-page-max-width'}>
+        <><PromoBanner /><header className={classnames(styles.header, 'site-header')}>
+            <div className={classnames(styles.headerInner, 'layout-page-max-width')}>
                 <a
                     href="/"
                     aria-label="Home"
