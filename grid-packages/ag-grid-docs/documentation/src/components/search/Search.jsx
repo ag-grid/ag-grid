@@ -2,7 +2,7 @@ import algoliasearch from 'algoliasearch/lite';
 import React, { createRef, useMemo, useState } from 'react';
 import { connectSearchBox, InstantSearch } from 'react-instantsearch-dom';
 import isDevelopment from 'utils/is-development';
-import styles from './Search.module.scss';
+import styles from '@design-system/modules/Search.module.scss';
 import SearchBox from './SearchBox';
 import SearchResult from './SearchResult';
 import useClickOutside from './use-click-outside';
