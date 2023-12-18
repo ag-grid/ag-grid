@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import { StyleGuide } from '../components/style-guide';
+import { StyleGuide } from '../design-system/style-guide/StyleGuide';
 
 const StyleGuidePage = () => {
     const meta = [

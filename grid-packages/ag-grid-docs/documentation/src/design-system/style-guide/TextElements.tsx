@@ -1,4 +1,5 @@
 import { Snippet } from '@components/snippet/Snippet';
+import React from 'react';
 import type { FunctionComponent } from 'react';
 
 import styles from './StyleGuide.module.scss';
