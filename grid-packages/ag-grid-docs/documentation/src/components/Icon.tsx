@@ -20,7 +20,7 @@ import RowsIcon from '../images/inline-svgs/rows.svg';
 import StackBlitzIcon from '../images/inline-svgs/stack-blitz.svg';
 import TakeControlIcon from '../images/inline-svgs/take-control-icon.svg';
 import TickIcon from '../images/inline-svgs/tick.svg';
-import styles from './Icon.module.scss';
+import styles from '@design-system/modules/Icon.module.scss';
 
 // Uses IBM Carbon Design System icons as a base
 // Full list of Carbon icons => https://carbondesignsystem.com/guidelines/icons/library
