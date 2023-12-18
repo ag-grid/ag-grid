@@ -8,7 +8,7 @@ import { Icon } from '../components/Icon';
 import ReleaseVersionNotes from '../components/release-notes/ReleaseVersionNotes.jsx';
 import { hostPrefix } from '../utils/consts';
 import { IssueColDef, IssueTypeColDef } from '../utils/grid/issueColDefs';
-import styles from './pipelineChangelog.module.scss';
+import styles from '@design-system/modules/pipelineChangelog.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
 const ALL_FIX_VERSIONS = 'All Versions';
