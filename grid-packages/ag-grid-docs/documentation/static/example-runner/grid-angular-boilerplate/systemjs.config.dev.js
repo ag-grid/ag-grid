@@ -27,22 +27,6 @@
             "npm:": "https://cdn.jsdelivr.net/npm/",
             ...systemJsPaths
         },
-        // RxJS makes a lot of requests to jsdelivr. This guy addressed it:
-        // https://github.com/OasisDigital/rxjs-system-bundle.
-        bundles: {
-            "npm:rxjs-system-bundle@6.3.3/Rx.system.min.js": [
-                "rxjs",
-                "rxjs/*",
-                "rxjs/operator/*",
-                "rxjs/operators/*",
-                "rxjs/observable/*",
-                "rxjs/scheduler/*",
-                "rxjs/symbol/*",
-                "rxjs/add/operator/*",
-                "rxjs/add/observable/*",
-                "rxjs/util/*"
-            ]
-        },
         // map tells the System loader where to look for things
         map:
         {
@@ -60,6 +44,8 @@
             '@angular/animations': 'npm:@angular/animations@' + ANGULAR_VERSION + '/fesm2015/animations.mjs',
             '@angular/animations/browser': 'npm:@angular/animations@' + ANGULAR_VERSION + '/fesm2015/browser.mjs',
 
+            'rxjs': "npm:rxjs@7.8.1/dist/bundles/rxjs.umd.min.js",
+            'rxjs/operators': "npm:rxjs@7.8.1/dist/bundles/rxjs.umd.min.js",
 
             css: boilerplatePath + "css.js",
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
