@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { Icon } from 'components/Icon';
 import React, { useEffect, useRef, useState } from 'react';
 import { trackApiDocumentation } from '../utils/analytics';
-import styles from './ApiDocumentation.module.scss';
+import styles from '../design-system/modules/ApiReference.module.scss';
 import {
     ApiProps,
     ChildDocEntry,

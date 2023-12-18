@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import React, { FunctionComponent } from 'react';
-import styles from './UpdateSpeedSlider.module.scss';
+import styles from '@design-system/modules/UpdateSpeedSlider.module.scss';
 
 interface Props {
     min: number;

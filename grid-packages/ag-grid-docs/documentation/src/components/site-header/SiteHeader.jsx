@@ -9,7 +9,7 @@ import { Collapsible } from '../Collapsible';
 import { Icon } from '../Icon';
 import LogoMark from '../LogoMark';
 import { DarkModeToggle } from './DarkModeToggle';
-import styles from './SiteHeader.module.scss';
+import styles from '../../design-system/modules/SiteHeader.module.scss';
 import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 import Search from "../search/Search";
@@ -177,8 +177,8 @@ const HeaderNav = ({ path, currentFramework }) => {
 export const SiteHeader = ({ path, currentFramework }) => {
     const [isLogoHover, setIsLogoHover] = useState(false);
     return (
-        <><PromoBanner /><header className={styles.header}>
-            <div className={styles.headerInner}>
+        <><PromoBanner /><header className={styles.header, 'site-header'}>
+            <div className={styles.headerInner, 'layout-page-max-width'}>
                 <a
                     href="/"
                     aria-label="Home"

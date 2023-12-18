@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { Link } from 'gatsby';
 import React from 'react';
 import { connectStateResults, Highlight, Index, InfiniteHits, Snippet } from 'react-instantsearch-dom';
-import styles from './SearchResult.module.scss';
+import styles from '../../design-system/modules/SearchResult.module.scss';
 
 const HitCount = connectStateResults(({ searchResults, hasResults }) => {
     const hitCount = searchResults && searchResults.nbHits;

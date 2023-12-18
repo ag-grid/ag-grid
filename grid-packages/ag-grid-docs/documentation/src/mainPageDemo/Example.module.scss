@@ -19,11 +19,11 @@
 
 #{$darkmode-selector} .starIcon {
     -webkit-filter: invert(100%); /* safari 6.0 - 9.0 */
-      filter: invert(100%);
+    filter: invert(100%);
 }
 
 .exampleWrapperDark {
-    background-color: #0b1d28;
+    background-color: #101828;
 }
 
 @media (prefers-color-scheme: dark) {
