@@ -9,7 +9,7 @@ import { Collapsible } from '../Collapsible';
 import { Icon } from '../Icon';
 import LogoMark from '../LogoMark';
 import { DarkModeToggle } from './DarkModeToggle';
-import styles from '../../design-system/modules/SiteHeader.module.scss';
+import styles from '@design-system/modules/SiteHeader.module.scss';
 import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 import Search from "../search/Search";
