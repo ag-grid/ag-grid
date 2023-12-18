@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { FunctionComponent, ReactNode } from 'react';
 import { Icon } from '../Icon';
-import styles from '@design-system/modules/Alert.module.scss';
+import styles from '../../design-system/modules/Alert.module.scss';
 
 interface Props {
     type: 'info' | 'idea' | 'warning' | 'default';
