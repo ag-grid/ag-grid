@@ -250,7 +250,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                this.columnApi = new ColumnApi(api);
           }
 
-          if (this.gridPreDestroyed.observers.length > 0) {
+          // For RxJs compatibility we need to check for observed v7+ or observers v6
+          const gridPreDestroyedEmitter = this.gridPreDestroyed as any;
+          if (gridPreDestroyedEmitter.observed ?? gridPreDestroyedEmitter.observers.length > 0) {
                console.warn(
                     'AG Grid: gridPreDestroyed event listener registered via (gridPreDestroyed)="method($event)" will be ignored! ' +
                          'Please assign via gridOptions.gridPreDestroyed and pass to the grid as [gridOptions]="gridOptions"'
@@ -293,7 +295,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     // or via gridOptions
     protected isEmitterUsed(eventType: string): boolean {
         const emitter = <EventEmitter<any>>(<any>this)[eventType];
-        const hasEmitter = !!emitter && emitter.observers && emitter.observers.length > 0;
+        // For RxJs compatibility we need to check for observed v7+ or observers v6
+        const emitterAny = emitter as any;
+        const hasEmitter = emitterAny?.observed ?? emitterAny?.observers?.length > 0;
 
         // gridReady => onGridReady
         const asEventName = `on${eventType.charAt(0).toUpperCase()}${eventType.substring(1)}`
