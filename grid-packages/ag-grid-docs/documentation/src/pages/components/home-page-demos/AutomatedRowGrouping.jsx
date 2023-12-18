@@ -14,7 +14,7 @@ import FeaturesList from '../../../components/FeaturesList';
 import LogoMark from '../../../components/LogoMark';
 import breakpoints from '../../../design-system/breakpoint.module.scss';
 import { trackHomepageExampleRowGrouping, trackOnceHomepageExampleRowGrouping } from '../../../utils/analytics';
-import { hostPrefix, isProductionBuild, localPrefix } from '../../../utils/consts';
+import {agGridEnterpriseVersion, hostPrefix, isProductionBuild, localPrefix} from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedRowGrouping.module.scss';
 
@@ -43,7 +43,7 @@ if (!isProductionBuild()) {
     helmet.push(
         <script
             key="enterprise-lib"
-            src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js"
+            src={`https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`}
             type="text/javascript"
         />
     );

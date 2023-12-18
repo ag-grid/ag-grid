@@ -2,6 +2,7 @@ import { RowCtrl } from "./row/rowCtrl";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import {
+    AgEventListener,
     BodyScrollEvent,
     CellFocusedEvent,
     DisplayedRowsChangedEvent,
@@ -26,7 +27,7 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { warnOnce, executeInAWhile } from "../utils/function";
+import { executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
@@ -187,19 +188,13 @@ export class RowRenderer extends BeanStub {
     }
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
-        const isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
-        const isPrintLayout = this.gridOptionsService.isDomLayout('print');
-
-        if (isEnsureDomOrder || isPrintLayout) {
-            liveList.sort((a, b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex);
-        }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
 
-        if(zombieList.length > 0 || cachedList.length > 0) {
+        if (zombieList.length > 0 || cachedList.length > 0) {
             // Only spread if we need to.
             this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
-        }else{
+        } else {
             this.allRowCtrls = liveList;
         }
     }
@@ -634,17 +629,14 @@ export class RowRenderer extends BeanStub {
             // state
             this.focusService.setRestoreFocusedCell(cellPosition);
 
-            this.onCellFocusChanged({
+            this.onCellFocusChanged(this.beans.gridOptionsService.addGridCommonParams<CellFocusedEvent>({
                 rowIndex: cellPosition.rowIndex,
                 column: cellPosition.column,
                 rowPinned: cellPosition.rowPinned,
                 forceBrowserFocus: true,
                 preventScrollOnBrowserFocus: true,
-                api: this.beans.gridApi,
-                columnApi: this.beans.columnApi,
-                context: this.beans.gridOptionsService.context,
                 type: 'mock',
-            });
+            }));
         }
     }
 
@@ -681,7 +673,7 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
-    public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
+    public addRenderedRowListener(eventName: string, rowIndex: number, callback: AgEventListener): void {
         const rowComp = this.rowCtrlsByRowIndex[rowIndex];
         if (rowComp) {
             rowComp.addEventListener(eventName, callback);
@@ -738,9 +730,12 @@ export class RowRenderer extends BeanStub {
                 return;
             }
 
-            const fullWidthRenderer = rowCtrl.getFullWidthCellRenderer();
-            if (fullWidthRenderer) {
-                fullWidthRenderers.push(fullWidthRenderer);
+            const renderers = rowCtrl.getFullWidthCellRenderers();
+            for (let i = 0; i < renderers.length; i++) {
+                const renderer = renderers[i];
+                if (renderer != null) {
+                    fullWidthRenderers.push(renderer);
+                }
             }
         });
 
@@ -940,7 +935,8 @@ export class RowRenderer extends BeanStub {
         this.getLockOnRefresh();
         this.recycleRows(null, false, afterScroll);
         this.releaseLockOnRefresh();
-        this.dispatchDisplayedRowsChanged(afterScroll);
+        // AfterScroll results in flushSync in React but we need to disable flushSync for sticky row group changes to avoid flashing
+        this.dispatchDisplayedRowsChanged(afterScroll && !hasStickyRowChanges);
 
         if (cellFocused != null) {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();

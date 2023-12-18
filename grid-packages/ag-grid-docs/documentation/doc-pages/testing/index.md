@@ -45,7 +45,7 @@ testing with AG Grid in this section.
 | function waitForGridApiToBeAvailable(gridOptions, success) {
 |     // recursive without a terminating condition,
 |     // but jasmines default test timeout will kill it (jasmine.DEFAULT_TIMEOUT_INTERVAL)
-|     if(gridOptions.api) {
+|     if (gridOptions.api) {
 |         success()
 |     } else {
 |         setTimeout(function () {
@@ -418,7 +418,7 @@ testing with AG Grid in this section.
 |        ...options,
 |        packageFilter: pkg => {
 |            const packageName = pkg.name;
-|            if(packageName === '@ag-grid-community/angular') {
+|            if (packageName === '@ag-grid-community/angular') {
 |                return {
 |                    ...pkg,
 |                };
@@ -442,7 +442,7 @@ testing with AG Grid in this section.
 <framework-specific-section frameworks="angular">
 | ## Configuring the Test Module
 |
-| The first thing we need to do is to add AG Grid's `AgGridModule` to the `TestBed.configureTestingModule`:
+| The first thing we need to do is to import the `AgGridAngular` into the `TestBed.configureTestingModule`:
 |
 </framework-specific-section>
 
@@ -452,7 +452,7 @@ testing with AG Grid in this section.
 |     TestBed.configureTestingModule({
 |         imports: [
 |             FormsModule,
-|             AgGridModule
+|             AgGridAngular
 |         ],
 |         declarations: [TestHostComponent]
 |     }).compileComponents();
@@ -476,7 +476,7 @@ testing with AG Grid in this section.
 |     TestBed.configureTestingModule({
 |         imports: [
 |             FormsModule,
-| +            AgGridModule
+| +            AgGridAngular
 |         ],
 | +        declarations: [TestHostComponent, RendererComponent, EditorComponent]
 |     }).compileComponents();

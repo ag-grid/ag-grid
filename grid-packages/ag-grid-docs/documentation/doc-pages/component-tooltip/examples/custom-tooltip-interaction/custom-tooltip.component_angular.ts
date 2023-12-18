@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { ITooltipParams } from "@ag-grid-community/core";
 import { ITooltipAngularComp } from "@ag-grid-community/angular";
+import { NgClass } from '@angular/common';
 
 @Component({
-    selector: 'tooltip-component',
+    standalone: true,
+    imports: [NgClass],
     template: `
         <div class="custom-tooltip">
             <div [ngClass]="'panel panel-' + type">

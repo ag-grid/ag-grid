@@ -74,10 +74,10 @@ var data = [];
 
 var dataObservers = [];
 
-function randomUpdates({ numRemove, numAdd, numUpdate }) {   
+function randomUpdates({ numRemove, numAdd, numUpdate }) {
     // removes
     const remove = [];
-    for(let i=0; i<(Math.ceil(numRemove)); i++) {      
+    for (let i = 0; i < (Math.ceil(numRemove)); i++) {
         const idx = randomBetween(0, data.length-1);
         const d = data[idx];
         data.splice(idx, 1);
@@ -86,7 +86,7 @@ function randomUpdates({ numRemove, numAdd, numUpdate }) {
 
     // updates
     const update = [];
-    for(let i=0; i< numUpdate; i++) {            
+    for (let i = 0; i < numUpdate; i++) {
         const idx = randomBetween(0, data.length-1);
         const d = data[idx];
         d.previous = d.current;
@@ -97,12 +97,12 @@ function randomUpdates({ numRemove, numAdd, numUpdate }) {
     } 
 
     // adds
-    const add = [];    
+    const add = [];
     const lastUpdate = new Date();
-    for(let i=0; i<(Math.ceil(numAdd)); i++) {       
+    for (let i = 0; i < (Math.ceil(numAdd)); i++) {
         const product = products[randomBetween(0, products.length-1)];
         const portfolio = portfolios[randomBetween(0, portfolios.length-1)];
-        const book = createBookName();        
+        const book = createBookName();
         const newRecord = createTradeRecord(product, portfolio, book);
         newRecord.lastUpdated = lastUpdate;
         newRecord.updateCount = 0;
@@ -111,7 +111,7 @@ function randomUpdates({ numRemove, numAdd, numUpdate }) {
     data.push(...add);
 
     // notify observers
-    dataObservers.forEach(obs => obs({update, add, remove})); 
+    dataObservers.forEach(obs => obs({update, add, remove}));
 }
 
 function randomBetween(min, max) {

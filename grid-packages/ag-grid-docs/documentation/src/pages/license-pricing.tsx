@@ -11,6 +11,10 @@ import SEO from './components/SEO';
 // @ts-ignore
 import styles from './license-pricing.module.scss';
 
+import AGGridLogo from '../images/inline-svgs/ag-grid-logo.svg';
+import AGChartsLogo from '../images/inline-svgs/ag-charts-logo.svg';
+
+
 export const LicensePricing = () => {
     useEffect(() => {
         const onSelectionChange = () => {
@@ -55,7 +59,7 @@ export const LicensePricing = () => {
                     <div className={styles.videoPrompt}>
                         <a href="#video-explainer" className={styles.thumbnail}>
                             <img
-                                src="https://img.youtube.com/vi/20SLdu4wLtI/hqdefault.jpg"
+                                src="https://img.youtube.com/vi/xacx_attYuo/hqdefault.jpg"
                                 alt="AG Grid license explained video"
                             />
                         </a>
@@ -75,47 +79,45 @@ export const LicensePricing = () => {
                 <div className={styles.licensesOuter}>
                     <Licenses />
 
-                    <p className={styles.buyTogether}>
+                    <div className={styles.buyTogether}>
                         <div className={styles.buyTogetherInner}>
+                            <div className={styles.products}>
+                                <AGGridLogo /> <span>+</span> <AGChartsLogo />
+                            </div>
+
                             <div className={styles.left}>
-                                <p className={styles.products}>
-                                    <b>AG&nbsp;Grid</b> +<wbr /> <b>AG&nbsp;Charts</b>
-                                </p>
                                 <div className={classnames(styles.enterpriseProducts, 'font-size-small')}>
                                     <p>
-                                        AG Grid Enterprise <Icon name="enterprise" />
-                                    </p>
-                                    <p>
-                                        AG Charts Enterprise <Icon name="enterprise" />
+                                        <Icon name="enterprise" /> Enterprise 
                                     </p>
                                 </div>
 
-                                <p className="font-size-small">The Ultimate Grid and Charts Combination</p>
+                                <div className={styles.rightPrice}>
+                                    <p>Starting at...</p>
+                                    <p className={styles.price}>$1,198</p>
+                                    <p>Per Developer</p>
+                                </div>
                             </div>
 
                             <div className={styles.right}>
-                                <div className={styles.rightInner}>
-                                    <div className={styles.rightPrice}>
-                                        <p className="font-size-small">Starting at...</p>
-                                        <p className={styles.price}>$1,199</p>
-                                        <p className="font-size-small">Per Developer</p>
-                                    </div>
+                                {/* <div className={styles.rightInner}>
                                     <div className={styles.rightInfo}>
                                         <p className="font-size-small">Perpetual License</p>
                                         <p className="font-size-small">1 Year of Support</p>
                                         <p className="font-size-small">1 Year of Updates</p>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 <a
-                                    href="/ecommerce/#/ecommerce/?licenseType=single&productType=both"
+                                    href="https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both"
+                                    target='_blank'
                                     className="button button-secondary"
                                 >
                                     Configure Now
                                 </a>
                             </div>
                         </div>
-                    </p>
+                    </div>
                 </div>
             </div>
 
@@ -123,8 +125,8 @@ export const LicensePricing = () => {
                 <div className={styles.community}>
                     <h3>Community Versions</h3>
                     <p>
-                        <b>AG Grid Community</b> and <b>AG Charts Community</b> are free and open source products distributed under the{' '}
-                        <a href={`${hostPrefix}/eula/AG-Grid-Community-License.html`} target="_blank">
+                        <a href="https://www.npmjs.com/package/ag-grid-community" target='_blank'><b>AG Grid Community</b></a> and <a href="https://www.npmjs.com/package/ag-charts-community" target='_blank'><b>AG Charts Community</b></a> are free and open source products distributed under the{' '}
+                        <a href="https://www.ag-grid.com/eula/AG-Grid-Community-License.html" target="_blank">
                             MIT License
                         </a>
                         . These versions are free to use in production environments.
@@ -132,6 +134,7 @@ export const LicensePricing = () => {
 
                     <a
                         href="https://www.npmjs.com/package/ag-grid-community"
+                        target='_blank'
                         className={classnames(styles.NpmButton, 'button-secondary')}
                     >
                         <NPMIcon /> Get AG Grid Community at NPM
@@ -139,6 +142,7 @@ export const LicensePricing = () => {
                     <br />
                     <a
                         href="https://www.npmjs.com/package/ag-charts-community"
+                        target='_blank'
                         className={classnames(styles.NpmButton, 'button-secondary')}
                     >
                         <NPMIcon /> Get AG Charts Community at NPM
@@ -150,16 +154,16 @@ export const LicensePricing = () => {
                         Enterprise Versions <Icon name="enterprise" />
                     </h3>
                     <p>
-                        <b>AG Grid Enterprise</b> and <b>AG Charts Enterprise</b> are commercial products distributed
+                        <a href="https://www.ag-grid.com/javascript-data-grid/licensing/" target='_blank'><b>AG Grid Enterprise</b></a> and <a href="https://charts.ag-grid.com/javascript/licensing/" target='_blank'><b>AG Charts Enterprise</b></a> are commercial products distributed
                         under our{' '}
-                        <a href={`${hostPrefix}/eula/AG-Grid-Enterprise-License-Latest.html`} target="_blank">
+                        <a href="https://www.ag-grid.com/eula/AG-Grid-Enterprise-License-Latest.html" target="_blank">
                             EULA
                         </a>{' '}
                         and supported by our technical staff.
                     </p>
 
                     <p>
-                        To evaluate <b>AG Grid Enterprise</b> or <b>AG Charts Enterprise</b> you don't need our
+                        To evaluate <a href="https://www.ag-grid.com/javascript-data-grid/licensing/" target='_blank'><b>AG Grid Enterprise</b></a> or <a href="https://charts.ag-grid.com/javascript/licensing/" target='_blank'><b>AG Charts Enterprise</b></a> you don't need our
                         permission – all features are unlocked. To temporarily hide the watermark and browser console
                         errors e-mail us to{' '}
                         <InfoEmailLink
@@ -190,8 +194,17 @@ export const LicensePricing = () => {
                     <a
                         href={`${hostPrefix}/javascript-data-grid/licensing/#feature-comparison`}
                         className="button-secondary"
+                        target='_blank'
                     >
                         See all AG Grid Enterprise features
+                    </a>
+                    <br/>
+                    <a
+                        href="https://charts.ag-grid.com/react/licensing/#feature-comparison"
+                        className="button-secondary"
+                        target='_blank'
+                    >
+                        See all AG Charts Enterprise features
                     </a>
                 </div>
             </div>
@@ -227,7 +240,7 @@ export const LicensePricing = () => {
                 </div>
 
                 <iframe
-                    src="https://www.youtube.com/embed/20SLdu4wLtI"
+                    src="https://www.youtube.com/embed/xacx_attYuo"
                     title="YouTube video player"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen

@@ -377,7 +377,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
-        if(colDef.filter === true) {
+        if (colDef.filter === true) {
             colDef.filter = 'agNumberColumnFilter';
         }
 
@@ -475,6 +475,16 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
             }
 
             if (children.length === 0) {
+                const potentialAggCol = this.columnModel.getPrimaryColumn(key);
+                if (potentialAggCol) {
+                    const headerName = this.columnModel.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
+                    const colDef = this.createColDef(potentialAggCol, headerName, undefined, false);
+                    colDef.colId = id;
+                    colDef.aggFunc = potentialAggCol.getAggFunc();
+                    colDef.valueGetter = (params) => params.data?.[id];
+                    return colDef;
+                }
+
                 const col: ColDef = {
                     colId: id,
                     headerName: key,
@@ -482,14 +492,6 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
                     // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
                     valueGetter: (params) => params.data?.[id],
                 };
-
-                const potentialAggCol = this.columnModel.getPrimaryColumn(key);
-                if (potentialAggCol) {
-                    col.headerName = this.columnModel.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
-                    col.aggFunc = potentialAggCol.getAggFunc();
-                    col.pivotValueColumn= potentialAggCol;
-                }
-
                 return col;
             }
 

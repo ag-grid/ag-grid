@@ -1,4 +1,4 @@
-import { ModuleRegistry, ColDef, Grid, GridOptions, GridReadyEvent, RowDropZoneParams, GetRowIdParams, GridApi, createGrid } from "@ag-grid-community/core";
+import { ModuleRegistry, ColDef, GridOptions, GridReadyEvent, RowDropZoneParams, GetRowIdParams, GridApi, createGrid } from "@ag-grid-community/core";
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 
@@ -166,9 +166,9 @@ function addGridDropZone(params: GridReadyEvent, side: string) {
 
 function loadGrid(side: string) {
     var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
-    if(side === 'Left') {
+    if (side === 'Left') {
         leftApi = createGrid(grid, leftGridOptions);
-    }else{
+    } else {
         rightApi = createGrid(grid, rightGridOptions);
     }
 }

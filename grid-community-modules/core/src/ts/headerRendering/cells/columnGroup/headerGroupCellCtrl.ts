@@ -8,7 +8,14 @@ import {
     DragSourceType
 } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
-import { ColumnEventType, Events } from "../../../events";
+import {
+    ColumnEventType,
+    ColumnHeaderClickedEvent,
+    ColumnHeaderContextMenuEvent,
+    ColumnHeaderMouseLeaveEvent,
+    ColumnHeaderMouseOverEvent,
+    Events
+} from "../../../events";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
@@ -25,6 +32,7 @@ import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 import { HorizontalDirection } from "../../../constants/direction";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HeaderPosition } from "../../common/headerPosition";
+import { WithoutGridCommon } from "../../../interfaces/iCommon";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     setResizableDisplayed(displayed: boolean): void;
@@ -57,6 +65,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.setupExpandable();
         this.setupTooltip();
         this.setupUserComp();
+        this.addHeaderMouseListeners();
 
         const pinned = this.getParentRowCtrl().getPinned();
         const leafCols = this.column.getProvidedColumnGroup().getLeafColumns();
@@ -168,19 +177,57 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     private setupUserComp(): void {
-        const params: IHeaderGroupParams = {
+        const params: IHeaderGroupParams = this.gridOptionsService.addGridCommonParams({
             displayName: this.displayName!,
             columnGroup: this.column,
             setExpanded: (expanded: boolean) => {
                 this.columnModel.setColumnGroupOpened(this.column.getProvidedColumnGroup(), expanded, "gridInitializing");
-            },
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            }
+        });
 
         const compDetails = this.userComponentFactory.getHeaderGroupCompDetails(params)!;
         this.comp.setUserCompDetails(compDetails);
+    }
+
+    private addHeaderMouseListeners(): void {
+        const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
+        const clickListener = (event: MouseEvent) => this.handleColumnClick(event, false);
+        const contextMenuListener = (event: MouseEvent) => this.handleColumnClick(event, true);
+
+        this.addManagedListener(this.getGui(), 'mouseenter', listener);
+        this.addManagedListener(this.getGui(), 'mouseleave', listener);
+        this.addManagedListener(this.getGui(), 'click', clickListener);
+        this.addManagedListener(this.getGui(), 'contextmenu', contextMenuListener);
+    }
+
+    private handleMouseOverChange(isMouseOver: boolean): void {
+        const eventType = isMouseOver ?
+            Events.EVENT_COLUMN_HEADER_MOUSE_OVER :
+            Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
+
+        const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
+            type: eventType,
+            column: this.column.getProvidedColumnGroup(),
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private handleColumnClick(mouseEvent: MouseEvent, isContextMenuEvent: boolean): void {
+        const eventType = isContextMenuEvent ?
+            Events.EVENT_COLUMN_HEADER_CONTEXT_MENU :
+            Events.EVENT_COLUMN_HEADER_CLICKED;
+
+        if (isContextMenuEvent && this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+            mouseEvent.preventDefault();
+        }
+
+        const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
+            type: eventType,
+            column: this.column.getProvidedColumnGroup(),
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     private setupTooltip(): void {
@@ -224,7 +271,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         }
     }
 
-    public getColId() {
+    public getColId(): string {
         return this.column.getUniqueId();
     }
 
@@ -264,7 +311,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     private onSuppressColMoveChange = () => {
-        if (this.isSuppressMoving()) {
+        if (!this.isAlive() || this.isSuppressMoving()) {
             this.removeDragSource();
         } else {
             if (!this.dragSource) {
@@ -299,7 +346,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     // unlike columns, this will only get called once, as we don't react on props on column groups
     // (we will always destroy and recreate this comp if something changes)
     public setDragSource(eHeaderGroup: HTMLElement): void {
-        if (this.isSuppressMoving()) {
+        if (!this.isAlive() || this.isSuppressMoving()) {
             return;
         }
 

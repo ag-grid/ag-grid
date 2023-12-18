@@ -56,12 +56,19 @@ const extractTitle = titleTag => {
     let title = titleTag.firstChild.textContent;
 
     let sibling = titleTag.firstChild.nextSibling;
-    while(sibling) {
+    while (sibling) {
         title += ` ${sibling.textContent}`;
         sibling = sibling.nextSibling;
     }
 
-    return title;
+    return title
+        ? title
+            .replace('React Data Grid', '')
+            .replace('JavaScript Data Grid', '')
+            .replace('Angular Data Grid', '')
+            .replace('Vue Data Grid', '')
+            .replace('ReactAngularVueJavaScript', '')
+        : title;
 }
 
 const createRecords = async (browser, url, framework, breadcrumb, rank, loadFromAgGrid) => {
@@ -76,7 +83,7 @@ const createRecords = async (browser, url, framework, breadcrumb, rank, loadFrom
         await page.setViewport({width: 800, height: 570});
 
         await page.goto(prodUrl, {waitUntil: 'networkidle2'});
-        await page.waitForFunction(() => document.querySelectorAll("[id^='reference-']").length > 5)
+        // await page.waitForFunction(() => document.querySelectorAll("[id^='reference-']").length > 5)
 
         const content = await page.content();
         dom = await new JSDOM(content);
@@ -296,5 +303,11 @@ const run = async () => {
     }
 };
 
-run();
+try {
+    run();
+}
+catch(e) {
+    console.error(e);
+    process.exit(1);
+}
 

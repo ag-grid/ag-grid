@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { AgGridAngular, ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
 
 @Component({
-    selector: 'app-detail-cell-renderer',
+    standalone: true,
+    imports: [AgGridAngular],
     template: `
         <div class="full-width-panel">
              <div class="full-width-details">

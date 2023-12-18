@@ -163,7 +163,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     refresh(params: SetFilterParams<any, V>): boolean {
-        if(!super.refresh(params)) {
+        if (!super.refresh(params)) {
             return false;
         }
 
@@ -524,9 +524,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
         const listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
 
-        listItem.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, selectedListener);
+        listItem.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, selectedListener as any);
         if (expandedListener) {
-            listItem.addEventListener(SetFilterListItem.EVENT_EXPANDED_CHANGED, expandedListener);
+            listItem.addEventListener(SetFilterListItem.EVENT_EXPANDED_CHANGED, expandedListener as any);
         }
 
         return listItem;
@@ -603,7 +603,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         // Tree item
-        if(this.isSetFilterModelTreeItem(item)) {
+        if (this.isSetFilterModelTreeItem(item)) {
             return this.newSetTreeItemAttributes(item, isTree);
         }
 
@@ -640,7 +640,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private isSelectedExpanded(item: SetFilterModelTreeItem | string | null): { isSelected: boolean | undefined, isExpanded: boolean | undefined } {
         let isSelected: boolean | undefined;
         let isExpanded: boolean | undefined;
-        if(this.isSetFilterModelTreeItem(item)) {
+        if (this.isSetFilterModelTreeItem(item)) {
             isExpanded = item.expanded;
             if (item.key === SetFilterDisplayValue.SELECT_ALL) {
                 isSelected = this.isSelectAllSelected();

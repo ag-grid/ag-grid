@@ -30,7 +30,7 @@ It is a common requirement to update a grid option after the grid has been creat
 |    [rowHeight]="rowHeight"    
 | &lt;/ag-grid-angular>
 |
-| updateHeight(){
+| updateHeight() {
 |   this.rowHeight = 50;
 |}
 </snippet>
@@ -42,7 +42,7 @@ It is a common requirement to update a grid option after the grid has been creat
 |    :row-height="rowHeight"
 | &lt;/ag-grid-vue>
 |
-| updateHeight(){
+| updateHeight() {
 |   this.rowHeight = 50;
 |}
 </snippet>
@@ -101,7 +101,7 @@ md-include:events-react.md
 md-include:events-vue.md    
  
 <note>
-TypeScript users can take advantage of the events' interfaces. Construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`. All events support [Typescript Generics](/typescript-generics/).
+TypeScript users can take advantage of the events' interfaces. Construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`. All events support [Typescript Generics](../typescript-generics/).
 </note>
 
 For a full list of events see: [Grid Events](/grid-events).

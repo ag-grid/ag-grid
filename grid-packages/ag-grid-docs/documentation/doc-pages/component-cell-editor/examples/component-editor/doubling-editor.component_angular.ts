@@ -1,9 +1,11 @@
 import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 import { ICellEditorParams } from "@ag-grid-community/core";
 
 @Component({
-    selector: 'editor-cell',
+    standalone: true,
+    imports: [FormsModule],
     template: `<input type="number" [(ngModel)]="value" #input class="doubling-input" />`
 })
 export class DoublingEditor implements ICellEditorAngularComp, AfterViewInit {

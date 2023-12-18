@@ -1,8 +1,12 @@
 import { createApp } from 'vue'
 import { ref } from 'vue';
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import { AgGridVue } from "ag-grid-vue3";
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from "@ag-grid-community/vue3";
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Define the component configuration
 const App = {
@@ -22,9 +26,9 @@ const App = {
   },
   setup() {
     const rowData = ref([
-      { mission: "CRS SpX-25", company: "SpaceX", location: "LC-39A, Kennedy Space Center, Florida, USA", date: "2022-07-15", time: "0:44:00", rocket: "Falcon 9 Block 5", price: 12480000, successful: true },
-      { mission: "LARES 2 & Cubesats", company: "ESA", location: "ELV-1, Guiana Space Centre, French Guiana, France", date: "2022-07-13", time: "13:13:00", rocket: "Vega C", price: 4470000, successful: true },
-      { mission: "Wise One Looks Ahead (NROL-162)", company: "Rocket Lab", location: "Rocket Lab LC-1A, Māhia Peninsula, New Zealand", date: "2022-07-13", time: "6:30:00", rocket: "Electron/Curie", price: 9750000, successful: true }      
+      { mission: "Voyager", company: "NASA", location: "Cape Canaveral", date: "1977-09-05", rocket: "Titan-Centaur ", price: 86580000, successful: true },
+      { mission: "Apollo 13", company: "NASA", location: "Kennedy Space Center", date: "1970-04-11", rocket: "Saturn V", price: 3750000, successful: false },
+      { mission: "Falcon 9", company: "SpaceX", location: "Cape Canaveral", date: "2015-12-22", rocket: "Falcon 9", price: 9750000, successful: true }
     ]);
 
     const colDefs = ref([

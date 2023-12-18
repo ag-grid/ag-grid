@@ -27,12 +27,13 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public getSelectedState() {
+        const treeData = this.gridOptionsService.get('treeData');
         const recursivelySerializeState = (state: SelectionState, level: number, nodeId?: string) => {
             const normalisedState: IServerSideGroupSelectionState = {
                 nodeId,
             };
     
-            if (level <= this.columnModel.getRowGroupColumns().length) {
+            if (treeData || level <= this.columnModel.getRowGroupColumns().length) {
                 normalisedState.selectAllChildren = state.selectAllChildren;
             }
     
@@ -108,7 +109,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
         let anyStateChanged = false;
         removedNodeIds.forEach(id => {
-            if(parentState?.toggledNodes.delete(id)) {
+            if (parentState?.toggledNodes.delete(id)) {
                 anyStateChanged = true;
             }
         });
@@ -225,7 +226,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 }
 
                 // if child was cleared, check if this state is still relevant
-                if(recursivelyRemoveState(state, nextStore, parentNode)) {
+                if (recursivelyRemoveState(state, nextStore, parentNode)) {
                     // cleans out groups which have no toggled nodes and an equivalent default to its parent
                     if (selectedState.selectAllChildren === state.selectAllChildren) {
                         selectedState.toggledNodes.delete(id);

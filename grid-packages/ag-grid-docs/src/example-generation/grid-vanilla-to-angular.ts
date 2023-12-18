@@ -1,6 +1,6 @@
-import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput } from './angular-utils';
+import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput, toTitleCase } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getIntegratedDarkModeCode,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
+import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getIntegratedDarkModeCode,getModuleRegistration,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
 const path = require('path');
 
 function getOnGridReadyCode(
@@ -46,6 +46,7 @@ function getOnGridReadyCode(
 function addModuleImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
 
+    imports.push("import { AgGridAngular } from '@ag-grid-community/angular';");
     imports.push('// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273');
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
 
@@ -56,7 +57,7 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach((styleSheet) => imports.push(`import '../${path.basename(styleSheet)}';`));
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
@@ -71,7 +72,7 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
         addBindingImports(bImports, imports, false, true);
     }
 
-    imports.push('// Required feature modules are registered in app.module.ts');
+    imports.push(...getModuleRegistration(bindings));
 
     return imports;
 }
@@ -79,6 +80,7 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
 function addPackageImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
 
+    imports.push("import { AgGridAngular } from 'ag-grid-angular';");
     if (gridSettings.enterprise) {
         imports.push("import 'ag-grid-enterprise';");
     }
@@ -92,7 +94,7 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
 
     if(allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import '../${path.basename(styleSheet)}';`));
+        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
@@ -113,10 +115,14 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
 function getImports(bindings: any, componentFileNames: string[], importType: ImportType, allStylesheets: string[]): string[] {
 
     let imports = ["import { Component } from '@angular/core';"];
+    if(bindings.gridSettings.includeNgFormsModule) {
+        imports.push("import { FormsModule } from '@angular/forms';");
+    }
 
     if (bindings.data) {
-        imports.push("import { HttpClient } from '@angular/common/http';");
+        imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
     }
+    
 
     if (importType === "packages") {
         addPackageImports(imports, bindings, allStylesheets);
@@ -228,6 +234,22 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             // We do not need the non-null assertion in component code as already applied to the declaration for the apis.            
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
+  const { includeNgFormsModule } = bindings.gridSettings;
+   let standaloneImports = ["AgGridAngular"];
+   if(includeNgFormsModule) {
+    standaloneImports.push("FormsModule");
+   }
+   if(bindings.data){
+    standaloneImports.push("HttpClientModule");
+   }
+
+   if (componentFileNames) {
+    componentFileNames.forEach(filename => {
+      const componentName = toTitleCase(filename.split('.')[0]);
+      standaloneImports.push(componentName);
+    });
+  }
+
         let generatedOutput = `
 ${imports.join('\n')}
 ${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
@@ -235,6 +257,8 @@ ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.l
 
 @Component({
     selector: 'my-app',
+    standalone: true,
+    imports: [${standaloneImports.join(', ')}],
     template: \`${template}\`
 })
 

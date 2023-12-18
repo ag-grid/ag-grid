@@ -52,10 +52,17 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu, tracking }) =>
     }, [hideMenu]);
 
     useEffect(() => {
+        const scrollOffsetCustomProp = Number(
+            window
+            .getComputedStyle(document.body)
+            .getPropertyValue("--scroll-offset")
+            .replace("px", "")
+        );
+    
         // Init scrollspy & refresh at the same time as there's no way to detect if it's already been initialised
         $("body").scrollspy({
                 target: "#side-menu",
-                offset: window.innerHeight / 3,
+                offset: scrollOffsetCustomProp ? scrollOffsetCustomProp : 130,
         });
         $("body").scrollspy("refresh");
     }, [allHeadings]);

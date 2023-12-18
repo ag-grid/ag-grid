@@ -157,14 +157,11 @@ export class RowCssClassCalculator {
     }
 
     public processRowClassRules(rowNode: RowNode, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void): void {
-        const rowClassParams: RowClassParams = {
+        const rowClassParams: RowClassParams = this.gridOptionsService.addGridCommonParams({
             data: rowNode.data,
             node: rowNode,
-            rowIndex: rowNode.rowIndex!,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            rowIndex: rowNode.rowIndex!
+        });
 
         this.stylingService.processClassRules(
             undefined,

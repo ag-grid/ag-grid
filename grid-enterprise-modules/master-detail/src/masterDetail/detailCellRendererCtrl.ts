@@ -145,6 +145,12 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         this.loadRowDataVersion++;
         const versionThisCall = this.loadRowDataVersion;
 
+        if (this.params.detailGridOptions?.rowModelType === 'serverSide') {
+            const node = this.params.node as RowNode;
+            node.detailGridInfo?.api?.refreshServerSide({ purge: true });
+            return;
+        }
+
         const userFunc = this.params.getDetailRowData;
         if (!userFunc) {
             console.warn('AG Grid: could not find getDetailRowData for master / detail, ' +
@@ -165,7 +171,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             // as the data could have been updated with new instance
             data: this.params.node.data,
             successCallback: successCallback,
-            context: this.gridOptionsService.context
+            context: this.gridOptionsService.getGridCommonParams().context
         };
         userFunc(funcParams);
     }
@@ -174,7 +180,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         const GET_GRID_TO_REFRESH = false;
         const GET_GRID_TO_DO_NOTHING = true;
 
-        switch(this.refreshStrategy) {
+        switch (this.refreshStrategy) {
             // ignore this refresh, make grid think we've refreshed but do nothing
             case 'nothing': return GET_GRID_TO_DO_NOTHING;
             // grid will destroy and recreate the cell

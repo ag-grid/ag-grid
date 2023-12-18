@@ -262,17 +262,14 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
 
         this.stylingService.processAllCellClasses(
             column!.getDefinition(),
-            {
+            this.gridOptionsService.addGridCommonParams({
                 value,
                 data: node!.data,
                 node: node!,
                 colDef: column!.getDefinition(),
                 column: column!,
-                rowIndex: rowIndex,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            },
+                rowIndex: rowIndex
+            }),
             (className: string) => {
                 if (styleIds.indexOf(className) > -1) {
                     applicableStyles.push(className);

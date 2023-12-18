@@ -399,10 +399,10 @@ export function findAllVariables(node) {
         allVariables.push(node.name.getText());
     }
     if (ts.isVariableDeclaration(node)) {
-        if(ts.isObjectBindingPattern(node.name)){
+        if (ts.isObjectBindingPattern(node.name)) {
             // Code like this:  const { pageSetup, margins } = getSheetConfig();
             node.name.elements.forEach(n => allVariables.push(n.getText()))
-        }else{
+        } else {
             allVariables.push(node.name.getText());
         }
     }
@@ -621,7 +621,7 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
 
         if (convertToPackage && k.includes('ag-grid')) {
             // Remove module related imports
-            unique = unique.filter(i => !i.includes('Module') || i == 'AgGridModule');
+            unique = unique.filter(i => !i.includes('Module'));
             hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
         }
         if (unique.length > 0 || v.namedImport) {
@@ -678,7 +678,7 @@ export function addGenericInterfaceImport(imports: string[], tData: string, bind
     }
 }
 
-export function replaceGridReadyRowData(callback: string, rowDataSetter: string){
+export function replaceGridReadyRowData(callback: string, rowDataSetter: string) {
     return callback
     // replace gridApi.setGridOption('rowData', data) with this.rowData = data
     .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)

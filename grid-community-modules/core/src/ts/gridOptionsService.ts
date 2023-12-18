@@ -16,6 +16,7 @@ import { getScrollbarWidth } from './utils/browser';
 import { IRowNode } from "./interfaces/iRowNode";
 import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
 import { ValidationService } from "./validation/validationService";
+import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -70,6 +71,7 @@ export class GridOptionsService {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
+    @Autowired('frameworkOverrides') frameworkOverrides: IFrameworkOverrides;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('validationService') private validationService: ValidationService;
 
@@ -80,11 +82,11 @@ export class GridOptionsService {
     private static readonly alwaysSyncGlobalEvents: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     // Store locally to avoid retrieving many times as these are requested for every callback
-    @Autowired('gridApi') public readonly api: GridApi;
+    @Autowired('gridApi') private readonly api: GridApi;
     /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
-    public columnApi: ColumnApi;
+    private columnApi: ColumnApi;
     // This is quicker then having code call gridOptionsService.get('context')
-    public get context() {
+    private get context() {
         return this.gridOptions['context'];
     }
 
@@ -146,7 +148,7 @@ export class GridOptionsService {
                 mergedParams.columnApi = this.columnApi;
                 mergedParams.context = this.context;
 
-                return callback(mergedParams);
+                return this.frameworkOverrides.wrapOutgoing(() => callback(mergedParams));
             };
             return wrapped;
         }
@@ -263,17 +265,17 @@ export class GridOptionsService {
 
         events.forEach(event => {
             if (this.gridOptions.debug) {
-                console.log(`AG Grid: Updated property ${event.type} from ${String(event.previousValue)} to ${String(event.currentValue)}.`);
+                console.log(`AG Grid: Updated property ${event.type} from `, event.previousValue, ' to  ', event.currentValue);
             }
             this.propertyEventService.dispatchEvent(event);
         });
     }
 
     addEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
-        this.propertyEventService.addEventListener(key, listener);
+        this.propertyEventService.addEventListener(key, listener as any);
     }
     removeEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
-        this.propertyEventService.removeEventListener(key, listener);
+        this.propertyEventService.removeEventListener(key, listener as any);
     }
 
     // responsible for calling the onXXX functions on gridOptions
@@ -294,7 +296,9 @@ export class GridOptionsService {
 
             const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
             if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
-                (this.gridOptions as any)[callbackMethodName](event);
+                this.frameworkOverrides.wrapOutgoing(() => {
+                    (this.gridOptions as any)[callbackMethodName](event);
+                })
             }
         }
     };
@@ -484,7 +488,8 @@ export class GridOptionsService {
         if (
             this.get('suppressGroupRowsSticky') ||
             this.get('paginateChildRows') ||
-            this.get('groupHideOpenParents')
+            this.get('groupHideOpenParents') ||
+            this.isDomLayout('print')
         ) { return false; }
 
         return true;
@@ -541,5 +546,21 @@ export class GridOptionsService {
         if (pivotMode) { return false; }
 
         return this.gridOptions.groupDisplayType === 'groupRows';
+    }
+
+    public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
+        return {
+            api: this.api,
+            columnApi: this.columnApi,
+            context: this.context
+        };
+    }
+
+    public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(params: WithoutGridCommon<T>): T {
+        const updatedParams = params as T;
+        updatedParams.api = this.api;
+        updatedParams.columnApi = this.columnApi;
+        updatedParams.context = this.context;
+        return updatedParams;
     }
 }

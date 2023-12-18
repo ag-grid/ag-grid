@@ -1,9 +1,11 @@
 import { Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
 import { IFilterAngularComp } from '@ag-grid-community/angular';
 
 @Component({
-    selector: 'filter-cell',
+    standalone: true,
+    imports: [FormsModule],
     template: `
         <div class="container">
             Partial Match Filter: <input #input (ngModelChange)="onChange($event)" [ngModel]="text" class="form-control">

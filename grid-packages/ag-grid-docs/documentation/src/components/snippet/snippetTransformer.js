@@ -52,7 +52,7 @@ class SnippetTransformer {
         if (Array.isArray(tree)) {
             return tree.map(node => this.parse(node, depth + 1)).join('');
 
-        } else if(isProperty(tree)) {
+        } else if (isProperty(tree)) {
             return this.addComment(tree, depth) + this.parseProperty(tree, depth);
 
         } else if (isExprStatement(tree)) {

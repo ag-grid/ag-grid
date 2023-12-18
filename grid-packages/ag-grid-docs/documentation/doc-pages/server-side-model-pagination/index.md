@@ -17,6 +17,8 @@ const gridOptions = {
     pagination: true,
     // sets 10 rows per page (default is 100)
     paginationPageSize: 10,
+    // allows the user to select the page size from a predefined list of page sizes
+    paginationPageSizeSelector: [10, 20, 50, 100],
 }
 </snippet>
 

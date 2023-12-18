@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
-import "ag-grid-community/styles/ag-grid.css"; // Core CSS
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
+import { AgGridReact } from '@ag-grid-community/react'; // React Grid Logic
+import "@ag-grid-community/styles/ag-grid.css"; // Core CSS
+import "@ag-grid-community/styles/ag-theme-quartz.css"; // Theme
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Custom Cell Renderer (Display logos based on cell value)
 const CompanyLogoRenderer = ({ value }) => (
@@ -70,7 +74,7 @@ const GridExample = () => {
   }, [])
 
   // Apply settings across all columns
-  const defaultColDefs = useMemo(() => ({
+  const defaultColDef = useMemo(() => ({
     filter: true,
     editable: true
   }))
@@ -81,7 +85,7 @@ const GridExample = () => {
       <AgGridReact 
         rowData={rowData}
         columnDefs={colDefs}
-        defaultColDef={defaultColDefs}
+        defaultColDef={defaultColDef}
         pagination={true}
         rowSelection='multiple'
         onSelectionChanged={event => console.log('Row Selected!')}

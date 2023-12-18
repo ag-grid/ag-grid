@@ -22,10 +22,11 @@ export class TabGuardCtrl extends BeanStub {
     private readonly eBottomGuard: HTMLElement;
 
     private readonly eFocusableElement: HTMLElement;
+    private readonly focusTrapActive: boolean;
 
     private readonly providedFocusInnerElement?: (fromBottom: boolean) => void;
-    private readonly providedFocusIn?: (event: FocusEvent) => boolean;
-    private readonly providedFocusOut?: (event: FocusEvent) => boolean;
+    private readonly providedFocusIn?: (event: FocusEvent) => void;
+    private readonly providedFocusOut?: (event: FocusEvent) => void;
 
     private readonly providedShouldStopEventPropagation?: () => boolean;
     private readonly providedOnTabKeyDown?: (e: KeyboardEvent) => void;
@@ -38,9 +39,10 @@ export class TabGuardCtrl extends BeanStub {
         eTopGuard: HTMLElement,
         eBottomGuard: HTMLElement,
         eFocusableElement: HTMLElement,
+        focusTrapActive?: boolean,
         focusInnerElement?: (fromBottom: boolean) => void,
-        onFocusIn?: (event: FocusEvent) => boolean,
-        onFocusOut?: (event: FocusEvent) => boolean,
+        onFocusIn?: (event: FocusEvent) => void,
+        onFocusOut?: (event: FocusEvent) => void,
         shouldStopEventPropagation?: () => boolean,
         onTabKeyDown?: (e: KeyboardEvent) => void,
         handleKeyDown?: (e: KeyboardEvent) => void
@@ -51,6 +53,7 @@ export class TabGuardCtrl extends BeanStub {
             comp,
             eTopGuard,
             eBottomGuard,
+            focusTrapActive,
             focusInnerElement,
             onFocusIn,
             onFocusOut,
@@ -66,6 +69,7 @@ export class TabGuardCtrl extends BeanStub {
         this.eBottomGuard = eBottomGuard;
         this.providedFocusInnerElement = focusInnerElement;
         this.eFocusableElement = eFocusableElement;
+        this.focusTrapActive = !!focusTrapActive;
 
         this.providedFocusIn = onFocusIn;
         this.providedFocusOut = onFocusOut;
@@ -127,6 +131,7 @@ export class TabGuardCtrl extends BeanStub {
         }
 
         const fromBottom = e.target === this.eBottomGuard;
+
         if (this.providedFocusInnerElement) {
             this.providedFocusInnerElement(fromBottom);
         } else {
@@ -135,13 +140,21 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private onFocusIn(e: FocusEvent): void {
-        if (this.providedFocusIn && this.providedFocusIn(e)) { return; }
+        if (this.focusTrapActive) { return; }
+
+        if (this.providedFocusIn) {
+            this.providedFocusIn(e);
+        }
 
         this.deactivateTabGuards();
     }
 
     private onFocusOut(e: FocusEvent): void {
-        if (this.providedFocusOut && this.providedFocusOut(e)) { return; }
+        if (this.focusTrapActive) { return; }
+
+        if (this.providedFocusOut) {
+            this.providedFocusOut(e);
+        }
 
         if (!this.eFocusableElement.contains(e.relatedTarget as HTMLElement)) {
             this.activateTabGuards();
@@ -154,6 +167,7 @@ export class TabGuardCtrl extends BeanStub {
             return;
         }
 
+        if (this.focusTrapActive) { return; }
         if (e.defaultPrevented) { return; }
 
         const tabGuardsAreActive = this.tabGuardsAreActive();
@@ -201,6 +215,10 @@ export class TabGuardCtrl extends BeanStub {
         this.skipTabGuardFocus = true;
 
         tabGuardToFocus.focus();
+
+        window.setTimeout(() => {
+            this.activateTabGuards();
+        });
     }
 
 }

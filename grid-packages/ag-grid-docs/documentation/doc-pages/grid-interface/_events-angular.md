@@ -4,7 +4,7 @@
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false} language="html">
-|onCellClicked(event: CellClickedEvent){
+|onCellClicked(event: CellClickedEvent) {
 |   console.log("Cell was clicked")   
 |}
 |

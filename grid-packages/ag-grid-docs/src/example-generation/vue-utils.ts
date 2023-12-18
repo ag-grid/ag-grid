@@ -23,7 +23,7 @@ export function toAssignment(property: any): string {
 
 export function getImport(filename: string, tokenReplace, replaceValue) {
     let componentName = filename.split('.')[0];
-    if(tokenReplace) {
+    if (tokenReplace) {
         componentName = componentName.replace(tokenReplace, replaceValue);
     }
     return `import ${toTitleCase(componentName)} from './${filename}';`;

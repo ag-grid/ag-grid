@@ -22,6 +22,7 @@ export interface ISelectionService {
      * @returns all nodes including unselectable nodes which are the target of this selection attempt
      */
     getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null;
+    hasNodesToSelect(justFiltered?: boolean, justCurrentPage?: boolean): boolean;
     selectAllRowNodes(params: {
         source: SelectionEventSourceType;
         justFiltered?: boolean;

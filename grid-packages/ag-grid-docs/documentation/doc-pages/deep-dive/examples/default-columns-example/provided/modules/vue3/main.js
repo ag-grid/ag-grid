@@ -1,8 +1,12 @@
 import { createApp } from 'vue'
 import { ref, onMounted } from 'vue';
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
-import { AgGridVue } from "ag-grid-vue3";
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from "@ag-grid-community/vue3";
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Define the component configuration
 const App = {
@@ -14,7 +18,7 @@ const App = {
         :class="themeClass"
         :columnDefs="colDefs"
         :rowData="rowData"
-        :defaultColDef="defaultColDefs"
+        :defaultColDef="defaultColDef"
     >
     </ag-grid-vue>
     `,
@@ -34,7 +38,7 @@ const App = {
       { field: "rocket" }
     ]);
 
-    const defaultColDefs = ref({
+    const defaultColDef = ref({
       filter: true
     });
 
@@ -51,7 +55,7 @@ const App = {
     return {
       rowData,
       colDefs,
-      defaultColDefs,
+      defaultColDef,
       themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
     };
   },

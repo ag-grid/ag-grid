@@ -1,4 +1,4 @@
-import { AgEvent } from "../events";
+import { AgEvent, AgEventListener } from "../events";
 import { EventService } from "../eventService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { areEventsNear } from "../utils/mouse";
@@ -68,11 +68,11 @@ export class TouchListener implements IEventEmitter {
         return null;
     }
 
-    public addEventListener(eventType: string, listener: Function): void {
+    public addEventListener(eventType: string, listener: AgEventListener): void {
         this.eventService.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: string, listener: AgEventListener): void {
         this.eventService.removeEventListener(eventType, listener);
     }
 

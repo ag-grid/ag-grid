@@ -163,7 +163,7 @@
             "url": "/security/"
           },
           {
-            "title": "Using Hooks",
+            "title": "Best Practices",
             "url": "/react-hooks/",
             "frameworks": [
               "react"
@@ -199,12 +199,12 @@
         "title": "Migration",
         "items": [
           {
-            "title": "Upgrade to AG Grid 31",
-            "url": "/upgrade-to-ag-grid-31/"
+            "title": "Upgrading to AG Grid 31",
+            "url": "/upgrading-to-ag-grid-31/"
           },
           {
-            "title": "Upgrade to Older Versions",
-            "url": "/upgrade-to-older-versions/"
+            "title": "Upgrading to Older Versions",
+            "url": "/upgrading-to-older-versions/"
           },
           {
             "title": "Codemods",

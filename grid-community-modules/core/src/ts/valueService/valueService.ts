@@ -168,17 +168,14 @@ export class ValueService extends BeanStub {
             return false;
         }
 
-        const params: ValueSetterParams = {
+        const params: ValueSetterParams = this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             oldValue: this.getValue(column, rowNode),
             newValue: newValue,
             colDef: column.getColDef(),
-            column: column,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            column: column
+        });
 
         params.newValue = newValue;
 
@@ -286,16 +283,13 @@ export class ValueService extends BeanStub {
     }
 
     private executeFilterValueGetter(valueGetter: string | Function, data: any, column: Column, rowNode: IRowNode): any {
-        const params: ValueGetterParams = {
+        const params: ValueGetterParams = this.gridOptionsService.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             getValue: this.getValueCallback.bind(this, rowNode)
-        };
+        });
 
         if (typeof valueGetter === 'function') {
             return valueGetter(params);
@@ -314,16 +308,13 @@ export class ValueService extends BeanStub {
             return valueFromCache;
         }
 
-        const params: ValueGetterParams = {
+        const params: ValueGetterParams = this.gridOptionsService.addGridCommonParams({
             data: data,
             node: rowNode,
             column: column,
             colDef: column.getColDef(),
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             getValue: this.getValueCallback.bind(this, rowNode)
-        };
+        });
 
         let result;
         if (typeof valueGetter === 'function') {
@@ -355,16 +346,13 @@ export class ValueService extends BeanStub {
 
         let result = value;
         if (keyCreator) {
-            const keyParams: KeyCreatorParams = {
+            const keyParams: KeyCreatorParams = this.gridOptionsService.addGridCommonParams({
                 value: value,
                 colDef: col.getColDef(),
                 column: col,
                 node: rowNode,
-                data: rowNode.data,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                data: rowNode.data
+            });
             result = keyCreator(keyParams);
         }
 

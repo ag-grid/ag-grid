@@ -1,10 +1,10 @@
 import {
     AfterViewInit,
     Component,
-    ComponentFactoryResolver,
     ElementRef,
     EventEmitter,
     Input,
+    NgZone,
     OnChanges,
     OnDestroy,
     Output,
@@ -50,6 +50,10 @@ import {
     ColumnAggFuncChangeRequestEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
+    ColumnHeaderClickedEvent,
+    ColumnHeaderContextMenuEvent,
+    ColumnHeaderMouseLeaveEvent,
+    ColumnHeaderMouseOverEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
     ColumnPivotChangeRequestEvent,
@@ -182,6 +186,7 @@ import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWra
 
 @Component({
     selector: 'ag-grid-angular',
+    standalone: true,
     template: '',
     providers: [
         AngularFrameworkOverrides,
@@ -214,55 +219,64 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         private viewContainerRef: ViewContainerRef,
         private angularFrameworkOverrides: AngularFrameworkOverrides,
         private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
-        private componentFactoryResolver: ComponentFactoryResolver) {
+        private ngZone: NgZone
+    ) {
         this._nativeElement = elementDef.nativeElement;
+    }
 
+    runOutsideAngular<T>(callback: () => T): T {
+        // Check if ngZone exists, as it won't be present when running zoneless. 
+        return this.ngZone ? this.ngZone.runOutsideAngular(callback) : callback();
     }
 
     ngAfterViewInit(): void {
-        this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
-        this.frameworkComponentWrapper.setComponentFactoryResolver(this.componentFactoryResolver);
-        this.angularFrameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
+      // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
+      this.runOutsideAngular(() => {
+          this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.ngZone);
+          const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
 
-        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
+          this.gridParams = {
+               globalEventListener: this.globalEventListener.bind(this),
+               frameworkOverrides: this.angularFrameworkOverrides,
+               providedBeanInstances: {
+                    frameworkComponentWrapper: this.frameworkComponentWrapper,
+               },
+               modules: (this.modules || []) as any,
+          };
 
-        this.gridParams = {
-            globalEventListener: this.globalEventListener.bind(this),
-            frameworkOverrides: this.angularFrameworkOverrides,
-            providedBeanInstances: {
-                frameworkComponentWrapper: this.frameworkComponentWrapper
-            },
-            modules: (this.modules || []) as any
-        };
+          const api = createGrid(this._nativeElement, mergedGridOps, this.gridParams);
+          if (api) {
+               this.api = api;
+               this.columnApi = new ColumnApi(api);
+          }
 
-        const api = createGrid(this._nativeElement, mergedGridOps, this.gridParams);
+          if (this.gridPreDestroyed.observers.length > 0) {
+               console.warn(
+                    'AG Grid: gridPreDestroyed event listener registered via (gridPreDestroyed)="method($event)" will be ignored! ' +
+                         'Please assign via gridOptions.gridPreDestroyed and pass to the grid as [gridOptions]="gridOptions"'
+               );
+          }
 
-        if (api) {
-            this.api = api;
-            this.columnApi = new ColumnApi(api);
-        }
+          this._initialised = true;
 
-        if (this.gridPreDestroyed.observers.length > 0) {
-            console.warn('AG Grid: gridPreDestroyed event listener registered via (gridPreDestroyed)="method($event)" will be ignored! ' +
-                'Please assign via gridOptions.gridPreDestroyed and pass to the grid as [gridOptions]="gridOptions"');
-        }
-
-        this._initialised = true;
-
-        // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
-        // this ties these together so that gridReady will always fire after agGridAngular's ngAfterViewInit
-        // the actual containing component's ngAfterViewInit will fire just after agGridAngular's
-        this._fullyReady.resolveNow(null, resolve => resolve);
-    }
+          // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
+          // this ties these together so that gridReady will always fire after agGridAngular's ngAfterViewInit
+          // the actual containing component's ngAfterViewInit will fire just after agGridAngular's
+          this._fullyReady.resolveNow(null, (resolve) => resolve);
+       });
+     }
 
     public ngOnChanges(changes: any): void {
-        if (this._initialised) {
-          const gridOptions: GridOptions = {};
-          Object.entries(changes).forEach(([key, value]: [string, any]) => {
-               gridOptions[key as keyof GridOptions] = value.currentValue;
-          });
-          ComponentUtil.processOnChange(gridOptions, this.api);
-        }
+         if (this._initialised) {
+               // Run the changes outside of angular so any event handlers that are created do not trigger change detection
+             this.runOutsideAngular(() => {
+                 const gridOptions: GridOptions = {};
+                 Object.entries(changes).forEach(([key, value]: [string, any]) => {
+                     gridOptions[key as keyof GridOptions] = value.currentValue;
+                 });
+                 ComponentUtil.processOnChange(gridOptions, this.api);
+             });
+         }
     }
 
     public ngOnDestroy(): void {
@@ -298,14 +312,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         // generically look up the eventType
         const emitter = <EventEmitter<any>>(<any>this)[eventType];
         if (emitter && this.isEmitterUsed(eventType)) {
+
+            // Make sure we emit within the angular zone, so change detection works properly
+            const fireEmitter = () => this.ngZone.run(() => emitter.emit(event));
+
             if (eventType === 'gridReady') {
-                // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit the
-                // gridReady event
-                this._fullyReady.then((result => {
-                    emitter.emit(event);
-                }));
+                // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit then gridReady event
+                this._fullyReady.then(() => fireEmitter());
             } else {
-                emitter.emit(event);
+                fireEmitter();
             }
         }
     }
@@ -1007,7 +1022,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public groupDefaultExpanded: number | undefined = undefined;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
-         * @initial
          */
     @Input() public autoGroupColumnDef: ColDef<TData> | undefined = undefined;
     /** When `true`, preserves the current group order when sorting on non-group columns.
@@ -1480,7 +1494,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** SSRM Tree Data: Allows specifying group keys.
          */
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
-    /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
+    /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
          * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
          */
     @Input() public getBusinessKeyForNode: ((node: IRowNode<TData>) => string) | undefined = undefined;
@@ -1577,6 +1591,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.
          */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<ColumnEverythingChangedEvent<TData>>();
+    /** A mouse cursor is initially moved over a column header.
+         */
+    @Output() public columnHeaderMouseOver: EventEmitter<ColumnHeaderMouseOverEvent<TData>> = new EventEmitter<ColumnHeaderMouseOverEvent<TData>>();
+    /** A mouse cursor is moved out of a column header.
+         */
+    @Output() public columnHeaderMouseLeave: EventEmitter<ColumnHeaderMouseLeaveEvent<TData>> = new EventEmitter<ColumnHeaderMouseLeaveEvent<TData>>();
+    /** A click is performed on a column header.
+         */
+    @Output() public columnHeaderClicked: EventEmitter<ColumnHeaderClickedEvent<TData>> = new EventEmitter<ColumnHeaderClickedEvent<TData>>();
+    /** A context menu action, such as right-click or context menu key press, is performed on a column header.
+         */
+    @Output() public columnHeaderContextMenu: EventEmitter<ColumnHeaderContextMenuEvent<TData>> = new EventEmitter<ColumnHeaderContextMenuEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
          * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
          */

@@ -415,7 +415,7 @@
         "undoRedoCellEditingLimit": {
             "more": {
                 "name": "Enabling Undo / Redo",
-                "url": "undo-redo-edits/#enabling-undo--redo"
+                "url": "/undo-redo-edits/#enabling-undo--redo"
             }
         },
         "readOnlyEdit": {

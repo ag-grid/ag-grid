@@ -179,10 +179,10 @@
 
     .ag-body-viewport, .ag-center-cols-viewport {
         &::-webkit-scrollbar {
-            display: none;
+            display: none !important;
         }
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+        -ms-overflow-style: none !important;
+        scrollbar-width: none !important;
     }
 
     .ag-body-viewport {

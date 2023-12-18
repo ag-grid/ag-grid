@@ -77,7 +77,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         let anyNodesToggled = false;
 
         removedNodeIds.forEach(id => {
-            if(this.selectedState.toggledNodes.delete(id)) {
+            if (this.selectedState.toggledNodes.delete(id)) {
                 anyNodesToggled = true;
             }
         });

@@ -16,7 +16,8 @@ import {
     ValueFormatterParams,
     GridOptionsService,
     ColumnModel,
-    ValueService
+    ValueService,
+    AgEventListener
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
@@ -199,11 +200,11 @@ export class SetValueModel<V> implements IEventEmitter {
         this.updateAllValues().then(updatedKeys => this.resetSelectionState(updatedKeys || []));
     }
 
-    public addEventListener(eventType: string, listener: Function, async?: boolean): void {
+    public addEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
         this.localEventService.addEventListener(eventType, listener, async);
     }
 
-    public removeEventListener(eventType: string, listener: Function, async?: boolean): void {
+    public removeEventListener(eventType: string, listener: AgEventListener, async?: boolean): void {
         this.localEventService.removeEventListener(eventType, listener, async);
     }
 
@@ -313,21 +314,16 @@ export class SetValueModel<V> implements IEventEmitter {
                     this.setIsLoading(true);
 
                     const callback = this.providedValues as SetFilterValuesFunc<any, V>;
-                    const { columnApi, api, column, colDef } = this.filterParams;
-                    const { context } = this.gridOptionsService;
-                    const params: SetFilterValuesFuncParams<any, V> = {
+                    const { column, colDef } = this.filterParams;
+                    const params: SetFilterValuesFuncParams<any, V> = this.gridOptionsService.addGridCommonParams({
                         success: values => {
                             this.setIsLoading(false);
 
                             resolve(this.processAllValues(this.uniqueValues(this.validateProvidedValues(values))));
                         },
                         colDef,
-                        column,
-                        columnApi,
-                        api,
-                        context,
-
-                    };
+                        column
+                    });
 
                     window.setTimeout(() => callback(params), 0);
 

@@ -105,13 +105,13 @@
     width: 100%;
     display: flex;
     border-radius: 5px;
-    border: 3px solid var(--card-color);
+    border: 2px solid var(--card-color);
     background-color: var(--card-color);
 
     #{$darkmode-selector} & {
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 6px;
         --card-color: var(--background-100);
+
+        border: 2px solid #0665cb;
     }
 }
 
@@ -126,13 +126,11 @@
     background-color: var(--default-background-color);
     opacity: var(--header-tint);
 
-    #{$darkmode-selector} & {
-    }
-
     @media screen and (min-width: $breakpoint-pricing-medium) {
         flex-direction: row;
+        flex-wrap: wrap;
         justify-content: space-between;
-        gap: $size-4;
+        gap: 0 $size-4;
         padding: $size-2 $size-2;
         text-align: left;
     }
@@ -147,7 +145,7 @@
     flex-direction: column;
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        width: 50%;
+        width: calc(50% - $size-2);
     }
 
     p {
@@ -156,7 +154,31 @@
 }
 
 .products {
+    width: 100%;
+    margin-top: -10px;
+    margin-left: -10px;
     font-size: var(--font-size-massive);
+
+    svg {
+        height: 54px;
+        width: fit-content;
+
+        #{$darkmode-selector} & {
+            :global(#LogoType) * {
+                fill: var(--default-text-color) !important;
+            }
+        }
+    }
+
+    span {
+        margin-left: -$size-1;
+        margin-right: -$size-1;
+        color: #00366d;
+
+        #{$darkmode-selector} & {
+            color: var(--default-text-color) !important;
+        }
+    }
 }
 
 .enterpriseProducts {
@@ -179,7 +201,9 @@
 
 .right {
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        width: 50%;
+        display: flex;
+        align-items: flex-end;
+        width: calc(50% - $size-2);
         max-width: 340px;
     }
 
@@ -203,6 +227,7 @@
 
 .rightPrice {
     text-align: left;
+    margin-top: $size-2;
 
     p {
         font-weight: var(--font-weight-bold);
@@ -294,6 +319,8 @@
         --text-color: var(--enterprise-icon-color);
 
         position: absolute;
+        top: 0;
+        right: 0;
         margin-top: -4px;
         margin-left: 4px;
         width: 26px;

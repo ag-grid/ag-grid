@@ -21,25 +21,21 @@ When you pass data to the grid, it wraps each data item in a node object. This i
 
 Working with AG Grid nodes is preferred over the row data as it provides you with more information and maps better to the internal representation of AG Grid.
 
-### Example: Single Row Selection
-
-The example below shows single row selection.
+### Single Row Selection
 
 - Property `rowSelection='single'` is set to enable single row selection. It is not possible to select multiple rows.
 
 <grid-example title='Single Row Selection' name='single-row-selection' type='generated'></grid-example>
 
-### Example: Multiple Row Selection
-
-The example below shows multi-row selection.
+### Multiple Row Selection
 
 - Property `rowSelection='multiple'` is set to enable multiple row selection. Selecting multiple rows can be achieved by holding down <kbd>^ Ctrl</kbd> and mouse clicking the rows. A range of rows can be selected by using <kbd>⇧ Shift</kbd>.
 
 <grid-example title='Multiple Row Selection' name='multiple-row-selection' type='generated'></grid-example>
 
-### Example: Multi Select With Click
+### Multi Select With Click
 
-The example below shows multi-select with click. Clicking multiple rows will select a range of rows without the need for <kbd>^ Ctrl</kbd> or <kbd>⇧ Shift</kbd> keys. Clicking a selected row will deselect it. This is useful for touch devices where <kbd>^ Ctrl</kbd> and <kbd>⇧ Shift</kbd> clicks are not available.
+Clicking multiple rows will select a range of rows without the need for <kbd>^ Ctrl</kbd> or <kbd>⇧ Shift</kbd> keys. Clicking a selected row will deselect it. This is useful for touch devices where <kbd>^ Ctrl</kbd> and <kbd>⇧ Shift</kbd> clicks are not available.
 
 - Property `rowMultiSelectWithClick=true` is set to enable multiple row selection with clicks.
 - Clicking multiple rows will select multiple rows without needing to press <kbd>^ Ctrl</kbd> or <kbd>⇧ Shift</kbd> keys.
@@ -82,13 +78,13 @@ colDef.checkboxSelection = false;
 // create checkbox, make checkbox not visible
 colDef.checkboxSelection = () => false;
 ```
-### Example: Displaying Disabled Checkboxes
+### Displaying Disabled Checkboxes
 
 It is possible to change the default behaviour for when a checkbox is not displayed, and instead have the checkbox visible but disabled. This can be done by enabling the column property `showDisabledCheckboxes`.
 
 <grid-example title='Displaying Disabled Checkboxes' name='disabled-checkboxes' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-### Example: Forcing Checkboxes As Selected
+### Forcing Checkboxes As Selected
 
 It is possible to select a row via API and disable its checkbox to prevent users from de-selecting it. This can be achieved by providing a predicate to the `checkboxSelection` property which will determine whether a row’s checkbox is selectable or disabled.
 
@@ -106,21 +102,21 @@ When doing grouping, you control what selecting a group means. This is controlle
 
 - `groupSelectsFiltered`: Used when `groupSelectsChildren=true`. When `true` only filtered children of the group will be selected / unselected. This means you can apply a filter, then try to select a group, and the group will end up in the intermediate state as only as subset of the children will be selected.
 
-### Example: Groups & Checkbox Selection
+### Groups & Checkbox Selection
 
-The example below shows checkbox selection with groups. Selecting the group has the effect of selecting the children. Likewise selecting all the children automatically selects the group. In this scenario the group itself will never appear in the `selectedRows` list.
+Selecting the group has the effect of selecting the children. Likewise selecting all the children automatically selects the group. In this scenario the group itself will never appear in the `selectedRows` list.
 
 The example also shows a checkbox for selection on the age column. In practice, it is not normal to have more than one column for selection, the below is just for demonstration. Having a checkbox within a non-group row is best for grids that are not using grouping.
 
 <grid-example title='Groups & Checkbox Selection' name='group-selection' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-### Example: Groups & Checkbox Selection With Unselectable Leaf Nodes
+### Groups & Checkbox Selection With Unselectable Leaf Nodes
 
 The example below is similar to the previous example except it does not put checkboxes on the leaf level nodes, allowing only entire groups to be selected. This is achieved by providing functions for `colDef.checkboxSelection` and `autoGroupColumnDef.cellRendererParams.checkbox`.
 
 <grid-example title='Groups & Checkbox Selection With Unselectable Leaf Nodes' name='selection-checkbox' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-### Example: Groups & Checkbox Selection With Only Filtered Children
+### Groups & Checkbox Selection With Only Filtered Children
 
 Lastly we show an example using `groupSelectsFiltered=true`. Here, when you filter the grid and select a group, only the filtered children get selected.
 
@@ -173,7 +169,7 @@ The header checkbox has three modes of operation, `'normal'`, `'filtered only'` 
 
 The examples below demonstrate all of these options.
 
-### Example: Just Filtered
+### Just Filtered
 
 This example has the following characteristics:
 
@@ -183,7 +179,7 @@ This example has the following characteristics:
 
 <grid-example title='Just Filtered' name='header-checkbox' type='generated' options='{ "exampleHeight": 590 }'></grid-example>
 
-### Example: Select Everything
+### Select Everything
 
 The next example is similar to the one above with the following changes:
 
@@ -192,7 +188,7 @@ The next example is similar to the one above with the following changes:
 
 <grid-example title='Select Everything' name='header-checkbox-entire-set' type='generated' options='{ "exampleHeight": 590 }'></grid-example>
 
-### Example: Select Only the Current Page
+### Select Only the Current Page
 
 The next example demonstrates the `headerCheckboxSelectionCurrentPageOnly` property, note the following:
 
@@ -201,7 +197,7 @@ The next example demonstrates the `headerCheckboxSelectionCurrentPageOnly` prope
 
 <grid-example title='Selecting Current Page' name='header-checkbox-current-page' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-### Example: Current Page with Group Selects Children
+### Current Page with Group Selects Children
 
 The next example demonstrates the `headerCheckboxSelectionCurrentPageOnly` property while using `groupSelectsChildren`, note the following:
 
@@ -224,7 +220,7 @@ const gridOptions = {
 }
 </snippet>
 
-### Example: Selectable Rows with Header Checkbox
+### Selectable Rows with Header Checkbox
 
 This example demonstrates the following:
 
@@ -233,7 +229,7 @@ This example demonstrates the following:
 
 <grid-example title='Selectable Rows with Header Checkbox' name='specify-selectable-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-### Example: Specifying Selectable Rows with Groups
+### Specifying Selectable Rows with Groups
 
 This example demonstrates the following:
 
@@ -296,13 +292,13 @@ If you want to select only the filtered rows, you could do this using the follow
 |api.setNodesSelected({ nodes, newValue: true });
 </snippet>
 
-### Example: Using forEachNode
+### Using forEachNode
 
 The Grid API function `forEachNode` can be used to select grid rows based on a business key. The example below shows selecting all rows with country = 'United States'. This method is also useful when you load data and need to know the node equivalent of the data for selection purposes.
 
 <grid-example title='Using forEachNode' name='using-foreachnode' type='generated' options='{ "exampleHeight": 590 }'></grid-example>
 
-### Example: Selection with Keyboard Arrow Keys
+### Selection with Keyboard Arrow Keys
 
 By default, you can select a row on mouse click, and navigate up and down the rows using your keyboard keys. However, the selection state does not correlate with the navigation keys, but we can add this behaviour using our own [Custom Navigation](/keyboard-navigation/#custom-navigation).
 

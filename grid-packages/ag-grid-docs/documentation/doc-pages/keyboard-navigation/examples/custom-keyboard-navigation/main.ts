@@ -10,6 +10,8 @@ import {
   TabToNextCellParams,
   TabToNextHeaderParams,
   CellPosition,
+  Column,
+  ColumnGroup
 } from '@ag-grid-community/core';
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
@@ -61,7 +63,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
 }
 
-function navigateToNextHeader(params: NavigateToNextHeaderParams): (HeaderPosition | null) {
+function navigateToNextHeader(params: NavigateToNextHeaderParams): HeaderPosition | null {
   const nextHeader = params.nextHeaderPosition;
 
   if (params.key !== 'ArrowDown' && params.key !== 'ArrowUp') {
@@ -72,9 +74,9 @@ function navigateToNextHeader(params: NavigateToNextHeaderParams): (HeaderPositi
     params.previousHeaderPosition!,
     params.headerRowCount,
     params.key === 'ArrowDown'
-  )
+  );
 
-  return processedNextHeader === nextHeader ? null : processedNextHeader
+  return processedNextHeader;
 }
 
 function tabToNextHeader(params: TabToNextHeaderParams): (HeaderPosition | null) {
@@ -85,44 +87,55 @@ function tabToNextHeader(params: TabToNextHeaderParams): (HeaderPosition | null)
   )
 }
 
-function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: number, isUp: boolean) {
+function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: number, isUp: boolean): HeaderPosition {
   const previousColumn = previousHeader.column;
+  const isSpanHeaderHeight = !!(previousColumn as Column).isSpanHeaderHeight && (previousColumn as Column).isSpanHeaderHeight();
+
   const lastRowIndex = previousHeader.headerRowIndex;
   let nextRowIndex = isUp ? lastRowIndex - 1 : lastRowIndex + 1;
   let nextColumn;
 
   if (nextRowIndex === -1) {
-    return previousHeader
+    return previousHeader;
   }
+
   if (nextRowIndex === headerRowCount) {
-    nextRowIndex = -1
+    nextRowIndex = -1;
   }
 
-  const parentColumn = previousColumn.getParent()
-
+  let parentColumn = previousColumn.getParent();
   if (isUp) {
-    nextColumn = parentColumn || previousColumn
+    if (isSpanHeaderHeight) {
+      while (parentColumn && parentColumn.isPadding()) {
+        parentColumn = parentColumn.getParent();
+      }
+    }
+
+    if (!parentColumn) { return previousHeader; }
+
+    nextColumn = parentColumn;
   } else {
-    nextColumn = (previousColumn as any).children
-      ? (previousColumn as any).children[0]
-      : previousColumn
+      const children = ((previousColumn as ColumnGroup).getChildren && (previousColumn as ColumnGroup).getChildren()) || [];
+      nextColumn = children.length > 0 ? children[0] : previousColumn;
   }
 
   return {
     headerRowIndex: nextRowIndex,
-    column: nextColumn,
-  }
+    column: nextColumn as Column,
+  };
 }
 
 function tabToNextCell(params: TabToNextCellParams): (CellPosition | null) {
-  const previousCell = params.previousCellPosition;
-  const lastRowIndex = previousCell.rowIndex;
-  let nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
+  const previousCell = params.previousCellPosition
   const renderedRowCount = params.api!.getModel().getRowCount();
+  const lastRowIndex = previousCell.rowIndex;
+
+  let nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
 
   if (nextRowIndex < 0) {
     nextRowIndex = -1
   }
+
   if (nextRowIndex >= renderedRowCount) {
     nextRowIndex = renderedRowCount - 1
   }

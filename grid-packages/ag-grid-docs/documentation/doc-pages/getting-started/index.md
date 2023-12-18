@@ -2,7 +2,13 @@
 title: "Quick Start" 
 ---
 
-Create a Grid in 60 seconds.
+Create a grid in 60 Seconds
+
+At a minimum, three things are required to create a grid:
+
+- **Container:** for the grids placement in your application.
+- **Styles:** to define the grid's theme & dimensions.
+- **Row Data & Column Definitions:** to define the data and how it should be displayed.
 
 <framework-specific-section frameworks="react,angular,vue">
 
@@ -12,9 +18,9 @@ Create a Grid in 60 seconds.
 
 <framework-specific-section frameworks="react">
 
-<!-- Install-->
+<!-- Install React -->
 
-Create a new React project and install the `ag-grid-react` library:
+First, install the `ag-grid-react` library:
 
 <snippet transform={false} language="bash">
 npm install ag-grid-react
@@ -24,9 +30,9 @@ npm install ag-grid-react
 
 <framework-specific-section frameworks="angular">
 
-<!-- Install-->
+<!-- Install Angular -->
 
-Create a new Angular project and install the `ag-grid-angular` library:
+First, install the `ag-grid-angular` library:
 
 <snippet transform={false} language="bash">
 npm install ag-grid-angular
@@ -36,9 +42,9 @@ npm install ag-grid-angular
 
 <framework-specific-section frameworks="vue">
 
-<!-- Install-->
+<!-- Install Vue3 -->
 
-Create a new Vue3 project and install the `ag-grid-vue3` library:
+First, install the `ag-grid-vue3` library:
 
 <snippet transform={false} language="bash">
 npm install ag-grid-vue3
@@ -46,44 +52,58 @@ npm install ag-grid-vue3
 
 </framework-specific-section>
 
-## Create
-
 <framework-specific-section frameworks="javascript">
 
-<!-- Create-->
+## Providing a Container
 
-Create a new `index.html` file with the following code:
+<!-- Create JavaScript -->
+
+First, load the AG Grid library and create a blank container element which will be used to contain the grid:
 
 <snippet transform={false} language="html">
-|&lt;!DOCTYPE html>
 |&lt;html lang="en">
 |  &lt;head>
-|    &lt;title>Ag Grid Quick Start&lt;/title>
-|    &lt;!-- Include all JS & CSS for AG Grid -->
+|    &lt;!-- Includes all JS & CSS for AG Grid -->
 |    &lt;script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js">&lt;/script>
-|    &lt;!-- Include Grid Configuration File -->
-|    &lt;script src='index.js'></script>
 |  &lt;/head>
 |  &lt;body>
-|    &lt;!-- Container Div: Holds the grid and defines its theme & dimensions. -->
-|    &lt;div id="myGrid" class="ag-theme-quartz" style="height: 500px">&lt;/div>
+|    &lt;!-- Your grid container -->
+|    &lt;div id="myGrid">&lt;/div>
 |  &lt;/body>
 |&lt;/html>
 </snippet>
 
-And a new `index.js` file, in the same directory, with the following code:
+## Instantiating the Grid
+
+Then, create the grid inside of your container by calling `createGrid` on the agGrid package.
 
 <snippet transform={false} language="jsx">
-|// Grid API: Access to Grid API methods
-|let gridApi;
+|// Grid Options: Contains all of the grid configurations
+|const gridOptions = {};
 |
+|// Your Javascript code to create the grid
+|const myGridElement = document.querySelector('#myGrid');
+|agGrid.createGrid(myGridElement, gridOptions);
+</snippet>
+
+In this snippet, the grid is created using the `agGrid.createGrid()` method. This method takes two parameters:
+- **Container:** The DOM element that the grid will be placed into.
+- **Grid Options:** An object containing all of the grid's configuration options.
+
+## Row Data & Column Definitions
+
+Next, provide the grid with some data to display and some column definitions to define how to display it.
+
+In the `gridOptions` object, add the following properties:
+
+<snippet transform={false} language="jsx">
 |// Grid Options: Contains all of the grid configurations
 |const gridOptions = {
 |  // Row Data: The data to be displayed.
 |  rowData: [
-|    { mission: "CRS SpX-25", company: "SpaceX", location: "LC-39A, Kennedy Space Center, Florida, USA", date: "2022-07-15", time: "0:44:00", rocket: "Falcon 9 Block 5", price: 12480000, successful: true },
-|    { mission: "LARES 2 & Cubesats", company: "ESA", location: "ELV-1, Guiana Space Centre, French Guiana, France", date: "2022-07-13", time: "13:13:00", rocket: "Vega C", price: 4470000, successful: true },
-|    { mission: "Wise One Looks Ahead (NROL-162)", company: "Rocket Lab", location: "Rocket Lab LC-1A, Māhia Peninsula, New Zealand", date: "2022-07-13", time: "6:30:00", rocket: "Electron/Curie", price: 9750000, successful: true }
+|    { mission: "Voyager", company: "NASA", location: "Cape Canaveral", date: "1977-09-05", rocket: "Titan-Centaur ", price: 86580000, successful: true },
+|    { mission: "Apollo 13", company: "NASA", location: "Kennedy Space Center", date: "1970-04-11", rocket: "Saturn V", price: 3750000, successful: false },
+|    { mission: "Falcon 9", company: "SpaceX", location: "Cape Canaveral", date: "2015-12-22", rocket: "Falcon 9", price: 9750000, successful: true }
 |  ],
 |  // Column Definitions: Defines & controls grid columns.
 |  columnDefs: [
@@ -95,38 +115,59 @@ And a new `index.js` file, in the same directory, with the following code:
 |    { field: "successful" },
 |    { field: "rocket" }
 |  ]
-|}
-|
-|// Create Grid: Create new grid within the #myGrid div, using the Grid Options object
-|gridApi = agGrid.createGrid(document.querySelector('#myGrid'), gridOptions);
+|};
 </snippet>
+
+This is a basic example of Row Data & Column Definitions. The column definitions will access data via the provided `field` property, which maps directly to fields inside of the `rowData` objects.
+
+## Styling the Grid
+
+Finally, add the `ag-theme-quartz` CSS class to your grid container element to apply the grid's theme. You should also set the grid's dimensions using CSS.
+
+<snippet transform={false} language="html">
+|&lt;!-- Your grid container -->
+|&lt;div id="myGrid" class="ag-theme-quartz" style="height: 500px">&lt;/div>
+</snippet>
+
+<note>
+Other included themes can be found on the [Themes](../themes/) page.
+</note>
 
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 
-<!-- Create-->
+<!-- Create React -->
 
-Replace your `index.js` file with the following code:
+## Create a Component
+
+Then, create a new component in your application with the required dependencies:
 
 <snippet transform={false} language="jsx">
-|import React, { useState } from 'react';
-|import { createRoot } from 'react-dom/client';
 |import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
 |import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 |import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 |
-|// Create new GridExample component
+|const GridExample = () => {
+|  return (&lt;div>&lt;/div>);
+|}
+</snippet>
+
+## Row Data & Column Definitions
+
+Next, add the `rowData` and `colDefs` arrays to your component to define the data and how it should be displayed:
+
+<snippet transform={false} language="jsx">
 |const GridExample = () => {
 |  // Row Data: The data to be displayed.
 |  const [rowData, setRowData] = useState([
-|    { mission: "CRS SpX-25", company: "SpaceX", location: "LC-39A, Kennedy Space Center, Florida, USA", date: "2022-07-15", time: "0:44:00", rocket: "Falcon 9 Block 5", price: 12480000, successful: true },
-|    { mission: "LARES 2 & Cubesats", company: "ESA", location: "ELV-1, Guiana Space Centre, French Guiana, France", date: "2022-07-13", time: "13:13:00", rocket: "Vega C", price: 4470000, successful: true },
-|    { mission: "Wise One Looks Ahead (NROL-162)", company: "Rocket Lab", location: "Rocket Lab LC-1A, Māhia Peninsula, New Zealand", date: "2022-07-13", time: "6:30:00", rocket: "Electron/Curie", price: 9750000, successful: true }
+|    { mission: "Voyager", company: "NASA", location: "Cape Canaveral", date: "1977-09-05", rocket: "Titan-Centaur ", price: 86580000, successful: true },
+|    { mission: "Apollo 13", company: "NASA", location: "Kennedy Space Center", date: "1970-04-11", rocket: "Saturn V", price: 3750000, successful: false },
+|    { mission: "Falcon 9", company: "SpaceX", location: "Cape Canaveral", date: "2015-12-22", rocket: "Falcon 9", price: 9750000, successful: true }
 |  ]);
 |  
 |  // Column Definitions: Defines & controls grid columns.
-|  const [colDefs] = useState([
+|  const [colDefs, setColDefs] = useState([
 |    { field: "mission" },
 |    { field: "company" },
 |    { field: "location" },
@@ -136,70 +177,80 @@ Replace your `index.js` file with the following code:
 |    { field: "rocket" }
 |  ]);
 |
-|  // Container: Defines the grid's theme & dimensions.
-|  return (
-|    &lt;div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
-|      {/* The AG Grid component, with Row Data & Column Definition props */}
-|      &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
-|    &lt;/div>
-|  );
-|}
+|  // ...
 |
-|// Render GridExample
-|const root = createRoot(document.getElementById('root'));
-|root.render(&lt;GridExample />);
+|}
 </snippet>
+
+This is a basic example of Row Data & Column Definitions. The column definitions will access data via the provided `field` property, which maps directly to fields inside of the `rowData` objects.
+
+## Rendering the Grid
+
+Then, return the `AgGridReact` component (wrapped in a container div) with `rowData` and `colDefs` as props:
+
+<snippet transform={false} language="jsx">
+|return (
+|  // Container
+|  &lt;div>
+|    {/* The AG Grid component */}
+|    &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
+|  &lt;/div>
+|)
+</snippet>
+
+## Styling the Grid
+
+Finally, configure the theme & dimensions for the grid, which are controlled by the grid's container element.
+
+In the container `<div>` add the `ag-theme-quartz` CSS class to apply the Quartz theme and specify a height:
+
+<snippet transform={false} language="jsx">
+|// Container with theme & dimensions
+|&lt;div className="ag-theme-quartz" style={{ height: 500 }}>
+|  {/* The AG Grid component */}
+|  &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
+|&lt;/div>
+</snippet>
+
+<note>
+Other included themes can be found on the [Themes](../themes/) page.
+</note>
 
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 
-<!-- Create-->
+## Create a Component
 
-Replace the `app.component.ts` file with the following code:
+Then, create a new component in your application with the required dependencies:
 
 <snippet transform={false} language="jsx">
 |import { Component } from '@angular/core';
-|import { AgGridModule } from 'ag-grid-angular'; // Angular Grid Logic
-|import { ColDef } from 'ag-grid-community'; // Column Definitions Interface
-|
-|// Row Data Interface
-|interface IRow {
-|  mission: string;
-|  company: string;
-|  location: string;
-|  date: string;
-|  time: string;
-|  rocket: string;
-|  price: number;
-|  successful: boolean;
-|}
+|import { AgGridAngular } from 'ag-grid-angular';
+|import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 |
 |@Component({
 |  selector: 'app-root',
 |  standalone: true,
-|  imports: [AgGridModule], // Add AG Grid Module to component
+|  imports: [AgGridAngular], // Add AG Grid component
 |  styleUrls: ['./app.component.css'],
-|  template:
-|  `
-|   &lt;div class="content">
-|     &lt;!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
-|     &lt;ag-grid-angular
-|       style="width: 600px; height: 500px;"
-|       class="ag-theme-quartz"
-|       [rowData]="rowData"
-|       [columnDefs]="colDefs">
-|     &lt;/ag-grid-angular>
-|   &lt;/div>
-|  `
+|  template: ``
 |})
 |
+|export class AppComponent {}
+</snippet>
+
+## Row Data & Column Definitions
+
+Next, add the `rowData` and `colDefs` arrays to your component to define the data and how it should be displayed:
+
+<snippet transform={false} language="jsx">
 |export class AppComponent {
 |  // Row Data: The data to be displayed.
-|  rowData: IRow[] = [
-|    { mission: "CRS SpX-25", company: "SpaceX", location: "LC-39A, Kennedy Space Center, Florida, USA", date: "2022-07-15", time: "0:44:00", rocket: "Falcon 9 Block 5", price: 12480000, successful: true },
-|    { mission: "LARES 2 & Cubesats", company: "ESA", location: "ELV-1, Guiana Space Centre, French Guiana, France", date: "2022-07-13", time: "13:13:00", rocket: "Vega C", price: 4470000, successful: true },
-|    { mission: "Wise One Looks Ahead (NROL-162)", company: "Rocket Lab", location: "Rocket Lab LC-1A, Māhia Peninsula, New Zealand", date: "2022-07-13", time: "6:30:00", rocket: "Electron/Curie", price: 9750000, successful: true }
+|  rowData = [
+|    { mission: "Voyager", company: "NASA", location: "Cape Canaveral", date: "1977-09-05", rocket: "Titan-Centaur ", price: 86580000, successful: true },
+|    { mission: "Apollo 13", company: "NASA", location: "Kennedy Space Center", date: "1970-04-11", rocket: "Saturn V", price: 3750000, successful: false },
+|    { mission: "Falcon 9", company: "SpaceX", location: "Cape Canaveral", date: "2015-12-22", rocket: "Falcon 9", price: 9750000, successful: true }
 |  ];
 |
 |  // Column Definitions: Defines & controls grid columns.
@@ -215,34 +266,59 @@ Replace the `app.component.ts` file with the following code:
 |}
 </snippet>
 
-Replace the `styles.css` file with the following code:
+This is a basic example of Row Data & Column Definitions. The column definitions will access data via the provided `field` property, which maps directly to fields inside of the `rowData` objects.
+
+## Rendering the Grid
+
+Then, add the `ag-grid-angular` component to the template with `rowData` and `colDefs` as props:
+
+<snippet transform={false} language="jsx">
+|template:
+|`
+|  &lt;!-- The AG Grid component -->
+|  &lt;ag-grid-angular
+|    [rowData]="rowData"
+|    [columnDefs]="colDefs">
+|  &lt;/ag-grid-angular>
+|`
+</snippet>
+
+## Styling the Grid
+
+Finally, configure the theme & dimensions for the grid. First, import the required dependencies into your `styles.css` file:
 
 <snippet transform={false} language="css">
 |/* Core Grid CSS */
 |@import 'ag-grid-community/styles/ag-grid.css';
-|/* Theme Specific CSS */
+|/* Quartz Theme Specific CSS */
 |@import 'ag-grid-community/styles/ag-theme-quartz.css';
 </snippet>
+
+Then add the `class` and `style` props to the `ag-grid-angular` component to define the theme and dimensions for the grid:
+
+<snippet transform={false} language="jsx">
+|&lt;ag-grid-angular
+|  class="ag-theme-quartz"
+|  style="height: 500px;"
+|  ...
+|>
+|&lt;/ag-grid-angular>
+</snippet>
+
+<note>
+Other included themes can be found on the [Themes](../themes/) page.
+</note>
 
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
 
-<!-- Create-->
+## Create a Component
 
-Replace the `app.vue` file with the following code:
+Then, create a new component in your application with the required dependencies:
 
 <snippet transform={false} language="html">
-|&lt;template>
-|  &lt;!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
-|  &lt;ag-grid-vue
-|    style="width: 500px; height: 500px"
-|    class="ag-theme-quartz"
-|    :rowData="rowData"
-|    :columnDefs="colDefs"
-|  >
-|  &lt;/ag-grid-vue>
-|&lt;/template>
+|&lt;template>&lt;/template>
 |
 |&lt;script>
 |import { ref } from 'vue';
@@ -255,43 +331,88 @@ Replace the `app.vue` file with the following code:
 |  components: {
 |    AgGridVue, // Add AG Grid Vue3 component
 |  },
-|  setup() {
-|    // Row Data: The data to be displayed.
-|    const rowData = ref([
-|    { mission: "CRS SpX-25", company: "SpaceX", location: "LC-39A, Kennedy Space Center, Florida, USA", date: "2022-07-15", time: "0:44:00", rocket: "Falcon 9 Block 5", price: 12480000, successful: true },
-|    { mission: "LARES 2 & Cubesats", company: "ESA", location: "ELV-1, Guiana Space Centre, French Guiana, France", date: "2022-07-13", time: "13:13:00", rocket: "Vega C", price: 4470000, successful: true },
-|    { mission: "Wise One Looks Ahead (NROL-162)", company: "Rocket Lab", location: "Rocket Lab LC-1A, Māhia Peninsula, New Zealand", date: "2022-07-13", time: "6:30:00", rocket: "Electron/Curie", price: 9750000, successful: true }
-|    ]);
-|
-|    // Column Definitions: Defines & controls grid columns.
-|    const colDefs = ref([
-|      { field: "mission" },
-|      { field: "company" },
-|      { field: "location" },
-|      { field: "date" },
-|      { field: "price" },
-|      { field: "successful" },
-|      { field: "rocket" }
-|    ]);
-|
-|    return {
-|      rowData,
-|      colDefs,
-|    };
-|  },
+|  setup() {},
 |};
 |&lt;/script>
 </snippet>
 
+## Row Data & Column Definitions
+
+Next, add the `rowData` and `colDefs` arrays to your component to define the data and how it should be displayed:
+
+<snippet transform={false} language="js">
+|setup() {
+|  // Row Data: The data to be displayed.
+|  const rowData = ref([
+|    { mission: "Voyager", company: "NASA", location: "Cape Canaveral", date: "1977-09-05", rocket: "Titan-Centaur ", price: 86580000, successful: true },
+|    { mission: "Apollo 13", company: "NASA", location: "Kennedy Space Center", date: "1970-04-11", rocket: "Saturn V", price: 3750000, successful: false },
+|    { mission: "Falcon 9", company: "SpaceX", location: "Cape Canaveral", date: "2015-12-22", rocket: "Falcon 9", price: 9750000, successful: true }
+|    ]);
+|
+|  // Column Definitions: Defines & controls grid columns.
+|  const colDefs = ref([
+|    { field: "mission" },
+|    { field: "company" },
+|    { field: "location" },
+|    { field: "date" },
+|    { field: "price" },
+|    { field: "successful" },
+|    { field: "rocket" }
+|  ]);
+|
+|  return {
+|    rowData,
+|    colDefs,
+|  };
+|},
+</snippet>
+
+This is a basic example of Row Data & Column Definitions. The column definitions will access data via the provided `field` property, which maps directly to fields inside of the `rowData` objects.
+
+## Rendering the Grid
+
+Then, add the `ag-grid-vue` component to the component template with `rowData` and `colDefs` as props:
+
+<snippet transform={false} language="html">
+|&lt;template>
+|  &lt;!-- The AG Grid component -->
+|  &lt;ag-grid-vue
+|    :rowData="rowData"
+|    :columnDefs="colDefs"
+|  >
+|  &lt;/ag-grid-vue>
+|&lt;/template>
+</snippet>
+
+## Styling the Grid
+
+Finally, configure the theme & dimensions for the grid by adding the class and style props to the `ag-grid-vue` component to define the theme and dimensions for the grid:
+
+<snippet transform={false} language="html">
+|&lt;template>
+|  &lt;!-- The AG Grid component -->
+|  &lt;ag-grid-vue
+|    style="height: 500px"
+|    class="ag-theme-quartz"
+|    // ...
+|  >
+|  &lt;/ag-grid-vue>
+|&lt;/template>
+</snippet>
+
+<note>
+Other included themes can be found on the [Themes](../themes/) page.
+</note>
+
 </framework-specific-section>
 
-## Run
+## Result
 
-When you run your application, you should see a basic grid with three rows:
+When you run your application, you should see a basic grid with three rows. To see the full code, click the `</> Code` button below the example.
 
-<grid-example title='Quick Start Example' name='quick-start-example' type='mixed' options='{ "exampleHeight": 201 }'></grid-example>
+<grid-example title='Quick Start Example' name='quick-start-example' type='mixed' options='{ "exampleHeight": 350 }'></grid-example>
 
-_Note: To live-edit the code, open the example in CodeSandbox or Plunkr using the buttons in the lower-right_
+<note>To live-edit the code, open the example in CodeSandbox or Plunkr using the buttons to the lower-right.</note>
 
 ## Next Steps
 

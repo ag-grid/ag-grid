@@ -320,9 +320,6 @@ export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eCh
         return;
     }
 
-    const focusedEl = document.activeElement as HTMLElement;
-    const eChildHasFocus = eChild.contains(focusedEl);
-
     if (eChildBefore) {
         if (eChildBefore.nextSibling) {
             // insert between the eRowBefore and the row after it
@@ -337,10 +334,6 @@ export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eCh
             // insert it at the first location
             eContainer.insertAdjacentElement('afterbegin', eChild);
         }
-    }
-
-    if (eChildHasFocus && focusedEl && browserSupportsPreventScroll()) {
-        focusedEl.focus({ preventScroll: true });
     }
 }
 

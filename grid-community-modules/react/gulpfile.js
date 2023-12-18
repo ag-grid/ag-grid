@@ -50,7 +50,7 @@ function tscTask() {
             }))
             .pipe(rename((path) => {
                 let { extname} = path;
-                if(extname === '.js') {
+                if (extname === '.js') {
                     path.extname = extname.replace('.js', '.mjs')
                 }
                 return path;

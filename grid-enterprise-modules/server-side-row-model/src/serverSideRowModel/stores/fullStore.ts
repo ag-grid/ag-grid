@@ -322,7 +322,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
 
         this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
-        if(this.postSortFunc) {
+        if (this.postSortFunc) {
             const params: WithoutGridCommon<PostSortRowsParams> = { nodes: this.nodesAfterSort };
             this.postSortFunc(params);
         }

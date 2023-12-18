@@ -318,15 +318,12 @@ export class SetFilterListItem<V> extends Component {
             this.setTooltip(tooltipValue);
         }
 
-        this.cellRendererParams = {
+        this.cellRendererParams = this.gridOptionsService.addGridCommonParams({
             value,
             valueFormatted: formattedValue,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             colDef: this.params.colDef,
             column: this.params.column,
-        };
+        });
     }
 
     public getTooltipParams(): WithoutGridCommon<ITooltipParams> {

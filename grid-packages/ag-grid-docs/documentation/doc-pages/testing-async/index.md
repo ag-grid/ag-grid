@@ -41,13 +41,13 @@ The expected behaviour can be seen in the example below by entering the text "Ge
 
  ## Configuring the Test Module
 
- The first part of the test is to configure the test module. It requires AG Grid's `AgGridModule` and also Angular's `FormModule` to provided support for `ngModel`.
+ The first part of the test is to configure the test module. It requires the `AgGridAngular` component and also Angular's `FormModule` to provided support for `ngModel`.
 
  ```ts
 beforeEach(() => {
     TestBed.configureTestingModule({
         declarations: [AppComponent],
-        imports: [AgGridModule, FormsModule],
+        imports: [AgGridAngular, FormsModule],
     });
     // Create the test component fixture
     fixture = TestBed.createComponent(AppComponent);

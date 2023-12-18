@@ -16,7 +16,7 @@ const LICENSE_TYPES = {
 }
 
 export class LicenseManager {
-    private static RELEASE_INFORMATION: string = 'MTcwMDc2MzcxODkzNg==';
+    private static RELEASE_INFORMATION: string = 'MTcwMjI5MjcxNTE0OQ==';
     private static licenseKey: string;
     private watermarkMessage: string | undefined = undefined;
 
@@ -273,7 +273,7 @@ export class LicenseManager {
         console.error('*****************************************************************************************************************');
         console.error('***************************************** AG Grid Enterprise License ********************************************');
         console.error('********************************************* Invalid License ***************************************************');
-        if(exists(incorrectLicenseType) && incorrectLicenseType && licenseType === 'CHARTS') {
+        if (exists(incorrectLicenseType) && incorrectLicenseType && licenseType === 'CHARTS') {
             console.error('* The license supplied is for AG Charts Enterprise Only and does not cover AG Grid Enterprise                   *');
         }
         console.error('* Your license for AG Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');

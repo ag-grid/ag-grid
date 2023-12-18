@@ -1,9 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-import {isProductionBuild, localPrefix, rootLocalPrefix} from '../../../utils/consts';
+import {agGridEnterpriseVersion, isProductionBuild, localPrefix, rootLocalPrefix} from '../../../utils/consts';
 
 const helmet = [];
-if(!isProductionBuild()) {
+if (!isProductionBuild()) {
     helmet.push(
         <link
             key="live-streaming-theme"
@@ -23,7 +23,7 @@ if(!isProductionBuild()) {
     helmet.push(
         <script
             key="enterprise-lib"
-            src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js"
+            src={`https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`}
             type="text/javascript"
         />
     );

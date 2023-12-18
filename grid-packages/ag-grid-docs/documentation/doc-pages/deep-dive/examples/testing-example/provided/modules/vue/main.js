@@ -1,7 +1,11 @@
 import Vue from 'vue';
-import { AgGridVue } from "ag-grid-vue";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import { AgGridVue } from "@ag-grid-community/vue";
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 const CompanyLogoRenderer = {
   template: 
@@ -52,7 +56,7 @@ const App = {
         :class="themeClass"
         :columnDefs="colDefs"
         :rowData="rowData"
-        :defaultColDef="defaultColDefs"
+        :defaultColDef="defaultColDef"
         :pagination="true"
         :rowSelection="'multiple'"
         @cell-value-changed="onCellValueChanged"
@@ -100,7 +104,7 @@ const App = {
         { field: "rocket" },
       ],
       // Default Column Definitions: Apply configurations to all columns
-      defaultColDefs: {
+      defaultColDef: {
         filter: true,
         editable: true
       },

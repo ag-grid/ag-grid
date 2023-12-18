@@ -235,7 +235,7 @@
     }
 
     function initLiveStreamUpdates() {
-        if(document.querySelector("#integrated-charting-grid") && window.agGrid) {
+        if (document.querySelector("#integrated-charting-grid") && window.agGrid) {
             var eGridDiv = document.querySelector("#integrated-charting-grid");
             api = agGrid.createGrid(eGridDiv, gridOptions);
             startWorker();

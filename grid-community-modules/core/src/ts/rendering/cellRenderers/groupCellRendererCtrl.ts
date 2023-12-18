@@ -151,8 +151,9 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (!topLevelFooter) {
             const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
-            // if we're not showing a group value
-            const isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') === 'singleColumn' || this.gridOptionsService.get('treeData');
+            // if we're always showing a group value
+            const isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') != 'multipleColumns' || this.gridOptionsService.get('treeData');
+            // if the cell is populated with a parent value due to `showOpenedGroup`
             const showOpenGroupValue = (
                 isAlwaysShowing || (this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && (
                     (
@@ -168,9 +169,11 @@ export class GroupCellRendererCtrl extends BeanStub {
             const leafWithValues = !node.group && (this.params.colDef?.field || this.params.colDef?.valueGetter);
             // doesn't have expand/collapse chevron
             const isExpandable = this.isExpandable();
+            // is showing pivot leaf cell
+            const showPivotModeLeafValue = this.columnModel.isPivotMode() && node.leafGroup && node.rowGroupColumn?.getColId() === params.column?.getColDef().showRowGroup;
 
             // if not showing any values or chevron, skip cell.
-            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal;
+            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal && !showPivotModeLeafValue;
             if (canSkipRenderingCell) {
                 return;
             }
@@ -407,7 +410,9 @@ export class GroupCellRendererCtrl extends BeanStub {
                 console.warn('AG Grid: footerValueGetter should be either a function or a string (expression)');
             }
         } else {
-            footerValue = 'Total ' + (this.params.value != null ? this.params.value : '');
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const footerTotalPrefix = localeTextFunc('footerTotal', 'Total');
+            footerValue = footerTotalPrefix + ' ' + (this.params.value != null ? this.params.value : '');
         }
 
         const innerCompDetails = this.getInnerCompDetails(this.params);

@@ -118,7 +118,7 @@ When we run our application, we should see a grid with ~1,400 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
-_Note: There are a large number of APIs available. See our [API Docs](/api/) for an exhaustive list._
+_Note: There are a large number of APIs available. See our [API Docs](/grid-api/) for an exhaustive list._
 
 ---
 
@@ -352,7 +352,7 @@ _Note: Column properties can be used to configure a wide-range of features; refe
 
 <!-- Default Column Definitions -->
 
-The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by adding the `defaultColDefs` property to our Grid Options object, and setting `filter: true`:
+The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by adding the `defaultColDef` property to our Grid Options object, and setting `filter: true`:
 
 <snippet transform={false} language="jsx">
 |const gridOptions = {
@@ -377,17 +377,17 @@ _Note: Column Definitions take precedence over Default Column Definitions_
 
 <!-- Default Column Definitions -->
 
-The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by creating a `defaultColDefs` object, setting `filter: true`, and passing this to the grid via the `defaultColDef` prop:
+The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by creating a `defaultColDef` object, setting `filter: true`, and passing this to the grid via the `defaultColDef` prop:
 
 <snippet transform={false} language="jsx">
 |// Apply settings across all columns
-|const defaultColDefs = useMemo(() => ({
+|const defaultColDef = useMemo(() => ({
 |  filter: true // Enable filtering on all columns
 |}))
 |
 |&lt;div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
 |  &lt;AgGridReact
-|    defaultColDef={defaultColDefs}
+|    defaultColDef={defaultColDef}
 |    //...
 |  />
 |&lt;/div>
@@ -407,7 +407,7 @@ _Note: Column Definitions take precedence over Default Column Definitions_
 
 <!-- Default Column Definitions -->
 
-The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by creating a `defaultColDefs` object, setting `filter: true`, and passing this to our template:
+The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by creating a `defaultColDef` object, setting `filter: true`, and passing this to our template:
 
 <snippet transform={false} language="jsx">
 |@Component({
@@ -416,7 +416,7 @@ The example above demonstrates how to configure a single column. To apply this c
 |  &lt;div class="content">
 |    &lt;ag-grid-angular
 |      ...
-|      [defaultColDef]="defaultColDefs"
+|      [defaultColDef]="defaultColDef"
 |    >
 |    &lt;/ag-grid-angular>
 |  &lt;/div>
@@ -426,7 +426,7 @@ The example above demonstrates how to configure a single column. To apply this c
 |
 |export class AppComponent {
 |  // Default Column Definitions: Apply configuration across all columns
-|  defaultColDefs: ColDef = {
+|  defaultColDef: ColDef = {
 |    filter: true
 |  }
 |  // ...
@@ -447,18 +447,18 @@ _Note: Column Definitions take precedence over Default Column Definitions_
 
 <!-- Default Column Definitions -->
 
-The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by creating a `defaultColDefs` object with the property `filter: true`:
+The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by creating a `defaultColDef` object with the property `filter: true`:
 
 <snippet transform={false} language="jsx">
 |const App = {
 |  setup() {
-|    const defaultColDefs = ref({
+|    const defaultColDef = ref({
 |      filter: true
 |    });
 |    // ...
 |  }
 |  return {
-|    defaultColDefs
+|    defaultColDef
 |    // ...
 |  };
 |  // ...
@@ -476,7 +476,7 @@ And then adding this to our `ag-grid-vue` component:
 |      class="ag-theme-quartz-dark"
 |      :columnDefs="colDefs"
 |      :rowData="rowData"
-|      :defaultColDef="defaultColDefs"
+|      :defaultColDef="defaultColDef"
 |    >
 |    &lt;/ag-grid-vue>
 |    `,
@@ -593,7 +593,7 @@ Grid Options are added directly to the `ag-grid-vue` component. Let's test this 
 |      class="ag-theme-quartz-dark"
 |      :columnDefs="colDefs"
 |      :rowData="rowData"
-|      :defaultColDef="defaultColDefs"
+|      :defaultColDef="defaultColDef"
 |      :pagination="true"
 |    >
 |    &lt;/ag-grid-vue>
@@ -988,7 +988,7 @@ In the last section of this tutorial we're going to hook into events raised by t
 To be notified of when an event is raised by the grid we need to use the relevant `on[EventName]` prop on the grid component. Let's try this out by enabling cell editing with `editable: true` and hooking into the `onCellValueChanged` event to log the new value to the console:
 
 <snippet transform={false} language="jsx">
-|const defaultColDefs = useMemo(() => ({
+|const defaultColDef = useMemo(() => ({
 |  editable: true, // Enable editing on all cells
 |  // ...
 |}))
@@ -1024,7 +1024,7 @@ Let's try this out by enabling cell editing with `editable: true` on the Default
 
 <snippet transform={false} language="ts">
 |// Default Column Definitions: Apply configuration across all columns
-|defaultColDefs: ColDef = {
+|defaultColDef: ColDef = {
 |  editable: true
 |  // ...
 |}
@@ -1084,7 +1084,7 @@ To be notified of when an event is raised by the grid we need to use the relevan
 |    }
 |  },
 |  setup() {
-|    const defaultColDefs = ref({
+|    const defaultColDef = ref({
 |      editable: true,
 |      // ...
 |    });

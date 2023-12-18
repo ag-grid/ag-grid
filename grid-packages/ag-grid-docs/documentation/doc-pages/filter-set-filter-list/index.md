@@ -117,7 +117,7 @@ const gridOptions = {
 </snippet>
 
 <note>
-A custom [Cell Renderer Component](/component-cell-renderer/) can also be supplied to `filterParams.cellRenderer`.
+A custom [Cell Renderer Component](../component-cell-renderer/) can also be supplied to `filterParams.cellRenderer`.
 </note>
 
 

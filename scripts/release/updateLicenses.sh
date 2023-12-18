@@ -2,8 +2,8 @@
 
 SOURCE_DIR="core"
 
-COMMUNITY_ROOTS=("grid-community-modules" "charts-community-modules")
-ENTERPRISE_ROOTS=("grid-enterprise-modules" "charts-enterprise-modules")
+COMMUNITY_ROOTS=("grid-community-modules")
+ENTERPRISE_ROOTS=("grid-enterprise-modules")
 
 SOURCE_COMMUNITY_LICENSE=./grid-community-modules/core/LICENSE.txt
 SOURCE_ENTERPRISE_LICENSE=./grid-enterprise-modules/core/LICENSE.txt

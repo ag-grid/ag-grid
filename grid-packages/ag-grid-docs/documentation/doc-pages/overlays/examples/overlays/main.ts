@@ -24,9 +24,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     // custom loading template. the class ag-overlay-loading-center is part of the grid,
     // it gives a white background and rounded border
     overlayLoadingTemplate:
-        '<div style="position:absolute;top:0;left:0;right:0; bottom:0; background: url(https://ag-grid.com/images/ag-grid-loading-spinner.svg) center no-repeat" aria-label="loading"></div>',
+        '<div aria-live="polite" aria-atomic="true" style="position:absolute;top:0;left:0;right:0; bottom:0; background: url(https://ag-grid.com/images/ag-grid-loading-spinner.svg) center no-repeat" aria-label="loading"></div>',
     overlayNoRowsTemplate:
-        '<span style="padding: 10px; border: 2px solid #666; background: #55AA77;">This is a custom \'no rows\' overlay</span>',
+        '<span aria-live="polite" aria-atomic="true" style="padding: 10px; border: 2px solid #666; background: #55AA77;">This is a custom \'no rows\' overlay</span>',
 }
 
 function onBtShowLoading() {

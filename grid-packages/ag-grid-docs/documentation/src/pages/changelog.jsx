@@ -2,18 +2,17 @@ import classnames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
 import GlobalContextConsumer from '../components/GlobalContext';
-import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
-import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
-import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
 import { Icon } from '../components/Icon';
 import ReleaseVersionNotes from '../components/release-notes/ReleaseVersionNotes.jsx';
 import { hostPrefix } from '../utils/consts';
+import { IssueColDef, IssueTypeColDef } from '../utils/grid/issueColDefs';
 import styles from './pipelineChangelog.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
 const ALL_FIX_VERSIONS = 'All Versions';
+
 
 const Changelog = ({ location }) => {
     const extractFixVersionParameter = (location) => {
@@ -33,25 +32,19 @@ const Changelog = ({ location }) => {
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
     const [markdownContent, setMarkdownContent] = useState(undefined);
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location) || ALL_FIX_VERSIONS);
+    const [hideExpander, setHideExpander] = useState(fixVersion === ALL_FIX_VERSIONS);
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
     const autoSizeStrategy = useMemo(() => ({ type: 'fitGridWidth' }), []);
 
-    const components = useMemo(() => {
-        return {
-            myDetailCellRenderer: DetailCellRenderer,
-            paddingCellRenderer: PaddingCellRenderer,
-            chevronButtonCellRenderer: ChevronButtonCellRenderer,
-            issueTypeCellRenderer: IssueTypeCellRenderer,
-        };
-    }, []);
-
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
-            const versionsFilterComponent = gridApi.getFilterInstance('versions');
-            const newModel = { values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: 'set' };
-            versionsFilterComponent.setModel(newModel);
-            gridApi.onFilterChanged();
+             const versionsFilterComponent = gridApi.getFilterInstance('version');
+             const newModel = fixVersion === ALL_FIX_VERSIONS ? null : { values: [fixVersion], filterType: 'set' };
+             if(versionsFilterComponent.getModel() === newModel) return;
+             versionsFilterComponent.setModel(newModel).then(() => {;
+                gridApi.onFilterChanged();
+            });
         }
     }, [gridApi, fixVersion, versions]);
 
@@ -61,6 +54,10 @@ const Changelog = ({ location }) => {
             .then((data) => {
                 const gridVersions = [ALL_FIX_VERSIONS, ...data.map((row) => row.versions[0])];
                 setVersions([...new Set(gridVersions)]);
+                data.forEach((row) => {
+                    // Only one version per row
+                    row.version = row.versions[0];
+                });
                 setRowData(data);
             });
         fetch(`${hostPrefix}/changelog/releaseVersionNotes.json`)
@@ -72,7 +69,7 @@ const Changelog = ({ location }) => {
 
     useEffect(() => {
         applyFixVersionFilter();
-    }, [gridApi, fixVersion, versions, applyFixVersionFilter]);
+    }, [fixVersion]);
 
     useEffect(() => {
         let releaseNotesVersion = fixVersion;
@@ -87,8 +84,10 @@ const Changelog = ({ location }) => {
             );
 
             let currentReleaseNotesHtml = null;
-
+            let newHideExpander = hideExpander;
             if (releaseNotes) {
+                newHideExpander = !releaseNotes['showExpandLink'] && releaseNotes["markdown"];
+            
                 if (releaseNotes['markdown']) {
                     fetch(`${hostPrefix}/changelog` + releaseNotes['markdown'])
                         .then((response) => response.text())
@@ -104,7 +103,11 @@ const Changelog = ({ location }) => {
                         .join(' ');
                     setMarkdownContent(undefined);
                 }
+            } else {
+                newHideExpander = true;
             }
+
+            setHideExpander(newHideExpander);
             setCurrentReleaseNotes(currentReleaseNotesHtml);
         }
     }, [fixVersion, allReleaseNotes]);
@@ -221,35 +224,7 @@ const Changelog = ({ location }) => {
 
     const COLUMN_DEFS = useMemo(
         () => [
-            {
-                colId: 'key',
-                field: 'key',
-                headerName: 'Issue',
-                width: 150,
-                cellRendererSelector: (params) => {
-                    if (
-                        params.node.data.moreInformation ||
-                        params.node.data.deprecationNotes ||
-                        params.node.data.breakingChangesNotes
-                    ) {
-                        return {
-                            component: 'chevronButtonCellRenderer',
-                        };
-                    }
-                    return {
-                        component: 'paddingCellRenderer',
-                    };
-                },
-                filter: 'agSetColumnFilter',
-                filterParams: {
-                    comparator: (a, b) => {
-                        const valA = parseInt(a);
-                        const valB = parseInt(b);
-                        if (valA === valB) return 0;
-                        return valA > valB ? -1 : 1;
-                    }
-                }
-            },
+            IssueColDef,
             {
                 field: 'summary',
                 tooltipField: 'summary',
@@ -259,26 +234,12 @@ const Changelog = ({ location }) => {
                 filter: 'agTextColumnFilter'
             },
             {
-                field: 'versions',
+                field: 'version',
                 headerName: 'Version',
-                width: 145,
                 filter: 'agSetColumnFilter',
-                filterParams: {
-                    comparator: (a, b) => {
-                        const valA = parseInt(a);
-                        const valB = parseInt(b);
-                        if (valA === valB) return 0;
-                        return valA > valB ? -1 : 1;
-                    }
-                }
+                width: 145,                
             },
-            {
-                field: 'issueType',
-                valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),
-                cellRenderer: 'issueTypeCellRenderer',
-                width: 175,
-                resizable: false
-            },
+            IssueTypeColDef,
             {
                 field: 'status',
                 valueGetter: (params) => {
@@ -310,7 +271,7 @@ const Changelog = ({ location }) => {
                             versions={versions}
                             fixVersion={fixVersion}
                             onChange={switchDisplayedFixVersion}
-                            hideExpander={fixVersion === ALL_FIX_VERSIONS}
+                            hideExpander={hideExpander}
                         />
                     </section>
 
@@ -335,12 +296,11 @@ const Changelog = ({ location }) => {
                                     gridHeight={'70.5vh'}
                                     columnDefs={COLUMN_DEFS}
                                     rowData={rowData}
-                                    components={components}
                                     defaultColDef={defaultColDef}
                                     detailRowAutoHeight={true}
                                     enableCellTextSelection={true}
                                     detailCellRendererParams={detailCellRendererParams}
-                                    detailCellRenderer={'myDetailCellRenderer'}
+                                    detailCellRenderer={DetailCellRenderer}
                                     isRowMaster={isRowMaster}
                                     masterDetail
                                     autoSizeStrategy={autoSizeStrategy}

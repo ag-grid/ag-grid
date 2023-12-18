@@ -21,7 +21,7 @@ export const hostPrefix = `https://${isDevelopment() && !IS_SSR && window.locati
 // determines if we're prod or archives - the latter uses dev artefacts and prod doesn't
 export const isProductionBuild = () => (!isDevelopment() && process.env.GATSBY_HOST ==='www.ag-grid.com' && !process.env.GATSBY_ROOT_DIRECTORY);
 export const isPreProductionBuild = () => (!isDevelopment() && process.env.GATSBY_HOST ==='www.ag-grid.com' && process.env.GATSBY_ROOT_DIRECTORY && process.env.GATSBY_ROOT_DIRECTORY.includes('/archive/'));
-export const isBuildServerBuild = () => (!isDevelopment() && process.env.GATSBY_HOST ==='build.ag-grid.com' && !process.env.GATSBY_ROOT_DIRECTORY);
+export const isBuildServerBuild = () => (!isDevelopment() && process.env.GATSBY_HOST ==='grid-staging.ag-grid.com' && !process.env.GATSBY_ROOT_DIRECTORY);
 
 // used in docs app code to determine if prod type features should be exposed
 export const isProductionEnvironment = () => (isProductionBuild() || isPreProductionBuild());

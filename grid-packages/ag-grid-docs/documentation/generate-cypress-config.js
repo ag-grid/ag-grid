@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * This script is used to generate config to drive the Cypress tests that are run against build.ag-grid.com in TeamCity.
+ * This script is used to generate config to drive the Cypress tests that are run against grid-staging.ag-grid.com in TeamCity.
  * The build will produce the file cypress.config.AUTO.json which will be collected as an artifact of the full build and then
  * used by the Cypress job in TeamCity to run the correct tests.
  */

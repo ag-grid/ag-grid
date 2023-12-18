@@ -3,7 +3,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { ICellRendererParams } from "@ag-grid-community/core";
 
 @Component({
-    selector: 'mood-cell',
+    standalone: true,
     template: `<img width="20px" [src]="imgForMood" />`
 })
 export class MoodRenderer implements ICellRendererAngularComp {

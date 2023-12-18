@@ -70,7 +70,6 @@ export class SelectAllFeature extends BeanStub {
     private showOrHideSelectAll(): void {
         this.cbSelectAllVisible = this.isCheckboxSelection();
         this.cbSelectAll.setDisplayed(this.cbSelectAllVisible, { skipAriaHidden: true });
-
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
             this.checkRightRowModelType('selectAllCheckbox');
@@ -103,6 +102,8 @@ export class SelectAllFeature extends BeanStub {
         );
 
         this.cbSelectAll.setValue(allSelected!);
+        const hasNodesToSelect = this.selectionService.hasNodesToSelect(this.isFilteredOnly(), this.isCurrentPageOnly());
+        this.cbSelectAll.setDisabled(!hasNodesToSelect);
         this.refreshSelectAllLabel();
 
         this.processingEventFromCheckbox = false;
@@ -178,13 +179,10 @@ export class SelectAllFeature extends BeanStub {
 
         if (typeof result === 'function') {
             const func = result as (params: HeaderCheckboxSelectionCallbackParams) => boolean;
-            const params: HeaderCheckboxSelectionCallbackParams = {
+            const params: HeaderCheckboxSelectionCallbackParams = this.gridOptionsService.addGridCommonParams({
                 column: this.column,
-                colDef: this.column.getColDef(),
-                columnApi: this.gridOptionsService.columnApi,
-                api: this.gridOptionsService.api,
-                context: this.gridOptionsService.context
-            };
+                colDef: this.column.getColDef()
+            });
             result = func(params);
         }
 
@@ -202,9 +200,4 @@ export class SelectAllFeature extends BeanStub {
     private isCurrentPageOnly(): boolean {
         return !!this.column.getColDef().headerCheckboxSelectionCurrentPageOnly;
     }
-}
-
-interface SelectionCount {
-    selected: number;
-    notSelected: number;
 }

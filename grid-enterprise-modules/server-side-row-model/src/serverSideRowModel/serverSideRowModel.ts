@@ -161,7 +161,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     
         if (storeToExecuteOn instanceof LazyStore) {
             storeToExecuteOn.applyRowData(rowDataParams, startRow, rowDataParams.rowData.length);
-        } else if (storeToExecuteOn instanceof FullStore){
+        } else if (storeToExecuteOn instanceof FullStore) {
             storeToExecuteOn.processServerResult(rowDataParams);
         }
     }

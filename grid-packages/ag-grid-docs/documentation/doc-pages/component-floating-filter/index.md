@@ -110,7 +110,7 @@ This example uses the previous custom filter but implementing the `getModelAsStr
 
 <framework-specific-section frameworks="react">
 | Note that in this example we make use of `useImperativeHandle` for lifecycle methods - please
-| see [here](../react-hooks/) for more information.
+| see [here](/react-hooks/) for more information.
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">

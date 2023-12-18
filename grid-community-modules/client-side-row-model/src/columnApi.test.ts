@@ -1,6 +1,6 @@
 import { describe, expect, it, xit, xtest, test, jest, beforeEach, afterEach } from '@jest/globals';
 import { ClientSideRowModelModule } from './clientSideRowModelModule';
-import { GridOptions, GridReadyEvent, Grid, ColDef, ColGroupDef, createGrid } from '@ag-grid-community/core';
+import { GridReadyEvent, ColDef, ColGroupDef, createGrid, GridOptions } from '@ag-grid-community/core';
 
 const getColNames = (cols: any[] | undefined) => cols?.map(c => c.field ?? c.colId) ?? [];
 
@@ -21,7 +21,7 @@ const withGroups: (ColDef | ColGroupDef)[] = [
 describe('getColumnDefs', () => {
     test('simple columns', (done) => {
 
-        const options = {
+        const options: GridOptions = {
             columnDefs: onlyFields,
             onGridReady: (params: GridReadyEvent) => {
                 const defs1 = params.api.getColumnDefs();
@@ -37,7 +37,7 @@ describe('getColumnDefs', () => {
 
     test('with column groups', (done) => {
 
-        const options = {
+        const options: GridOptions = {
             columnDefs: withGroups,
             onGridReady: (params: GridReadyEvent) => {
                 const defs1 = params.api.getColumnDefs();
@@ -53,7 +53,7 @@ describe('getColumnDefs', () => {
 
     test('crashes after destroy', (done) => {
 
-        const options = {
+        const options: GridOptions = {
             columnDefs: withGroups,
             onGridReady: (params: GridReadyEvent) => {
 

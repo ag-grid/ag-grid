@@ -1,7 +1,11 @@
 import Vue from 'vue';
-import { AgGridVue } from "ag-grid-vue";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import { AgGridVue } from "@ag-grid-community/vue";
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 const App = {
   template: 
@@ -11,7 +15,7 @@ const App = {
         :class="themeClass"
         :columnDefs="columnDefs"
         :rowData="rowData"
-        :defaultColDef="defaultColDefs"
+        :defaultColDef="defaultColDef"
         :pagination="true"
     >
     </ag-grid-vue>
@@ -33,7 +37,7 @@ const App = {
         { field: "successful" },
         { field: "rocket" }
       ],
-      defaultColDefs: {
+      defaultColDef: {
         filter: true,
         editable: true
       },

@@ -16,28 +16,31 @@ type LicenseData = {
     priceFullDollars: string;
     launchPrice: any;
     buyLink: string;
+    learnMoreLink: string;
     Logo: any;
 };
 
 const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
-        id: 'single-application',
-        subHeading: 'AG Grid Enterprise',
+        id: 'grid',
+        subHeading: 'Enterprise',
         priceFullDollars: '999',
         launchPrice: null,
         licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
-        buyLink: '/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
+        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
+        learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
         Logo: AGGridLogo
     },
     {
         className: styles.chartsLicense,
-        id: 'single-application',
-        subHeading: 'AG Charts Enterprise',
+        id: 'charts',
+        subHeading: 'Enterprise',
         licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
         priceFullDollars: '399',
         launchPrice: '199',
-        buyLink: '/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
+        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
+        learnMoreLink: "https://charts.ag-grid.com/javascript/licensing/",
         Logo: AGChartsLogo
     },
 ];
@@ -51,19 +54,18 @@ const makeNonBreaking = (text: string) => {
 const Price = ({ priceFullDollars, launchPrice }) => {
     return (
         <div className={styles.price}>
-            <p className="font-size-small"><b>Starting at...</b></p>
-            { launchPrice && (
-                <>
-                    <p className={styles.standardPrice}>
-                        {priceFullDollars}
-                        <svg className={styles.standardPriceCross} viewBox="0 0 100 100" preserveAspectRatio="none">
-                            <path d="m0 0 100 100M100 0 0 100"/>
-                        </svg>
-                    </p>
-                </>
-            )}
-            <p className={styles.priceFullDollars}>{launchPrice ? launchPrice : priceFullDollars}</p>
-            <p className="font-size-small">
+            <p><b>Starting at...</b></p>
+            <p className={styles.priceFullDollars}>
+                {launchPrice ? launchPrice : priceFullDollars}
+                { launchPrice && (
+                    <>
+                        <span className={styles.standardPrice}>
+                            {priceFullDollars}
+                        </span>
+                    </>
+                )}
+            </p>
+            <p>
                 <b>Per Developer</b>
             </p>
         </div>
@@ -71,31 +73,31 @@ const Price = ({ priceFullDollars, launchPrice }) => {
 };
 
 const License = (props: LicenseData) => {
-    const { id, subHeading, licenseBenefits, priceFullDollars, launchPrice, buyLink, Logo } = props;
+    const { id, subHeading, licenseBenefits, priceFullDollars, launchPrice, buyLink, learnMoreLink, Logo } = props;
 
     return (
         <>
             <div className={classnames(styles.top, 'top')}>
                 <div className={styles.licenseMeta}>
                     <Logo className={styles.logo}/>
-                    <p className="font-size-small">{subHeading}<Icon name="enterprise" /></p>
+                    <p className="font-size-small"><Icon name="enterprise" /> {subHeading}</p>
                 </div>
 
                 <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
 
                 <div className={styles.licenseBenefits}>
-                    <ul className="font-size-small list-style-none">
+                    <ul className="list-style-none">
                         {licenseBenefits.map((benefit, i) => {
-                            return <li key={i}>{makeNonBreaking(benefit)}</li>;
+                            return <li key={i}><Icon name="tick"/> {makeNonBreaking(benefit)}</li>;
                         })}
                     </ul>
 
-                    <a className={classnames(styles.learnMoreLink, 'font-size-small')} href={`#${id}`}>
+                    <a className={classnames(styles.learnMoreLink, 'font-size-small')} href={learnMoreLink}>
                         Learn more
                     </a>
                 </div>
 
-                
+
                 <div className={styles.launchExplainer}>
                     { launchPrice && (
                         <>
@@ -109,6 +111,7 @@ const License = (props: LicenseData) => {
                     <a
                         className="button"
                         href={buyLink}
+                        target="_blank"
                         onClick={() => {
                             trackBuyButton({
                                 type: id,
@@ -128,7 +131,7 @@ export const Licenses: FunctionComponent = () => {
         <>
             {DEV_LICENSE_DATA.map((data) => {
                 return (
-                    <div key={data.name} className={classnames(styles.license, data.className, 'card')}>
+                    <div key={data.id} className={classnames(styles.license, data.className)}>
                         <License {...data} />
                     </div>
                 );

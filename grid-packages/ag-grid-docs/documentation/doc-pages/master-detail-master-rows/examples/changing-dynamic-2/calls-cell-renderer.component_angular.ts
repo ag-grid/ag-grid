@@ -3,7 +3,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { ICellRendererParams } from '@ag-grid-community/core';
 
 @Component({
-    selector: 'app-loading-cell-renderer',
+    standalone: true,
     template: `<span class="calls-cell-renderer">
                     <button (click)="onAdd()">+</button>
                     <button (click)="onRemove()">-</button>

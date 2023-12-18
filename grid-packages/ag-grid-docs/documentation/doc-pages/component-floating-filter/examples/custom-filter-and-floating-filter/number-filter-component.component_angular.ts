@@ -1,10 +1,12 @@
 import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 
 import { IFilterAngularComp } from "@ag-grid-community/angular";
 import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
 
 @Component({
-    selector: 'number-component',
+    standalone: true,
+    imports: [FormsModule],
     template: `
       <div style="padding: 4px">
       <div style="font-weight: bold;">Greater than:</div>

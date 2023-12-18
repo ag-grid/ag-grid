@@ -40,7 +40,7 @@ export class LazyBlockLoader extends BeanStub {
         const lastRowInViewport = this.api.getLastDisplayedRow();
 
         // quick look-up for priority rows needing loading in viewport.
-        for(let i = firstRowInViewport; i <= lastRowInViewport; i++) {
+        for (let i = firstRowInViewport; i <= lastRowInViewport; i++) {
             const node = this.cache.getNodeCachedByDisplayIndex(i);
 
             if (!node) {
@@ -54,7 +54,7 @@ export class LazyBlockLoader extends BeanStub {
                 continue;
             }
 
-            if(this.isRowLoading(lazyNode.index)) {
+            if (this.isRowLoading(lazyNode.index)) {
                 continue;
             }
 
@@ -72,7 +72,7 @@ export class LazyBlockLoader extends BeanStub {
                 return;
             }
 
-            if(this.isRowLoading(node.rowIndex)) {
+            if (this.isRowLoading(node.rowIndex)) {
                 return;
             }
         
@@ -138,15 +138,12 @@ export class LazyBlockLoader extends BeanStub {
             this.queueLoadAction();
         }
 
-        const params: IServerSideGetRowsParams = {
+        const params: IServerSideGetRowsParams = this.gridOptionsService.addGridCommonParams({
             request,
             success,
             fail,
-            parentNode: this.parentNode,
-            api: this.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            parentNode: this.parentNode
+        });
 
         addNodesToLoadingMap();
         this.cache.getSsrmParams().datasource?.getRows(params);

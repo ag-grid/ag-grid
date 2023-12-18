@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { NgClass, NgIf } from '@angular/common';
 import { IHeaderAngularComp } from '@ag-grid-community/angular'
 import { IHeaderParams } from '@ag-grid-community/core'
 
@@ -7,7 +8,8 @@ export interface ICustomHeaderParams {
 }
 
 @Component({
-    selector: 'app-custom-header',
+    standalone: true,
+    imports: [NgIf, NgClass],
     template: `
       <div>
       <div *ngIf="params.enableMenu" #menuButton class="customHeaderMenuButton" (click)="onMenuClicked($event)"><i class="fa {{params.menuIcon}}"></i>

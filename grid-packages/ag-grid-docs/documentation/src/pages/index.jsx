@@ -195,18 +195,12 @@ const Default = () => {
                             <img src="images/fw-logos/webpack.svg" alt="Webpack" />
 
                             <h3>Webpack</h3>
-                            <a href="https://medium.com/webpack/ag-grid-partners-with-webpack-24f8cf9d890b">
-                                Read about our Partnership with webpack.
-                            </a>
                         </li>
 
                         <li className={classNames(styles.project, styles.projectPlunker)}>
                             <img src="images/fw-logos/plunker.svg" alt="Plunker" />
 
                             <h3>Plunker</h3>
-                            <a href="https://medium.com/ag-grid/plunker-is-now-backed-by-ag-grid-601c17440fca">
-                                Read about our Backing of Plunker.
-                            </a>
                         </li>
                     </ul>
                 </section>

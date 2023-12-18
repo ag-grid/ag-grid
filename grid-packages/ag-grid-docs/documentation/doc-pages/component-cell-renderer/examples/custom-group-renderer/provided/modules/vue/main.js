@@ -71,7 +71,7 @@ const VueExample = {
                 .then((data) => updateData(data));
         },
         onCellDoubleClicked: (params) => {
-            if(params.colDef.showRowGroup) {
+            if (params.colDef.showRowGroup) {
                 params.node.setExpanded(!params.node.expanded);
             }
         },
@@ -85,7 +85,7 @@ const VueExample = {
             if (params.event.code !== "Enter") {
                 return;
             }
-            if(params.colDef.showRowGroup) {
+            if (params.colDef.showRowGroup) {
                 params.node.setExpanded(!params.node.expanded);
             }
         }

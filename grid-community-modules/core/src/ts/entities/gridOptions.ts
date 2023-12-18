@@ -84,7 +84,11 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
-    StateUpdatedEvent
+    StateUpdatedEvent,
+    ColumnHeaderMouseOverEvent,
+    ColumnHeaderMouseLeaveEvent,
+    ColumnHeaderClickedEvent,
+    ColumnHeaderContextMenuEvent,
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -1057,7 +1061,6 @@ export interface GridOptions<TData = any> {
     groupDefaultExpanded?: number;
     /**
      * Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
-     * @initial
      */
     autoGroupColumnDef?: ColDef<TData>;
     /**
@@ -1712,7 +1715,7 @@ export interface GridOptions<TData = any> {
 
     // *** Rows *** //
     /**
-     * Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
+     * Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
     getBusinessKeyForNode?: (node: IRowNode<TData>) => string;
@@ -1854,6 +1857,28 @@ export interface GridOptions<TData = any> {
      * Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.
      */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
+
+    // *** Column Header *** //
+
+    /**
+     * A mouse cursor is initially moved over a column header.
+     */
+    onColumnHeaderMouseOver?(event: ColumnHeaderMouseOverEvent<TData>): void;
+
+    /**
+     * A mouse cursor is moved out of a column header.
+     */
+    onColumnHeaderMouseLeave?(event: ColumnHeaderMouseLeaveEvent<TData>): void;
+
+    /**
+     * A click is performed on a column header.
+     */
+    onColumnHeaderClicked?(event: ColumnHeaderClickedEvent<TData>): void;
+
+    /**
+     * A context menu action, such as right-click or context menu key press, is performed on a column header.
+     */
+    onColumnHeaderContextMenu?(event: ColumnHeaderContextMenuEvent<TData>): void;
 
     // *** Components *** //
     /**

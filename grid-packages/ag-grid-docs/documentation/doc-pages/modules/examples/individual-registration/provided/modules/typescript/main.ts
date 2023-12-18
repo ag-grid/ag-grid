@@ -1,5 +1,5 @@
-import 'ag-grid-community/styles/ag-grid.css';
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import '@ag-grid-community/styles/ag-grid.css';
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';

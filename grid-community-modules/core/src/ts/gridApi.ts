@@ -42,7 +42,7 @@ import {
     TabToNextHeaderParams
 } from "./interfaces/iCallbackParams";
 import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
-import { AgEvent, ColumnEventType, FilterChangedEventSourceType, GridPreDestroyedEvent, SelectionEventSourceType } from "./events";
+import { AgEvent, AgEventListener, AgGlobalEventListener, ColumnEventType, FilterChangedEventSourceType, GridPreDestroyedEvent, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
 import { FocusService } from "./focusService";
@@ -540,7 +540,7 @@ export class GridApi<TData = any> {
      * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
-        this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback);
+        this.rowRenderer.addRenderedRowListener(eventName, rowIndex, callback as any);
     }
 
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
@@ -1046,7 +1046,7 @@ export class GridApi<TData = any> {
      * Listeners will be automatically removed when the grid is destroyed.
      */
     public addEventListener(eventType: string, listener: Function): void {
-        this.apiEventService.addEventListener(eventType, listener);
+        this.apiEventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /**
@@ -1054,17 +1054,17 @@ export class GridApi<TData = any> {
      * Listeners will be automatically removed when the grid is destroyed.
      */
     public addGlobalListener(listener: Function): void {
-        this.apiEventService.addGlobalListener(listener);
+        this.apiEventService.addGlobalListener(listener as AgGlobalEventListener);
     }
 
     /** Remove an event listener. */
     public removeEventListener(eventType: string, listener: Function): void {
-        this.apiEventService.removeEventListener(eventType, listener);
+        this.apiEventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove a global event listener. */
     public removeGlobalListener(listener: Function): void {
-        this.apiEventService.removeGlobalListener(listener);
+        this.apiEventService.removeGlobalListener(listener as AgGlobalEventListener);
     }
 
     public dispatchEvent(event: AgEvent): void {
@@ -1637,10 +1637,10 @@ export class GridApi<TData = any> {
      * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      **/
-    public sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number){
-        if(typeof paramsOrGridWidth === 'number'){
+    public sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
+        if (typeof paramsOrGridWidth === 'number') {
             this.columnModel.sizeColumnsToFit(paramsOrGridWidth, 'api');
-        }else{
+        } else {
             this.gridBodyCtrl.sizeColumnsToFit(paramsOrGridWidth);
         }
     }

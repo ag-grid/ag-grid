@@ -275,7 +275,7 @@ export class ColumnModel extends BeanStub {
         this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'], () => this.buildAutoGroupColumns());
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
-        this.addManagedPropertyListener('pivotMode', () => this.setPivotMode(this.gridOptionsService.get('pivotMode')));
+        this.addManagedPropertyListener('pivotMode', event => this.setPivotMode(this.gridOptionsService.get('pivotMode'), (event as any).source));
         this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());
     }
 
@@ -510,7 +510,7 @@ export class ColumnModel extends BeanStub {
         return true;
     }
 
-    public setPivotMode(pivotMode: boolean, source: ColumnEventType = 'api'): void {
+    private setPivotMode(pivotMode: boolean, source: ColumnEventType = 'api'): void {
         if (pivotMode === this.pivotMode || !this.isPivotSettingAllowed(this.pivotMode)) { return; }
 
         this.pivotMode = pivotMode;
@@ -2398,8 +2398,9 @@ export class ColumnModel extends BeanStub {
             this.dispatchColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
 
             const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
-            if (getChangedColumns(sortChangePredicate).length > 0) {
-                this.sortController.dispatchSortChangedEvents(source);
+            const changedColumns = getChangedColumns(sortChangePredicate);
+            if (changedColumns.length > 0) {
+                this.sortController.dispatchSortChangedEvents(source, changedColumns);
             }
 
             // special handling for moved column events
@@ -2518,12 +2519,8 @@ export class ColumnModel extends BeanStub {
         const flex = getValue('flex').value1;
         if (flex !== undefined) {
             column.setFlex(flex);
-        }
-
-        // width - we only set width if column is not flexing
-        const noFlexThisCol = column.getFlex() <= 0;
-        if (noFlexThisCol) {
-            // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
+        } else {
+            // if no flex, then use width if it's there
             const width = getValue('width').value1;
             if (width != null) {
                 if (minColWidth != null && width >= minColWidth) {
@@ -2755,16 +2752,13 @@ export class ColumnModel extends BeanStub {
         const headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {
-            const params: HeaderValueGetterParams = {
+            const params: HeaderValueGetterParams = this.gridOptionsService.addGridCommonParams({
                 colDef: colDef,
                 column: column,
                 columnGroup: columnGroup,
                 providedColumnGroup: providedColumnGroup,
-                location: location,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                location: location
+            });
 
             if (typeof headerValueGetter === 'function') {
                 // valueGetter is a function, so just call it

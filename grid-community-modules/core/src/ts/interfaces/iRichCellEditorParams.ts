@@ -8,9 +8,9 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
     /** The list of values to be selected from. */
     values: TValue[] | RichCellEditorValuesCallback<TData, TValue>;
     /** The row height, in pixels, of each value. */
-    cellHeight: number;
+    cellHeight?: number;
     /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */
-    cellRenderer: any;
+    cellRenderer?: any;
     /**
      * Set to `true` to be able to type values in the display area.
      * @default false
@@ -20,7 +20,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      * If `true` it will filter the list of values as you type (only relevant when `allowTyping=true`).
      * @default false
      */
-    filterList: true;
+    filterList?: boolean;
     /** 
      * The type of search algorithm that is used when searching for values. 
      *  - `match` - Matches if the value starts with the text typed.
@@ -59,7 +59,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      */
     valueListMaxWidth?: number | string;
      /** A callback function that allows you to change the displayed value for simple data. */
-    formatValue: (value: TValue | null | undefined) => string;
+    formatValue?: (value: TValue | null | undefined) => string;
 }
 
-export interface RichCellEditorParams<TData = any, TValue = any, TContext = any> extends IRichCellEditorParams<TData, TValue>, ICellEditorParams<TData, TValue, TContext> {}
+export interface RichCellEditorParams<TData = any, TValue = any, TContext = any> extends IRichCellEditorParams<TData, TValue>, Omit<ICellEditorParams<TData, TValue, TContext>, "formatValue"> {}

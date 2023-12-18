@@ -201,10 +201,10 @@ function getPackageInfo(options) {
 
   const pkgRoot = path.dirname(pkgPath);
 
-  // if(pkg.name === 'ag-charts-community' || (pkg.name.startsWith("@ag-grid") && options.opts.useEsmEs5)) {
+  // if (pkg.name === 'ag-charts-community' || (pkg.name.startsWith("@ag-grid") && options.opts.useEsmEs5)) {
   //   pkg['module'] = "./dist/esm/es5/main.js";
   // }
-  if((pkg.name.startsWith("@ag-grid") && options.opts.useEsmEs5)) {
+  if ((pkg.name.startsWith("@ag-grid") && options.opts.useEsmEs5)) {
     pkg['module'] = "./dist/esm/es5/main.js";
   }
 

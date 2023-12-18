@@ -6,12 +6,12 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 // be used with operations tied to the buttons. in this example, the cell renderer is just for
 // display purposes.
 @Component({
-    selector: 'simple-component',
+    standalone: true,
     template: `<div [innerHTML]="value"></div>`
 })
 export class MultilineCellRenderer implements ICellRendererAngularComp {
     private params!: ICellRendererParams;
-    private value: any;
+    public value: any;
 
     agInit(params: ICellRendererParams): void {
         this.params = params;
