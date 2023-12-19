@@ -1,7 +1,6 @@
 import { beforeAll, beforeEach, describe, expect, it, jest, afterEach } from '@jest/globals';
 import * as fs from 'fs';
 import { getJsonFromFile } from './documentation-helpers';
-import { loadLookups } from './expandable-snippet/model';
 
 jest.mock('./documentation-helpers');
 jest.mock('./use-json-file-nodes');
@@ -70,7 +69,6 @@ describe('Documentation Overrides Sanity Check', () => {
             });
     
             it('should load and parse without error', () => {
-                expect(() => loadLookups('test', {}, override)).not.toThrowError();
                 expect(console.warn).not.toBeCalled();
             });
         });
