@@ -1,5 +1,4 @@
-@use "sass:math";
-@use '../design-system' as *;
+@use '../core' as *;
 
 $z-index-base: 10000; // For automated example mouse
 $z-index-debug-canvas: $z-index-base + 10;
@@ -20,10 +19,8 @@ gatsby-fast-refresh {
 }
 
 .homepageHero {
-    --text-color: var(--white);
-
     padding-top: $spacing-size-10;
-    background-color: var(--dark-blue-600);
+    background-color: var(--color-bg-site-header);
 
     @media screen and (min-width: $breakpoint-hero-small) {
         padding-top: $spacing-size-16;
@@ -31,10 +28,6 @@ gatsby-fast-refresh {
 
     @media screen and (min-width: $breakpoint-hero-large) {
         padding-top: $spacing-size-24;
-    }
-
-    #{$darkmode-selector} & {
-        background-color: #121f29;
     }
 }
 
@@ -50,20 +43,19 @@ gatsby-fast-refresh {
 
     h1,
     h2 {
-        --line-height: var(--line-height-tight);
-
-        color: var(--text-color);
+        line-height: var(--text-lh-tight);
+        color: var(--color-white);
     }
 
     h1 {
-        --font-size: 28px;
+        font-size: 28px;
 
         @media screen and (min-width: $breakpoint-hero-small) {
-            --font-size: var(--font-size-massive);
+            font-size: var(--text-fs-2xl);
         }
 
         @media screen and (min-width: $breakpoint-hero-large) {
-            --font-size: min(3.4vw, 54px);
+            font-size: min(3.4vw, 54px);
 
             margin-top: -0.225em;
             margin-bottom: 0.5em;
@@ -77,13 +69,11 @@ gatsby-fast-refresh {
         margin-bottom: 1.4em;
 
         @media screen and (min-width: $breakpoint-hero-small) {
-            --font-size: 22px;
+            font-size: 22px;
         }
 
         @media screen and (min-width: $breakpoint-hero-large) {
-            --font-size: min(1.9vw, 30px);
-            --font-weight: var(--font-weight-thin);
-
+            font-size: min(1.9vw, 30px);
             max-width: unset;
         }
     }
@@ -103,8 +93,6 @@ gatsby-fast-refresh {
     display: flex;
     flex-direction: row-reverse;
     height: 320px;
-
-    // Pre hero grid load view
     background-color: #001223; // --ag-background-color;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
@@ -136,7 +124,7 @@ gatsby-fast-refresh {
 }
 
 .homepageFrameworks {
-    background-color: var(--bright-blue-gray);
+    background-color: var(--color-util-brand-100);
     padding-top: $spacing-size-4;
     padding-bottom: $spacing-size-12;
 
@@ -145,34 +133,8 @@ gatsby-fast-refresh {
     }
 
     #{$darkmode-selector} & {
-        background-color: #121f29;
-        border-bottom: 1px solid #394755;
-    }
-}
-
-.automatedRowGroupingOuter,
-.automatedIntegratedChartsOuter {
-    #{$darkmode-selector} & {
-        border-bottom: 1px solid #394755;
-    }
-}
-
-.homepageExample {
-    padding-top: $spacing-size-12;
-    padding-bottom: $spacing-size-16;
-
-    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
-        padding-top: $spacing-size-24;
-        padding-bottom: $size-9;
-    }
-}
-
-.automatedIntegratedChartsOuter {
-    margin-bottom: $spacing-size-24;
-    background-color: var(--background-500);
-
-    #{$darkmode-selector} & {
-        background-color: var(--default-background-color);
+        background-color: var(--color-util-gray-100);
+        border-bottom: 1px solid var(--color-border-primary);
     }
 }
 
@@ -193,23 +155,19 @@ gatsby-fast-refresh {
 }
 
 .frameworksLabel {
-    font-size: var(--font-size);
-    font-weight: var(--font-weight);
-
     @media screen and (min-width: 1020px) {
-        --font-size: var(--font-size-extra-large);
-        --font-weight: var(--font-weight-thin);
+        --font-size: var(--text--fs-xl);
     }
 
     #{$darkmode-selector} & {
-        color: var(--default-text-color);
+        color: var(--color-text-primary);
     }
 }
 
 .homepageQuotes {
     padding-top: $spacing-size-16;
     padding-bottom: $spacing-size-2;
-    background-color: var(--background-100);
+    background-color: var(--color-util-gray-50);
 
     @media screen and (min-width: 940px) {
         padding-top: $spacing-size-24;
@@ -218,11 +176,11 @@ gatsby-fast-refresh {
 }
 
 .homepageCustomers {
-    background-color: var(--background-100);
+    background-color: var(--color-util-gray-50);
     padding-bottom: $spacing-size-12;
 
     #{$darkmode-selector} & {
-        border-bottom: 1px solid #394755;
+        border-bottom: 1px solid var(--color-border-primary);
     }
 }
 
@@ -238,7 +196,7 @@ gatsby-fast-refresh {
         text-align: center;
 
         @media screen and (min-width: $breakpoint-hero-large) {
-            font-size: var(--font-size-extra-large);
+            font-size: var(--text-fs-xl);
         }
     }
 }
@@ -276,7 +234,7 @@ gatsby-fast-refresh {
     padding-bottom: $spacing-size-24;
 
     #{$darkmode-selector} & {
-        border-bottom: 1px solid #394755;
+        border-bottom: 1px solid var(--color-border-primary);
     }
 }
 
@@ -331,7 +289,7 @@ gatsby-fast-refresh {
 }
 
 [data-dark-mode='true'] .chartsLogo :global(#LogoType) > * {
-    fill: var(--default-text-color) !important;
+    fill: var(--color-white) !important; // !important used to override SVG inline styles
 }
 
 .chartsExample {
@@ -360,6 +318,32 @@ gatsby-fast-refresh {
     }
 }
 
+.automatedRowGroupingOuter,
+.automatedIntegratedChartsOuter {
+    #{$darkmode-selector} & {
+        border-bottom: 1px solid var(--color-border-primary);
+    }
+}
+
+.homepageExample {
+    padding-top: $spacing-size-12;
+    padding-bottom: $spacing-size-16;
+
+    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
+        padding-top: $spacing-size-24;
+        padding-bottom: $size-9;
+    }
+}
+
+.automatedIntegratedChartsOuter {
+    margin-bottom: $spacing-size-24;
+    background-color: var(--color-util-brand-100);
+
+    #{$darkmode-selector} & {
+        background-color: var(--color-fg-primary);
+    }
+}
+
 .sponsorshipInner {
     margin-bottom: $spacing-size-20;
 
@@ -370,10 +354,9 @@ gatsby-fast-refresh {
     }
 
     > div {
-        --line-height: var(--line-height-tight);
-
         text-align: center;
         margin-bottom: $spacing-size-10;
+        list-style: var(--text-lh-tight);
 
         @media screen and (min-width: $breakpoint-sponsorship-large) {
             text-align: unset;
@@ -441,15 +424,15 @@ gatsby-fast-refresh {
     right: 0;
     width: 220px;
     height: fit-content;
-    border-left: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    border-left: 1px solid var(--color-border-primary);
+    border-bottom: 1px solid var(--color-border-primary);
     background-color: rgba(255, 255, 255, 0.85);
     padding: $spacing-size-4;
     z-index: $z-index-debug-panel;
 
     :global(.disabled) {
         h2 {
-            color: var(--secondary-text-color);
+            color: var(--color-text-tertiary);
 
             &::after {
                 content: ' (disabled)';
@@ -458,10 +441,9 @@ gatsby-fast-refresh {
     }
 
     h2 {
-        font-size: $font-size-medium;
-        margin-bottom: $size-half;
+        font-size: var(--text-fs-base);
+        margin-bottom: $spacing-size-1;
         margin-top: $spacing-size-2;
-
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -470,7 +452,7 @@ gatsby-fast-refresh {
     :global(.state) {
         &::before {
             content: 'State: ';
-            color: var(--secondary-text-color);
+            color: var(--color-text-tertiary);
         }
     }
 
@@ -489,7 +471,7 @@ gatsby-fast-refresh {
     :global(.paused-state) {
         &::before {
             content: 'Paused at: ';
-            color: var(--secondary-text-color);
+            color: var(--color-text-tertiary);
         }
     }
 
@@ -498,8 +480,8 @@ gatsby-fast-refresh {
         justify-content: space-between;
 
         button:not([class^='ag-']) {
-            padding: $size-half;
-            line-height: $line-height-ultra-tight;
+            padding: $spacing-size-1;
+            line-height: var(--text-lh-ultra-tight);
         }
     }
 
@@ -514,7 +496,7 @@ gatsby-fast-refresh {
 
         &::before {
             content: 'Mouse: ';
-            color: var(--secondary-text-color);
+            color: var(--color-text-tertiary);
         }
     }
 
@@ -525,7 +507,7 @@ gatsby-fast-refresh {
 
         &::before {
             content: 'Manager: ';
-            color: var(--secondary-text-color);
+            color: var(--color-text-tertiary);
         }
     }
 }

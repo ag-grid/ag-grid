@@ -1,4 +1,4 @@
-@use '../design-system' as *;
+@use '../core' as *;
 
 .aboutPage {
     margin-top: $spacing-size-12;
@@ -10,12 +10,11 @@
 }
 
 .team {
-    --line-height: var(--line-height-tight);
-
     display: flex;
     flex-wrap: wrap;
     gap: $spacing-size-4;
     margin-bottom: calc($spacing-size-12 * 2);
+    line-height: var(--text-lh-tight);
 
     @media screen and (min-width: $breakpoint-about-small) {
         gap: $spacing-size-8;
@@ -39,17 +38,17 @@
 
     img {
         width: 100%;
-        border-radius: var(--border-radius);
+        border-radius: var(--radius-md);
     }
 
     h3 {
         margin-top: $spacing-size-2;
         margin-bottom: $size-half;
-        line-height: var(--line-height-tight);
+        line-height: var(--text-lh-tight);
     }
 
     p {
-        line-height: var(--line-height-tight);
+        line-height: var(--text-lh-tight);
     }
 }
 
