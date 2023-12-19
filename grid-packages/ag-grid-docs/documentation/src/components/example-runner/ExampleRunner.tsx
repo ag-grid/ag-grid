@@ -7,7 +7,7 @@ import VisibilitySensor from 'react-visibility-sensor';
 import isServerSideRendering from 'utils/is-server-side-rendering';
 import { OpenInCTA } from '../OpenInCTA';
 import CodeViewer from './CodeViewer';
-import styles from './ExampleRunner.module.scss';
+import styles from '@design-system/modules/ExampleRunner.module.scss';
 import ExampleRunnerResult from './ExampleRunnerResult';
 import { getExampleInfo, getIndexHtmlUrl, openPlunker, openCodeSandbox } from './helpers';
 import { getIndexHtml } from './index-html-helper';

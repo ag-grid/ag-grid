@@ -11,12 +11,16 @@
     label {
         display: block;
     }
+
+    > div:where(:not(:last-child)) {
+        margin-bottom: $spacing-size-2;
+    }
 }
 
 .simpleSelect {
     margin-left: 0;
-    padding: 0 $spacing-size-6 0 $spacing-size-1;
-    border: 1px solid (--color-input-border);
+    padding: 0 $spacing-size-6 0 0;
+    border: none;
 }
 
 .importInfoIcon svg {

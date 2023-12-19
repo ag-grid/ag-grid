@@ -3,7 +3,7 @@ import GlobalContextConsumer from 'components/GlobalContext';
 import { Icon } from 'components/Icon';
 import React from 'react';
 import isServerSideRendering from 'utils/is-server-side-rendering';
-import styles from './CodeOptions.module.scss';
+import styles from '@design-system/modules/CodeOptions.module.scss';
 import { trackExampleRunnerEvent } from './track-example-runner-event';
 
 const isGeneratedExample = (type) => ['generated', 'mixed', 'typescript'].includes(type);

@@ -5,7 +5,7 @@ import isServerSideRendering from 'utils/is-server-side-rendering';
 import Code from '../Code';
 import { Icon } from '../Icon';
 import CodeOptions from './CodeOptions';
-import styles from './CodeViewer.module.scss';
+import styles from '@design-system/modules/CodeViewer.module.scss';
 import { getEntryFile, getExampleFiles, stripOutDarkModeCode} from './helpers';
 import { trackExampleRunnerEvent } from './track-example-runner-event';
 
@@ -29,7 +29,7 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
     const exampleFiles = keys.filter((key) => !files[key].isFramework);
 
     return (
-        <div className={classnames(styles.codeViewer, { [styles.hidden]: !isActive, [styles.hideFiles]: !showFiles })}>
+        <div className={classnames(styles.codeViewer, styles.codeViewerBorder, { [styles.hidden]: !isActive, [styles.hideFiles]: !showFiles })}>
             <div className={styles.mobileHeader}>
                 <button
                     className={'button-style-none button-as-link'}
