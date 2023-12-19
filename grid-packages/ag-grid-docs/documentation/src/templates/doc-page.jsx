@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import { ApiDocumentation, InterfaceDocumentation } from 'components/ApiDocumentation';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
+import { ExpandableSnippet } from 'components/expandable-snippet/ExpandableSnippet';
 import FrameworkSpecificSection from 'components/FrameworkSpecificSection';
 import Gif from 'components/Gif';
 import { Icon } from 'components/Icon';
@@ -90,6 +91,14 @@ const DocPageTemplate = ({ data, path, pageContext: { framework, frameworks, exa
                     // NOTE: lowercased upstream
                     lineNumbers: props.linenumbers === 'true',
                     framework,
+                }),
+            'expandable-snippet': (props) =>
+                ExpandableSnippet({
+                    ...props,
+                    framework,
+                    exampleIndexData,
+                    breadcrumbs: props.breadcrumbs ? JSON.parse(props.breadcrumbs) : undefined,
+                    config: props.config != null ? JSON.parse(props.config) : undefined,
                 }),
             'icons-panel': (props) => <IconsPanel {...props} />,
             'image-caption': (props) => ImageCaption({ ...props, pageName }),
