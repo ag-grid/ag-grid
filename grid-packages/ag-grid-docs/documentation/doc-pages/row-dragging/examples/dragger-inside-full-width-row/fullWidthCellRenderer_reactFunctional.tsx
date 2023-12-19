@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-const FullWidthCellRenderer = forwardRef((params: ICellRendererParams, ref) => {
+const FullWidthCellRenderer = forwardRef((params: CustomCellRendererProps, ref) => {
     const myRef = useRef<HTMLDivElement>(null);
     const stopPropagation = (e: Event) => e.stopPropagation();
 

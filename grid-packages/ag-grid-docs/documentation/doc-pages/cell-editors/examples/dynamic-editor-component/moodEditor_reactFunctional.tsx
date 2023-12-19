@@ -1,9 +1,9 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { ICellEditorParams } from "@ag-grid-community/core";
+import { CustomCellEditorProps } from "@ag-grid-community/react";
 
 
-export default forwardRef((props: ICellEditorParams, ref) => {
+export default forwardRef((props: CustomCellEditorProps, ref) => {
     const isHappy = (value: string) => value === 'Happy';
 
     const [happy, setHappy] = useState(isHappy(props.value));

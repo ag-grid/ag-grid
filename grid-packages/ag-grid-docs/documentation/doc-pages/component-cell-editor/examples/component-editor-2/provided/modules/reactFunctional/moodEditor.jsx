@@ -1,30 +1,24 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
-export default forwardRef((props, ref) => {
-    const isHappy = value => value === 'Happy';
+export default memo(({ value, onValueChange, stopEditing }) => {
+    const isHappy = (value) => value === 'Happy';
 
     const [ready, setReady] = useState(false);
-    const [happy, setHappy] = useState(isHappy(props.value));
-    const [done, setDone] = useState(false);
     const refContainer = useRef(null);
 
     const checkAndToggleMoodIfLeftRight = (event) => {
         if (ready) {
             if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
                 const isLeft = event.key === 'ArrowLeft';
-                setHappy(isLeft);
+                onValueChange(isLeft ? 'Happy' : 'Sad');
                 event.stopPropagation();
             }
         }
     };
 
     useEffect(() => {
-        if (done) props.stopEditing();
-    }, [done]);
-
-    useEffect(() => {
-        ReactDOM.findDOMNode(refContainer.current).focus();
+        (ReactDOM.findDOMNode(refContainer.current)).focus();
         setReady(true);
     }, [])
 
@@ -36,13 +30,10 @@ export default forwardRef((props, ref) => {
         };
     }, [checkAndToggleMoodIfLeftRight, ready]);
 
-    useImperativeHandle(ref, () => {
-        return {
-            getValue() {
-                return happy ? 'Happy' : 'Sad';
-            }
-        };
-    });
+    const onClick = (happy) => {
+        onValueChange(happy ? 'Happy' : 'Sad');
+        stopEditing();
+    };
 
     const mood = {
         borderRadius: 15,
@@ -67,22 +58,16 @@ export default forwardRef((props, ref) => {
         padding: 4
     };
 
-    const happyStyle = happy ? selected : unselected;
-    const sadStyle = !happy ? selected : unselected;
+    const happyStyle = isHappy(value) ? selected : unselected;
+    const sadStyle = !isHappy(value) ? selected : unselected;
 
     return (
         <div ref={refContainer}
             style={mood}
             tabIndex={1} // important - without this the key presses wont be caught
         >
-            <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
-                setHappy(true);
-                setDone(true);
-            }} style={happyStyle} />
-            <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
-                setHappy(false);
-                setDone(true);
-            }} style={sadStyle} />
+            <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => onClick(true)} style={happyStyle} />
+            <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => onClick(false)} style={sadStyle} />
         </div>
     );
 });

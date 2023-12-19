@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { ICellRendererParams } from "@ag-grid-community/core";
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default (props: ICellRendererParams) => {
+export default (props: CustomCellRendererProps) => {
     const imageForMood = (mood: string) => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
 
     const mood = useMemo(() => imageForMood(props.value), [props.value]);

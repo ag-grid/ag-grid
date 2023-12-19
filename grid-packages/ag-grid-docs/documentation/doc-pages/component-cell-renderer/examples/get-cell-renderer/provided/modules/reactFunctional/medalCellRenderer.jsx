@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle} from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 
 export default forwardRef((props, ref) => {
     useImperativeHandle(ref, () => {

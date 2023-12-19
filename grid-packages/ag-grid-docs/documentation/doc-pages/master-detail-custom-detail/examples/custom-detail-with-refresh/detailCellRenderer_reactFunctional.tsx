@@ -1,12 +1,12 @@
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-const DetailCellRenderer = forwardRef((props: ICellRendererParams, ref) => {
+const DetailCellRenderer = forwardRef((props: CustomCellRendererProps, ref) => {
     const [callCount, setCallCount] = useState(props.data.calls);
 
     useImperativeHandle(ref, () => {
         return {
-            refresh(params: ICellRendererParams) {
+            refresh(params: CustomCellRendererProps) {
                 setCallCount(params.data.calls);
                  // tell the grid not to destroy and recreate
                 return true;

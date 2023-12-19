@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
-import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const SportRenderer = (props: ICellRendererParams) => {
+const SportRenderer = (props: CustomCellRendererProps) => {
     return (
         <i className="far fa-trash-alt"
             style={{ cursor: 'pointer' }}

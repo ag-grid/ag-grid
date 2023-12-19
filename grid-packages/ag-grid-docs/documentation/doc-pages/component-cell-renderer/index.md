@@ -207,7 +207,7 @@ The example below demonstrates custom methods on cell renderers called by the ap
 - The **First Row Gold** method executes a method on the gold cell of the first row only. Note that the `getCellRendererInstances()` method will return nothing if the grid is scrolled far past the first row showing row virtualisation in action.
 - The **All Cells** method executes a method on all instances of all cell renderers.
 
-<grid-example title='Get Cell Renderer' name='get-cell-renderer' type='generated'></grid-example>
+<grid-example title='Get Cell Renderer' name='get-cell-renderer' type='mixed'></grid-example>
 
 <framework-specific-section frameworks="react">
 <note>

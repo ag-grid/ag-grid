@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-const DetailCellRenderer = ({ data }: ICellRendererParams) => {
+const DetailCellRenderer = ({ data }: CustomCellRendererProps) => {
   const firstRecord = data.callRecords[0];
   const [callId, setCallId] = useState(firstRecord.callId);
   const [number, setNumber] = useState(firstRecord.number);

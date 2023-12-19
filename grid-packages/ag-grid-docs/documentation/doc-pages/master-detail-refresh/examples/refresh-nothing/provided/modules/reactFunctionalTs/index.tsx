@@ -3,8 +3,8 @@
 
 import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
-import { ColDef, FirstDataRenderedEvent, GetRowIdFunc, GetRowIdParams, GridReadyEvent, IDetailCellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridReact, CustomDetailCellRendererProps } from '@ag-grid-community/react';
+import { ColDef, FirstDataRenderedEvent, GetRowIdFunc, GetRowIdParams, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -65,7 +65,7 @@ const GridExample = () => {
                 // params.successCallback([]);
                 params.successCallback(params.data.callRecords);
             },
-        } as IDetailCellRendererParams<IAccount, ICallRecord>
+        } as CustomDetailCellRendererProps<IAccount, ICallRecord>
     }, []);
 
 

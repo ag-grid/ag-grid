@@ -1,13 +1,13 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
-import { ICellEditorParams } from "@ag-grid-community/core";
+import { CustomCellEditorProps } from "@ag-grid-community/react";
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
-export default forwardRef((props: ICellEditorParams, ref) => {
+export default forwardRef((props: CustomCellEditorProps, ref) => {
     const createInitialState = () => {
         let startValue;
 

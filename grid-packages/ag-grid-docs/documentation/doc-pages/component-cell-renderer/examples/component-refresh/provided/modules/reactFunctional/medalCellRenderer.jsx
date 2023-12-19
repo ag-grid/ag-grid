@@ -1,5 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
-import { useEffect } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
 export default forwardRef((props, ref) => {
     const [value, setValue] = useState(props.value);

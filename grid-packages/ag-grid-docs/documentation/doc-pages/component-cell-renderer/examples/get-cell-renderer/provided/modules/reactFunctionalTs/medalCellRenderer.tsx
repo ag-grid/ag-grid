@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
-import { CustomCellRendererProps } from "@ag-grid-community/react";
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
 export default forwardRef((props: CustomCellRendererProps, ref) => {
     useImperativeHandle(ref, () => {

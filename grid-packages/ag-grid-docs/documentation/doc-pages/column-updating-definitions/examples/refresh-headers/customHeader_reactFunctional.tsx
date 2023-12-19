@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
-import { IHeaderParams } from "@ag-grid-community/core";
+import { CustomHeaderProps } from "@ag-grid-community/react";
 
-const CustomHeader = (props: IHeaderParams) => {
+const CustomHeader = (props: CustomHeaderProps) => {
     const { enableMenu, displayName, showColumnMenu } = props;
     const menuButtonRef = useRef(null);
 

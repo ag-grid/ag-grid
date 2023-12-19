@@ -1,5 +1,5 @@
-import React, { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { ICellEditorParams } from "@ag-grid-community/core";
+import React, { memo, useCallback, useEffect,  useRef } from 'react';
+import { CustomCellEditorProps, useGridCellEditor } from '@ag-grid-community/react';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -9,51 +9,44 @@ const KEY_TAB = 'Tab';
 const KEY_ARROW_LEFT = 'ArrowLeft';
 const KEY_ARROW_RIGHT = 'ArrowRight';
 
-export default memo(forwardRef((props: ICellEditorParams, ref) => {
-    const createInitialState = () => {
+export default memo(({ value, onValueChange, eventKey, stopEditing }: CustomCellEditorProps) => {
+    const updateValue = (val: string) => {
+        onValueChange(val === '' ? null : parseInt(val));
+    };
+
+    useEffect(() => {
         let startValue;
         let highlightAllOnFocus = true;
-        const eventKey = props.eventKey;
 
         if (eventKey === KEY_BACKSPACE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (eventKey && eventKey.length === 1) {
             // if a letter was pressed, we start with the letter
-            startValue = props.eventKey;
+            startValue = eventKey;
             highlightAllOnFocus = false;
         } else {
             // otherwise we start with the current value
-            startValue = props.value;
+            startValue = value;
             if (eventKey === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }
+        if (startValue == null) {
+            startValue = '';
+        }
 
-        return {
-            value: startValue,
-            highlightAllOnFocus
-        };
-    };
+        updateValue(startValue);
 
-    const initialState = createInitialState();
-    const [value, setValue] = useState(initialState.value);
-    const [highlightAllOnFocus, setHighlightAllOnFocus] = useState(initialState.highlightAllOnFocus);
-    const refInput = useRef<HTMLInputElement>(null);
-
-    // focus on the input
-    useEffect(() => {
         // get ref from React component
         const eInput = refInput.current!;
         eInput.focus();
         if (highlightAllOnFocus) {
             eInput.select();
-
-            setHighlightAllOnFocus(false);
         } else {
             // when we started editing, we want the caret at the end, not the start.
-            // this comes into play in two scenarios:
-            //   a) when user hits F2
+            // this comes into play in two scenarios: 
+            //   a) when user hits F2 
             //   b) when user hits a printable character
             const length = eInput.value ? eInput.value.length : 0;
             if (length > 0) {
@@ -62,9 +55,7 @@ export default memo(forwardRef((props: ICellEditorParams, ref) => {
         }
     }, []);
 
-    /* Utility Methods */
-    const isCharacter = props.eventKey && props.eventKey.length === 1;
-    const cancelBeforeStart = isCharacter && ('1234567890'.indexOf(props.eventKey!) < 0);
+    const refInput = useRef<HTMLInputElement>(null);
 
     const isLeftOrRight = (event: any) => {
         return [KEY_ARROW_LEFT, KEY_ARROW_RIGHT].indexOf(event.key) > -1;
@@ -99,41 +90,35 @@ export default memo(forwardRef((props: ICellEditorParams, ref) => {
         }
 
         if (finishedEditingPressed(event)) {
-            props.stopEditing();
+            stopEditing();
         }
     };
 
-    /* Component Editor Lifecycle methods */
-    useImperativeHandle(ref, () => {
-        return {
-            // the final value to send to the grid, on completion of editing
-            getValue() {
-                return value === '' || value == null ? null : parseInt(value);
-            },
+    // Gets called once before editing starts, to give editor a chance to
+    // cancel the editing before it even starts.
+    const isCancelBeforeStart = useCallback(() => {
+        return !!eventKey && eventKey.length === 1 && ('1234567890'.indexOf(eventKey) < 0);
+    }, [eventKey]);
 
-            // Gets called once before editing starts, to give editor a chance to
-            // cancel the editing before it even starts.
-            isCancelBeforeStart() {
-                return cancelBeforeStart;
-            },
+    // Gets called once when editing is finished (eg if Enter is pressed).
+    // If you return true, then the result of the edit will be ignored.
+    const isCancelAfterEnd = useCallback(() => {
+        // will reject the number if it greater than 1,000,000
+        // not very practical, but demonstrates the method.
+        return value != null && value > 1000000;
+    }, [value]);
 
-            // Gets called once when editing is finished (eg if Enter is pressed).
-            // If you return true, then the result of the edit will be ignored.
-            isCancelAfterEnd() {
-                // will reject the number if it greater than 1,000,000
-                // not very practical, but demonstrates the method.
-                const finalValue = this.getValue();
-                return finalValue != null && finalValue > 1000000;
-            }
-        };
+    useGridCellEditor({
+        isCancelBeforeStart,
+        isCancelAfterEnd,
     });
 
     return (
         <input ref={refInput}
             value={value}
-            onChange={event => setValue(event.target.value)}
-            onKeyDown={event => onKeyDown(event)}
-            className='numeric-input'
+            onChange={(event: any) => updateValue(event.target.value)}
+            onKeyDown={(event: any) => onKeyDown(event)}
+            className="numeric-input"
         />
     );
-}));
+});

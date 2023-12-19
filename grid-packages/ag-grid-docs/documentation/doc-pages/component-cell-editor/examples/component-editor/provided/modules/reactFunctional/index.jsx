@@ -25,7 +25,9 @@ const DoublingEditor = memo(({ value, onValueChange }) => {
 
     useEffect(() => {
         // focus on the input
-        refInput.current?.focus();
+        if (refInput.current) {
+            refInput.current.focus();
+        }
 
         onValueChange(value * 2);
     }, []);
@@ -186,10 +188,10 @@ const NumericEditor = memo(({ value, onValueChange, eventKey, stopEditing }) => 
         }
     }, []);
 
-    const refInput = useRef<HTMLInputElement>(null);
+    const refInput = useRef(null);
 
     const isLeftOrRight = (event) => {
-        return ['ArrowLeft', 'ArrowLeft'].indexOf(event.key) > -1;
+        return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
     };
 
     const isCharNumeric = (charStr) => {
@@ -310,7 +312,7 @@ const GridExample = () => {
                     height: '100%',
                     width: '100%'
                 }}
-                className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     columnDefs={columnDefs}
                     rowData={rowData}
