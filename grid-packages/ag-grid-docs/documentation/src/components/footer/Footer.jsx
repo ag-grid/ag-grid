@@ -3,7 +3,7 @@ import DocumentationLink from 'components/DocumentationLink';
 import React from 'react';
 import { Icon } from '../Icon';
 import footerItems from './footer-items.json';
-import styles from '../../design-system/modules/Footer.module.scss';
+import styles from '@design-system/modules/Footer.module.scss';
 
 const MenuColumns = ({ framework = 'javascript' }) =>
     footerItems.map(({ title, links }) => (
