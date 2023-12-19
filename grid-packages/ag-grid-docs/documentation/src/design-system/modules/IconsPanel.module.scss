@@ -1,13 +1,13 @@
-@use '../design-system' as *;
+@use '../core' as *;
 
 .iconList {
     display: flex;
     flex-wrap: wrap;
     height: 34rem;
     overflow-y: scroll;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--color-border-primary);
     border-bottom: none;
-    box-shadow: inset 0 -1px 0 0 var(--border-color);
+    box-shadow: inset 0 -1px 0 0 var(--color-border-primary);
     container-type: size;
 }
 
@@ -22,11 +22,11 @@
     gap: $size-half;
     width: 50%;
     padding: $spacing-size-4 $spacing-size-2;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--color-border-primary);
 
     @container (max-width: #{$container-small}) {
         &:not(:nth-child(2n)) {
-            border-right: 1px solid var(--border-color);
+            border-right: 1px solid var(--color-border-primary);
         }
     }
 
@@ -34,7 +34,7 @@
         width: 33.3333%;
 
         &:not(:nth-child(3n)) {
-            border-right: 1px solid var(--border-color);
+            border-right: 1px solid var(--color-border-primary);
         }
     }
 
@@ -42,7 +42,7 @@
         width: 25%;
 
         &:not(:nth-child(4n)) {
-            border-right: 1px solid var(--border-color);
+            border-right: 1px solid var(--color-border-primary);
         }
     }
 

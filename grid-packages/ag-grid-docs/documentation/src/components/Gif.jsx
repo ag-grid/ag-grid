@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import React from 'react';
 import isDevelopment from 'utils/is-development';
 import isServerSideRendering from 'utils/is-server-side-rendering';
-import styles from './Gif.module.scss';
+import styles from '@design-system/modules/Gif.module.scss';
 import GlobalContextConsumer from './GlobalContext';
 import { getImage, useImageFileNodes } from './use-image-file-nodes';
 
