@@ -268,9 +268,9 @@ export class CellComp extends Component implements TooltipParentComp {
         const eParent = this.getParentOfValue();
         clearElement(eParent);
 
-        const escapedValue = valueToDisplay != null ? escapeString(valueToDisplay) : null;
+        const escapedValue = valueToDisplay != null ? escapeString(valueToDisplay, true) : null;
         if (escapedValue != null) {
-            eParent.innerHTML = escapedValue;
+            eParent.textContent = escapedValue;
         }
     }
 
