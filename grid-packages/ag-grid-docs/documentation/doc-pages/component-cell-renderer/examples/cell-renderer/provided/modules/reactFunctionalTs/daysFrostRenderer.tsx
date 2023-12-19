@@ -1,7 +1,7 @@
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 import React from 'react';
 
-export interface ImageCellRendererParams extends ICellRendererParams {
+export interface ImageCellRendererParams extends CustomCellRendererProps {
     rendererImage: string
 }
 

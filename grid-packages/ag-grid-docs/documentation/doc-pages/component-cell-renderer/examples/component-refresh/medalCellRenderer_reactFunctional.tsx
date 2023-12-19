@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default forwardRef((props: ICellRendererParams<IOlympicData, number>, ref) => {
+export default forwardRef((props: CustomCellRendererProps<IOlympicData, number>, ref) => {
     const [value, setValue] = useState(props.value);
 
     useEffect(() => {
@@ -10,7 +10,7 @@ export default forwardRef((props: ICellRendererParams<IOlympicData, number>, ref
 
     useImperativeHandle(ref, () => {
         return {
-            refresh(params: ICellRendererParams<IOlympicData, number>) {
+            refresh(params: CustomCellRendererProps<IOlympicData, number>) {
                 console.log('renderer refreshed');
                 setValue(params.value);
                 return true;

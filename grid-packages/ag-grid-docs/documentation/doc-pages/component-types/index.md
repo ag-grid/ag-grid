@@ -2,11 +2,7 @@
 title: "Component Types"
 ---
 
-<framework-specific-section frameworks="javascript">
-|You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
+<framework-specific-section frameworks="javascript,vue">
 |You can create your own custom components to customise the behaviour of the grid. For example you can customise how cells are rendered, how values are edited and also create your own filters.
 </framework-specific-section>
 

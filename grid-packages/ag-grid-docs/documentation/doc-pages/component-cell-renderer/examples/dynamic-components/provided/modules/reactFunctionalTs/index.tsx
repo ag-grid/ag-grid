@@ -4,17 +4,17 @@ import React, { useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi } from '@ag-grid-community/core';
+import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
-import { ColDef, ICellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const SquareRenderer = (props: ICellRendererParams) => {
+const SquareRenderer = (props: CustomCellRendererProps) => {
     const valueSquared = (value: any) => {
         return value * value;
     };
@@ -22,7 +22,7 @@ const SquareRenderer = (props: ICellRendererParams) => {
     return <span>{valueSquared(props.value)}</span>;
 };
 
-const CubeRenderer = (props: ICellRendererParams) => {
+const CubeRenderer = (props: CustomCellRendererProps) => {
     const valueCubed = (value: any) => {
         return value * value * value;
     };
@@ -30,11 +30,11 @@ const CubeRenderer = (props: ICellRendererParams) => {
     return <span>{valueCubed(props.value)}</span>;
 };
 
-const ParamsRenderer = (props: ICellRendererParams) => {
+const ParamsRenderer = (props: CustomCellRendererProps) => {
     return <span>Field: {props.colDef?.field}, Value: {props.value}</span>;
 };
 
-const CurrencyRenderer = (props: ICellRendererParams) => {
+const CurrencyRenderer = (props: CustomCellRendererProps) => {
     const value = useMemo(() => props.value, [props.value]);
 
     const formatValueToCurrency = (currency: string, value: any) => {
@@ -44,7 +44,7 @@ const CurrencyRenderer = (props: ICellRendererParams) => {
     return <span>{formatValueToCurrency('EUR', value)}</span>;
 };
 
-const ChildMessageRenderer = (props: ICellRendererParams) => {
+const ChildMessageRenderer = (props: CustomCellRendererProps) => {
     const invokeParentMethod = () => {
         props.context.methodFromParent(`Row: ${props.node.rowIndex}, Col: ${props.colDef?.field}`);
     };

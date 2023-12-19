@@ -12,7 +12,7 @@ The example below shows a few cell editors in action.
 
 <grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370, "includeNgFormsModule" : true }'></grid-example>
 
-## Implementing a Cell Editor
+## Implementing a Cell Editor Component
 
 md-include:component-interface-javascript.md 
 md-include:component-interface-angular.md

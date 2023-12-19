@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { IToolPanelParams } from "@ag-grid-community/core";
+import { CustomToolPanelProps } from "@ag-grid-community/react";
 
 const totalStyle = { paddingBottom: '15px' };
 
-export default (props: IToolPanelParams) => {
+export default (props: CustomToolPanelProps) => {
     const [numMedals, setNumMedals] = useState(0);
     const [numGold, setNumGold] = useState(0);
     const [numSilver, setNumSilver] = useState(0);

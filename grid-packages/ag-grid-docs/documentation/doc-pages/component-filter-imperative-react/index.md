@@ -134,7 +134,7 @@ The interface for a custom filter component is as follows:
 
 <note>
 |Note that you will need to expose the lifecycle/callback methods (for example, the `doesFilterPass` callback) with
-|`forwardRef` & `useImperativeHandle`.
+|`forwardRef` and `useImperativeHandle`.
 </note>
 
 ### Custom Filter Parameters

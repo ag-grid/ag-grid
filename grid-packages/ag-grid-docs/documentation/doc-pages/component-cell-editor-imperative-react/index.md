@@ -10,6 +10,26 @@ frameworks: ["react"]
 An example cell editor component looks like this:
 
 <snippet transform={false} language="jsx">
+|export default forwardRef((props, ref) => {
+|    const [value, setValue] = useState(props.value);
+|
+|    /* Component Cell Editor Lifecycle methods */
+|    useImperativeHandle(ref, () => {
+|        return {
+|            getValue() {
+|                return value;
+|            },
+|        };
+|    });
+|
+|    return (
+|        &lt;input
+|            type="text"
+|            value={value || ''}
+|            onChange={({ target: { value: newValue }}) => setValue(newValue))}
+|        />
+|    );
+|});
 </snippet>
 
 ## Custom Cell Editor Interface
@@ -43,7 +63,7 @@ The interface for a custom cell editor component is as follows:
 
 <note>
 |Note that you will need to expose the lifecycle/callback methods (for example, the `getValue` callback) with
-|`forwardRef` & `useImperativeHandle`.
+|`forwardRef` and `useImperativeHandle`.
 </note>
 
 ### Custom Cell Editor Parameters

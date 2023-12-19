@@ -8,7 +8,7 @@ The example below shows two custom filters. The first is on the `Athlete` column
 
 <grid-example title='Filter Component' name='custom-filter' type='mixed' options='{ "includeNgFormsModule" : true}'></grid-example>
 
-## Implementing a Custom Filter
+## Implementing a Filter Component
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md

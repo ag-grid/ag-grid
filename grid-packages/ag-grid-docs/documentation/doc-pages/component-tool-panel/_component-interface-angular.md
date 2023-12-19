@@ -1,8 +1,5 @@
 <framework-specific-section frameworks="angular">
-|## Tool Panel Interface
-|
 |Implement this interface to create a tool panel component.
-|
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">

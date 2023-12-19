@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
-import { ICellRendererParams } from "@ag-grid-community/core";
+import { CustomCellRendererProps } from "@ag-grid-community/react";
 
-export default forwardRef((props: ICellRendererParams, ref) => {
+export default forwardRef((props: CustomCellRendererProps, ref) => {
     useImperativeHandle(ref, () => {
         return {
             medalUserFunction() {

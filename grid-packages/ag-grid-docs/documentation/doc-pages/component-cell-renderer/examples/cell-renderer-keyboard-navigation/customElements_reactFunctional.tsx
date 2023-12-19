@@ -1,7 +1,7 @@
 import React from "react"
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default ({ data }: ICellRendererParams) => {
+export default ({ data }: CustomCellRendererProps) => {
   return (
     <div className="custom-element">
       <button>Age: {data.age ? data.age : '?'}</button>

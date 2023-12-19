@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { IStatusPanelParams } from "@ag-grid-community/core";
+import { CustomStatusPanelProps } from "@ag-grid-community/react";
 
-export default (props: IStatusPanelParams) => {
+export default (props: CustomStatusPanelProps) => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {

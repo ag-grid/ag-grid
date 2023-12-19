@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ICellRendererParams, RowEvent } from '@ag-grid-community/core';
+import { RowEvent } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default (props: ICellRendererParams) => {
+export default (props: CustomCellRendererProps) => {
     const { node, value } = props;
     const [expanded, setExpanded] = useState(node.expanded);
   

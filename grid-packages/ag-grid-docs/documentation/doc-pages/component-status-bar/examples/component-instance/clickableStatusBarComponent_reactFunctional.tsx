@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
-import { IStatusPanelParams } from "@ag-grid-community/core";
+import { CustomStatusPanelProps } from "@ag-grid-community/react";
 
-export default forwardRef((props: IStatusPanelParams, ref) => {
+export default forwardRef((props: CustomStatusPanelProps, ref) => {
     const [visible, setVisible] = useState(true);
 
     const onClick = () => {

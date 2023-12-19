@@ -7,14 +7,23 @@ The Status Bar Panel allows you to add your own components to the grid's Status 
 
 <grid-example title='Status Bar Panel' name='simple-component' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 
+## Implementing a Status Bar Panel Component
+
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
-## Status Panel Parameters
+<framework-specific-section frameworks="javascript,angular,vue">
+<interface-documentation interfaceName='IStatusPanelParams'></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomStatusPanelProps'></interface-documentation>
+</framework-specific-section>
 
-<interface-documentation interfaceName='IStatusPanelParams' ></interface-documentation>
+<framework-specific-section frameworks="react">
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom status bar panels, however your status bar panel will not update with prop changes, but will instead be destroyed/recreated..</note>
+</framework-specific-section>
 
 ## Configuring Status Bar Panels
 
@@ -47,6 +56,10 @@ md-include:init-vue.md
 After the grid has created an instance of a status bar component it is possible to access that instance. This is useful if you want to call a method that you provide on the status bar component that has nothing to do with the operation of the grid. Accessing a status bar component is done using the grid API `getStatusPanel(key)`.
 
 <api-documentation source='grid-api/api.json' section='accessories' names='["getStatusPanel"]'></api-documentation>
+
+<framework-specific-section frameworks="react">
+|The instances returned by the grid will be wrapper components that match the provided grid status bar panel components. To get the React custom status bar panel component, the helper function `getInstance` can be used with this.
+</framework-specific-section>
 
 The example below shows using `getStatusPanel`:
 
