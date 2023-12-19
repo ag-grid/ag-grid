@@ -1,16 +1,14 @@
-@use "../design-system/" as *;
+@use '../core' as *;
 
 .exampleWrapper {
     display: flex;
     flex-direction: column;
     overflow: auto;
-
     max-width: 100%;
     width: 100%;
     height: 100%;
     min-height: calc(100vh - #{$site-header-height});
-
-    background-color: white;
+    background-color: var(--color-bg-primary);
 
     #{$darkmode-selector} & {
         min-height: calc(100vh - #{$site-header-height} - 2px);
@@ -22,18 +20,8 @@
     filter: invert(100%);
 }
 
-.exampleWrapperDark {
-    background-color: #101828;
-}
-
-@media (prefers-color-scheme: dark) {
-    .exampleWrapperAuto {
-        background-color: #0a161f;
-    }
-}
-
 .gridWrapper {
-    margin-top: $spacing-size-4;
+    padding: var(--layout-gap);
     flex: 1 1 auto;
     overflow: hidden;
     display: flex;

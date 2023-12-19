@@ -1,26 +1,22 @@
-@use "sass:map";
-@use "../design-system/" as *;
+@use '../core' as *;
 
 $toolbar-width: 1050px;
 
 .toolbar {
     width: 100%;
     position: relative;
-    background-color: var(--color-bg-primary);
+    background-color: var(--color-util-brand-100);
 
     #{$darkmode-selector} & {
+        background-color: var(--color-bg-primary);
         border-bottom: 1px solid var(--color-border-primary);
     }
 }
 
 .controlsContainer {
-    padding: ($spacing-size-2 + 1px) $spacing-size-4 $spacing-size-2;
+    padding-top: $spacing-size-2;
+    padding-bottom: $spacing-size-2;
     overflow: auto;
-
-    @media screen and (min-width: $breakpoint-site-header-small) {
-        padding-right: $spacing-size-6;
-        padding-left: $spacing-size-6;
-    }
 }
 
 .controls {
@@ -41,7 +37,7 @@ $toolbar-width: 1050px;
     right: 0;
     height: 100%;
     width: 70px;
-    background: linear-gradient(90deg, transparent 0%, var(--toolbar-background) 110%);
+    background: linear-gradient(90deg, transparent 0%, var(--color-util-brand-100) 110%);
     pointer-events: none;
 
     @media (min-width: $toolbar-width) {
@@ -54,15 +50,11 @@ $toolbar-width: 1050px;
     align-items: center;
     gap: 4px;
 
-    #{$darkmode-selector} & {
-        color: var(--default-text-color);
-    }
-
     :global(.icon) {
         fill: #f00;
 
         #{$darkmode-selector} & {
-            fill: var(--default-text-color);
+            fill: var(--color-text-primary);
         }
     }
 }
