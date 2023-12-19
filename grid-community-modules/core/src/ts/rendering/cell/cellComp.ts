@@ -270,7 +270,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const escapedValue = valueToDisplay != null ? escapeString(valueToDisplay, true) : null;
         if (escapedValue != null) {
-            eParent.textContent = escapedValue;
+            eParent.innerHTML = escapedValue;
         }
     }
 
