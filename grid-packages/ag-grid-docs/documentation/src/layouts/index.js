@@ -8,7 +8,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import '../design-system/design-system.scss';
 import favIcons from '../images/favicons';
-import styles from './index.module.scss';
+import styles from '@design-system/modules/GridIndex.module.scss';
 import menuData from '../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../doc-pages/licensing/api-menu.json';
 import { getCurrentFramework } from '../utils/local-storage';
