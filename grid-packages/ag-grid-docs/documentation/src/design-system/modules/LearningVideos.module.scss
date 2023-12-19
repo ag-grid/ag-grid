@@ -1,4 +1,4 @@
-@use '../design-system' as *;
+@use '../core' as *;
 
 .learningVideos {
     display: flex;
@@ -18,20 +18,20 @@
 }
 
 .title {
-    font-size: var(--font-size-extra-large);
+    font-size: var(--text-fs-lg);
 }
 
 .video {
     display: flex;
     gap: $spacing-size-4;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
     padding: $spacing-size-4;
     margin: $spacing-size-4;
     transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
     width: calc(100% - 2 * $spacing-size-4);
     box-sizing: border-box;
-    color: var(--text-color);
+    color: var(--color-text-primary);
 
     @media screen and (max-width: 1200px) {
         flex-direction: column;
@@ -39,14 +39,14 @@
     }
 
     #{$darkmode-selector} & {
-        color: var(--default-text-color);
+        color: var(--color-text-primary);
         text-decoration: none !important;
-        background: rgb(18, 31, 41);
-        border: 1px solid var(--border-color);
+        background: var(--color-bg-secondary);
+        border: 1px solid var(--color-border-primary);
     }
 
     .duration {
-        font-size: var(--font-size-medium);
+        font-size: var(--text-fs-base);
         background: transparent;
         padding: 0 $spacing-size-2;
         border-radius: var(--border-radius);
@@ -56,7 +56,7 @@
     &:hover {
         border-color: var(--link-hover-color);
         #{$darkmode-selector} & {
-            border: 1px solid #6c6d70;
+            border: 1px solid var(--color-util-gray-400);
         }
     }
 
@@ -70,8 +70,8 @@
 
     img {
         width: auto;
-        border-radius: var(--border-radius);
-        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-border-primary);
         transition: border-color $default-transition-timing;
 
         @media screen and (max-width: 600px) {
@@ -98,8 +98,8 @@
     }
 
     li {
-        color: var(--text-color);
-        font-size: var(--font-size-medium);
+        color: var(--color-text-primary);
+        font-size: var(--text-fs-base);
         margin-left: $spacing-size-6;
         position: relative;
 
