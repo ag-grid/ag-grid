@@ -148,7 +148,7 @@ const copyGridCoreTypings = (done) => {
     exportedCommunityModules.forEach(exportedCommunityModule => result = result.pipe(replace(exportedCommunityModule, "ag-grid-community")));
 
     return merge([
-        gulp.src(['./node_modules/ag-charts-community/dist/package/src/**']).pipe(gulp.dest('./dist/lib/ag-charts-community')),
+        gulp.src(['./node_modules/ag-charts-community/dist/types/src/**']).pipe(gulp.dest('./dist/lib/ag-charts-community')),
         result.pipe(gulp.dest('./dist/lib'))
     ]);
 };
