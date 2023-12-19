@@ -158,8 +158,8 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
     return (
         <>
             <header className={styles.sectionHeader}>
-                <h2 className="font-size-gargantuan">Feature Packed, Incredible Performance</h2>
-                <p className="font-size-extra-large">
+                <h2 className="text-3xl">Feature Packed, Incredible Performance</h2>
+                <p className="text-xl">
                     Millions of rows, thousands of updates per second? No problem!
                     <br />
                     Out of the box performance that can handle any data you can throw at it.
@@ -193,7 +193,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
             </div>
 
             <footer className={styles.sectionFooter}>
-                <div className={classNames(styles.exploreButtonOuter, 'font-size-extra-large')}>
+                <div className={classNames(styles.exploreButtonOuter, 'text-xl')}>
                     <span className="text-secondary">Live example:</span>
                     <ToggleAutomatedExampleButton
                         onClick={() => {

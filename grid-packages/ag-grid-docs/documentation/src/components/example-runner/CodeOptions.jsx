@@ -15,7 +15,7 @@ const ImportTypeSelector = ({ id, tracking }) => {
             {({ exampleImportType, set }) => {
                 return (
                     <>
-                        <label className="font-size-small" htmlFor={formId}>
+                        <label className="text-sm" htmlFor={formId}>
                             Import type:
                         </label>{' '}
                         <select
@@ -65,7 +65,7 @@ const ReactStyleSelector = ({ id, tracking }) => {
 
                 return (
                     <>
-                        <label className="font-size-small" htmlFor={formId}>
+                        <label className="text-sm" htmlFor={formId}>
                             Language:
                         </label>{' '}
                         <select
@@ -95,7 +95,7 @@ const VueStyleSelector = ({ id, tracking }) => {
             {({ useVue3, set }) => {
                 return (
                     <>
-                        <label className="font-size-small" htmlFor={formId}>
+                        <label className="text-sm" htmlFor={formId}>
                             Version:
                         </label>{' '}
                         <select
@@ -126,7 +126,7 @@ const TypescriptStyleSelector = ({ id, tracking }) => {
             {({ useTypescript, set }) => {
                 return (
                     <>
-                        <label className="font-size-small" htmlFor={formId}>
+                        <label className="text-sm" htmlFor={formId}>
                             Language:
                         </label>{' '}
                         <select

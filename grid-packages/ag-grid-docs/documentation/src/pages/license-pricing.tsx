@@ -38,7 +38,7 @@ export const LicensePricing = () => {
                 <div className={styles.intro}>
                     <h1>AG Grid Licences</h1>
 
-                    <p className="font-size-large">
+                    <p className="text-lg">
                         Email
                         <InfoEmailLink
                             emailSubject="AG Grid Developer license query"
@@ -51,7 +51,7 @@ export const LicensePricing = () => {
                     </p>
 
                     <p className={styles.salesEmail}>
-                        <InfoEmailLink isButton withIcon className="font-size-extra-large" trackingType="headerButton">
+                        <InfoEmailLink isButton withIcon className="text-xl" trackingType="headerButton">
                             info@ag-grid.com
                         </InfoEmailLink>
                     </p>
@@ -86,7 +86,7 @@ export const LicensePricing = () => {
                             </div>
 
                             <div className={styles.left}>
-                                <div className={classnames(styles.enterpriseProducts, 'font-size-small')}>
+                                <div className={classnames(styles.enterpriseProducts, 'text-sm')}>
                                     <p>
                                         <Icon name="enterprise" /> Enterprise 
                                     </p>
@@ -102,9 +102,9 @@ export const LicensePricing = () => {
                             <div className={styles.right}>
                                 {/* <div className={styles.rightInner}>
                                     <div className={styles.rightInfo}>
-                                        <p className="font-size-small">Perpetual License</p>
-                                        <p className="font-size-small">1 Year of Support</p>
-                                        <p className="font-size-small">1 Year of Updates</p>
+                                        <p className="text-sm">Perpetual License</p>
+                                        <p className="text-sm">1 Year of Support</p>
+                                        <p className="text-sm">1 Year of Updates</p>
                                     </div>
                                 </div> */}
 
@@ -212,7 +212,7 @@ export const LicensePricing = () => {
             <div className={styles.ukraineNotice}>
                 <img src={ukraineFlagSVG} alt="flag of Ukraine" />
 
-                <p className="text-secondary font-size-small">
+                <p className="text-secondary text-sm">
                     In light of current events in Ukraine we are choosing to express our disappointment in the breakdown
                     of diplomacy, and its effects on the people of Ukraine, the global economy and community by not
                     licensing software to companies or individuals registered or residing in the Russian Federation.
@@ -221,7 +221,7 @@ export const LicensePricing = () => {
 
             <div className={styles.videoExplainer} id="video-explainer">
                 <div>
-                    <h3 className="font-size-massive">Questions about our licenses? </h3>
+                    <h3 className="text-2xlive">Questions about our licenses? </h3>
                     <p>
                         Watch our short video for an in-depth look at exactly how the license works. Learn which license
                         is right for you, how many licenses you need for your team, and exactly when you need a
@@ -248,7 +248,7 @@ export const LicensePricing = () => {
             </div>
 
             <div className={styles.licensesInDetail}>
-                <h3 className="font-size-massive">Our Licenses in Depth</h3>
+                <h3 className="text-2xlive">Our Licenses in Depth</h3>
 
                 <div
                     className={classnames(styles.singleApplicationLicense, 'card', 'single-application')}
@@ -376,7 +376,7 @@ export const LicensePricing = () => {
 
                 <InfoEmailLink
                     emailSubject="AG Grid Developer license query"
-                    className="font-size-extra-large"
+                    className="text-xl"
                     trackingType="footer"
                 >
                     info@ag-grid.com

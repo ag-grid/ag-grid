@@ -80,7 +80,7 @@ const License = (props: LicenseData) => {
             <div className={classnames(styles.top, 'top')}>
                 <div className={styles.licenseMeta}>
                     <Logo className={styles.logo}/>
-                    <p className="font-size-small"><Icon name="enterprise" /> {subHeading}</p>
+                    <p className="text-sm"><Icon name="enterprise" /> {subHeading}</p>
                 </div>
 
                 <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
@@ -92,7 +92,7 @@ const License = (props: LicenseData) => {
                         })}
                     </ul>
 
-                    <a className={classnames(styles.learnMoreLink, 'font-size-small')} href={learnMoreLink}>
+                    <a className={classnames(styles.learnMoreLink, 'text-sm')} href={learnMoreLink}>
                         Learn more
                     </a>
                 </div>
@@ -101,8 +101,8 @@ const License = (props: LicenseData) => {
                 <div className={styles.launchExplainer}>
                     { launchPrice && (
                         <>
-                            <p className='font-size-small'>Limited time launch price</p>
-                            <p className='font-size-small'>Standard price <b>${priceFullDollars}</b></p>
+                            <p className='text-sm'>Limited time launch price</p>
+                            <p className='text-sm'>Standard price <b>${priceFullDollars}</b></p>
                         </>
                     )}
                 </div>

@@ -42,7 +42,7 @@ const Footer = ({ framework, path }) => (
             {/* Only show customer logo trademark info on homepage */}
             {(path === '/' || path === undefined) && (
                 <div className={classNames(styles.row, styles.trademarks)}>
-                    <p className="font-size-small thin-text">
+                    <p className="text-sm thin-text">
                         The Microsoft logo is a trademark of the Microsoft group of companies.
                     </p>
                 </div>

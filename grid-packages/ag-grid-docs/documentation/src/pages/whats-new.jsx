@@ -30,13 +30,13 @@ const Version = ({ date, version, blogUrl, highlights, buttonURL, majorMinor }) 
                     </div>
 
                     <div className={styles.flex}>
-                        <b className={styles['font-size-large']}>Version {version}</b>
+                        <b className={styles['text-lg']}>Version {version}</b>
                         <a className={styles.bloglink} href={blogHref}>Read more →</a>
                     </div>
                     <span className={styles.line}></span>
                 </header>
 
-                <p className={styles['font-size-small']}>
+                <p className={styles['text-sm']}>
                     Feature Highlights
                 </p>
 

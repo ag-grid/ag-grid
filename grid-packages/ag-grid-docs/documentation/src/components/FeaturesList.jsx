@@ -39,7 +39,7 @@ const ItemGroup = ({ items }) => {
 
 function FeaturesList() {
     return (
-        <div className={classNames(styles.featuresListOuter, 'font-size-extra-large')}>
+        <div className={classNames(styles.featuresListOuter, 'text-xl')}>
             <p>All the features your users expect and more...</p>
 
             <div className={styles.featuresList}>

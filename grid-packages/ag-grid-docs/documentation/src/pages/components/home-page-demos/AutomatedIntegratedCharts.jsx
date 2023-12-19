@@ -150,8 +150,8 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
     return (
         <>
             <header className={styles.sectionHeader}>
-                <h2 className="font-size-gargantuan">Fully Integrated Charting</h2>
-                <p className="font-size-extra-large">
+                <h2 className="text-3xl">Fully Integrated Charting</h2>
+                <p className="text-xl">
                     With a complete suite of integrated charting tools, your users can visualise their data any way they
                     choose.
                 </p>
@@ -185,7 +185,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
             </div>
 
             <footer className={styles.sectionFooter}>
-                <div className={classNames(styles.exploreButtonOuter, 'font-size-extra-large')}>
+                <div className={classNames(styles.exploreButtonOuter, 'text-xl')}>
                     <span className="text-secondary">Live example:</span>
                     <ToggleAutomatedExampleButton
                         onClick={() => {

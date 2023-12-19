@@ -71,10 +71,10 @@ const Default = () => {
             <div className={styles.homepageHero}>
                 <section className={classNames(styles.heroInner, 'layout-page-max-width')}>
                     <section className={styles.heroHeadings}>
-                        <h1 className="font-size-extra-large">
+                        <h1 className="text-xl">
                             The&nbsp;Best&nbsp;JavaScript Grid&nbsp;in&nbsp;the&nbsp;World
                         </h1>
-                        <h2 className="font-size-medium normal-weight-text">
+                        <h2 className="text-base normal-weight-text">
                             The professional choice for developers building enterprise&nbsp;applications
                         </h2>
                     </section>
@@ -110,7 +110,7 @@ const Default = () => {
 
             <div className={styles.homepageCustomers}>
                 <div className={classNames(styles.customersInner, 'layout-page-max-width')}>
-                    <p className="font-size-large text-secondary">
+                    <p className="text-lg text-secondary">
                         Trusted by developers at nine out of ten Fortune 500 companies
                     </p>
                     <div className={styles.customerLogos}>
@@ -131,7 +131,7 @@ const Default = () => {
                 <div className={classNames(styles.chartsInner, "layout-page-max-width")}>
                     <div className={styles.chartsCopy}>
                         <ChartsLogo className={styles.chartsLogo}/>
-                        <p className="font-size-large">Check out the all new <a href="https://charts.ag-grid.com"><b>AG Charts</b></a>. Experience the power of <b>AG Grid</b> <a href="/javascript-data-grid/integrated-charts/">Integrated Charts</a> in a standalone library.</p>
+                        <p className="text-lg">Check out the all new <a href="https://charts.ag-grid.com"><b>AG Charts</b></a>. Experience the power of <b>AG Grid</b> <a href="/javascript-data-grid/integrated-charts/">Integrated Charts</a> in a standalone library.</p>
                     </div>
                     <div className={styles.chartsExample}>
                         <img className={styles.chartsExampleLight} src="images/ag-charts-gallery-light.webp" alt="AG Charts" />
