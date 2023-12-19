@@ -1,5 +1,4 @@
 @use 'sass:math';
-@use 'sass:map';
 @use '../core' as *;
 
 fieldset#{$selector-exclude-grid} {
@@ -68,12 +67,8 @@ input[type='number'] {
         border: 1px solid var(--color-input-border);
         background-color: var(--color-bg-primary);
         outline: none;
-        box-shadow:
-            0 0 0 $spacing-size-1 transparent,
-            var(--shadow-xs);
-        transition:
-            border-color $transition-default-timing,
-            box-shadow $transition-default-timing;
+        box-shadow: 0 0 0 $spacing-size-1 transparent, var(--shadow-xs);
+        transition: border-color $transition-default-timing, box-shadow $transition-default-timing;
 
         &::placeholder {
             color: var(--color-fg-placeholder);
@@ -90,9 +85,7 @@ input[type='number'] {
         &:focus:not(:disabled):not([readonly]),
         &:focus-visible:not(:disabled):not([readonly]),
         &.focus {
-            box-shadow:
-                0 0 0 $spacing-size-1 var(--color-input-shadow-focus),
-                var(--shadow-xs);
+            box-shadow: 0 0 0 $spacing-size-1 var(--color-input-shadow-focus), var(--shadow-xs);
         }
 
         &:disabled,
@@ -144,9 +137,7 @@ input[type='checkbox']:not(.switch)#{$selector-exclude-grid} {
 
     border-radius: var(--radius-sm);
     border: 1px solid var(--color-border-primary);
-    transition:
-        background-color $transition-default-timing,
-        border-color $transition-default-timing,
+    transition: background-color $transition-default-timing, border-color $transition-default-timing,
         box-shadow $transition-default-timing;
 
     &:hover:not(:disabled):not([readonly]),
@@ -187,9 +178,7 @@ input[type='checkbox'].switch {
     );
     background-repeat: no-repeat;
     background-size: $height $height;
-    transition:
-        background-position $transition-default-timing,
-        background-color $transition-default-timing,
+    transition: background-position $transition-default-timing, background-color $transition-default-timing,
         box-shadow $transition-default-timing;
 
     &:checked {
@@ -201,9 +190,7 @@ input[type='checkbox'].switch {
 input[type='radio']#{$selector-exclude-grid} {
     border-radius: var(--radius-full);
     border: 1px solid var(--color-border-primary);
-    transition:
-        background-color $transition-default-timing,
-        border-color $transition-default-timing,
+    transition: background-color $transition-default-timing, border-color $transition-default-timing,
         box-shadow $transition-default-timing;
 
     &:hover:not(:disabled):not([readonly]),
@@ -236,9 +223,7 @@ select#{$selector-exclude-grid} {
     background-position: center right 4px;
     border: 1px solid var(--color-input-border);
     outline: none;
-    transition:
-        border-color $transition-default-timing,
-        box-shadow $transition-default-timing;
+    transition: border-color $transition-default-timing, box-shadow $transition-default-timing;
     cursor: pointer;
 
     &:hover,
@@ -296,9 +281,7 @@ input[type='range']#{$selector-exclude-grid} {
     outline: none;
     border: 2px solid transparent;
     cursor: pointer;
-    transition:
-        border-color $transition-default-timing,
-        box-shadow $transition-default-timing;
+    transition: border-color $transition-default-timing, box-shadow $transition-default-timing;
 
     &:focus-visible:not(:disabled):not([readonly]),
     &.focus {
