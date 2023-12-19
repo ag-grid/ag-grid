@@ -1,5 +1,4 @@
-@use "sass:map";
-@use '../design-system' as *;
+@use '../core' as *;
 
 .doc-page-wrapper {
     --docs-page-max-width: 68em;
@@ -7,29 +6,12 @@
     display: flex;
     justify-content: space-between;
 
-    @media screen and (max-width: $breakpoint-docs-nav-medium) {
-        // @include page-horizontal-margins(); // Commented out for refactor
-    }
-
     @media screen and (min-width: $breakpoint-docs-nav-medium) and (max-width: $breakpoint-docs-nav-large) {
         padding-right: var(--horizontal-margin);
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
         --docs-page-max-width: 74em;
-    }
-}
-
-%enterprise-icon {
-    display: inline-block;
-    background-image: url('../images/enterprise.svg');
-    text-indent: -10000px;
-    background-position-y: center;
-    background-repeat: no-repeat;
-    content: 'e';
-
-    #{$darkmode-selector} & {
-        --text-color: var(--active-color);
     }
 }
 
@@ -85,15 +67,8 @@
             height: 0.85em;
             top: -0.1em;
             visibility: visible;
-            fill: var(--link-color);
+            fill: var(--color-link);
         }
-    }
-
-    enterprise-icon::after {
-        @extend %enterprise-icon;
-
-        width: 1rem;
-        margin-left: 0.25rem;
     }
 
     ul li > p {
@@ -140,9 +115,9 @@
 
 .headerFramework {
     display: none;
-    font-size: var(--font-size-extra-large);
-    font-weight: var(--font-weight-normal);
-    color: var(--secondary-text-color);
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-regular);
+    color: var(--color-text-tertiary);
     padding-bottom: 6px;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
@@ -154,9 +129,9 @@
     display: inline-block;
     position: relative;
     bottom: 0.05em;
-    font-size: var(--font-size-extra-large);
-    font-weight: var(--font-weight-normal);
-    color: var(--secondary-text-color);
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-regular);
+    color: var(--color-text-tertiary);
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         position: absolute;
@@ -168,11 +143,11 @@
 
     :global(.icon) {
         --icon-size: 1.25em;
-        --text-color: var(--enterprise-icon-color);
+        --color-icon: var(--color-enterprise-icon);
 
         position: relative;
         top: -0.1em;
-        margin-left: $size-half;
+        margin-left: $spacing-size-1;
     }
 }
 
@@ -183,9 +158,7 @@
 
 // Hack to target "intro" section of docs page
 .pageSections > div > p:first-child {
-    --font-size-extra-large: #{$font-size-extra-large};
-
-    font-size: var(--font-size-extra-large);
+    font-size: var(--text-fs-xl);
     margin-bottom: $spacing-size-8;
 
     code {
@@ -213,22 +186,6 @@
     > ol,
     > table,
     > pre {
-        font-size: var(--font-size-medium);
-    }
-
-    > h1,
-    > h2,
-    > h3,
-    > h4,
-    > h5,
-    > h6,
-    > p,
-    > ul,
-    > ol,
-    > table,
-    > hr {
-        @media screen and (min-width: $max-page-width) {
-            // @include font-size-responsive(); // Commented out for refactor
-        }
+        font-size: var(--text-fs-base);
     }
 }

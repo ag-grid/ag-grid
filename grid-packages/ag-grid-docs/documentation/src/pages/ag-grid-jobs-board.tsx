@@ -1,6 +1,6 @@
 import React from 'react';
 // @ts-ignore
-import docsStyles from '../templates/doc-page.module.scss';
+import docsStyles from '@design-system/modules/GridDocs.module.scss';
 import SEO from './components/SEO';
 
 const JobsBoard = () => {

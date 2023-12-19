@@ -26,7 +26,7 @@ import DownloadDSButton from 'components/DownloadDSButton';
 import LearningVideos from '../components/LearningVideos';
 import NextStepTiles from '../components/NextStepTiles';
 import { trackApiDocumentation } from '../utils/analytics';
-import styles from './doc-page.module.scss';
+import styles from '@design-system/modules/GridDocs.module.scss';
 import FrameworkSelectorInsideDocs from "../components/FrameworkSelectorInsideDocs";
 
 /**

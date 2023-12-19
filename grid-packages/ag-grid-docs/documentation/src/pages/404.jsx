@@ -1,6 +1,6 @@
 import { Link } from 'gatsby';
 import React, { useEffect } from 'react';
-import docsStyles from '../templates/doc-page.module.scss';
+import docsStyles from '@design-system/modules/GridDocs.module.scss';
 import { track404 } from '../utils/analytics';
 import Seo from './components/SEO';
 
