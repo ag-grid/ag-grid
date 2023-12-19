@@ -56,7 +56,7 @@
         margin-bottom: -4px;
     }
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         :global(#LogoType) * {
             fill: var(--color-text-primary) !important; // !important required to override SVG inline styles
         }

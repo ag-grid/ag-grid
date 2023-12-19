@@ -1,5 +1,4 @@
 @forward 'variables';
-@forward 'old-variables'; // Remove after refactor
 @forward 'breakpoints' as breakpoint-*;
 
 @forward 'utils';

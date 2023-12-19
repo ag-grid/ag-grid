@@ -19,7 +19,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: $size-half;
+    gap: $spacing-size-1;
     width: 50%;
     padding: $spacing-size-4 $spacing-size-2;
     border-bottom: 1px solid var(--color-border-primary);
@@ -50,7 +50,7 @@
         display: block;
         height: 32px;
 
-        #{$darkmode-selector} & {
+        #{$selector-darkmode} & {
             filter: invert(1);
         }
     }

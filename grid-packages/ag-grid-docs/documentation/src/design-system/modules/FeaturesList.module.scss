@@ -47,10 +47,10 @@
 .featureItem {
     display: flex;
     gap: 0 $spacing-size-2;
-    transition: color $default-transition-timing;
+    transition: color $transition-default-timing;
 
     span {
-        #{$darkmode-selector} & {
+        #{$selector-darkmode} & {
             color: var(--link-color);
         }
     }
@@ -60,7 +60,7 @@
     width: $spacing-size-10;
     height: $spacing-size-10;
     fill: var(--dark-blue-300);
-    transition: fill $default-transition-timing;
+    transition: fill $transition-default-timing;
 
     .featureItem:hover & {
         fill: var(--link-hover-color);
@@ -71,7 +71,7 @@
         height: 100%;
     }
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         fill: var(--default-text-color);
     }
 }

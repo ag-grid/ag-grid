@@ -17,7 +17,7 @@
     }
 
     @media screen and (min-width: $breakpoint-quotes-large) {
-        --avatar-size: #{$size-8};
+        --avatar-size: #{$spacing-size-24};
 
         gap: $spacing-size-10;
     }

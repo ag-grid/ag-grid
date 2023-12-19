@@ -13,8 +13,8 @@
     width: $replay-width;
     padding: 0.25em 0.5em 0.4em 0.5em !important;
     text-align: left;
-    transition: background-color $default-transition-timing, border $default-transition-timing,
-        box-shadow $default-transition-timing, width $default-transition-timing !important;
+    transition: background-color $transition-default-timing, border $transition-default-timing,
+        box-shadow $transition-default-timing, width $transition-default-timing !important;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         display: none;

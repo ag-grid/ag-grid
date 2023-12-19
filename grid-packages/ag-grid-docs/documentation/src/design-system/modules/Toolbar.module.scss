@@ -7,7 +7,7 @@ $toolbar-width: 1050px;
     position: relative;
     background-color: var(--color-util-brand-100);
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         background-color: var(--color-bg-primary);
         border-bottom: 1px solid var(--color-border-primary);
     }
@@ -53,7 +53,7 @@ $toolbar-width: 1050px;
     :global(.icon) {
         fill: #f00;
 
-        #{$darkmode-selector} & {
+        #{$selector-darkmode} & {
             fill: var(--color-text-primary);
         }
     }

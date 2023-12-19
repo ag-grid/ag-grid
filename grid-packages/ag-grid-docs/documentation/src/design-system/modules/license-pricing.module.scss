@@ -107,7 +107,7 @@
     border: 2px solid var(--card-color);
     background-color: var(--card-color);
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         --card-color: var(--background-100);
 
         border: 2px solid #0665cb;
@@ -162,7 +162,7 @@
         height: 54px;
         width: fit-content;
 
-        #{$darkmode-selector} & {
+        #{$selector-darkmode} & {
             :global(#LogoType) * {
                 fill: var(--color-text-primary) !important;
             }
@@ -174,7 +174,7 @@
         margin-right: -$spacing-size-2;
         color: #00366d;
 
-        #{$darkmode-selector} & {
+        #{$selector-darkmode} & {
             color: var(--color-text-primary) !important;
         }
     }
@@ -396,7 +396,7 @@
         --header-tint: 90%;
         --content-tint: 96%;
 
-        #{$darkmode-selector} & {
+        #{$selector-darkmode} & {
             --card-color: #16325c;
             --header-tint: 66%;
             --content-tint: 88%;
@@ -408,7 +408,7 @@
         --header-tint: 91%;
         --content-tint: 97%;
 
-        #{$darkmode-selector} & {
+        #{$selector-darkmode} & {
             --card-color: #175a1b;
             --header-tint: 72%;
             --content-tint: 88%;
@@ -443,7 +443,7 @@
     }
 
     a {
-        font-size: $font-size-extra-large;
+        font-size: var(--text-fs-lg);
         display: inline-block;
     }
 }

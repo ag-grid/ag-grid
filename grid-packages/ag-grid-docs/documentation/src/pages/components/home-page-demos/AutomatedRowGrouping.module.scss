@@ -104,7 +104,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     > span:first-child {
         display: none;
 
-        @media screen and (min-width: $max-page-width) {
+        @media screen and (min-width: $breakpoint-site-header-large) {
             display: inline;
         }
     }
@@ -117,7 +117,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
     position: relative;
     display: inline-block;
     padding-right: $spacing-size-6;
-    transition: color $default-transition-timing;
+    transition: color $transition-default-timing;
 
     &::after {
         content: '';
@@ -127,7 +127,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
         left: 0;
         height: 2px;
         background-color: var(--text-color);
-        transition: background-color $default-transition-timing;
+        transition: background-color $transition-default-timing;
 
         @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
             display: none;
@@ -147,7 +147,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
         position: absolute;
         bottom: 0;
         right: -0.33em;
-        transition: transform $default-transition-timing, fill $default-transition-timing;
+        transition: transform $transition-default-timing, fill $transition-default-timing;
     }
 }
 

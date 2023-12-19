@@ -7,7 +7,7 @@
 .doc-page {
     flex: 1 1 0px;
     min-width: 0px;
-    padding-top: $spacing-size-8 + $size-half;
+    padding-top: $spacing-size-8 + $spacing-size-1;
     padding-bottom: $spacing-size-16;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {

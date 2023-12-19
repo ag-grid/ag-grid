@@ -13,7 +13,7 @@
     color: $positive-color;
     background-color: rgba($positive-color, 0.1);
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         $positive-color: #1ce61c;
 
         color: $positive-color;
@@ -27,7 +27,7 @@
     color: $negative-color;
     background-color: rgba($negative-color, 0.19);
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         $negative-color: #ff0552;
 
         color: $negative-color;

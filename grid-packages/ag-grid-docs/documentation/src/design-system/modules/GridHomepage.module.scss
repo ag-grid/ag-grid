@@ -97,7 +97,7 @@ gatsby-fast-refresh {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         background-color: #121f29;
     }
 
@@ -132,7 +132,7 @@ gatsby-fast-refresh {
         padding-top: $spacing-size-12;
     }
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         background-color: var(--color-util-gray-100);
         border-bottom: 1px solid var(--color-border-primary);
     }
@@ -159,7 +159,7 @@ gatsby-fast-refresh {
         --font-size: var(--text--fs-xl);
     }
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         color: var(--color-text-primary);
     }
 }
@@ -179,7 +179,7 @@ gatsby-fast-refresh {
     background-color: var(--color-util-gray-50);
     padding-bottom: $spacing-size-12;
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         border-bottom: 1px solid var(--color-border-primary);
     }
 }
@@ -223,7 +223,7 @@ gatsby-fast-refresh {
         }
 
         // WIP darkmode adjustment for customer logos
-        #{$darkmode-selector} & {
+        #{$selector-darkmode} & {
             filter: invert(0.5) sepia(13%) saturate(534%) hue-rotate(173deg) brightness(92%) contrast(88%);
         }
     }
@@ -233,7 +233,7 @@ gatsby-fast-refresh {
     padding-top: $spacing-size-24;
     padding-bottom: $spacing-size-24;
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         border-bottom: 1px solid var(--color-border-primary);
     }
 }
@@ -307,7 +307,7 @@ gatsby-fast-refresh {
         display: none;
     }
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         .chartsExampleLight {
             display: none;
         }
@@ -320,7 +320,7 @@ gatsby-fast-refresh {
 
 .automatedRowGroupingOuter,
 .automatedIntegratedChartsOuter {
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         border-bottom: 1px solid var(--color-border-primary);
     }
 }
@@ -331,7 +331,7 @@ gatsby-fast-refresh {
 
     @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
         padding-top: $spacing-size-24;
-        padding-bottom: $size-9;
+        padding-bottom: $spacing-size-32;
     }
 }
 
@@ -339,7 +339,7 @@ gatsby-fast-refresh {
     margin-bottom: $spacing-size-24;
     background-color: var(--color-util-brand-100);
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         background-color: var(--color-fg-primary);
     }
 }
@@ -414,7 +414,7 @@ gatsby-fast-refresh {
 }
 
 // Invert plunker logo for darkmode
-#{$darkmode-selector} .projectPlunker img {
+#{$selector-darkmode} .projectPlunker img {
     filter: invert(1);
 }
 

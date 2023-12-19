@@ -36,7 +36,7 @@
     --input-background-color: #001223;
     --input-focus-box-shadow-color: rgba(255, 255, 255, 0.25);
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         --ag-background-color: #0E1A23;
         --ag-odd-row-background-color: #081A27
 

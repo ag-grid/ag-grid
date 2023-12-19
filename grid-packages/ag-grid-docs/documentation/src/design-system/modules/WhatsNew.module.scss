@@ -8,7 +8,7 @@
     border-radius: 8px;
     border: 1px solid var(--color-border-primary);
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         background-color: var(--color-util-gray-200);
     }
 
@@ -18,7 +18,7 @@
         font-size: 1rem;
         color: var(--text-color);
 
-        #{$darkmode-selector} & {
+        #{$selector-darkmode} & {
             color: var(--color-text-secondary);
         }
     }
@@ -69,7 +69,7 @@
     color: var(--color-text-tertiary);
     opacity: 0.7;
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         opacity: 1;
     }
 }
@@ -87,7 +87,7 @@
     padding: 2px 8px;
     margin-right: 8px;
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         border: 1px solid var(--color-border-primary);
     }
 }
@@ -138,7 +138,7 @@
     display: flex;
     justify-content: center;
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         background-color: var(--color-util-gray-300);
     }
 }
@@ -149,7 +149,7 @@
     justify-content: center;
     margin-bottom: 16px;
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         background-color: var(--color-util-gray-300);
     }
 }
