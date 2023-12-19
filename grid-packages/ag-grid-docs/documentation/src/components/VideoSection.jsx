@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import styles from './VideoSection.module.scss';
+import styles from '@design-system/modules/VideoSection.module.scss';
 
 /**
  * This embeds a YouTube video into the page.
