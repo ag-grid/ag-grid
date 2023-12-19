@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import React from 'react';
 import { trackOnceDownloadDS } from '../utils/analytics';
 import { hostPrefix } from '../utils/consts';
-import styles from './DownloadDSButton.module.scss';
+import styles from '../design-system/modules/DownloadDSButton.module.scss';
 import { Icon } from './Icon';
 
 const DS_VERSION = "31.0.0";

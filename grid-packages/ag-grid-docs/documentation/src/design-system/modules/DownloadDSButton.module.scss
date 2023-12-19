@@ -13,10 +13,11 @@
 
     span {
         white-space: nowrap;
-        color: var(--button-text-color);
+        color: var(--color-fg-white);
     }
 
     svg {
         height: 1.4em;
+        fill: var(--color-fg-white);
     }
 }
