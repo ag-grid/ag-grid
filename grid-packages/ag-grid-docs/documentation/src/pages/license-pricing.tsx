@@ -9,7 +9,7 @@ import { trackOnceInfoEmail } from '../utils/analytics';
 import { hostPrefix } from '../utils/consts';
 import SEO from './components/SEO';
 // @ts-ignore
-import styles from './license-pricing.module.scss';
+import styles from '@design-system/modules/license-pricing.module.scss';
 
 import AGGridLogo from '../images/inline-svgs/ag-grid-logo.svg';
 import AGChartsLogo from '../images/inline-svgs/ag-charts-logo.svg';
@@ -33,7 +33,7 @@ export const LicensePricing = () => {
     });
 
     return (
-        <div className={classnames('page-margin', styles.container)}>
+        <div className={classnames('layout-page-max-width', styles.container)}>
             <div className={styles.topSection}>
                 <div className={styles.intro}>
                     <h1>AG Grid Licences</h1>
