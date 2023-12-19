@@ -24,7 +24,6 @@ import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
 import DownloadDSButton from 'components/DownloadDSButton';
 import LearningVideos from '../components/LearningVideos';
-import NextStepTiles from '../components/NextStepTiles';
 import { trackApiDocumentation } from '../utils/analytics';
 import styles from '@design-system/modules/GridDocs.module.scss';
 import FrameworkSelectorInsideDocs from "../components/FrameworkSelectorInsideDocs";
@@ -122,7 +121,6 @@ const DocPageTemplate = ({ data, path, pageContext: { framework, frameworks, exa
                 </pre>
             ),
             'download-ds-button': DownloadDSButton,
-            'next-step-tiles': (props) => NextStepTiles({...props})
         },
     }).Compiler;
 
