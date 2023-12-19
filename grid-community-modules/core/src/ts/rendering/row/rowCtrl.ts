@@ -121,6 +121,7 @@ export class RowCtrl extends BeanStub {
     private rowStyles: RowStyle | undefined;
     private readonly emptyStyle: RowStyle = {};
     private readonly printLayout: boolean;
+    private readonly suppressRowTransform: boolean;
 
     private updateColumnListsPending = false;
 
@@ -143,6 +144,7 @@ export class RowCtrl extends BeanStub {
         this.paginationPage = beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
+        this.suppressRowTransform = this.gridOptionsService.get('suppressRowTransform');
 
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
         this.rowId = escapeString(rowNode.id);
@@ -1580,12 +1582,10 @@ export class RowCtrl extends BeanStub {
     // to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
     // time, the row would animate down (ie from position zero).
     public getInitialRowTop(rowContainerType: RowContainerType): string | undefined {
-        const suppressRowTransform = this.gridOptionsService.get('suppressRowTransform');
-        return suppressRowTransform ? this.getInitialRowTopShared(rowContainerType) : undefined;
+        return this.suppressRowTransform ? this.getInitialRowTopShared(rowContainerType) : undefined;
     }
     public getInitialTransform(rowContainerType: RowContainerType): string | undefined {
-        const suppressRowTransform = this.gridOptionsService.get('suppressRowTransform');
-        return suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared(rowContainerType)})`;
+        return this.suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared(rowContainerType)})`;
     }
     private getInitialRowTopShared(rowContainerType: RowContainerType): string {
         // print layout uses normal flow layout for row positioning
@@ -1606,9 +1606,8 @@ export class RowCtrl extends BeanStub {
     }
 
     private setRowTopStyle(topPx: string): void {
-        const suppressRowTransform = this.gridOptionsService.get('suppressRowTransform');
         this.allRowGuis.forEach(
-            gui => suppressRowTransform ?
+            gui => this.suppressRowTransform ?
                 gui.rowComp.setTop(topPx) :
                 gui.rowComp.setTransform(`translateY(${topPx})`)
         );
