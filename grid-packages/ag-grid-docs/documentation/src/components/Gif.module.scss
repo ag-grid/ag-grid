@@ -2,7 +2,7 @@
 
 .gif {
     max-width: 100%;
-    margin-bottom: $size-2;
+    margin-bottom: $spacing-size-4;
     outline: none !important;
 
     &.wrapped {
@@ -35,8 +35,8 @@
 
 :global(.play_button) {
     position: absolute;
-    width: $size-7;
-    height: $size-7;
+    width: $spacing-size-16;
+    height: $spacing-size-16;
     top: 50%;
     left: 50%;
     border-radius: 50%;

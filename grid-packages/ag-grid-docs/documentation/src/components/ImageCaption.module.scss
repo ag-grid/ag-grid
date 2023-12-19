@@ -3,7 +3,7 @@
 .imageCaption {
     display: flex;
     flex-direction: column;
-    margin: $size-2 $size-3 $size-1;
+    margin: $spacing-size-4 $spacing-size-6 $spacing-size-2;
 }
 
 .imageCaption.centered {
@@ -26,7 +26,7 @@
 }
 
 .body {
-    padding: $size-2;
+    padding: $spacing-size-4;
 
     &.top {
         padding: $size-half;

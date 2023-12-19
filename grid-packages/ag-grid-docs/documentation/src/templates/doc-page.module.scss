@@ -36,12 +36,12 @@
 .doc-page {
     flex: 1 1 0px;
     min-width: 0px;
-    padding-top: $size-4 + $size-half;
-    padding-bottom: $size-7;
+    padding-top: $spacing-size-8 + $size-half;
+    padding-bottom: $spacing-size-16;
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
-        padding-right: $size-6;
-        padding-left: $size-3;
+        padding-right: $spacing-size-12;
+        padding-left: $spacing-size-6;
         max-width: var(--docs-page-max-width);
     }
 
@@ -70,7 +70,7 @@
     :global(.docs-header-icon) {
         position: relative;
         padding-left: 0;
-        margin-left: $size-1;
+        margin-left: $spacing-size-2;
         font-size: inherit;
         opacity: 0;
         transition: opacity 0.33s ease-in-out;
@@ -101,7 +101,7 @@
     }
 
     :global(.alert) {
-        margin-bottom: $size-2;
+        margin-bottom: $spacing-size-4;
     }
 }
 
@@ -110,14 +110,14 @@
 }
 
 .docsPageTitle {
-    margin-bottom: $size-2;
+    margin-bottom: $spacing-size-4;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         line-height: var(--line-height-ultra-tight);
     }
 
     > span {
-        margin-bottom: $size-1;
+        margin-bottom: $spacing-size-2;
     }
 }
 
@@ -186,7 +186,7 @@
     --font-size-extra-large: #{$font-size-extra-large};
 
     font-size: var(--font-size-extra-large);
-    margin-bottom: $size-4;
+    margin-bottom: $spacing-size-8;
 
     code {
         font-size: 0.8em;
@@ -200,12 +200,12 @@
 
 .pageSections > div {
     > h2 {
-        margin-top: $size-6;
+        margin-top: $spacing-size-12;
     }
 
     > h3,
     > h4 {
-        margin-top: $size-5;
+        margin-top: $spacing-size-10;
     }
 
     p,

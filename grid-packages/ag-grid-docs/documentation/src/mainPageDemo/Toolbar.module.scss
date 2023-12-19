@@ -14,12 +14,12 @@ $toolbar-width: 1050px;
 }
 
 .controlsContainer {
-    padding: ($size-1 + 1px) $size-2 $size-1;
+    padding: ($spacing-size-2 + 1px) $spacing-size-4 $spacing-size-2;
     overflow: auto;
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        padding-right: $size-3;
-        padding-left: $size-3;
+        padding-right: $spacing-size-6;
+        padding-left: $spacing-size-6;
     }
 }
 
@@ -31,7 +31,7 @@ $toolbar-width: 1050px;
     select,
     input {
         max-width: 200px;
-        margin-right: $size-4;
+        margin-right: $spacing-size-8;
     }
 }
 

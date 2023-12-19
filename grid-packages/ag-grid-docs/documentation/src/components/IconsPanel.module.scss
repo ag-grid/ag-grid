@@ -21,7 +21,7 @@
     justify-content: center;
     gap: $size-half;
     width: 50%;
-    padding: $size-2 $size-1;
+    padding: $spacing-size-4 $spacing-size-2;
     border-bottom: 1px solid var(--border-color);
 
     @container (max-width: #{$container-small}) {
@@ -64,7 +64,7 @@
 .footer {
     display: flex;
     justify-content: flex-end;
-    margin-top: $size-2;
+    margin-top: $spacing-size-4;
 }
 
 .downloadButton {

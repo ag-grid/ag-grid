@@ -18,7 +18,7 @@ $z-index-splash-contents: 10;
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         width: 200% !important;
         height: 450px !important;
-        margin-bottom: calc(450px / -2 + $size-2);
+        margin-bottom: calc(450px / -2 + $spacing-size-4);
         transform-origin: top left;
         transform: scale(0.5);
         overflow: hidden;
@@ -53,7 +53,7 @@ $z-index-splash-contents: 10;
         gap: $size-half;
 
         @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            gap: $size-1;
+            gap: $spacing-size-2;
         }
     }
 
@@ -79,10 +79,10 @@ $z-index-splash-contents: 10;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: $size-6;
+    margin-bottom: $spacing-size-12;
 
     h2 {
-        margin-bottom: $size-2;
+        margin-bottom: $spacing-size-4;
         font-weight: var(--font-weight-bold);
         line-height: var(--line-height-ultra-tight);
 
@@ -104,11 +104,11 @@ $z-index-splash-contents: 10;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: $size-6;
-    margin-top: $size-6;
+    gap: $spacing-size-12;
+    margin-top: $spacing-size-12;
 
     button:not([class^='ag-']) {
-        margin-left: $size-1;
+        margin-left: $spacing-size-2;
     }
 }
 
@@ -149,7 +149,7 @@ $z-index-splash-contents: 10;
 
     position: relative;
     display: inline-block;
-    padding-right: $size-3;
+    padding-right: $spacing-size-6;
     transition: color $default-transition-timing;
 
     &::after {

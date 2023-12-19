@@ -1,12 +1,12 @@
 @use '../../design-system/' as *;
 
 .tabsOuter {
-    margin-top: $size-2;
-    margin-bottom: $size-2;
+    margin-top: $spacing-size-4;
+    margin-bottom: $spacing-size-4;
 }
 
 .hasHeading {
-    padding-top: $size-1;
+    padding-top: $spacing-size-2;
 }
 
 .heading {
@@ -16,10 +16,10 @@
 .externalLinks {
     display: flex;
     align-items: center;
-    gap: $size-2;
+    gap: $spacing-size-4;
     flex-shrink: 0;
     margin-left: auto;
-    padding-right: $size-2;
+    padding-right: $spacing-size-4;
 
     li {
         margin-bottom: 0.125em;

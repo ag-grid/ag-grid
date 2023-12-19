@@ -3,13 +3,11 @@
 .learningVideos {
     display: flex;
     flex-direction: column;
-    gap: $size-2;
+    gap: $spacing-size-4;
 
     @media screen and (max-width: 600px) {
-        gap: $size-1; 
+        gap: $spacing-size-2;
     }
-
-
 }
 
 .titleDurationWrapper {
@@ -21,19 +19,17 @@
 
 .title {
     font-size: var(--font-size-extra-large);
-
-
 }
 
 .video {
     display: flex;
-    gap: $size-2;
+    gap: $spacing-size-4;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    padding: $size-2;
-    margin: $size-2;
+    padding: $spacing-size-4;
+    margin: $spacing-size-4;
     transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-    width: calc(100% - 2*$size-2);
+    width: calc(100% - 2 * $spacing-size-4);
     box-sizing: border-box;
     color: var(--text-color);
 
@@ -52,7 +48,7 @@
     .duration {
         font-size: var(--font-size-medium);
         background: transparent;
-        padding: 0 $size-1;
+        padding: 0 $spacing-size-2;
         border-radius: var(--border-radius);
         margin-left: auto;
     }
@@ -97,20 +93,20 @@
         flex-direction: column;
         width: 100%;
         list-style-type: none;
-        gap: $size-1;
-        margin: $size-2 0 0 0;
+        gap: $spacing-size-2;
+        margin: $spacing-size-4 0 0 0;
     }
 
     li {
         color: var(--text-color);
         font-size: var(--font-size-medium);
-        margin-left: $size-3;
+        margin-left: $spacing-size-6;
         position: relative;
 
         &::before {
-            content: "•";
+            content: '•';
             position: absolute;
-            left: -($size-2);
+            left: -($spacing-size-4);
             top: 50%;
             transform: translateY(-50%);
         }

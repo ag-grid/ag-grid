@@ -26,19 +26,19 @@
 
 .level3 {
     @container (min-width: #{$breakpoint-table-small}) {
-        margin-left: $size-2;
+        margin-left: $spacing-size-4;
     }
 }
 
 .level4 {
     @container (min-width: #{$breakpoint-table-small}) {
-        margin-left: $size-5;
+        margin-left: $spacing-size-10;
     }
 }
 
 .tick,
 .cross {
-    --icon-size: #{$size-3};
+    --icon-size: #{$spacing-size-6};
 }
 
 .tick {

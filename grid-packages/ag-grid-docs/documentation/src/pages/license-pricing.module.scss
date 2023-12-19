@@ -1,16 +1,16 @@
 @use "../design-system/" as *;
 
 .container {
-    margin-top: $size-6;
-    margin-bottom: calc($size-6 * 4);
+    margin-top: $spacing-size-12;
+    margin-bottom: calc($spacing-size-12 * 4);
 }
 
 .topSection {
     display: flex;
     flex-wrap: wrap;
-    gap: $size-4;
-    margin-top: $size-8;
-    margin-bottom: $size-7;
+    gap: $spacing-size-8;
+    margin-top: $spacing-size-24;
+    margin-bottom: $spacing-size-16;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         flex-wrap: nowrap;
@@ -19,14 +19,14 @@
     h1 {
         font-size: 44px;
         font-weight: var(--font-weight-bold);
-        margin-bottom: $size-1;
+        margin-bottom: $spacing-size-2;
         line-height: $line-height-ultra-tight;
     }
 }
 
 .intro {
     width: 100%;
-    margin-bottom: $size-4;
+    margin-bottom: $spacing-size-8;
     text-align: center;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
@@ -41,8 +41,8 @@
 }
 
 .salesEmail {
-    margin-top: $size-2;
-    margin-bottom: $size-2;
+    margin-top: $spacing-size-4;
+    margin-bottom: $spacing-size-4;
 
     a {
         @media screen and (max-width: $breakpoint-pricing-small) {
@@ -59,8 +59,8 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    gap: $size-1 $size-2;
-    margin-top: $size-6;
+    gap: $spacing-size-2 $spacing-size-4;
+    margin-top: $spacing-size-12;
 
     @media screen and (min-width: $breakpoint-pricing-small) {
         text-align: left;
@@ -85,7 +85,7 @@
     img {
         width: 100%;
         aspect-ratio: 16 / 9;
-        margin-top: $size-1;
+        margin-top: $spacing-size-2;
         object-fit: cover;
         border-radius: var(--border-radius);
     }
@@ -95,7 +95,7 @@
     display: flex;
     flex-wrap: wrap;
     width: 100%;
-    gap: $size-4;
+    gap: $spacing-size-8;
 }
 
 .buyTogether {
@@ -118,9 +118,9 @@
 .buyTogetherInner {
     display: flex;
     flex-direction: column;
-    gap: $size-2;
+    gap: $spacing-size-4;
     width: 100%;
-    padding: $size-2;
+    padding: $spacing-size-4;
     text-align: center;
     border-radius: var(--border-radius);
     background-color: var(--default-background-color);
@@ -130,8 +130,8 @@
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-between;
-        gap: 0 $size-4;
-        padding: $size-2 $size-2;
+        gap: 0 $spacing-size-8;
+        padding: $spacing-size-4 $spacing-size-4;
         text-align: left;
     }
 
@@ -145,7 +145,7 @@
     flex-direction: column;
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        width: calc(50% - $size-2);
+        width: calc(50% - $spacing-size-4);
     }
 
     p {
@@ -171,8 +171,8 @@
     }
 
     span {
-        margin-left: -$size-1;
-        margin-right: -$size-1;
+        margin-left: -$spacing-size-2;
+        margin-right: -$spacing-size-2;
         color: #00366d;
 
         #{$darkmode-selector} & {
@@ -182,8 +182,8 @@
 }
 
 .enterpriseProducts {
-    margin-top: $size-1;
-    margin-bottom: $size-3;
+    margin-top: $spacing-size-2;
+    margin-bottom: $spacing-size-6;
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         margin-top: $size-half;
@@ -191,7 +191,7 @@
     }
 
     :global(.icon) {
-        --icon-size: #{$size-2};
+        --icon-size: #{$spacing-size-4};
 
         margin-top: -1px;
         margin-left: -1px;
@@ -203,13 +203,13 @@
     @media screen and (min-width: $breakpoint-pricing-medium) {
         display: flex;
         align-items: flex-end;
-        width: calc(50% - $size-2);
+        width: calc(50% - $spacing-size-4);
         max-width: 340px;
     }
 
     :global(.button) {
         width: 100%;
-        margin-top: $size-1;
+        margin-top: $spacing-size-2;
         text-align: center;
     }
 }
@@ -218,7 +218,7 @@
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: $size-1;
+    gap: $spacing-size-2;
 }
 
 .rightInfo {
@@ -227,7 +227,7 @@
 
 .rightPrice {
     text-align: left;
-    margin-top: $size-2;
+    margin-top: $spacing-size-4;
 
     p {
         font-weight: var(--font-weight-bold);
@@ -259,16 +259,16 @@
 .communityEnterprise,
 .videoExplainer,
 .licensesInDetail {
-    margin-bottom: $size-8;
+    margin-bottom: $spacing-size-24;
 }
 
 .bulkLicenses {
-    margin-top: $size-5;
+    margin-top: $spacing-size-10;
     text-align: center;
 
     p {
         max-width: 48em;
-        margin: 0 auto $size-1;
+        margin: 0 auto $spacing-size-2;
     }
 }
 
@@ -276,9 +276,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: $size-2;
+    gap: $spacing-size-4;
     max-width: 48em;
-    margin: $size-7 auto $size-8;
+    margin: $spacing-size-16 auto $spacing-size-24;
 
     @media screen and (min-width: $breakpoint-alert-flag-small) {
         flex-direction: row;
@@ -291,19 +291,19 @@
 
 .communityEnterprise {
     grid-template-columns: 1fr 2fr;
-    gap: $size-3;
+    gap: $spacing-size-6;
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         display: grid;
     }
 
     :global(.button-secondary):not(:last-child) {
-        margin-bottom: $size-1;
+        margin-bottom: $spacing-size-2;
     }
 }
 
 .community {
-    margin-bottom: $size-4;
+    margin-bottom: $spacing-size-8;
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         margin-bottom: 0;
@@ -340,11 +340,11 @@
     @media screen and (min-width: $breakpoint-pricing-large) {
         grid-template-columns: 2fr 1fr;
         grid-auto-flow: dense;
-        gap: $size-3;
+        gap: $spacing-size-6;
     }
 
     div {
-        margin-bottom: $size-4;
+        margin-bottom: $spacing-size-8;
 
         @media screen and (min-width: $breakpoint-pricing-large) {
             grid-column: 2;
@@ -357,7 +357,7 @@
         font-weight: var(--font-weight-bold);
 
         @media screen and (min-width: $breakpoint-pricing-large) {
-            margin-top: -$size-1;
+            margin-top: -$spacing-size-2;
         }
     }
 
@@ -373,7 +373,7 @@
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    gap: $size-3;
+    gap: $spacing-size-6;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         flex-direction: row;
@@ -420,7 +420,7 @@
     .singleApplicationLicense,
     .multipleApplicationsLicense {
         @media screen and (min-width: $breakpoint-pricing-large) {
-            width: calc(50% - $size-3 / 2);
+            width: calc(50% - $spacing-size-6 / 2);
         }
     }
 
@@ -428,19 +428,19 @@
     .deploymentLicense ul {
         @media screen and (min-width: $breakpoint-pricing-large) {
             columns: 2;
-            gap: $size-3;
+            gap: $spacing-size-6;
         }
     }
 }
 
 .contactSales {
-    margin-bottom: $size-10;
+    margin-bottom: $spacing-size-20;
     text-align: center;
 
     p {
         max-width: 740px;
         margin-right: auto;
-        margin-bottom: $size-1;
+        margin-bottom: $spacing-size-2;
         margin-left: auto;
     }
 

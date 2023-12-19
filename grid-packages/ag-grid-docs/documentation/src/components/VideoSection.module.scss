@@ -3,8 +3,8 @@
 .videoSection {
     display: flex;
     flex-direction: column;
-    gap: $size-2;
-    margin-bottom: $size-2;
+    gap: $spacing-size-4;
+    margin-bottom: $spacing-size-4;
 
     @media screen and (min-width: $breakpoint-docs-home-small) {
         flex-direction: row;

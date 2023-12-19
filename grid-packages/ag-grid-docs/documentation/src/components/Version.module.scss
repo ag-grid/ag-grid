@@ -1,7 +1,7 @@
 @use '../design-system' as *;
 
 .version {
-    padding: $size-1;
+    padding: $spacing-size-2;
     background-color: var(--background-100);
     border-radius: var(--border-radius);
     border: 2px solid var(--secondary-border-color);
@@ -10,21 +10,21 @@
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: 0 $size-2;
+        gap: 0 $spacing-size-4;
 
         span {
             font-weight: var(--font-weight-thin);
-            margin-right: $size-6;
+            margin-right: $spacing-size-12;
         }
     }
 
     p:not(:last-child) {
-        margin-top: $size-1;
+        margin-top: $spacing-size-2;
         margin-bottom: $size-half;
     }
 
     ul {
-        margin-bottom: $size-2;
+        margin-bottom: $spacing-size-4;
 
         a::before {
             content: '- ';

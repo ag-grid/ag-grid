@@ -9,9 +9,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: $size-1;
+    gap: $spacing-size-2;
     width: 100%;
-    padding: $size-1 $size-1 $size-1 $size-2;
+    padding: $spacing-size-2 $spacing-size-2 $spacing-size-2 $spacing-size-4;
     text-align: left;
     font-weight: $font-weight-bold;
     transition: color $default-transition-timing !important;
@@ -52,7 +52,7 @@
     $border: 1px solid var(--border-color);
 
     position: relative;
-    padding: $size-2;
+    padding: $spacing-size-4;
     border-bottom-right-radius: var(--border-radius);
     border-bottom-left-radius: var(--border-radius);
     border-right: $border;
@@ -62,7 +62,7 @@
 
     &:not(.notExpandable) > div {
         overflow: hidden;
-        padding-bottom: $size-7;
+        padding-bottom: $spacing-size-16;
     }
 
     &.contentCollapsed:not(.notExpandable) > div {
@@ -75,7 +75,7 @@
         }
 
         .showMoreLink {
-            padding-top: $size-2;
+            padding-top: $spacing-size-4;
             background-image: none;
         }
     }
@@ -93,7 +93,7 @@
     width: 100%;
     left: 0;
     bottom: 0;
-    padding: $size-8 $size-2 $size-2;
+    padding: $spacing-size-24 $spacing-size-4 $spacing-size-4;
     text-align: center;
     background-image: linear-gradient(transparent, var(--default-background-color) 75%);
     border-radius: var(--border-radius);

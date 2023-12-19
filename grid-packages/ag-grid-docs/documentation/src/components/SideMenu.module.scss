@@ -5,14 +5,14 @@
 
     --right-padding: max(var(--horizontal-margin), calc(50vw - var(--max-page-width) / 2));
     --side-nav-max-width: calc(
-        var(--max-page-width) + var(--horizontal-margin) - #{$size-2} - var(--docs-page-max-width)
+        var(--max-page-width) + var(--horizontal-margin) - #{$spacing-size-4} - var(--docs-page-max-width)
     );
 
     display: none;
     width: clamp(220px, 22vw, var(--side-nav-max-width));
-    padding-top: $size-4;
-    padding-right: $size-4;
-    padding-bottom: $size-7;
+    padding-top: $spacing-size-8;
+    padding-right: $spacing-size-8;
+    padding-bottom: $spacing-size-16;
     line-height: var(--line-height-tight);
 
     @supports (position: sticky) {
@@ -31,9 +31,9 @@
 
     > div {
         @supports (position: sticky) {
-            padding-top: $size-4;
-            padding-right: $size-4;
-            padding-bottom: $size-7;
+            padding-top: $spacing-size-8;
+            padding-right: $spacing-size-8;
+            padding-bottom: $spacing-size-16;
             position: sticky;
             top: $site-header-height + $top-bar-height;
             max-height: calc(100vh - #{$site-header-height + $top-bar-height});
@@ -42,7 +42,7 @@
 
             @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
                 width: calc(var(--side-nav-max-width) + var(--right-padding));
-                margin-left: $size-2;
+                margin-left: $spacing-size-4;
                 padding-right: var(--right-padding);
             }
         }
@@ -53,8 +53,8 @@
     --nav-line-color: var(--neutral-300);
 
     position: relative;
-    padding-top: $size-1;
-    padding-bottom: $size-6;
+    padding-top: $spacing-size-2;
+    padding-bottom: $spacing-size-12;
     box-shadow: inset 1px 0 0 0 var(--nav-line-color);
     z-index: -2;
 
@@ -67,8 +67,8 @@
     --item-gap: 0.875em;
 
     position: relative;
-    padding-left: $size-2;
-    margin-bottom: $size-1;
+    padding-left: $spacing-size-4;
+    margin-bottom: $spacing-size-2;
 }
 
 .sideNav a {
@@ -136,7 +136,7 @@
 
 .sideNav .level3 {
     margin-bottom: calc(var(--item-gap) / 1.75) !important;
-    padding-left: $size-4;
+    padding-left: $spacing-size-8;
 }
 
 .sideNav .level1 + .level3,
@@ -153,5 +153,5 @@
 .sideNav .level6 {
     font-size: var(--font-size-extra-small);
     margin-bottom: calc(var(--item-gap) / 2) !important;
-    padding-left: $size-4;
+    padding-left: $spacing-size-8;
 }
