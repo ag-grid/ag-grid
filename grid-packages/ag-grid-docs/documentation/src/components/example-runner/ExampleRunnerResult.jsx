@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import styles from './ExampleRunnerResult.module.scss';
+import styles from '@design-system/modules/ExampleRunnerResult.module.scss';
 import { getIndexHtmlUrl } from './helpers';
 import { getIndexHtml } from './index-html-helper';
 import isDevelopment from 'utils/is-development';

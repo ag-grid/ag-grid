@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { hostPrefix } from '../../utils/consts';
-import styles from './ChevronButtonRenderer.module.scss';
+import styles from '@design-system/modules/ChevronButtonRenderer.module.scss';
 
 const TreeClosed = `${hostPrefix}/theme-icons/quartz/tree-closed.svg`;
 

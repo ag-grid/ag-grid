@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { withPrefix } from 'gatsby';
 import React from 'react';
 import { Icon } from './Icon';
-import styles from './IconsPanel.module.scss';
+import styles from '@design-system/modules/IconsPanel.module.scss';
 import { Tabs } from './tabs/Tabs';
 
 const THEMES = ['quartz', 'balham', 'material', 'alpine'];

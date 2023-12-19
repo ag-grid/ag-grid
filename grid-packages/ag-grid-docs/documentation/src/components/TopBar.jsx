@@ -4,7 +4,7 @@ import supportedFrameworks from '../utils/supported-frameworks';
 import FrameworkSelector from './FrameworkSelector';
 import { Icon } from './Icon';
 import Search from './search/Search';
-import styles from './TopBar.module.scss';
+import styles from '@design-system/modules/TopBar.module.scss';
 
 export const TopBar = ({ frameworks, currentFramework, path, suppressFrameworkSelector }) => {
     const frameworksData = supportedFrameworks

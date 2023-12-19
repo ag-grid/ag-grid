@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import React, { useState } from 'react';
 import { connectSearchBox } from 'react-instantsearch-dom';
 import { Icon } from '../Icon';
-import styles from './SearchBox.module.scss';
+import styles from '@design-system/modules/SearchBox.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
 

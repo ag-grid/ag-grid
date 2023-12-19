@@ -1,0 +1,32 @@
+@use '../core' as *;
+
+.mainNavLargeContainer {
+    display: flex;
+    margin-right: -16px;
+}
+
+.mainNavLarge {
+    display: none;
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        display: block;
+        background-color: var(--site-nav-background);
+        margin-left: auto;
+        background-color: unset;
+        overflow: visible;
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        margin-left: auto;
+    }
+}
+
+#mainNavSmall {
+    width: calc(100% + var(--layout-gap) * 2);
+    margin-right: calc(var(--layout-gap) * -1);
+    margin-left: calc(var(--layout-gap) * -1);
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        display: none;
+    }
+}

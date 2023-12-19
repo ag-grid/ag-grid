@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
-import styles from './FeaturesList.module.scss';
+import styles from '@design-system/modules/FeaturesList.module.scss';
 import { Icon } from './Icon';
+
 
 const featuresListItems = [
     { name: 'Cell Editing', url: '/javascript-data-grid/cell-editing/', icon: 'feature-editing' },
@@ -38,7 +39,7 @@ const ItemGroup = ({ items }) => {
 
 function FeaturesList() {
     return (
-        <div className={classNames(styles.featuresListOuter, 'font-size-extra-large')}>
+        <div className={classNames(styles.featuresListOuter, 'text-xl')}>
             <p>All the features your users expect and more...</p>
 
             <div className={styles.featuresList}>

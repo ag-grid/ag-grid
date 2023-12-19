@@ -1,0 +1,60 @@
+@use '../core' as *;
+
+$toolbar-width: 1050px;
+
+.toolbar {
+    width: 100%;
+    position: relative;
+    background-color: var(--color-util-brand-100);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-primary);
+        border-bottom: 1px solid var(--color-border-primary);
+    }
+}
+
+.controlsContainer {
+    padding-top: $spacing-size-2;
+    padding-bottom: $spacing-size-2;
+    overflow: auto;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    width: $toolbar-width;
+
+    select,
+    input {
+        max-width: 200px;
+        margin-right: $spacing-size-8;
+    }
+}
+
+.scrollIndicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 70px;
+    background: linear-gradient(90deg, transparent 0%, var(--color-util-brand-100) 110%);
+    pointer-events: none;
+
+    @media (min-width: $toolbar-width) {
+        display: none;
+    }
+}
+
+.videoTour {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    :global(.icon) {
+        fill: #f00;
+
+        #{$selector-darkmode} & {
+            fill: var(--color-text-primary);
+        }
+    }
+}

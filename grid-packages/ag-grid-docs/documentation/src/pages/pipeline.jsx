@@ -6,7 +6,7 @@ import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
 import { Icon } from '../components/Icon';
 import { IssueColDef, IssueTypeColDef } from '../utils/grid/issueColDefs';
-import styles from './pipelineChangelog.module.scss';
+import styles from '@design-system/modules/pipelineChangelog.module.scss';
 
 const COLUMN_DEFS = [
     IssueColDef,

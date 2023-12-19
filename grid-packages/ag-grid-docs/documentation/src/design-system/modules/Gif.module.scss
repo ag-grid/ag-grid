@@ -1,0 +1,48 @@
+@use '../core' as *;
+
+.gif {
+    max-width: 100%;
+    margin-bottom: $spacing-size-4;
+    outline: none !important;
+
+    &.wrapped {
+        margin-bottom: 0;
+    }
+}
+
+:global(.gif_player) {
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+
+    display: inline-block;
+    position: relative;
+    user-select: none;
+    cursor: pointer;
+
+    img {
+        max-width: 100%;
+    }
+
+    &:hover :global(.play_button) {
+        background-color: var(--link-hover-color);
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    &:global(.playing) :global(.play_button) {
+        transform: translate(-50%, -50%) scale(0);
+    }
+}
+
+:global(.play_button) {
+    position: absolute;
+    width: $spacing-size-16;
+    height: $spacing-size-16;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    background-color: var(--link-color);
+    background-image: url('../../images/gif-play-icon.svg');
+    color: #fff;
+    transform: translate(-50%, -50%) scale(1);
+    transition: transform 0.25s, background-color 0.25s;
+}

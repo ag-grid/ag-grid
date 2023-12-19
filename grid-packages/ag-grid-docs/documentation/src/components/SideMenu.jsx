@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
 import { addNonBreakingSpaceBetweenLastWords } from '../utils/add-non-breaking-space-between-last-words';
-import styles from './SideMenu.module.scss';
+import styles from '@design-system/modules/SideNavigation.module.scss';
 
 /**
  * This renders the right-hand menu that allows the user to navigate between different headings on a page.
@@ -68,7 +68,7 @@ const SideMenu = ({ headings = [], pageName, pageTitle, hideMenu, tracking }) =>
     }, [allHeadings]);
 
     return (
-        <nav id="side-menu" ref={menuRef} className={classNames(styles.sideNav, 'font-size-responsive')}>
+        <nav id="side-menu" ref={menuRef} className={styles.sideNav}>
             <div>
                 {allHeadings.length > 0 && (
                     <ul className="list-style-none">

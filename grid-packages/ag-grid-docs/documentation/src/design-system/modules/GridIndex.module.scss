@@ -1,0 +1,17 @@
+@use '../core' as *;
+
+html {
+    overflow-x: hidden;
+}
+
+main {
+    display: contents;
+}
+
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 0;
+    width: 100%;
+}
