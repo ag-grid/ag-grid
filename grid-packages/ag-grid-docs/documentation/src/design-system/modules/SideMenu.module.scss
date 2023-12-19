@@ -144,7 +144,7 @@
 
 .sideNav .level1 + .level3,
 .sideNav .level2 + .level3 {
-    margin-top: var(--item-gap);
+    margin-top: calc(var(--item-gap) * -0.7);
 }
 
 .sideNav .level3,

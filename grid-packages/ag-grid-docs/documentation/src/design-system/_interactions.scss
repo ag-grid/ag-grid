@@ -1,6 +1,6 @@
 @use './core' as *;
 
-.collapse:not(.show) {
+.collapse:where(:not(.show)) {
     display: none;
 }
 

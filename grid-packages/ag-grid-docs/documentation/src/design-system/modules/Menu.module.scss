@@ -14,23 +14,21 @@
         padding: 2px 10px;
         text-decoration: none;
         font-size: var(--text-fs-sm);
-        color: var(--color-link-hover);
+        color: var(--color-logo-orange);
         border-radius: 24px;
-        border: 1px solid var(--color-link-hover);
-        transition:
-            background-color $transition-default-timing,
-            color $transition-default-timing;
+        border: 1px solid var(--color-logo-orange);
+        transition: background-color $transition-default-timing, color $transition-default-timing;
         -webkit-font-smoothing: auto;
 
         &:hover,
         &:focus {
-            background-color: color-mix(in srgb, var(--color-link-hover) 5%, var(--color-bg-primary));
+            background-color: color-mix(in srgb, var(--color-logo-orange) 5%, var(--color-bg-primary));
         }
 
         #{$selector-darkmode} & {
             &:hover,
             &:focus {
-                background-color: color-mix(in srgb, var(--color-link-hover) 10%, var(--color-bg-primary));
+                background-color: color-mix(in srgb, var(--color-logo-orange) 10%, var(--color-bg-primary));
             }
         }
     }
@@ -60,7 +58,7 @@
     }
 }
 
-ul.menuInner {
+.menuInner {
     flex-basis: auto;
     flex-direction: column;
     padding-top: 0;
@@ -100,9 +98,7 @@ button:not([class^='ag-']).sectionHeader {
     font-weight: var(--text-semibold);
     border: 2px solid transparent;
     outline: none;
-    transition:
-        color $transition-default-timing,
-        border-color $transition-default-timing;
+    transition: color $transition-default-timing, border-color $transition-default-timing;
     border-radius: var(--radius-sm);
 
     &:focus-visible {
@@ -136,9 +132,7 @@ button:not([class^='ag-']).sectionHeader {
             fill: var(--color-fg-primary);
         }
 
-        transition:
-            transform 0.33s ease-in-out,
-            fill $transition-default-timing;
+        transition: transform 0.33s ease-in-out, fill $transition-default-timing;
 
         &.active {
             transform: rotate(90deg);
@@ -201,10 +195,7 @@ button:not([class^='ag-']).sectionHeader {
     color: var(--color-fg-secondary);
     border-left: 1px solid transparent;
     outline: none;
-    transition:
-        color 0.33s ease-in-out,
-        border-color 0.33s ease-in-out,
-        background-color 0.33s ease-in-out;
+    transition: color 0.33s ease-in-out, border-color 0.33s ease-in-out, background-color 0.33s ease-in-out;
 
     #{$selector-darkmode} & {
         --active-color: var(--color-brand-300);

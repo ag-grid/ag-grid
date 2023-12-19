@@ -5,7 +5,8 @@ import { useWindowSize } from '../utils/use-window-size';
 import {Icon} from 'components/Icon';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import {Collapsible} from './Collapsible';
-import styles from './Menu.module.scss';
+import styles from '@design-system/modules/Menu.module.scss';
+import gridStyles from '@design-system/modules/GridMenu.module.scss';
 import {toElementId, getActiveParentItems, getFilteredMenuData} from './menuUtils';
 import breakpoints from '../design-system/breakpoint.module.scss';
 
@@ -39,7 +40,7 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
     }, []);
 
     return (
-        <nav className={classnames(styles.menu, 'font-size-responsive')}>
+        <nav className={classnames(gridStyles.menu, styles.menu, 'font-size-responsive')}>
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
                 {whatsNewLink && (
                     <li className={styles.whatsNewLink}>

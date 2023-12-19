@@ -72,7 +72,7 @@ export const Layout = ({
                 <SiteHeader path={path} currentFramework={framework} />
 
                 <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
-                    <div className={styles.contentViewport}>
+                    <div className={classnames(styles.contentViewport, 'layout-grid')}>
                         {!fullScreen &&
                             <Menu currentFramework={framework}
                                   currentPage={pageName}

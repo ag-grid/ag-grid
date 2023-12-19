@@ -1,18 +1,7 @@
 @use '../core' as *;
 
 .doc-page-wrapper {
-    --docs-page-max-width: 68em;
-
-    display: flex;
-    justify-content: space-between;
-
-    @media screen and (min-width: $breakpoint-docs-nav-medium) and (max-width: $breakpoint-docs-nav-large) {
-        padding-right: var(--horizontal-margin);
-    }
-
-    @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
-        --docs-page-max-width: 74em;
-    }
+    display: contents;
 }
 
 .doc-page {
@@ -21,21 +10,21 @@
     padding-top: $spacing-size-8 + $size-half;
     padding-bottom: $spacing-size-16;
 
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        width: var(--layout-width-9-12);
+    }
+
     @media screen and (min-width: $breakpoint-docs-nav-large) {
-        padding-right: $spacing-size-12;
-        padding-left: $spacing-size-6;
-        max-width: var(--docs-page-max-width);
+        width: var(--layout-width-8-12);
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
+        width: var(--layout-width-6-12);
+        margin-right: calc(var(--layout-width-1-12) + var(--layout-gap));
+        margin-left: calc(var(--layout-width-1-12) + var(--layout-gap));
     }
 
     &.noSideMenu {
-        @media screen and (min-width: $breakpoint-docs-nav-large) {
-            padding-right: $horizontal-margin;
-            max-width: none;
-        }
-
-        @media screen and (min-width: 1600px) {
-            padding-right: calc(50vw - $max-page-width / 2);
-        }
     }
 
     h1,
