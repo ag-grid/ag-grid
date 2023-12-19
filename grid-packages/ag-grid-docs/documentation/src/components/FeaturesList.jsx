@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
-import styles from './FeaturesList.module.scss';
+import styles from '@design-system/modules/FeaturesList.module.scss';
 import { Icon } from './Icon';
+
 
 const featuresListItems = [
     { name: 'Cell Editing', url: '/javascript-data-grid/cell-editing/', icon: 'feature-editing' },
