@@ -2,7 +2,6 @@ import React from 'react';
 import type { FunctionComponent } from 'react';
 
 import styles from './StyleGuide.module.scss';
-import { getCssVarValue } from './getCssVarValue';
 
 const textSizes = ['2xs', 'xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl'];
 
@@ -11,7 +10,6 @@ const Text: FunctionComponent = ({ textName, fontWeight = 'normal' }) => {
         <div className={styles.textSizeItem}>
             <span>
                 <code>{`var(--text-${textName})`}</code>:{' '}
-                <span>{getCssVarValue(`--text-${textName}`).split('-')[0]}</span>
             </span>
             <p className={styles.textSizeExample} style={{ fontSize: `var(--text-fs-${textName})`, fontWeight }}>
                 The quick brown fox jumps over the lazy dog
