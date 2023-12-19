@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import { addNonBreakingSpaceBetweenLastWords } from '../../utils/add-non-breaking-space-between-last-words';
-import styles from './Quotes.module.scss';
+import styles from '@design-system/modules/Quotes.module.scss';
 import { QuotesData, QuotesDataItem } from './QuotesData';
 
 function filterAndSortByKey(data: QuotesData, sortKey: keyof QuotesDataItem) {

@@ -1,7 +1,7 @@
 @use '../../design-system' as *;
 
 .container {
-    --avatar-size: #{$size-7};
+    --avatar-size: #{$spacing-size-16};
 
     display: flex;
     flex-direction: column;
@@ -13,32 +13,28 @@
     @media screen and (min-width: $breakpoint-quotes-medium) {
         flex-direction: row;
         align-items: flex-start;
-        gap: $size-3;
+        gap: $spacing-size-6;
     }
 
     @media screen and (min-width: $breakpoint-quotes-large) {
         --avatar-size: #{$size-8};
 
-        gap: $size-5;
+        gap: $spacing-size-10;
     }
 
     blockquote {
-        --background-color: #d9f0fa;
+        --quote-background-color: var(--color-util-gray-200);
 
         position: relative;
-        margin-bottom: $size-3;
-        padding: $size-2 $size-3;
-        background-color: var(--background-color);
-        border-radius: var(--border-radius);
-
-        #{$darkmode-selector} & {
-            --background-color: #121f29;
-        }
+        margin-bottom: $spacing-size-6;
+        padding: $spacing-size-4 $spacing-size-6;
+        background-color: var(--quote-background-color);
+        border-radius: var(--radius-md);
     }
 
     figure {
         max-width: 40em;
-        margin-bottom: $size-6;
+        margin-bottom: $spacing-size-12;
 
         li:last-child & {
             margin-bottom: 0;
@@ -62,12 +58,12 @@
     figcaption {
         display: grid;
         grid-template-columns: var(--avatar-size) auto;
-        column-gap: $size-1;
+        column-gap: $spacing-size-2;
         grid-template-rows: auto;
         grid-template-areas:
             'avatar name'
             'avatar orgContainer';
-        line-height: var(--line-height-ultra-tight);
+        line-height: var(--text-lh-ultra-tight);
     }
 
     @media screen and (max-width: $breakpoint-quotes-large) {
@@ -97,9 +93,9 @@
     position: absolute;
     width: 18px;
     height: 22px;
-    bottom: -$size-2;
+    bottom: -$spacing-size-4;
     left: var(--avatar-size);
-    fill: var(--background-color);
+    fill: var(--quote-background-color);
 
     @media screen and (min-width: $breakpoint-quotes-large) {
         bottom: -22px;
@@ -110,8 +106,8 @@
     grid-area: avatar;
     width: var(--avatar-size);
     height: var(--avatar-size);
-    margin-right: $size-1;
-    border-radius: 50%;
+    margin-right: $spacing-size-2;
+    border-radius: var(--radius-full);
 }
 
 .name {
@@ -124,7 +120,7 @@
     align-self: start;
     display: flex;
     align-items: center;
-    gap: $size-half;
+    gap: $spacing-size-1;
 }
 
 .orgIcon {
