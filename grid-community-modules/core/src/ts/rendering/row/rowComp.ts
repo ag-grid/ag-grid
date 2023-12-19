@@ -29,7 +29,7 @@ export class RowComp extends Component {
         this.rowCtrl = ctrl;
 
         const rowDiv = document.createElement('div');
-        rowDiv.setAttribute('comp-id', this.getCompId().toString());
+        rowDiv.setAttribute('comp-id', `${this.getCompId()}`);
         rowDiv.setAttribute('style', this.getInitialStyle(containerType));
         this.setTemplateFromElement(rowDiv);
 
