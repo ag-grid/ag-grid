@@ -1,5 +1,4 @@
-import { browserSupportsPreventScroll, isBrowserChrome, isBrowserSafari } from './browser';
-import { exists } from './generic';
+import { isBrowserChrome, isBrowserSafari } from './browser';
 import { setAriaHidden } from './aria';
 import { RowStyle } from '../entities/gridOptions';
 import { CellStyle } from '../entities/colDef';

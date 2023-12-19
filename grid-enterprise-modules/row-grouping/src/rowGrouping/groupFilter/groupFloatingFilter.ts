@@ -36,13 +36,13 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         `);
     }
 
-    public init(params: IFloatingFilterParams<GroupFilter>): AgPromise<void> {
+    public init(params: IFloatingFilterParams<GroupFilter>): Promise<void> {
         this.params = params;
 
         // we only support showing the underlying floating filter for multiple group columns
         const canShowUnderlyingFloatingFilter = this.gridOptionsService.get('groupDisplayType') === 'multipleColumns';
 
-        return new AgPromise<void>(resolve => {
+        return new Promise<void>(resolve => {
             this.params.parentFilterInstance(parentFilterInstance => {
                 this.parentFilterInstance = parentFilterInstance;
 

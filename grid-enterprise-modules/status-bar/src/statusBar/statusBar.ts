@@ -4,11 +4,11 @@ import {
     UserComponentFactory,
     PostConstruct,
     PreDestroy,
-    AgPromise,
     RefSelector,
     IStatusPanelComp,
     IStatusPanelParams,
-    WithoutGridCommon
+    WithoutGridCommon,
+    AgPromise
 } from '@ag-grid-community/core';
 import { StatusBarService } from "./statusBarService";
 
@@ -103,7 +103,7 @@ export class StatusBar extends Component {
             });
         });
 
-        AgPromise.all(componentDetails.map((details) => details.promise))
+        Promise.all(componentDetails.map((details) => details.promise))
             .then(() => {
                 componentDetails.forEach(componentDetail => {
                     componentDetail.promise.then((component: IStatusPanelComp) => {

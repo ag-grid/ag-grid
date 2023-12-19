@@ -1,5 +1,4 @@
 import {
-    AgPromise,
     Autowired,
     ChartMenuOptions,
     ChartType,
@@ -83,7 +82,7 @@ export class TabbedChartMenu extends Component {
             tab: {
                 title: titleEl,
                 titleLabel: translatedTitle,
-                bodyPromise: AgPromise.resolve(eWrapperDiv),
+                bodyPromise: Promise.resolve(eWrapperDiv),
                 getScrollableContainer: () => {
                     const scrollableContainer = eWrapperDiv.querySelector('.ag-scrollable-container');
                     return (scrollableContainer || eWrapperDiv) as HTMLElement;

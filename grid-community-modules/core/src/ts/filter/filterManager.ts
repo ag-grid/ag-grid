@@ -644,7 +644,7 @@ export class FilterManager extends BeanStub {
             column: column,
             filterPromise: null,
             compiledElement: null,
-            guiPromise: AgPromise.resolve(null),
+            guiPromise: Promise.resolve(null),
             compDetails: null
         };
 
@@ -664,7 +664,7 @@ export class FilterManager extends BeanStub {
 
         eFilterGui.className = 'ag-filter';
 
-        filterWrapper.guiPromise = new AgPromise<HTMLElement>(resolve => {
+        filterWrapper.guiPromise = new Promise<HTMLElement>(resolve => {
             filterWrapper.filterPromise!.then(filter => {
                 let guiFromFilter = filter!.getGui();
 
@@ -1025,6 +1025,6 @@ export interface FilterWrapper {
     compiledElement: any;
     column: Column;
     filterPromise: AgPromise<IFilterComp> | null;
-    guiPromise: AgPromise<HTMLElement | null>;
+    guiPromise: Promise<HTMLElement | null>;
     compDetails: UserCompDetails | null;
 }

@@ -52,7 +52,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         this.initialiseTabGuard({});
     }
 
-    public init(params: IFilterParams): AgPromise<void> {
+    public init(params: IFilterParams): Promise<void> {
         this.params = params;
         this.validateParams();
         return this.updateGroups().then(() => {
@@ -73,7 +73,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         }
     }
 
-    private updateGroups(): AgPromise<void> {
+    private updateGroups(): Promise<void> {
         const sourceColumns = this.updateGroupField();
         return this.getUnderlyingFilters(sourceColumns);
     }
@@ -141,12 +141,12 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
         }
     }
 
-    private getUnderlyingFilters(sourceColumns: Column[] | null): AgPromise<void> {
+    private getUnderlyingFilters(sourceColumns: Column[] | null): Promise<void> {
         if (!sourceColumns) {
             this.filterColumnPairs = undefined;
             this.selectedFilter = undefined;
             this.groupColumn.setFilterActive(false, 'columnRowGroupChanged');
-            return AgPromise.resolve();
+            return Promise.resolve();
         }
         const filterPromises: AgPromise<IFilterComp>[] = [];
         const filterColumnPairs: FilterColumnPair[] = [];
@@ -167,20 +167,20 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
                 }));
             }
         });
-        return AgPromise.all(filterPromises).then(() => {
+        return Promise.all(filterPromises).then(() => {
             this.filterColumnPairs = filterColumnPairs;
             this.groupColumn.setFilterActive(this.isFilterActive(), 'columnRowGroupChanged');
         });
     }
 
-    private addUnderlyingFilterElement(): AgPromise<void> {
+    private addUnderlyingFilterElement(): Promise<void> {
         _.clearElement(this.eUnderlyingFilter);
         if (!this.selectedColumn) {
-            return AgPromise.resolve();
+            return Promise.resolve();
         }
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.selectedColumn, 'COLUMN_MENU');
         if (!filterWrapper) {
-            return AgPromise.resolve();
+            return Promise.resolve();
         }
         return filterWrapper.guiPromise.then(gui => {
             this.eUnderlyingFilter.appendChild(gui!);

@@ -28,14 +28,14 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         super(/* html */`<div class="ag-multi-floating-filter ag-floating-filter-input"></div>`);
     }
 
-    public init(params: IFloatingFilterParams<MultiFilter>): AgPromise<void> {
+    public init(params: IFloatingFilterParams<MultiFilter>): Promise<void> {
         this.params = params;
 
         const { compDetailsList } = this.getCompDetailsList(params);
         return this.setParams( compDetailsList );
     }
 
-    private setParams(compDetailsList: UserCompDetails[]): AgPromise<void> {
+    private setParams(compDetailsList: UserCompDetails[]): Promise<void> {
         const floatingFilterPromises: AgPromise<IFloatingFilterComp>[] = [];
 
         compDetailsList.forEach(compDetails => {
@@ -47,7 +47,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             }
         });
 
-        return AgPromise.all(floatingFilterPromises).then(floatingFilters => {
+        return Promise.all(floatingFilterPromises).then(floatingFilters => {
             floatingFilters!.forEach((floatingFilter, index) => {
                 this.floatingFilters.push(floatingFilter!);
 

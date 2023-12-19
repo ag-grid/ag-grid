@@ -61,7 +61,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
     }
 
-    public init(params: MultiFilterParams): AgPromise<void> {
+    public init(params: MultiFilterParams): Promise<void> {
         this.params = params;
         this.filterDefs = MultiFilter.getFilterDefs(params);
 
@@ -81,7 +81,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         });
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
-        return AgPromise
+        return Promise
             .all(filterPromises)
             .then(filters => {
                 this.filters = filters as IFilterComp[];

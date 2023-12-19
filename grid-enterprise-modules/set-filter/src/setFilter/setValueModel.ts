@@ -2,7 +2,6 @@ import {
     _,
     IClientSideRowModel,
     SetFilterParams,
-    AgPromise,
     SetFilterValues,
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
@@ -17,7 +16,8 @@ import {
     GridOptionsService,
     ColumnModel,
     ValueService,
-    AgEventListener
+    AgEventListener,
+    AgPromise
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
@@ -208,8 +208,8 @@ export class SetValueModel<V> implements IEventEmitter {
         this.localEventService.removeEventListener(eventType, listener, async);
     }
 
-    public updateOnParamsChange(filterParams: SetFilterParams<any, V>): AgPromise<void> {
-        return new AgPromise<void>(resolve => {
+    public updateOnParamsChange(filterParams: SetFilterParams<any, V>): Promise<void> {
+        return new Promise<void>(resolve => {
             const {
                 values,
                 textFormatter,
@@ -271,8 +271,8 @@ export class SetValueModel<V> implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    public overrideValues(valuesToUse: (V | null)[]): AgPromise<void> {
-        return new AgPromise<void>(resolve => {
+    public overrideValues(valuesToUse: (V | null)[]): Promise<void> {
+        return new Promise<void>(resolve => {
             // wait for any existing values to be populated before overriding
             this.allValuesPromise.then(() => {
                 this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
@@ -434,10 +434,10 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.clientSideValuesExtractor.extractUniqueValues(params.predicate, params.existingValues);
     }
 
-    private getValuesFromRowsAsync(removeUnavailableValues = false): AgPromise<Map<string | null, V | null> | null> {
+    private getValuesFromRowsAsync(removeUnavailableValues = false): Promise<Map<string | null, V | null> | null> {
         const params = this.getParamsForValuesFromRows(removeUnavailableValues);
         if (!params) {
-            return AgPromise.resolve(null);
+            return Promise.resolve(null);
         }
 
         return this.clientSideValuesExtractor.extractUniqueValuesAsync(params.predicate, params.existingValues);

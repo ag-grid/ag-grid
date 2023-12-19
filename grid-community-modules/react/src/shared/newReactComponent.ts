@@ -1,6 +1,6 @@
 import { ReactPortal, createElement } from 'react';
 import { createPortal } from 'react-dom';
-import { ComponentType, AgPromise } from '@ag-grid-community/core';
+import { ComponentType } from '@ag-grid-community/core';
 import { ReactComponent } from './reactComponent';
 import { renderToStaticMarkup } from "react-dom/server";
 import generateNewKey from "./keyGenerator";
@@ -22,13 +22,13 @@ export class NewReactComponent extends ReactComponent {
         this.portalKey = generateNewKey();
     }
 
-    public init(params: any): AgPromise<void> {
+    public init(params: any): Promise<void> {
         this.eParentElement = this.createParentElement(params);
         this.params = params;
 
         this.createOrUpdatePortal(params);
 
-        return new AgPromise<void>(resolve => this.createReactComponent(resolve));
+        return new Promise<void>(resolve => this.createReactComponent(resolve));
     }
 
     private createOrUpdatePortal(params: any) {

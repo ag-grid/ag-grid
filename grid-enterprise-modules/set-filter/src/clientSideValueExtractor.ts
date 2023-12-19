@@ -1,5 +1,4 @@
 import {
-    AgPromise,
     Column,
     ColumnModel,
     Events,
@@ -28,8 +27,8 @@ export class ClientSideValuesExtractor<V> {
     ) {
     }
 
-    public extractUniqueValuesAsync(predicate: (node: RowNode) => boolean, existingValues?: Map<string | null, V | null>): AgPromise<Map<string | null, V | null>> {
-        return new AgPromise(resolve => {
+    public extractUniqueValuesAsync(predicate: (node: RowNode) => boolean, existingValues?: Map<string | null, V | null>): Promise<Map<string | null, V | null>> {
+        return new Promise(resolve => {
             if (this.rowModel.isRowDataLoaded()) {
                 resolve(this.extractUniqueValues(predicate, existingValues));
             } else {

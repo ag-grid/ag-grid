@@ -1,7 +1,7 @@
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { PostConstruct, PreDestroy } from '../../../context/context';
 import { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
-import { AgPromise } from '../../../utils';
+import { AgPromise } from "../../../utils";
 import { setDisplayed } from "../../../utils/dom";
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';

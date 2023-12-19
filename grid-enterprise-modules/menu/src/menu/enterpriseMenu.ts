@@ -18,7 +18,6 @@ import {
     ModuleRegistry,
     PopupService,
     PostConstruct,
-    AgPromise,
     TabbedItem,
     TabbedLayout,
     FocusService,
@@ -169,7 +168,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     private addStopAnchoring(
-        stopAnchoringPromise: AgPromise<() => void>,
+        stopAnchoringPromise: Promise<() => void>,
         column: Column,
         closedFuncsArr: (() => void)[]
     ) {
@@ -497,7 +496,7 @@ export class EnterpriseMenu extends BeanStub {
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsService, this.column)!,
             titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
-            bodyPromise: AgPromise.resolve(this.mainMenuList.getGui()),
+            bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
         };
 
@@ -550,7 +549,7 @@ export class EnterpriseMenu extends BeanStub {
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsService, this.column)!,
             titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
-            bodyPromise: filterWrapper?.guiPromise as AgPromise<HTMLElement>,
+            bodyPromise: filterWrapper?.guiPromise as Promise<HTMLElement>,
             afterAttachedCallback: afterFilterAttachedCallback,
             afterDetachedCallback,
             name: EnterpriseMenu.TAB_FILTER
@@ -598,7 +597,7 @@ export class EnterpriseMenu extends BeanStub {
         this.tabItemColumns = {
             title: _.createIconNoSpan('columns', this.gridOptionsService, this.column)!, //createColumnsIcon(),
             titleLabel: EnterpriseMenu.TAB_COLUMNS.replace('MenuTab', ''),
-            bodyPromise: AgPromise.resolve(eWrapperDiv),
+            bodyPromise: Promise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
         };
 

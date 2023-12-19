@@ -9,7 +9,6 @@ import { KeyCode } from '../constants/keyCode';
 import { FocusService } from "../focusService";
 import { GridCtrl } from "../gridComp/gridCtrl";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
-import { AgPromise } from "../utils";
 import { CtrlsService } from "../ctrlsService";
 import { setAriaLabel, setAriaRole } from "../utils/aria";
 import { PostProcessPopupParams } from "../interfaces/iCallbackParams";
@@ -46,7 +45,7 @@ export interface AgPopup {
     isAnchored: boolean;
     instanceId: number;
     alignedToElement?: HTMLElement;
-    stopAnchoringPromise?: AgPromise<() => void>;
+    stopAnchoringPromise?: Promise<() => void>;
 }
 
 enum DIRECTION { vertical, horizontal }
@@ -603,7 +602,7 @@ export class PopupService extends BeanStub {
         return this.popupList.findIndex(p => p.element === el);
     }
 
-    public setPopupPositionRelatedToElement(popupEl: HTMLElement, relativeElement?: HTMLElement | null): AgPromise<() => void> | undefined {
+    public setPopupPositionRelatedToElement(popupEl: HTMLElement, relativeElement?: HTMLElement | null): Promise<() => void> | undefined {
         const popupIndex = this.getPopupIndex(popupEl);
 
         if (popupIndex === -1) { return; }
@@ -644,7 +643,7 @@ export class PopupService extends BeanStub {
         ePopup: HTMLElement,
         element: HTMLElement,
         hidePopup: () => void;
-    }): AgPromise<() => void> {
+    }): Promise<() => void> {
         const eParent = this.getPopupParent();
         const parentRect = eParent.getBoundingClientRect();
 
@@ -663,7 +662,7 @@ export class PopupService extends BeanStub {
         const leftPx = ePopup.style.left;
         const left = parseInt(leftPx!.substring(0, leftPx!.length - 1), 10);
 
-        return new AgPromise<() => void>(resolve => {
+        return new Promise<() => void>(resolve => {
             this.getFrameworkOverrides().setInterval(() => {
                 const pRect = eParent.getBoundingClientRect();
                 const sRect = element.getBoundingClientRect();

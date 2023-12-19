@@ -1,4 +1,3 @@
-import { AgPromise } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { clearElement } from '../utils/dom';
@@ -240,7 +239,7 @@ export interface TabbedLayoutParams {
 export interface TabbedItem {
     title: Element;
     titleLabel: string;
-    bodyPromise: AgPromise<HTMLElement>;
+    bodyPromise: Promise<HTMLElement>;
     name: string;
     getScrollableContainer?: () => HTMLElement;
     afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;

@@ -1,8 +1,6 @@
-import { AgPromise } from "../utils";
-
 export interface IFrameworkOverrides {
 
-    setInterval(action: any, interval?: any): AgPromise<number>;
+    setInterval(action: any, interval?: any): Promise<number>;
 
     addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
     

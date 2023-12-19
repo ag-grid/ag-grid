@@ -1,4 +1,4 @@
-import { AgPromise, HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from '@ag-grid-community/core';
+import { HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from '@ag-grid-community/core';
 import { createMemo, createSignal, onMount } from 'solid-js';
 import { CssClasses } from '../core/utils';
 import UserComp from '../userComps/userComp';
@@ -19,9 +19,9 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     let alreadyResolved = false;
     let userCompResolve: (value: IFloatingFilter)=>void;
-    let userCompPromise: AgPromise<IFloatingFilter>;
+    let userCompPromise: Promise<IFloatingFilter>;
     onMount( ()=> {
-        userCompPromise = new AgPromise<IFloatingFilter>( resolve => {
+        userCompPromise = new Promise<IFloatingFilter>( resolve => {
             userCompResolve = resolve;
         });
     });

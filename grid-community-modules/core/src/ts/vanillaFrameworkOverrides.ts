@@ -15,8 +15,8 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     public setTimeout(action: any, timeout?: any): void {
         window.setTimeout(action, timeout);
     }
-    public setInterval(action: any, timeout?: any): AgPromise<number> {
-        return new AgPromise(resolve => {
+    public setInterval(action: any, timeout?: any): Promise<number> {
+        return new Promise(resolve => {
             resolve(window.setInterval(action, timeout));
         });
     }
