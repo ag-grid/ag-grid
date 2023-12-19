@@ -94,6 +94,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
         }
         
 
+        const isApiSelection = source === 'api';
         let updatedCount = 0;
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
@@ -101,7 +102,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
             // trying to set it to true / false. this group will be calculated further on
             // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
             // here, otherwise the updatedCount would include it.
-            const skipThisNode = groupSelectsFiltered && node.group;
+            const skipThisNode = !isApiSelection && groupSelectsFiltered && node.group;
 
             if (!skipThisNode) {
                 const thisNodeWasSelected = node.selectThisNode(newValue, params.event, source);
