@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import Collapsible from './Collapsible';
-import styles from './ReleaseVersionNotes.module.scss';
+import styles from '@design-system/modules/ReleaseVersionNotes.module.scss';
 
 const ReleaseVersionNotes = ({ releaseNotes, markdownContent, versions, fixVersion, onChange, hideExpander }) => {
     let content;
