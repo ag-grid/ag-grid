@@ -73,7 +73,9 @@ export class CellComp extends Component implements TooltipParentComp {
         this.eRow = eRow;
         this.cellCtrl = cellCtrl;
 
-        this.setTemplate(/* html */`<div comp-id="${this.getCompId()}"/>`);
+        const cellDiv = document.createElement('div');
+        cellDiv.setAttribute('comp-id', `${this.getCompId()}`);
+        this.setTemplateFromElement(cellDiv);
 
         const eGui = this.getGui();
 
