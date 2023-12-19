@@ -149,7 +149,7 @@ export class SortIndicatorComp extends Component {
         setDisplayed(this.eSortOrder, showIndex, { skipAriaHidden: true });
 
         if (indexThisCol >= 0) {
-            this.eSortOrder.innerHTML = (indexThisCol + 1).toString();
+            this.eSortOrder.textContent = (indexThisCol + 1).toString();
         } else {
             clearElement(this.eSortOrder);
         }
