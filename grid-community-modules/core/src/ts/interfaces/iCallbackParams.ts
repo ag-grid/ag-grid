@@ -183,6 +183,10 @@ export interface FillOperationParams<TData = any, TContext = any> extends AgGrid
     column: Column;
     /** The values that were present before processing started. */
     initialValues: any[];
+    /** The values that were present before processing after without the aggregation function. */
+    initialNonAggregatedValues: any[];
+    /** The values that were present before processing after being formatted by their value formatter */
+    initialFormattedValues: any[];
     /** The index of the current processed value. */
     currentIndex: number;
     /** The value of the cell being currently processed by the Fill Operation. */

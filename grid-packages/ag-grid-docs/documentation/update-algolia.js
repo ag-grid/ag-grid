@@ -61,7 +61,14 @@ const extractTitle = titleTag => {
         sibling = sibling.nextSibling;
     }
 
-    return title;
+    return title
+        ? title
+            .replace('React Data Grid', '')
+            .replace('JavaScript Data Grid', '')
+            .replace('Angular Data Grid', '')
+            .replace('Vue Data Grid', '')
+            .replace('ReactAngularVueJavaScript', '')
+        : title;
 }
 
 const createRecords = async (browser, url, framework, breadcrumb, rank, loadFromAgGrid) => {

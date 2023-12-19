@@ -36,7 +36,7 @@ const GridExample = () => {
         }
     }, []);
 
-    const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(() => ({
+    const autoSizeStrategy = useMemo(() => ({
         type: 'fitCellContents',
         colIds: ['athleteDescription']
     }), []);

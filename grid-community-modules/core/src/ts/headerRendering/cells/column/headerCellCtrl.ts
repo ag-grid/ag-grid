@@ -26,6 +26,13 @@ import { SortDirection } from "../../../entities/colDef";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
+import { WithoutGridCommon } from "../../../interfaces/iCommon";
+import {
+    ColumnHeaderMouseOverEvent,
+    ColumnHeaderMouseLeaveEvent,
+    ColumnHeaderClickedEvent,
+    ColumnHeaderContextMenuEvent,
+} from "../../../events";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -597,7 +604,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
                 const possiblyNoContentYet = autoHeight == 0;
 
                 if (notYetInDom || possiblyNoContentYet) {
-                    this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled + 1), 0);
+                    window.setTimeout(() => measureHeight(timesCalled + 1), 0);
                     return;
                 }
             }
@@ -646,7 +653,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.addManagedListener(this.eventService, Column.EVENT_SORT_CHANGED, () => {
             // Rendering changes for sort, happen after the event... not ideal
             if (isMeasuring) {
-                this.beans.frameworkOverrides.setTimeout(() => measureHeight(0));
+                window.setTimeout(() => measureHeight(0));
             }
         });
         this.addRefreshFunction(checkMeasuring);
@@ -657,7 +664,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             const translate = this.localeService.getLocaleTextFunc();
             const sort = this.sortController.getDisplaySortForColumn(this.column) || null;
             this.comp.setAriaSort(getAriaSortState(sort));
-            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort.'));
+            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
         } else {
             this.comp.setAriaSort();
             this.setAriaDescriptionProperty('sort', null);
@@ -667,7 +674,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private refreshAriaMenu(): void {
         if (this.menuEnabled) {
             const translate = this.localeService.getLocaleTextFunc();
-            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
+            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu'));
         } else {
             this.setAriaDescriptionProperty('menu', null);
         }
@@ -692,15 +699,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     public refreshAriaDescription(): void {
-        let ariaDescription: string | null = null;
-        for (const [key, value] of this.ariaDescriptionProperties) {
-            // always announce filtered state first
-            if (key === 'filter') {
-                ariaDescription = `${value} ${ariaDescription || ''}`;
-            } else {
-                ariaDescription = `${ariaDescription || ''} ${value}`
-            }
-        }
+        const ariaDescription = 
+            Array.from(this.ariaDescriptionProperties.keys())
+                // always announce the filter description first
+                .sort((a: string, b: string) => a === 'filter' ? - 1 : (b.charCodeAt(0) - a.charCodeAt(0)))
+                .map((key: HeaderAriaDescriptionKey) => this.ariaDescriptionProperties.get(key))
+                .join('. ')
 
         this.comp.setAriaDescription(ariaDescription ?? undefined);
     }
@@ -728,9 +732,45 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private addActiveHeaderMouseListeners(): void {
-        const listener = (e: MouseEvent) => this.setActiveHeader(e.type === 'mouseenter');
+        const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
+        const clickListener = (event: MouseEvent) => this.handleColumnClick(event, false);
+        const contextMenuListener = (event: MouseEvent) => this.handleColumnClick(event, true);
+
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
+        this.addManagedListener(this.getGui(), 'click', clickListener);
+        this.addManagedListener(this.getGui(), 'contextmenu', contextMenuListener);
+    }
+
+    private handleMouseOverChange(isMouseOver: boolean): void {
+        this.setActiveHeader(isMouseOver);
+        const eventType = isMouseOver ?
+            Events.EVENT_COLUMN_HEADER_MOUSE_OVER :
+            Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
+
+        const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
+            type: eventType,
+            column: this.column,
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private handleColumnClick(mouseEvent: MouseEvent, isContextMenuEvent: boolean): void {
+        const eventType = isContextMenuEvent ?
+            Events.EVENT_COLUMN_HEADER_CONTEXT_MENU :
+            Events.EVENT_COLUMN_HEADER_CLICKED;
+
+        if (isContextMenuEvent && this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+            mouseEvent.preventDefault();
+        }
+
+        const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
+            type: eventType,
+            column: this.column,
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     private setActiveHeader(active: boolean): void {

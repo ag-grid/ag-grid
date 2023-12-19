@@ -32,7 +32,7 @@ const extrasMap = {
         scripts: ['https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/flatpickr.min.js'],
         styles: [
             'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/flatpickr.min.css',
-            'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/themes/material_blue.css'
+            'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.5.2/themes/dark.css'
         ]
     },
     fontawesome: {

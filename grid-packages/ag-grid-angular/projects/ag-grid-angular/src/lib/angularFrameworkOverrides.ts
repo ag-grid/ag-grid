@@ -1,77 +1,29 @@
 import {Injectable, NgZone} from "@angular/core";
 import {VanillaFrameworkOverrides} from "ag-grid-community";
-import {AgPromise} from "ag-grid-community";
 
 @Injectable()
 export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
-    private isEmitterUsed: (eventType: string) => boolean;
-
     constructor(private _ngZone: NgZone) {
         super('angular');
     }
 
-    setEmitterUsedCallback(isEmitterUsed: (eventType: string) => boolean) {
-        this.isEmitterUsed = isEmitterUsed;
-
-    }
-
-    public setTimeout(action: any, timeout?: any): void {
+    dispatchEvent(listener: () => void): void {
+        // Make all events run outside Angular as they often trigger the setup of event listeners
+        // By having the event listeners outside Angular we can avoid triggering change detection
+        // Check for _ngZone existence as it is not present when Zoneless
         if (this._ngZone) {
-            this._ngZone.runOutsideAngular(() => {
-                window.setTimeout(() => {
-                    action();
-                }, timeout);
-            });
+            this._ngZone.runOutsideAngular(listener);
         } else {
-            window.setTimeout(() => {
-                action();
-            }, timeout);
+            listener();
         }
     }
 
-    public setInterval(action: any, interval?: any): AgPromise<number> {
-        return new AgPromise<number>(resolve => {
-            if (this._ngZone) {
-                this._ngZone.runOutsideAngular(() => {
-                    resolve(window.setInterval(() => {
-                            action();
-                        }, interval)
-                    );
-                });
-            } else {
-                resolve(window.setInterval(() => {
-                        action();
-                    }, interval)
-                );
-            }
-        });
-    }
-
-    addEventListener(element: HTMLElement, eventType: string, listener: EventListener | EventListenerObject, useCapture?: boolean): void {
-        if (this.isOutsideAngular(eventType) && this._ngZone) {
-            this._ngZone.runOutsideAngular(() => {
-                element.addEventListener(eventType, listener, useCapture);
-            });
-        } else {
-            element.addEventListener(eventType, listener, useCapture);
-        }
-    }
-
-    dispatchEvent(eventType: string, listener: () => {}, global = false): void {
-        if (this.isOutsideAngular(eventType)) {
-            if (this._ngZone) {
-                this._ngZone.runOutsideAngular(listener);
-            } else {
-                listener();
-            }
-        } else if (this.isEmitterUsed(eventType) || global) {
-            // only trigger off events (and potentially change detection) if actually used
-            if (!NgZone.isInAngularZone() && this._ngZone) {
-                this._ngZone.run(listener);
-            } else {
-                listener();
-            }
-        }
+    /**
+     * Make sure that any code that is executed outside of AG Grid is running within the Angular zone.
+     * This means users can update templates and use binding without having to do anything extra.
+     */
+    wrapOutgoing<T>( callback: () => T): T {
+        return this._ngZone ? this._ngZone.run(callback) : callback();
     }
 
     isFrameworkComponent(comp: any): boolean {

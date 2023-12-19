@@ -524,9 +524,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
         const listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
 
-        listItem.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, selectedListener);
+        listItem.addEventListener(SetFilterListItem.EVENT_SELECTION_CHANGED, selectedListener as any);
         if (expandedListener) {
-            listItem.addEventListener(SetFilterListItem.EVENT_EXPANDED_CHANGED, expandedListener);
+            listItem.addEventListener(SetFilterListItem.EVENT_EXPANDED_CHANGED, expandedListener as any);
         }
 
         return listItem;

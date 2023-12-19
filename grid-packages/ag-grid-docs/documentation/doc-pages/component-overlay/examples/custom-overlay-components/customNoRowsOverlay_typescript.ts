@@ -6,8 +6,8 @@ export class CustomNoRowsOverlay implements ICellRendererComp {
     init(params: ICellRendererParams & { noRowsMessageFunc: () => string }) {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = `
-            <div class="ag-overlay-loading-center" style="background-color: #b4bebe;">   
-                <i class="far fa-frown"> ${params.noRowsMessageFunc()} </i>
+            <div role="presentation" class="ag-overlay-loading-center" style="background-color: #b4bebe;">
+                <i class="far fa-frown" aria-live="polite" aria-atomic="true"> ${params.noRowsMessageFunc()} </i>
             </div>
         `;
     }

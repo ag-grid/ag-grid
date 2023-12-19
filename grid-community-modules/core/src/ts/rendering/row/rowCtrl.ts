@@ -8,7 +8,7 @@ import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
 import { DataChangedEvent, IRowNode, RowHighlightPosition } from "../../interfaces/iRowNode";
 import { RowPosition } from "../../entities/rowPositionUtils";
-import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
+import { AgEventListener, CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { ModuleNames } from "../../modules/moduleNames";
@@ -122,6 +122,7 @@ export class RowCtrl extends BeanStub {
     private rowStyles: RowStyle | undefined;
     private readonly emptyStyle: RowStyle = {};
     private readonly printLayout: boolean;
+    private readonly suppressRowTransform: boolean;
 
     private updateColumnListsPending = false;
 
@@ -144,6 +145,7 @@ export class RowCtrl extends BeanStub {
         this.paginationPage = beans.paginationProxy.getCurrentPage();
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
+        this.suppressRowTransform = this.gridOptionsService.get('suppressRowTransform');
 
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
         this.rowId = escapeString(rowNode.id);
@@ -1064,7 +1066,7 @@ export class RowCtrl extends BeanStub {
                         this.beans.serverSideRowModel.onRowHeightChanged();
                     }
                 };
-                this.beans.frameworkOverrides.setTimeout(updateRowHeightFunc, 0);
+                window.setTimeout(updateRowHeightFunc, 0);
             }
         };
 
@@ -1427,11 +1429,11 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    public addEventListener(eventType: string, listener: Function): void {
+    public addEventListener(eventType: string, listener: AgEventListener): void {
         super.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: string, listener: AgEventListener): void {
         super.removeEventListener(eventType, listener);
     }
 
@@ -1567,12 +1569,10 @@ export class RowCtrl extends BeanStub {
     // to below the viewport, so the row will appear to animate up. if we didn't set the initial position at creation
     // time, the row would animate down (ie from position zero).
     public getInitialRowTop(rowContainerType: RowContainerType): string | undefined {
-        const suppressRowTransform = this.gridOptionsService.get('suppressRowTransform');
-        return suppressRowTransform ? this.getInitialRowTopShared(rowContainerType) : undefined;
+        return this.suppressRowTransform ? this.getInitialRowTopShared(rowContainerType) : undefined;
     }
     public getInitialTransform(rowContainerType: RowContainerType): string | undefined {
-        const suppressRowTransform = this.gridOptionsService.get('suppressRowTransform');
-        return suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared(rowContainerType)})`;
+        return this.suppressRowTransform ? undefined : `translateY(${this.getInitialRowTopShared(rowContainerType)})`;
     }
     private getInitialRowTopShared(rowContainerType: RowContainerType): string {
         // print layout uses normal flow layout for row positioning
@@ -1593,9 +1593,8 @@ export class RowCtrl extends BeanStub {
     }
 
     private setRowTopStyle(topPx: string): void {
-        const suppressRowTransform = this.gridOptionsService.get('suppressRowTransform');
         this.allRowGuis.forEach(
-            gui => suppressRowTransform ?
+            gui => this.suppressRowTransform ?
                 gui.rowComp.setTop(topPx) :
                 gui.rowComp.setTransform(`translateY(${topPx})`)
         );

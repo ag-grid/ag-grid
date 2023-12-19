@@ -114,6 +114,19 @@ const gridOptions = {
 }
 </snippet>
 
+### Disable Group Sticky Rows
+
+By default, when grouping, the current parent of rows becomes "sticky" to the top of the grid while scrolling. This causes the rows to be in 'incorrect order' and result in inconsistent
+announcements for row indices when parsed by screen readers.
+
+To disable Group Sticky Rows, set `suppressGroupRowsSticky={true}` the gridOptions like so:
+
+<snippet>
+const gridOptions = {
+    suppressGroupRowsSticky: true,
+}
+</snippet>
+
 <note>
 Animations won't work properly when the DOM order is forced, so ensure they are not enabled.
 </note>
@@ -166,6 +179,9 @@ Using advanced functionality in AG Grid makes the DOM structure incompatible wit
 
 - ### Navigation to pinned rows/columns
     Screen readers assume that the visual and DOM element order are identical. Specifically, when you pin a row/column, it  causes elements to be rendered in different containers. This is why you cannot use screen readers to navigate into a  pinned row/column cells, as in fact, this means they're rendered in a different element from the rest of the columns/rows which are scrollable.
+
+- ### Full Width Rows
+    Full Width Rows are rendered in a different container, therefore screen readers have trouble announcing them for the same reason as `Pinned Rows/Columns`. This also includes Row Grouping, when `groupDisplayType="groupRows"`
 
 - ### Limitations announcing the correct column name in grouped columns
     Even though all aria tags have been applied to the necessary elements, some screen readers have trouble navigating the tags when the structure of the grid gets more complex (eg. grouped columns). This is the reason why there are some limitations announcing the correct column names.

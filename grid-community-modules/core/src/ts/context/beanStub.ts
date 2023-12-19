@@ -1,6 +1,6 @@
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { EventService } from "../eventService";
-import { AgEvent } from "../events";
+import { AgEvent, AgEventListener } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { Component } from "../widgets/component";
@@ -72,7 +72,7 @@ export class BeanStub implements IEventEmitter {
         this.dispatchEvent({ type: BeanStub.EVENT_DESTROYED });
     }
 
-    public addEventListener(eventType: string, listener: Function): void {
+    public addEventListener(eventType: string, listener: AgEventListener): void {
         if (!this.localEventService) {
             this.localEventService = new EventService();
         }
@@ -80,7 +80,7 @@ export class BeanStub implements IEventEmitter {
         this.localEventService.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: string, listener: AgEventListener): void {
         if (this.localEventService) {
             this.localEventService.removeEventListener(eventType, listener);
         }
@@ -107,12 +107,19 @@ export class BeanStub implements IEventEmitter {
 
         if (object instanceof HTMLElement) {
             addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
+        } else if (object instanceof Window) {
+            object.addEventListener(event, listener);
         } else {
             object.addEventListener(event, listener);
         }
 
         const destroyFunc: () => null = () => {
-            object.removeEventListener(event, listener);
+            if (object instanceof HTMLElement || object instanceof Window) {
+                object.removeEventListener(event, listener);
+            } else {
+                object.removeEventListener(event, listener);
+            }
+
             this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
             return null;
         };

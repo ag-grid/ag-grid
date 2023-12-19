@@ -190,6 +190,7 @@ const AG_GRID_LOCALE_EN = {
     firstPage: 'First Page',
     previousPage: 'Previous Page',
     pageSizeSelectorLabel: 'Page Size:',
+    footerTotal: 'Total',
 
     // Pivoting
     pivotColumnGroupTotals: 'Total',
@@ -368,7 +369,7 @@ const AG_GRID_LOCALE_EN = {
     ariaHidden: 'hidden',
     ariaIndeterminate:'indeterminate',
     ariaInputEditor: 'Input Editor',
-    ariaMenuColumn: 'Press CTRL ENTER to open column menu.',
+    ariaMenuColumn: 'Press CTRL ENTER to open column menu',
     ariaRowDeselect: 'Press SPACE to deselect this row',
     ariaRowSelectAll: 'Press Space to toggle all rows selection',
     ariaRowToggleSelection: 'Press Space to toggle row selection',

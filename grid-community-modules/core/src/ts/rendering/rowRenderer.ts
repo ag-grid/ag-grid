@@ -2,6 +2,7 @@ import { RowCtrl } from "./row/rowCtrl";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import {
+    AgEventListener,
     BodyScrollEvent,
     CellFocusedEvent,
     DisplayedRowsChangedEvent,
@@ -672,7 +673,7 @@ export class RowRenderer extends BeanStub {
         return res;
     }
 
-    public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
+    public addRenderedRowListener(eventName: string, rowIndex: number, callback: AgEventListener): void {
         const rowComp = this.rowCtrlsByRowIndex[rowIndex];
         if (rowComp) {
             rowComp.addEventListener(eventName, callback);
