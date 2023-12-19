@@ -7,7 +7,7 @@
     width: var(--layout-width-3-12);
     padding-top: $spacing-size-8;
     padding-bottom: $spacing-size-16;
-    line-height: var(--text-lh-tight);
+    line-height: var(--text-lh-sm);
 
     @supports (position: sticky) {
         padding-top: 0;

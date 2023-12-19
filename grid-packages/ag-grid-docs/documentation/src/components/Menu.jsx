@@ -40,7 +40,7 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
     }, []);
 
     return (
-        <nav className={classnames(gridStyles.menu, styles.menu, 'font-size-responsive')}>
+        <nav className={classnames(gridStyles.menu, styles.menu)}>
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
                 {whatsNewLink && (
                     <li className={styles.whatsNewLink}>

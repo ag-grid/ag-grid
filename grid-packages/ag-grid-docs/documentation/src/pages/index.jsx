@@ -110,7 +110,7 @@ const Default = () => {
 
             <div className={styles.homepageCustomers}>
                 <div className={classNames(styles.customersInner, 'layout-page-max-width')}>
-                    <p className="font-size-responsive font-size-large text-secondary">
+                    <p className="font-size-large text-secondary">
                         Trusted by developers at nine out of ten Fortune 500 companies
                     </p>
                     <div className={styles.customerLogos}>
