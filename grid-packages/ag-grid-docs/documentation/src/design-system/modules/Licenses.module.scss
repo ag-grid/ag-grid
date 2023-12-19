@@ -2,15 +2,11 @@
 
 .license {
     width: 100%;
-    border-radius: var(--border-radius);
-    border: 1px solid #c5c5c5;
-
-    #{$darkmode-selector} & {
-        border-color: #394755;
-    }
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-primary);
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        max-width: calc(50% - $size-2);
+        max-width: calc(50% - $spacing-size-4);
         max-height: 480px;
     }
 
@@ -24,7 +20,7 @@
         align-items: center;
         text-align: center;
         height: 100%;
-        padding: $size-2;
+        padding: $spacing-size-4;
 
         @media screen and (min-width: $breakpoint-pricing-medium) {
             align-items: flex-start;
@@ -36,8 +32,8 @@
 .licenseMeta {
     display: flex;
     flex-direction: column;
-    margin-bottom: $size-1;
-    color: var(--secondary-text-color);
+    margin-bottom: $spacing-size-2;
+    color: var(--color-text-tertiary);
 
     :global(.icon) {
         margin-top: -1px;
@@ -46,7 +42,7 @@
         opacity: 0.6666;
 
         * {
-            fill: var(--secondary-text-color) !important;
+            fill: var(--color-text-tertiary);
         }
     }
 }
@@ -62,16 +58,16 @@
 
     #{$darkmode-selector} & {
         :global(#LogoType) * {
-            fill: var(--default-text-color) !important;
+            fill: var(--color-text-primary) !important; // !important required to override SVG inline styles
         }
     }
 }
 
 p.name {
     font-size: 46px;
-    line-height: $line-height-ultra-tight;
-    margin-top: $size-half;
-    margin-bottom: $size-1;
+    line-height: var(--text-lh-ultra-tight);
+    margin-top: $spacing-size-1;
+    margin-bottom: $spacing-size-2;
 
     @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
         max-width: 340px;
@@ -83,31 +79,31 @@ p.name {
 .price {
     display: flex;
     flex-direction: column;
-    margin-bottom: $size-2;
+    margin-bottom: $spacing-size-4;
 }
 
 .standardPrice {
     display: inline-block;
     position: relative;
-    margin-left: $size-2;
-    color: var(--secondary-text-color);
+    margin-left: $spacing-size-4;
+    color: var(--color-text-tertiary);
 
     &::after {
         content: '';
         position: absolute;
         top: 50%;
-        right: $size-half * -1;
-        left: $size-half * -1;
-        height: $size-half;
-        margin-top: $size-half * -1;
-        background-color: var(--secondary-text-color);
+        right: $spacing-size-1 * -1;
+        left: $spacing-size-1 * -1;
+        height: $spacing-size-1;
+        margin-top: $spacing-size-1 * -1;
+        background-color: var(--color-text-tertiary);
     }
 }
 
 .priceFullDollars,
 .standardPrice {
-    font-size: 46px !important; // !important for font-size weirdness
-    line-height: $line-height-ultra-tight;
+    font-size: 46px;
+    line-height: var(--text-lh-ultra-tight);
     letter-spacing: -0.05em;
 
     &::before {
@@ -116,7 +112,7 @@ p.name {
 }
 
 .priceFullDollars {
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--text-bold);
 }
 
 .licenseBenefits {
@@ -124,12 +120,12 @@ p.name {
     flex-direction: column;
 
     li {
-        margin-bottom: $size-half !important;
+        margin-bottom: $spacing-size-1;
     }
 
     a {
         display: block;
-        margin-top: $size-half;
+        margin-top: $spacing-size-1;
     }
 
     svg {
@@ -138,23 +134,18 @@ p.name {
         width: 20px;
         height: 20px;
         border-radius: 3px;
-        fill: #7a7a7a;
-        background-color: #efefef;
-
-        #{$darkmode-selector} & {
-            fill: var(--default-text-color);
-            background-color: #394755;
-        }
+        fill: var(--color-util-gray-700);
+        background-color: var(--color-util-gray-300);
     }
 }
 
 .launchExplainer {
-    margin-top: $size-1;
+    margin-top: $spacing-size-2;
     min-height: 36px;
-    margin-bottom: $size-2;
+    margin-bottom: $spacing-size-4;
 
     p {
-        line-height: var(--line-height-tight);
+        line-height: var(--text-lh-tight);
     }
 }
 
@@ -176,6 +167,6 @@ p.name {
     &::after {
         content: '→';
         padding-left: 0.25em;
-        transition: transform $default-transition-timing;
+        transition: transform $transition-default-timing;
     }
 }

@@ -6,7 +6,7 @@ import AGGridLogo from '../../images/inline-svgs/ag-grid-logo.svg';
 import AGChartsLogo from '../../images/inline-svgs/ag-charts-logo.svg';
 
 // @ts-ignore
-import styles from './Licenses.module.scss';
+import styles from '@design-system/modules/Licenses.module.scss';
 
 type LicenseData = {
     className: string;
