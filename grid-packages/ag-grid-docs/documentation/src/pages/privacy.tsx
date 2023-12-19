@@ -1,6 +1,6 @@
 import React from 'react';
 import SEO from './components/SEO';
-import styles from '@design-system/modules/PolicyPage.module.scss';
+import styles from '@design-system/modules/policyPage.module.scss';
 
 const Privacy = () => {
     return (
