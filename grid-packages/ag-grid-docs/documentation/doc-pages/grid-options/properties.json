@@ -592,7 +592,7 @@
         "chartThemeOverrides": {
             "more": {
                 "name": "Chart Groups and Types Customisation",
-                "url": "/integrated-charts-customisation/#overriding-existing-themes"
+                "url": "/integrated-charts-customisation/#overriding-themes"
             }
         },
         "chartToolPanelsDef": {
