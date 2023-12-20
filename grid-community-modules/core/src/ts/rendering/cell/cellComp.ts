@@ -181,7 +181,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
-            // <div class="ag-cell-wrapper" role="presentation"></div>
             const wrapperDiv = document.createElement('div');
             wrapperDiv.setAttribute('role', 'presentation');
             wrapperDiv.setAttribute('class', 'ag-cell-wrapper');
@@ -199,7 +198,6 @@ export class CellComp extends Component implements TooltipParentComp {
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            // <span class="ag-cell-value" role="presentation"></span>
             const cellSpan = document.createElement('span');
             cellSpan.setAttribute('role', 'presentation');
             cellSpan.setAttribute('class', 'ag-cell-value');
