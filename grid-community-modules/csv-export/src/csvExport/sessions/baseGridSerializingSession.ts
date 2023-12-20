@@ -76,7 +76,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         // we render the group summary text e.g. "-> Parent -> Child"...
         const hideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         const value = ((!hideOpenParents || node.footer) && this.shouldRenderGroupSummaryCell(node, column, index))
-            ? this.createValueForGroupNode(node)
+            ? this.createValueForGroupNode(column, node)
             : this.valueService.getValue(column, node);
 
         const processedValue = this.processCell({
@@ -127,17 +127,32 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         return this.columnModel.getDisplayNameForColumn(column, 'csv', true);
     }
 
-    private createValueForGroupNode(node: RowNode): string {
+    private createValueForGroupNode(column: Column, node: RowNode): string {
         if (this.processRowGroupCallback) {
-            return this.processRowGroupCallback(this.gridOptionsService.addGridCommonParams({ node }));
+            return this.processRowGroupCallback(this.gridOptionsService.addGridCommonParams({ column, node }));
         }
+
+        const isTreeData = this.gridOptionsService.get('treeData');
+        const isSuppressGroupMaintainValueType = this.gridOptionsService.get('suppressGroupMaintainValueType');
+
+        // if not tree data and not suppressGroupMaintainValueType then we get the value from the group data
+        const getValueFromNode = (node: RowNode) => {
+            if (isTreeData || isSuppressGroupMaintainValueType) {
+                return node.key;
+            }
+            const value = node.groupData?.[column.getId()];
+            if (!value || !node.rowGroupColumn) { return value; }
+            return this.valueFormatterService.formatValue(node.rowGroupColumn, node, value) ?? value;
+        }
+
+        
         const isFooter = node.footer;
-        const keys = [node.key];
+        const keys = [getValueFromNode(node)];
 
         if (!this.gridOptionsService.isGroupMultiAutoColumn()) {
             while (node.parent) {
                 node = node.parent;
-                keys.push(node.key);
+                keys.push(getValueFromNode(node));
             }
         }
 

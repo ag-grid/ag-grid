@@ -161,6 +161,6 @@ export interface ProcessGroupHeaderForExportParams<TData = any, TContext = any> 
 }
 
 export interface ProcessRowGroupForExportParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** Row node. */
     node: IRowNode<TData>;
+    column?: Column;
 }
