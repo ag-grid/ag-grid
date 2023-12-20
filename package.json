@@ -58,7 +58,8 @@
     "nx": "^16.6.0",
     "rollup": "^2.74.1",
     "terser": "^4.3.9",
-    "typescript": "~4.7.4"
+    "typescript": "~4.7.4",
+    "@types/estree": "1.0.5"
   },
   "dependencies": {
     "gatsby-alias-imports": "^1.0.6"
