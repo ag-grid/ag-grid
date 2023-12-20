@@ -17,7 +17,7 @@ The example below demonstrates how to provide custom overlay components to the g
 - **Custom No Rows Overlay Renderer** is supplied by name via `gridOptions.noRowsOverlayComponent`.
 - **Custom No Rows Overlay Renderer Parameters** are supplied using `gridOptions.noRowsOverlayComponentParams`.
 
-<grid-example title='Custom Overlay Components' name='custom-overlay-components' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Custom Overlay Components' name='custom-overlay-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 
 ## Implementing a Loading Overlay Component
 

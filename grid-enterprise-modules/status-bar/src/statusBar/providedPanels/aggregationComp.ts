@@ -14,7 +14,7 @@ import {
     RowPositionUtils,
     RowRenderer, Optional,
     AggregationStatusPanelAggFunc,
-    IAggregationStatusPanelParams
+    AggregationStatusPanelParams
 } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
@@ -43,7 +43,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @RefSelector('maxAggregationComp') private maxAggregationComp: NameValueComp;
     @RefSelector('avgAggregationComp') private avgAggregationComp: NameValueComp;
 
-    private params!: IAggregationStatusPanelParams;
+    private params!: AggregationStatusPanelParams;
 
     constructor() {
         super(AggregationComp.TEMPLATE);
@@ -78,11 +78,11 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 
-    public init(params: IAggregationStatusPanelParams) {
+    public init(params: AggregationStatusPanelParams) {
         this.params = params;
     }
 
-    public refresh(params: IAggregationStatusPanelParams): boolean {
+    public refresh(params: AggregationStatusPanelParams): boolean {
         this.params = params;
         this.onRangeSelectionChanged();
         return true;

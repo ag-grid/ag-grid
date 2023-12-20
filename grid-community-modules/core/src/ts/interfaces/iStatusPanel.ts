@@ -12,7 +12,11 @@ export interface IStatusPanelParams<TData = any, TContext = any> extends AgGridC
 
 export type AggregationStatusPanelAggFunc = 'count' | 'sum' | 'min' | 'max' | 'avg';
 
-export interface IAggregationStatusPanelParams<TData = any, TContext = any> extends IStatusPanelParams<TData, TContext> {
+export interface IAggregationStatusPanelParams {
+    aggFuncs: AggregationStatusPanelAggFunc[];
+}
+
+export interface AggregationStatusPanelParams<TData = any, TContext = any> extends IAggregationStatusPanelParams, IStatusPanelParams<TData, TContext> {
     aggFuncs: AggregationStatusPanelAggFunc[];
 }
 

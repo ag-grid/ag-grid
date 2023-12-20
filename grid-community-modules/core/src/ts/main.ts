@@ -204,7 +204,7 @@ export { GroupCellRenderer, } from "./rendering/cellRenderers/groupCellRenderer"
 export { GroupCellRendererParams, IGroupCellRendererParams, IGroupCellRendererFullRowParams, FooterValueGetterFunc, IGroupCellRenderer, GroupCellRendererCtrl, GroupCheckboxSelectionCallback, GroupCheckboxSelectionCallbackParams } from "./rendering/cellRenderers/groupCellRendererCtrl";
 
 // status bar components
-export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams, AggregationStatusPanelAggFunc, IAggregationStatusPanelParams } from "./interfaces/iStatusPanel";
+export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams, AggregationStatusPanelAggFunc, IAggregationStatusPanelParams, AggregationStatusPanelParams } from "./interfaces/iStatusPanel";
 export { IStatusBarService } from "./interfaces/iStatusBarService";
 
 // tool panel components

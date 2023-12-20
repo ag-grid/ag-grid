@@ -7,7 +7,7 @@ Custom Tool Panel Components can be included into the grid's Side Bar. Implement
 
 The example below provides a 'Custom Stats' Tool Panel to demonstrates how to create and register a Custom Tool Panel Component with the grid and include it the Side Bar:
  
-<grid-example title='Custom Stats' name='custom-stats' type='generated' options='{ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter" ], "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Custom Stats' name='custom-stats' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter" ], "extras": ["fontawesome"] }'></grid-example>
 
 ## Implementing a Tool Panel Component
 

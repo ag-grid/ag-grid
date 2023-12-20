@@ -1,4 +1,4 @@
-import { AgPromise, IFilter, IToolPanel } from "ag-grid-community";
+import { AgPromise, ICellEditor, IFilter, IToolPanel } from "ag-grid-community";
 
 /**
  * Function to retrieve the React component from an instance returned by the grid.
@@ -6,7 +6,7 @@ import { AgPromise, IFilter, IToolPanel } from "ag-grid-community";
  * @param callback Callback which is provided the underlying React custom component
  */
 export function getInstance<
-    TGridComponent extends IFilter | IToolPanel = IFilter | IToolPanel,
+    TGridComponent extends IFilter | IToolPanel | ICellEditor = IFilter | IToolPanel | ICellEditor,
     TCustomComponent extends TGridComponent = TGridComponent
 >(wrapperComponent: TGridComponent, callback: (customComponent: TCustomComponent | undefined) => void): void {
     const promise = (wrapperComponent as any)?.getInstance?.() ?? AgPromise.resolve(undefined);

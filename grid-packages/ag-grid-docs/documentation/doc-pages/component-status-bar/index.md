@@ -5,7 +5,7 @@ enterprise: true
 
 The Status Bar Panel allows you to add your own components to the grid's Status Bar. Use this when the provided status bar components do not meet your requirements.
 
-<grid-example title='Status Bar Panel' name='simple-component' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
+<grid-example title='Status Bar Panel' name='simple-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 
 ## Implementing a Status Bar Panel Component
 
@@ -36,7 +36,7 @@ md-include:configure-vue.md
 
 Order is important here - the order of the components provided will determine the order in which they're rendered, from left to right.
 
-<grid-example title='Status Bar Panel' name='custom-component' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
+<grid-example title='Status Bar Panel' name='custom-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 
 ## Initialisation of Status Bar Components
 
@@ -63,4 +63,4 @@ After the grid has created an instance of a status bar component it is possible 
 
 The example below shows using `getStatusPanel`:
 
-<grid-example title='Get Status Bar Panel Instance' name='component-instance' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
+<grid-example title='Get Status Bar Panel Instance' name='component-instance' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
