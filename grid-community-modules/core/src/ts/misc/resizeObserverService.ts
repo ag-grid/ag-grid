@@ -1,6 +1,5 @@
 import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { offsetHeight, offsetWidth } from "../utils/dom";
 
 const DEBOUNCE_DELAY = 50;
 @Bean('resizeObserverService')
@@ -19,8 +18,8 @@ export class ResizeObserverService extends BeanStub {
 
         const usePolyfill = () => {
             // initialise to the current width and height, so first call will have no changes
-            let widthLastTime = offsetWidth(element);
-            let heightLastTime = offsetHeight(element);
+            let widthLastTime = element?.clientWidth ?? 0;
+            let heightLastTime = element?.clientHeight ?? 0;
 
             // when finished, this gets turned to false.
             let running = true;
@@ -28,8 +27,8 @@ export class ResizeObserverService extends BeanStub {
             const periodicallyCheckWidthAndHeight = () => {
                 if (running) {
 
-                    const newWidth = offsetWidth(element);
-                    const newHeight = offsetHeight(element);
+                    const newWidth = element?.clientWidth ?? 0;
+                    const newHeight = element?.clientHeight ?? 0;
 
                     const changed = newWidth !== widthLastTime || newHeight !== heightLastTime;
                     if (changed) {
