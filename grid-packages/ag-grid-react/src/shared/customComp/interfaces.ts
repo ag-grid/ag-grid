@@ -11,7 +11,6 @@ import {
     IDetailCellRendererParams,
     IFilter,
     IFloatingFilterParams,
-    IFloatingFilterParent,
     IGroupCellRendererParams,
     IHeaderGroupParams,
     IHeaderParams,
@@ -59,7 +58,7 @@ export interface CustomFilterProps<TData = any, TContext = any, TModel = any> ex
 }
 
 /** Props provided to custom floating filter components */
-export interface CustomFloatingFilterProps<P = IFloatingFilterParent & IFilter, TData = any, TContext = any, TModel = any> extends IFloatingFilterParams<P, TData, TContext> {
+export interface CustomFloatingFilterProps<P = IFilter, TData = any, TContext = any, TModel = any> extends IFloatingFilterParams<P, TData, TContext> {
     /** The current filter model for the component. */
     model: TModel | null;
     /** Callback that should be called every time the model in the component changes. */

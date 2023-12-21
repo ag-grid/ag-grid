@@ -38,7 +38,10 @@ export class FloatingFilterComponent implements IFloatingFilter {
         this.refreshProps();
         this.floatingFilterParams.parentFilterInstance(instance => {
             (instance.setModel(model) || AgPromise.resolve()).then(() => {
-                this.floatingFilterParams.filterParams.filterChangedCallback();
+                setTimeout(() => {
+                    // ensure prop updates have happened
+                    this.floatingFilterParams.filterParams.filterChangedCallback();
+                });
             });
         });
     }
