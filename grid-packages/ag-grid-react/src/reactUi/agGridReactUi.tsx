@@ -14,12 +14,13 @@ import React, {
     useRef,
     useState
 } from 'react';
-import { DateComponent } from '../shared/customComp/dateComponent';
-import { FilterComponent } from '../shared/customComp/filterComponent';
-import { LoadingOverlayComponent } from '../shared/customComp/loadingOverlayComponent';
-import { NoRowsOverlayComponent } from '../shared/customComp/noRowsOverlayComponent';
-import { StatusPanelComponent } from '../shared/customComp/statusPanelComponent';
-import { ToolPanelComponent } from '../shared/customComp/toolPanelComponent';
+import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
+import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
+import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
+import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';
+import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverlayComponentWrapper';
+import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
+import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
 import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
@@ -184,17 +185,19 @@ class ReactFrameworkComponentWrapper
                 switch (propertyName) {
                     case 'filter':
                     case 'filterComponent':
-                        return FilterComponent;
+                        return FilterComponentWrapper;
+                    case 'floatingFilterComponent':
+                        return FloatingFilterComponentWrapper;
                     case 'dateComponent':
-                        return DateComponent;
+                        return DateComponentWrapper;
                     case 'loadingOverlayComponent':
-                        return LoadingOverlayComponent;
+                        return LoadingOverlayComponentWrapper;
                     case 'noRowsOverlayComponent':
-                        return NoRowsOverlayComponent;
+                        return NoRowsOverlayComponentWrapper;
                     case 'statusPanel':
-                        return StatusPanelComponent;
+                        return StatusPanelComponentWrapper;
                     case 'toolPanel':
-                        return ToolPanelComponent;
+                        return ToolPanelComponentWrapper;
                 }
             }
             const ComponentClass = getComponentClass(componentType.propertyName);

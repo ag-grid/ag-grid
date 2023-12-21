@@ -5,7 +5,7 @@ import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
-import { CellEditorComponent } from '../../shared/customComp/cellEditorComponent';
+import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
 import { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 
@@ -169,7 +169,7 @@ export interface EditDetails {
     compDetails: UserCompDetails;
     popup?: boolean;
     popupPosition?: 'over' | 'under';
-    compProxy?: CellEditorComponent;
+    compProxy?: CellEditorComponentProxy;
 }
 
 const CellComp = (props: {
@@ -405,7 +405,7 @@ const CellComp = (props: {
                 if (compDetails) {
                     let compProxy = undefined;
                     if (reactiveCustomComponents) {
-                        compProxy = new CellEditorComponent(compDetails.params!, () => setRenderKey( prev => prev + 1 ));
+                        compProxy = new CellEditorComponentProxy(compDetails.params!, () => setRenderKey( prev => prev + 1 ));
                     }
                     // start editing
                     setEditDetails({

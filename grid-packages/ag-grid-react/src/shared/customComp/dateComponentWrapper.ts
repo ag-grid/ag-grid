@@ -1,8 +1,8 @@
-import { IDate, IDateParams } from "@ag-grid-community/core";
-import { CustomComponent } from "./customComponent";
+import { IDate, IDateParams } from "ag-grid-community";
+import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomDateProps, CustomDateCallbacks } from "./interfaces";
 
-export class DateComponent extends CustomComponent<IDateParams, CustomDateProps, CustomDateCallbacks> implements IDate {
+export class DateComponentWrapper extends CustomComponentWrapper<IDateParams, CustomDateProps, CustomDateCallbacks> implements IDate {
     private date: Date | null = null;
 
     public getDate(): Date | null {

@@ -1,8 +1,8 @@
 import { IToolPanel, IToolPanelParams } from "@ag-grid-community/core";
-import { CustomComponent } from "./customComponent";
+import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomToolPanelProps } from "./interfaces";
 
-export class ToolPanelComponent extends CustomComponent<IToolPanelParams, CustomToolPanelProps, {}> implements IToolPanel {
+export class ToolPanelComponentWrapper extends CustomComponentWrapper<IToolPanelParams, CustomToolPanelProps, {}> implements IToolPanel {
     private state: any;
 
     public refresh(params: IToolPanelParams): boolean {

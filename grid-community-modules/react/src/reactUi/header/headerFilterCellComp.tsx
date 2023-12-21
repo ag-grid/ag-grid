@@ -3,7 +3,7 @@ import { BeansContext } from '../beansContext';
 import { AgPromise, HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from '@ag-grid-community/core';
 import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
-import { FloatingFilterComponent } from '../../shared/customComp/floatingFilterComponent';
+import { FloatingFilterComponentProxy } from '../../shared/customComp/floatingFilterComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
 import { CustomFloatingFilterCallbacks } from '../../shared/customComp/interfaces';
 
@@ -88,7 +88,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const reactiveCustomComponents = useMemo(() => gridOptionsService.get('reactiveCustomComponents'), []);
     const floatingFilterCompProxy = useMemo(() => {
         if (reactiveCustomComponents && userCompDetails) {
-            const compProxy = new FloatingFilterComponent(userCompDetails!.params, () => setRenderKey(prev => prev + 1));
+            const compProxy = new FloatingFilterComponentProxy(userCompDetails!.params, () => setRenderKey(prev => prev + 1));
             userCompRef(compProxy);
             return compProxy;
         }

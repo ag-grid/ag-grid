@@ -1,8 +1,8 @@
 import { ILoadingOverlay, ILoadingOverlayParams } from "@ag-grid-community/core";
-import { CustomComponent } from "./customComponent";
+import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomLoadingOverlayProps } from "./interfaces";
 
-export class LoadingOverlayComponent extends CustomComponent<ILoadingOverlayParams, CustomLoadingOverlayProps, {}> implements ILoadingOverlay {
+export class LoadingOverlayComponentWrapper extends CustomComponentWrapper<ILoadingOverlayParams, CustomLoadingOverlayProps, {}> implements ILoadingOverlay {
     public refresh(params: ILoadingOverlayParams): void {
         this.sourceParams = params;
         this.refreshProps();

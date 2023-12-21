@@ -18,7 +18,7 @@ export function addOptionalMethods<M, C>(optionalMethodNames: string[], provided
     });
 }
 
-export class CustomComponent<TInputParams, TOutputParams, TMethods> extends NewReactComponent {
+export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> extends NewReactComponent {
     protected refreshProps!: () => void;
 
     protected providedMethods!: TMethods;

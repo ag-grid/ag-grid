@@ -1,8 +1,8 @@
 import { INoRowsOverlay, INoRowsOverlayParams } from "@ag-grid-community/core";
-import { CustomComponent } from "./customComponent";
+import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomNoRowsOverlayProps } from "./interfaces";
 
-export class NoRowsOverlayComponent extends CustomComponent<INoRowsOverlayParams, CustomNoRowsOverlayProps, {}> implements INoRowsOverlay {
+export class NoRowsOverlayComponentWrapper extends CustomComponentWrapper<INoRowsOverlayParams, CustomNoRowsOverlayProps, {}> implements INoRowsOverlay {
     public refresh(params: INoRowsOverlayParams): void {
         this.sourceParams = params;
         this.refreshProps();

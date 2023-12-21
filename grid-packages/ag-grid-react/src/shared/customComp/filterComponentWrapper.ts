@@ -1,8 +1,8 @@
-import { IDoesFilterPassParams, IFilter, IFilterParams } from "@ag-grid-community/core";
-import { CustomComponent } from "./customComponent";
+import { IDoesFilterPassParams, IFilter, IFilterParams } from "ag-grid-community";
+import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomFilterProps, CustomFilterCallbacks } from "./interfaces";
 
-export class FilterComponent extends CustomComponent<IFilterParams, CustomFilterProps, CustomFilterCallbacks> implements IFilter {
+export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams, CustomFilterProps, CustomFilterCallbacks> implements IFilter {
     private model: any = null;
 
     public isFilterActive(): boolean {

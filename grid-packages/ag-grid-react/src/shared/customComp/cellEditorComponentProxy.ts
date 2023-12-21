@@ -1,8 +1,8 @@
-import { AgPromise, ICellEditor, ICellEditorParams } from "@ag-grid-community/core";
-import { addOptionalMethods } from "./customComponent";
+import { AgPromise, ICellEditor, ICellEditorParams } from "ag-grid-community";
+import { addOptionalMethods } from "./customComponentWrapper";
 import { CustomCellEditorCallbacks, CustomCellEditorProps } from "./interfaces";
 
-export class CellEditorComponent implements ICellEditor {
+export class CellEditorComponentProxy implements ICellEditor {
     private value: any;
     private componentInstance?: any;
     private resolveInstanceCreated?: () => void;

@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from "react";
-import { WrapperParams } from "../../shared/customComp/customComponent"
+import { WrapperParams } from "../../shared/customComp/customComponentWrapper"
 import { CustomContext } from "../../shared/customComp/customContext"
 
 const CustomWrapperComp = <P, M>(params: WrapperParams<P, M>) => {
