@@ -8,6 +8,9 @@
 |    /** The agInit(params) method is called on the tool panel component once.
 |        See below for details on the parameters. */
 |    agInit(params: IToolPanelParams): void;
+|
+|    /** Can be left blank if no custom refresh logic is required. */
+|    refresh(): void;
 |}
 </snippet>
 </framework-specific-section>
