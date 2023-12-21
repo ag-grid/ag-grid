@@ -505,7 +505,12 @@ export class DragAndDropService extends BeanStub {
 
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
 
-        this.setGhostIcon(null);
+        // In order for getIconName() to retrieve the correct icon, we need to wait for the dragging to start.
+        // We use timeout to wait for the next tick, so that onDragging() has been called at least once.
+        setTimeout(() => {
+            const newGhostIcon = this.lastDropTarget?.getIconName ? this.lastDropTarget.getIconName() : null;
+            this.setGhostIcon(newGhostIcon);
+        }, 0);
 
         const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
         let dragItemName = this.dragSource.dragItemName;

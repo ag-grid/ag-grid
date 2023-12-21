@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import React, { FunctionComponent } from 'react';
 import { Icon } from '../Icon';
-import styles from './ToggleAutomatedExampleButton.module.scss';
+import styles from '@design-system/modules/ToggleAutomatedExampleButton.module.scss';
 
 interface Props {
     isHoveredOver: boolean;

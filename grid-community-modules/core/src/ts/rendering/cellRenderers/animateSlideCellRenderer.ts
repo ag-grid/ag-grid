@@ -2,15 +2,10 @@ import { Autowired } from "../../context/context";
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { FilterManager } from "../../filter/filterManager";
-import { loadTemplate, clearElement } from "../../utils/dom";
+import { clearElement } from "../../utils/dom";
 import { missing, exists } from "../../utils/generic";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
-
-    private static TEMPLATE = /* html */
-        `<span>
-            <span class="ag-value-slide-current"></span>
-        </span>`;
 
     private eCurrent: HTMLElement;
     private ePrevious: HTMLElement | null;
@@ -22,12 +17,20 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
     @Autowired('filterManager') private filterManager: FilterManager;
 
     constructor() {
-        super(AnimateSlideCellRenderer.TEMPLATE);
+        super();
+
+        const template = document.createElement('span');
+        const slide = document.createElement('span');
+        slide.setAttribute('class', 'ag-value-slide-current');        
+        template.appendChild(slide);
+
+        this.setTemplateFromElement(template);
+
         this.eCurrent = this.queryForHtmlElement('.ag-value-slide-current');
     }
 
     public init(params: any): void {
-        this.refresh(params);
+        this.refresh(params, true);
     }
 
     public addSlideAnimation(): void {
@@ -43,8 +46,11 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
             this.getGui().removeChild(this.ePrevious);
         }
 
-        this.ePrevious = loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
-        this.ePrevious.innerHTML = this.eCurrent.innerHTML;
+        const prevElement = document.createElement('span');
+        prevElement.setAttribute('class','ag-value-slide-previous ag-value-slide-out');
+        this.ePrevious = prevElement;
+
+        this.ePrevious.textContent = this.eCurrent.textContent;
         this.getGui().insertBefore(this.ePrevious, this.eCurrent);
 
         // having timeout of 0 allows use to skip to the next css turn,
@@ -62,7 +68,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         }, 3000);
     }
 
-    public refresh(params: any): boolean {
+    public refresh(params: any, isInitialRender: boolean = false): boolean {
         let value = params.value;
 
         if (missing(value)) {
@@ -79,14 +85,16 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
             return false;
         }
 
-        this.addSlideAnimation();
+        if(!isInitialRender){
+            this.addSlideAnimation();
+        }
 
         this.lastValue = value;
 
         if (exists(params.valueFormatted)) {
-            this.eCurrent.innerHTML = params.valueFormatted;
+            this.eCurrent.textContent = params.valueFormatted;
         } else if (exists(params.value)) {
-            this.eCurrent.innerHTML = value;
+            this.eCurrent.textContent = value;
         } else {
             clearElement(this.eCurrent);
         }

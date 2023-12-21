@@ -1,0 +1,55 @@
+@use '../../design-system' as *;
+
+.buttonOuter {
+    display: inline-block;
+    width: 262px;
+}
+
+.button {
+    $replay-width: 224px;
+    $control-width: 254px;
+
+    position: relative;
+    width: $replay-width;
+    padding: 0.25em 0.5em 0.4em 0.5em !important;
+    text-align: left;
+    transition: background-color $transition-default-timing, border $transition-default-timing,
+        box-shadow $transition-default-timing, width $transition-default-timing !important;
+
+    @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
+        display: none;
+    }
+
+    :global(.icon) {
+        --icon-size: 1.5em;
+
+        margin: -1em 0 -1em 0.25em;
+    }
+
+    span {
+        transition: opacity 0.4s;
+    }
+
+    &.isActive {
+        width: $control-width;
+    }
+}
+
+.controlInner {
+    opacity: 0;
+
+    .isActive & {
+        opacity: 1;
+    }
+}
+
+.replayInner {
+    position: absolute;
+    top: 0.25em;
+    left: 0.5em;
+    opacity: 1;
+
+    .isActive & {
+        opacity: 0;
+    }
+}

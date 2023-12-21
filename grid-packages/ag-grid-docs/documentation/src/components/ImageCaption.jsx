@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import React from 'react';
 import Gif from './Gif';
 import GlobalContextConsumer from './GlobalContext';
-import styles from './ImageCaption.module.scss';
+import styles from '@design-system/modules/ImageCaption.module.scss';
 import { getImage, useImageFileNodes } from './use-image-file-nodes';
 
 /**

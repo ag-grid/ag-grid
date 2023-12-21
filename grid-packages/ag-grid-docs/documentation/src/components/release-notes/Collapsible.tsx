@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { FunctionComponent, useState } from 'react';
 import { Icon } from '../Icon';
-import styles from './Collapsible.module.scss';
+import styles from '@design-system/modules/Collapsible.module.scss';
 
 interface Props {
     title: string;

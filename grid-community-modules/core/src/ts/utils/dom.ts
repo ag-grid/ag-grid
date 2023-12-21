@@ -294,26 +294,6 @@ export function loadTemplate(template: string): HTMLElement {
     return tempDiv.firstChild as HTMLElement;
 }
 
-export function appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
-    if (eContainer.lastChild) {
-        // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
-        // we put the items at the start, so new items appear underneath old items,
-        // so when expanding/collapsing groups, the new rows don't go on top of the
-        // rows below that are moving our of the way
-        eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
-    } else {
-        eContainer.innerHTML = htmlTemplate;
-    }
-}
-
-export function offsetHeight(element: HTMLElement) {
-    return element && element.clientHeight ? element.clientHeight : 0;
-}
-
-export function offsetWidth(element: HTMLElement) {
-    return element && element.clientWidth ? element.clientWidth : 0;
-}
-
 export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eChildBefore?: HTMLElement | null): void {
     // if already in right order, do nothing
     if (eChildBefore && eChildBefore.nextSibling === eChild) {

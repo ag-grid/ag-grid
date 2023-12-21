@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 // @ts-ignore
 import { hostPrefix } from '../utils/consts';
 // @ts-ignore
-import styles from './LearningVideos.module.scss';
+import styles from '@design-system/modules/LearningVideos.module.scss';
 
 type VideoData = {
     title: string;

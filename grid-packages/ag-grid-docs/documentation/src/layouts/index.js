@@ -8,7 +8,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import '../design-system/design-system.scss';
 import favIcons from '../images/favicons';
-import styles from './index.module.scss';
+import styles from '@design-system/modules/GridIndex.module.scss';
 import menuData from '../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../doc-pages/licensing/api-menu.json';
 import { getCurrentFramework } from '../utils/local-storage';
@@ -72,7 +72,7 @@ export const Layout = ({
                 <SiteHeader path={path} currentFramework={framework} />
 
                 <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
-                    <div className={styles.contentViewport}>
+                    <div className={classnames(styles.contentViewport, !fullScreen && 'layout-grid')}>
                         {!fullScreen &&
                             <Menu currentFramework={framework}
                                   currentPage={pageName}

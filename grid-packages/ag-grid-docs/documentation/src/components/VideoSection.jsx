@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import styles from './VideoSection.module.scss';
+import styles from '@design-system/modules/VideoSection.module.scss';
 
 /**
  * This embeds a YouTube video into the page.
@@ -16,7 +16,7 @@ const VideoSection = ({ id, title, header, children }) => {
     return (
         <>
             {hasWindow && (
-                <div className={classnames(styles.videoSection, 'font-size-responsive')}>
+                <div className={styles.videoSection}>
                     <div className={classnames({ [styles.header]: header })}>{children}</div>
                     <iframe
                         className={styles.ytIframe}

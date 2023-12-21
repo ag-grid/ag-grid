@@ -13,7 +13,7 @@ import { TooltipParentComp } from "../../widgets/customTooltipFeature";
 import { setAriaRole } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
-import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from "../../utils/dom";
+import { addStylesToElement, clearElement, removeFromParent } from "../../utils/dom";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { browserSupportsPreventScroll } from "../../utils/browser";
@@ -181,7 +181,10 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
-            this.eCellWrapper = loadTemplate(/* html */`<div class="ag-cell-wrapper" role="presentation"></div>`);
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.setAttribute('role', 'presentation');
+            wrapperDiv.setAttribute('class', 'ag-cell-wrapper');
+            this.eCellWrapper = wrapperDiv;
             this.getGui().appendChild(this.eCellWrapper);
         }
         const takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
@@ -195,7 +198,10 @@ export class CellComp extends Component implements TooltipParentComp {
         const usingCellValue = !editing && usingWrapper;
         const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
-            this.eCellValue = loadTemplate(/* html */`<span class="ag-cell-value" role="presentation"></span>`);
+            const cellSpan = document.createElement('span');
+            cellSpan.setAttribute('role', 'presentation');
+            cellSpan.setAttribute('class', 'ag-cell-value');
+            this.eCellValue = cellSpan;
             this.eCellWrapper!.appendChild(this.eCellValue);
         }
         const takeCellValueOut = !usingCellValue && this.eCellValue != null;
@@ -268,9 +274,9 @@ export class CellComp extends Component implements TooltipParentComp {
         const eParent = this.getParentOfValue();
         clearElement(eParent);
 
-        const escapedValue = valueToDisplay != null ? escapeString(valueToDisplay) : null;
+        const escapedValue = valueToDisplay != null ? escapeString(valueToDisplay, true) : null;
         if (escapedValue != null) {
-            eParent.innerHTML = escapedValue;
+            eParent.textContent = escapedValue;
         }
     }
 

@@ -1,0 +1,107 @@
+@use '../core' as *;
+
+.footer {
+    padding-top: $spacing-size-10;
+    padding-bottom: calc($spacing-size-10 * 2);
+    background-color: var(--color-util-brand-500);
+    color: var(--color-white);
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-primary);
+        background-color: var(--color-bg-primary);
+        border-top: 1px solid var(--color-border-primary);
+    }
+
+    h4,
+    p {
+        opacity: 0.6666;
+    }
+
+    h4 {
+        font-weight: var(--text-regular);
+    }
+
+    svg {
+        fill: var(--color-white);
+    }
+}
+
+.footerColumns {
+    @media screen and (min-width: $breakpoint-site-footer-four-column) {
+        justify-content: space-between;
+    }
+}
+
+.menuColumn {
+    margin-bottom: $spacing-size-10;
+    width: var(--layout-width-4-4);
+
+    @media screen and (min-width: $breakpoint-site-footer-two-column) and (max-width: $breakpoint-site-footer-four-column) {
+        width: var(--layout-width-2-4);
+
+        &:nth-child(even) {
+            text-align: right;
+        }
+    }
+
+    @media screen and (min-width: $breakpoint-site-footer-four-column) {
+        width: auto;
+
+        &:last-child {
+            text-align: right;
+        }
+    }
+
+    li {
+        overflow: hidden;
+    }
+
+    a {
+        text-decoration: underline;
+        display: inline-block;
+        min-width: $spacing-size-12;
+        margin-top: -12px;
+        margin-bottom: -12px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-decoration-color: transparent;
+        text-underline-offset: 2px;
+        color: var(--color-white);
+        transition: text-decoration-color $transition-default-timing;
+
+        &:hover {
+            color: var(--color-white);
+            text-decoration-color: var(--color-white);
+
+            :global(.icon) {
+                opacity: 1;
+            }
+        }
+    }
+
+    :global(.icon) {
+        display: inline;
+        position: relative;
+        width: 22px;
+        height: 22px;
+        top: -1px;
+        margin-right: $spacing-size-1;
+        opacity: 0.6666;
+        transition: opacity $transition-default-timing;
+    }
+}
+
+.legal {
+    justify-content: space-between;
+    gap: 0;
+
+    p:first-child {
+        margin-right: $spacing-size-8;
+    }
+}
+
+.trademarks {
+    @media screen and (min-width: $breakpoint-site-footer-four-column) {
+        margin-top: -$spacing-size-4;
+    }
+}

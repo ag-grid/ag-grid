@@ -27,7 +27,7 @@ import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { booleanValues, colNames, countries, COUNTRY_CODES, firstNames, games, lastNames, months } from './consts';
 import { CountryFloatingFilterComponent } from './CountryFloatingFilterComponent';
-import styles from './Example.module.scss';
+import styles from '@design-system/modules/Example.module.scss';
 import { PersonFilter } from './PersonFilter';
 import { PersonFloatingFilterComponent } from './PersonFloatingFilterComponent';
 import { Toolbar } from './Toolbar';
@@ -1442,7 +1442,7 @@ const ExampleInner = ({darkMode}) => {
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
                 {helmet.map((entry) => entry)}
             </Helmet>
-            <div className={classnames(styles.exampleWrapper, isAutoTheme ? styles.exampleWrapperAuto : (isDarkTheme ? styles.exampleWrapperDark : null))}>
+            <div className={styles.exampleWrapper}>
                 <Toolbar
                     gridRef={gridRef}
                     dataSize={dataSize}
@@ -1456,7 +1456,7 @@ const ExampleInner = ({darkMode}) => {
                     {message}
                     <i className="fa fa-spinner fa-pulse fa-fw margin-bottom" />
                 </span>
-                <section className={styles.gridWrapper} style={{ padding: '1rem', paddingTop: 0 }}>
+                <section className={styles.gridWrapper}>
                     {gridTheme && (
                         <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={themeClass}>
                             <AgGridReactMemo

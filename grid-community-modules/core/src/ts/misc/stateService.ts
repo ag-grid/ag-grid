@@ -66,23 +66,21 @@ export class StateService extends BeanStub {
 
         this.cachedState = this.gridOptionsService.get('initialState') ?? {};
 
-        this.ctrlsService.whenReady(() => this.setupStateOnGridReady());
+        this.ctrlsService.whenReady(() => this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady()));
 
         const newColumnsLoadedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, ({ source }: NewColumnsLoadedEvent) => {
             if (source === 'gridInitializing') {
                 newColumnsLoadedDestroyFunc?.();
-                this.setupStateOnColumnsInitialised();
+                this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnColumnsInitialised());
             }
         });
         const rowCountReadyDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_COUNT_READY, () => {
             rowCountReadyDestroyFunc?.();
-            this.setupStateOnRowCountReady();
+            this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnRowCountReady());
         });
         const firstDataRenderedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => {
             firstDataRenderedDestroyFunc?.();
-            this.setupStateOnFirstDataRendered();
-            this.suppressEvents = false;
-            this.dispatchStateUpdateEvent(['gridInitializing']);
+            this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnFirstDataRendered());
         });
     }
 
@@ -580,5 +578,18 @@ export class StateService extends BeanStub {
             state: this.cachedState
         }
         this.eventService.dispatchEvent(event);
+    }
+
+    private suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {
+        this.suppressEvents = true;
+        updateFunc();
+        // We want to suppress any grid events, but not user events.
+        // Using a timeout here captures things like column resizing and emits a single grid initializing event.
+        setTimeout(() => {
+            this.suppressEvents = false;
+            // We only want the grid initializing source.
+            this.queuedUpdateSources.clear();
+            this.dispatchStateUpdateEvent(['gridInitializing']);
+        });
     }
 }

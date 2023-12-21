@@ -1,0 +1,17 @@
+@use '../core' as *;
+
+.menu {
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        width: var(--layout-width-3-12);
+        padding-top: $spacing-size-8;
+        padding-bottom: $spacing-size-24;
+
+        ul {
+            display: block;
+        }
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        width: var(--layout-width-2-12);
+    }
+}

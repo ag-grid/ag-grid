@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import GlobalContextConsumer from '../GlobalContext';
 import { Icon } from '../Icon';
-import headerStyles from './SiteHeader.module.scss';
+import headerStyles from '@design-system/modules/SiteHeader.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
 

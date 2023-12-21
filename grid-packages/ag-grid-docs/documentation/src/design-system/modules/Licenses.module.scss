@@ -1,0 +1,172 @@
+@use "../../design-system/" as *;
+
+.license {
+    width: 100%;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-primary);
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        max-width: calc(50% - $spacing-size-4);
+        max-height: 480px;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        height: 100%;
+        padding: $spacing-size-4;
+
+        @media screen and (min-width: $breakpoint-pricing-medium) {
+            align-items: flex-start;
+            text-align: left;
+        }
+    }
+}
+
+.licenseMeta {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: $spacing-size-2;
+    color: var(--color-text-tertiary);
+
+    :global(.icon) {
+        margin-top: -1px;
+        margin-left: 2px;
+        width: 16px;
+        opacity: 0.6666;
+
+        * {
+            fill: var(--color-text-tertiary);
+        }
+    }
+}
+
+.logo {
+    height: 54px;
+    width: fit-content;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        margin-left: -10px;
+        margin-bottom: -4px;
+    }
+
+    #{$selector-darkmode} & {
+        :global(#LogoType) * {
+            fill: var(--color-text-primary) !important; // !important required to override SVG inline styles
+        }
+    }
+}
+
+p.name {
+    font-size: 46px;
+    line-height: var(--text-lh-ultra-tight);
+    margin-top: $spacing-size-1;
+    margin-bottom: $spacing-size-2;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
+        max-width: 340px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.price {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: $spacing-size-4;
+}
+
+.standardPrice {
+    display: inline-block;
+    position: relative;
+    margin-left: $spacing-size-4;
+    color: var(--color-text-tertiary);
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: $spacing-size-1 * -1;
+        left: $spacing-size-1 * -1;
+        height: $spacing-size-1;
+        margin-top: $spacing-size-1 * -1;
+        background-color: var(--color-text-tertiary);
+    }
+}
+
+.priceFullDollars,
+.standardPrice {
+    font-size: 46px;
+    line-height: var(--text-lh-ultra-tight);
+    letter-spacing: -0.05em;
+
+    &::before {
+        content: '$';
+    }
+}
+
+.priceFullDollars {
+    font-weight: var(--text-bold);
+}
+
+.licenseBenefits {
+    display: flex;
+    flex-direction: column;
+
+    li {
+        margin-bottom: $spacing-size-1;
+    }
+
+    a {
+        display: block;
+        margin-top: $spacing-size-1;
+    }
+
+    svg {
+        position: relative;
+        top: -2px;
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        fill: var(--color-util-gray-700);
+        background-color: var(--color-util-gray-300);
+    }
+}
+
+.launchExplainer {
+    margin-top: $spacing-size-2;
+    min-height: 36px;
+    margin-bottom: $spacing-size-4;
+
+    p {
+        line-height: var(--text-lh-tight);
+    }
+}
+
+.licenseActions {
+    width: 100%;
+    margin-top: auto;
+
+    a {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.learnMoreLink {
+    &:hover::after {
+        transform: translateY(0.125em);
+    }
+
+    &::after {
+        content: '→';
+        padding-left: 0.25em;
+        transition: transform $transition-default-timing;
+    }
+}
