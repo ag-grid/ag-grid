@@ -1,8 +1,6 @@
-@use 'sass:map';
-@use 'sass:math';
 @use '../core' as *;
 
-$vertical-padding: $size-1;
+$vertical-padding: $spacing-size-2;
 
 pre.code,
 pre.code code {
@@ -24,7 +22,7 @@ pre.code code {
     -ms-hyphens: none;
     hyphens: none;
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         -webkit-font-smoothing: antialiased;
 
         color: var(--default-text-color);
@@ -32,27 +30,27 @@ pre.code code {
 }
 
 pre.code {
-    --comment-color: hsl(120, 30%, 40%);
-    --tag-color: #a31515;
-    --string-color: #a31515;
+    --comment-color: #5d6376;
+    --tag-color: #984f4e;
+    --string-color: #0087bf;
     --punctuation-color: #393a34;
-    --keyword-color: #0000ff;
-    --symbol-color: #36acaa;
-    --function-color: #393a34;
-    --deleted-color: #9a050f;
+    --keyword-color: #b31ea7;
+    --symbol-color: #0087bf;
+    --function-color: #2d7df7;
+    --deleted-color: #f54946;
     --selector-color: #00009f;
     --important-color: #e90;
     --class-name-color: #2b91af;
-    --property-color: #0a2c80;
+    --property-color: #2ea248;
 
     position: relative;
-    margin: 0 0 $size-2;
+    margin: 0 0 $spacing-size-4;
     padding: 0;
-    border: 1px solid color-mix(in srgb, var(--secondary-border-color), var(--border-color));
+    border: 1px solid color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
     overflow: visible;
-    overflow-y: auto !important;
+    overflow-y: auto;
 
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         color-scheme: dark;
         --comment-color: #aaabb3;
         --tag-color: #bf9fea;
@@ -67,7 +65,6 @@ pre.code {
         --class-name-color: #2b91af;
         --property-color: #7ac1d1;
 
-        border-radius: $size-1;
         border: 1px solid rgb(255, 255, 255, 0.1);
     }
 }
@@ -77,24 +74,19 @@ pre.code > code {
     display: inline-block;
     min-width: 100%;
     margin-bottom: -6px;
-    padding: $vertical-padding $size-2;
-    font-size: 0.9375em;
-    background-color: var(--default-background-color);
-    background-image: linear-gradient(transparent 50%, var(--background-100) 50%);
+    padding: $vertical-padding $spacing-size-4;
+    font-size: 15px;
+    background-color: var(--color-bg-secondary);
     background-size: 3em 3em;
     background-origin: content-box;
     background-attachment: local;
     border: none;
     border-radius: 0;
-    box-shadow:
-        inset 0 $vertical-padding 0 0 var(--default-background-color),
-        inset 0 $vertical-padding * -1 0 0 var(--default-background-color);
-    overflow-x: auto !important;
+    overflow-x: auto;
+}
 
-    #{$darkmode-selector} & {
-        background: #0d2431;
-        box-shadow: inset 0px 0px;
-    }
+pre.code > .language-bash {
+    color: var(--function-color);
 }
 
 pre.code.line-numbers.line-numbers code {
@@ -274,24 +266,24 @@ code[class*='language-css'] {
 .token.tag,
 .token.url,
 .token.variable {
-    #{$darkmode-selector} & {
+    #{$selector-darkmode} & {
         -webkit-font-smoothing: subpixel-antialiased;
     }
 }
 
 .line-numbers .line-numbers-rows {
-    border-right: 1px solid var(--background-700);
+    border-right: 1px solid var(--color-util-brand-100);
 
-    #{$darkmode-selector} & {
-        border-right-color: var(--neutral-300);
+    #{$selector-darkmode} & {
+        border-right-color: var(--color-border-secondary);
     }
 }
 
 .line-numbers-rows > span:before {
-    color: var(--dark-blue-200);
+    color: var(--color-util-brand-500);
     opacity: 0.33;
 
-    #{$darkmode-selector} & {
-        color: var(--default-text-color);
+    #{$selector-darkmode} & {
+        color: var(--color-fg-primary);
     }
 }

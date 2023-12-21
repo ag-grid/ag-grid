@@ -4,7 +4,7 @@ $indent: 24px;
 
 // Ignore padding & remove border if within tabbed container
 :global(.tabs-outer) .expandableSnippet pre:global(.code) {
-    margin: -$size-2;
+    margin: -$spacing-size-4;
     border: none;
 }
 
@@ -18,8 +18,8 @@ $indent: 24px;
 
 .jsonProperty {
     position: relative;
-    margin-top: $size-half;
-    margin-bottom: $size-half;
+    margin-top: $spacing-size-1;
+    margin-bottom: $spacing-size-1;
 }
 
 .type-nested-object > .jsonProperty {
@@ -46,7 +46,7 @@ $indent: 24px;
 .expander {
     --icon-size: 1em;
 
-    transition: transform $default-transition-timing;
+    transition: transform $transition-default-timing;
 
     &.active {
         transform: rotate(90deg);
@@ -90,8 +90,8 @@ $indent: 24px;
 
 .jsdocExpandable {
     font-size: var(--font-size-medium);
-    font-family: $font-family;
-    padding: $size-half 10px $size-half;
+    font-family: var(--text-font-family);
+    padding: $spacing-size-1 10px $spacing-size-1;
     white-space: normal;
     cursor: text;
 }

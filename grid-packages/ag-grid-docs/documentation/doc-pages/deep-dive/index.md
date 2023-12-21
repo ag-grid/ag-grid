@@ -799,7 +799,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 <snippet transform={false} language=jsx>
 |// Custom Cell Renderer (Display flags based on cell value)
 |const CompanyLogoRenderer = ({ value }) => (
-|  &lt;span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{value && &lt;img alt={`${value} Flag`} src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}&lt;p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{value}&lt;p>&lt;/span>
+|  &lt;span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{value && &lt;img alt={`${value} Flag`} src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}&lt;p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{value}&lt;/p>&lt;/span>
 );
 </snippet>
 

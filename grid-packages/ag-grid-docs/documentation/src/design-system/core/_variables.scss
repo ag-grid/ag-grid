@@ -1,415 +1,377 @@
-@use "sass:math";
-@use "utils" as *;
+// // Darkmode selector. To be used as an interpolated Sass parent selector
+// // #{$selector-darkmode} & {
+// //     [DARKMODE STYLES]
+// // }
+$selector-darkmode: "[data-dark-mode='true']";
 
-// Configuration
-// =============
-$css-variables-root: ':root' !default; // The root level where CSS variables are applied
-$exclude-grid-selector: ':where(:not([class^=ag]))'; // Exclude simple selectors from interfering with grid styles
+// Exclude simple selectors from interfering with grid styles
+$selector-exclude-grid: ':where(:not([class^=ag]))';
 
-// Size constants
-// ==============
-$border-radius: 0.25em;
+$spacing-size-1: 4px;
+$spacing-size-2: 8px;
+$spacing-size-3: 12px;
+$spacing-size-4: 16px;
+$spacing-size-5: 20px;
+$spacing-size-6: 24px;
+$spacing-size-8: 32px;
+$spacing-size-10: 40px;
+$spacing-size-12: 48px;
+$spacing-size-16: 64px;
+$spacing-size-20: 80px;
+$spacing-size-24: 96px;
+$spacing-size-32: 128px;
+$spacing-size-40: 160px;
+$spacing-size-48: 192px;
+$spacing-size-56: 224px;
+$spacing-size-64: 256px;
 
-// Transition contstants
-// =====================
-$default-transition-timing: 0.25s ease-in-out;
+$transition-default-timing: 0.25s ease-in-out;
 
-// Size constants
-// ==============
-$size-1: 8px;
-$size-2: $size-1 * 2;
-$size-3: $size-1 * 3;
-$size-4: $size-1 * 4;
-$size-5: $size-1 * 5;
-$size-6: $size-1 * 6;
+:root {
+    // Layout
+    --layout-gap: 32px;
+    --layout-max-width: 1800px;
+    --layout-copy-max-width: 1020px;
+    --layout-site-header-height: 64px;
+    --layout-scroll-offset: calc(var(--layout-site-header-height) + 13px);
 
-$size-7: $size-1 * 8;
-$size-8: $size-1 * 12;
-$size-9: $size-1 * 18;
-$size-10: $size-1 * 26;
+    --layout-width-1-4: calc((100% - var(--layout-gap) * (4 / 1 - 1)) / 4 * 1);
+    --layout-width-2-4: calc((100% - var(--layout-gap) * (4 / 2 - 1)) / 4 * 2);
+    --layout-width-3-4: calc((100% - var(--layout-gap) * (4 / 3 - 1)) / 4 * 3);
+    --layout-width-4-4: 100%;
 
-$size-half: math.div($size-1, 2);
+    --layout-width-1-6: calc((100% - var(--layout-gap) * (6 / 1 - 1)) / 6 * 1);
+    --layout-width-2-6: calc((100% - var(--layout-gap) * (6 / 2 - 1)) / 6 * 2);
+    --layout-width-3-6: calc((100% - var(--layout-gap) * (6 / 3 - 1)) / 6 * 3);
+    --layout-width-4-6: calc((100% - var(--layout-gap) * (6 / 4 - 1)) / 6 * 4);
+    --layout-width-5-6: calc((100% - var(--layout-gap) * (6 / 5 - 1)) / 6 * 5);
+    --layout-width-6-6: 100%;
 
-// Layout constants
-// ================
-$max-page-width: 1400px;
-$horizontal-margin: 6vw;
-$site-header-height: 64px;
+    --layout-width-1-12: calc((100% - var(--layout-gap) * (12 / 1 - 1)) / 12 * 1);
+    --layout-width-2-12: calc((100% - var(--layout-gap) * (12 / 2 - 1)) / 12 * 2);
+    --layout-width-3-12: calc((100% - var(--layout-gap) * (12 / 3 - 1)) / 12 * 3);
+    --layout-width-4-12: calc((100% - var(--layout-gap) * (12 / 4 - 1)) / 12 * 4);
+    --layout-width-5-12: calc((100% - var(--layout-gap) * (12 / 5 - 1)) / 12 * 5);
+    --layout-width-6-12: calc((100% - var(--layout-gap) * (12 / 6 - 1)) / 12 * 6);
+    --layout-width-7-12: calc((100% - var(--layout-gap) * (12 / 7 - 1)) / 12 * 7);
+    --layout-width-8-12: calc((100% - var(--layout-gap) * (12 / 8 - 1)) / 12 * 8);
+    --layout-width-9-12: calc((100% - var(--layout-gap) * (12 / 9 - 1)) / 12 * 9);
+    --layout-width-10-12: calc((100% - var(--layout-gap) * (12 / 10 - 1)) / 12 * 10);
+    --layout-width-11-12: calc((100% - var(--layout-gap) * (12 / 11 - 1)) / 12 * 11);
+    --layout-width-12-12: 100%;
 
-// Typographic constants
-// =====================
-$font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
-    'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    // Border radii
+    --radius-none: 0;
+    --radius-xxs: 2px;
+    --radius-xs: 4px;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 12px;
+    --radius-2xl: 16px;
+    --radius-3xl: 20px;
+    --radius-4xl: 24px;
+    --radius-full: 100%;
 
-$monospace-font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
+    // Typography
+    --text-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+        'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-$font-size-extra-small: px-to-rem(12); // convert px values to rems
-$font-size-small: px-to-rem(14); // convert px values to rems
-$font-size-medium: px-to-rem(16); // convert px values to rems
-$font-size-large: px-to-rem(20); // convert px values to rems
-$font-size-extra-large: px-to-rem(24); // convert px values to rems
-$font-size-massive: px-to-rem(30); // convert px values to rems
-$font-size-gigantic: px-to-rem(40); // convert px values to rems
-$font-size-gargantuan: px-to-rem(50); // convert px values to rems
+    --text-monospace-font-family: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono',
+        'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro', 'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 
-$large-font-size-extra-small: px-to-rem(13); // convert px values to rems
-$large-font-size-small: px-to-rem(15); // convert px values to rems
-$large-font-size-medium: px-to-rem(18); // convert px values to rems
-$large-font-size-large: px-to-rem(22); // convert px values to rems
-$large-font-size-extra-large: px-to-rem(26); // convert px values to rems
-$large-font-size-massive: px-to-rem(32); // convert px values to rems
-$large-font-size-gigantic: px-to-rem(42); // convert px values to rems
-$large-font-size-gargantuan: px-to-rem(52); // convert px values to rems
+    --text-regular: 400;
+    --text-semibold: 600;
+    --text-bold: 700;
 
-$font-weight-normal: 400;
-$font-weight-thin: 300;
-$font-weight-bold: 600;
+    --text-lh-tight: 1.2;
+    --text-lh-ultra-tight: 1;
 
-$line-height-normal: 1.5;
-$line-height-tight: 1.25;
-$line-height-ultra-tight: 1;
+    --text-fs-2xs: 10px;
+    --text-lh-2xs: 1.2;
 
-$icon-size: 2em;
+    --text-fs-xs: 12px;
+    --text-lh-xs: 1.6666;
 
-// Color constants
-// ===========================================
+    --text-fs-sm: 14px;
+    --text-lh-sm: 1.4;
 
-// Darkmode selector. To be used as an interpolated Sass parent selector
-// #{$darkmode-selector} & {
-//     [DARKMODE STYLES]
-// }
-$darkmode-selector: "[data-dark-mode='true']";
+    --text-fs-base: 16px;
+    --text-lh-base: 1.4;
 
-// Names from color-name.com
-$abstract-colors: (
-    // Brand (from logo)
-    'ag-grid-dark-blue': #003264,
-    'ag-grid-aqua': #55b4c8,
-    'ag-grid-orange': #ff8c00,
-    'ag-grid-red': #ff0000,
-    // Blues
-    'dark-cerulean-blue': #00407f,
-    'medium-electric-blue': #044c93,
-    'azure-blue': #007bff,
-    'brilliant-azure': #3893f9,
-    'sky-blue': #80bdff,
-    'water-blue': #cce5ff,
-    'light-water-blue': #d9f0fa,
-    'bright-blue-gray': #eaf0f6,
-    'ghost-blue': #f9fcff,
-    // Grays
-    'black': #000000,
-    'eerie-black': #181c22,
-    'dark-gunmetal-gray': #212529,
-    'charcoal': #354856,
-    'auro-metal': #6c757d,
-    'quick-silver': #9ea3a6,
-    'ag-grid-grey': #b4bebe,
-    'dull-light-gray': #d0d4d6,
-    'light-gray': #ced4da,
-    'platinum-gray': #dee2e6,
-    'ghost-white': #f8f9fa,
-    'white': #ffffff,
-    // Other
-    'cerise-pink': #e83e8c,
-    'danger-red': #dc3545,
-    'papaya-whip': #ffeed9,
-    'pineapple': #5c3508,
-    'dark-bg-new': #0b1d28,
-);
+    --text-fs-lg: 20px;
+    --text-lh-lg: 1.2;
 
-$color-scales: (
-    'primary': (
-        '100': #cce5ff,
-        '200': #a8d2ff,
-        '300': #84beff,
-        '400': #60aaff,
-        '500': #3b93ff,
-        '600': #007bff,
-        '700': #005ffd,
-        '800': #003bfa,
-        '900': #0000f7,
-    ),
-    'dark-blue': (
-        '100': #0d5fb8,
-        '200': #0958ac,
-        '300': #06519f,
-        '400': #044b93,
-        '500': #024587,
-        '600': #013e7b,
-        '700': #00386f,
-        '800': #003264,
-        '900': #002c59,
-    ),
-    'background': (
-        '100': #f9fcff,
-        '200': #f6fafd,
-        '300': #f2f7fb,
-        '400': #eef4f9,
-        '500': #eaf0f6,
-        '600': #e3eef9,
-        '700': #dcebfb,
-        '800': #d4e8fd,
-        '900': #cce5ff,
-    ),
-    'neutral': (
-        '100': #f8f9fa,
-        '200': #e5e7e9,
-        '300': #d1d4d7,
-        '400': #bdc1c5,
-        '500': #a9aeb3,
-        '600': #959ca2,
-        '700': #81888f,
-        '800': #6c757d,
-        '900': #5c646b,
-    ),
-    'red': (
-        '100': #ffe8e7,
-        '200': #fdcdcb,
-        '300': #fab2b0,
-        '400': #f49695,
-        '500': #ee7a7a,
-        '600': #e55b60,
-        '700': #dc3545,
-        '800': #d10028,
-        '900': #c50000,
-    ),
-    'pink': (
-        '100': #fce8f2,
-        '200': #fbcfe4,
-        '300': #f9b5d5,
-        '400': #f69bc4,
-        '500': #f37fb3,
-        '600': #ee62a0,
-        '700': #e83e8d,
-        '800': #e10079,
-        '900': #d90064,
-    ),
-    'orange': (
-        '100': #fff4e6,
-        '200': #ffe5c7,
-        '300': #ffd5a8,
-        '400': #ffc589,
-        '500': #ffb369,
-        '600': #ffa045,
-        '700': #ff8c00,
-        '800': #fe7600,
-        '900': #fd5c00,
-    ),
-    'green': (
-        '100': #dafbe2,
-        '200': #c0f4cc,
-        '300': #a6ecb5,
-        '400': #8be49d,
-        '500': #6edb83,
-        '600': #4ed268,
-        '700': #1dc948,
-        '800': #00bf15,
-        '900': #00b500,
-    ),
-    'brown': (
-        '100': #ffeed9,
-        '200': #e2cdb4,
-        '300': #c6ad91,
-        '400': #aa8d6e,
-        '500': #906f4d,
-        '600': #76512d,
-        '700': #5c3508,
-        '800': #431900,
-        '900': #2a0000,
-    ),
-);
+    --text-fs-xl: 24px;
+    --text-lh-xl: 1.2;
 
-$dark-scales: (
-    'primary': (
-        '100': color-mix(in srgb, #007bff calc(100% / 6 * 1), var(--default-background-color)),
-        '200': color-mix(in srgb, #007bff calc(100% / 6 * 2), var(--default-background-color)),
-        '300': color-mix(in srgb, #007bff calc(100% / 6 * 3), var(--default-background-color)),
-        '400': color-mix(in srgb, #007bff calc(100% / 6 * 4), var(--default-background-color)),
-        '500': color-mix(in srgb, #007bff calc(100% / 6 * 5), var(--default-background-color)),
-        '600': #007bff,
-        '700': #005ffd,
-        '800': #003bfa,
-        '900': #0000f7,
-    ),
-    'dark-blue': (
-        '100': #1c3a59,
-        '200': #173655,
-        '300': #133251,
-        '400': #0f2e4d,
-        '500': #0b2a49,
-        '600': #062645,
-        '700': #032341,
-        '800': #001f3d,
-        '900': #001b39,
-    ),
-    'background': (
-        '100': #0a161f,
-        '200': #081a28,
-        '300': #051d31,
-        '400': #03203a,
-        '500': #012343,
-        '600': #00264d,
-        '700': #002957,
-        '800': #012b61,
-        '900': #042d6c,
-    ),
-    'neutral': (
-        '100': #18191b,
-        '200': #1f1f20,
-        '300': #2b2c2d,
-        '400': #38393b,
-        '500': #444748,
-        '600': #515456,
-        '700': #5d6163,
-        '800': #6a6e71,
-        '900': #848b90,
-    ),
-    'red': (
-        '100': #ffe8e7,
-        '200': #fdcdcb,
-        '300': #fab2b0,
-        '400': #f49695,
-        '500': #ee7a7a,
-        '600': #e55b60,
-        '700': #dc3545,
-        '800': #d10028,
-        '900': #c50000,
-    ),
-    'pink': (
-        '100': color-mix(in srgb, #d90064 calc(100% / 7 * 1), var(--default-background-color)),
-        '200': color-mix(in srgb, #d90064 calc(100% / 7 * 2), var(--default-background-color)),
-        '300': color-mix(in srgb, #d90064 calc(100% / 7 * 3), var(--default-background-color)),
-        '400': color-mix(in srgb, #d90064 calc(100% / 7 * 4), var(--default-background-color)),
-        '500': color-mix(in srgb, #d90064 calc(100% / 7 * 5), var(--default-background-color)),
-        '600': color-mix(in srgb, #d90064 calc(100% / 7 * 6), var(--default-background-color)),
-        '700': #d90064,
-        '800': color-mix(in srgb, #d90064, #ff0f7d),
-        '900': #ff0f7d,
-    ),
-    'orange': (
-        '100': color-mix(in srgb, #fd5c00 calc(100% / 7 * 1), var(--default-background-color)),
-        '200': color-mix(in srgb, #fd5c00 calc(100% / 7 * 2), var(--default-background-color)),
-        '300': color-mix(in srgb, #fd5c00 calc(100% / 7 * 3), var(--default-background-color)),
-        '400': color-mix(in srgb, #fd5c00 calc(100% / 7 * 4), var(--default-background-color)),
-        '500': color-mix(in srgb, #fd5c00 calc(100% / 7 * 5), var(--default-background-color)),
-        '600': color-mix(in srgb, #fd5c00 calc(100% / 7 * 6), var(--default-background-color)),
-        '700': #fd5c00,
-        '800': color-mix(in srgb, #fd5c00, #ffb400),
-        '900': #ffb400,
-    ),
-    'green': (
-        '100': #dafbe2,
-        '200': #c0f4cc,
-        '300': #a6ecb5,
-        '400': #8be49d,
-        '500': #6edb83,
-        '600': #4ed268,
-        '700': #1dc948,
-        '800': #00bf15,
-        '900': #00b500,
-    ),
-    'brown': (
-        '100': #ffeed9,
-        '200': #e2cdb4,
-        '300': #c6ad91,
-        '400': #aa8d6e,
-        '500': #906f4d,
-        '600': #76512d,
-        '700': #5c3508,
-        '800': #431900,
-        '900': #2a0000,
-    ),
-);
+    --text-fs-2xl: 32px;
+    --text-lh-2xl: 1.2;
 
-// Semantic colors based on abstract colors & color scales
-$semantic-colors: (
-    // Background
-    'default-background-color': white,
-    // Text
-    'default-text-color': dark-gunmetal-gray,
-    'text-color': default-text-color,
-    'secondary-text-color': neutral-800,
-    // Border
-    'border-color': neutral-300,
-    'secondary-border-color': background-500,
-    // Link
-    'link-color': primary-600,
-    'link-hover-color': orange-700,
-    // Button
-    'button-text-color': white,
-    'button-color': primary-600,
-    'button-hover-color': dark-blue-400,
-    'button-active-color': dark-blue-800,
-    'button-focus-box-shadow-color': primary-100,
-    // Code
-    'code-text-color': pink-700,
-    'code-background-color': neutral-100,
-    // Input
-    'input-background-color': default-background-color,
-    'input-border-color': border-color,
-    'input-secondary-background-color': neutral-400,
-    'input-secondary-border-color': secondary-text-color,
-    'input-primary-color': primary-600,
-    'input-focus-border-color': primary-200,
-    'input-focus-box-shadow-color': primary-100,
-    'input-error-color': red-700,
-    // Table
-    'table-odd-row-background-color': background-100,
-    // Site header
-    'site-header-background': dark-blue-400,
-    'site-nav-background': dark-blue-800,
-    // Toolbar
-    'toolbar-background': background-500,
-    // Warnings
-    'warning-background': brown-100,
-    'warning-text': brown-700,
-    // Enterprise
-    'enterprise-icon-color': red-700
-);
+    --text-fs-3xl: 40px;
+    --text-lh-3xl: 1.1;
 
-// Semantic colors based on abstract colors
-$dark-semantic-colors: (
-    // Background
-    'default-background-color': dark-bg-new,
-    // Text
-    'default-text-color': ghost-white,
-    'text-color': default-text-color,
-    'secondary-text-color': quick-silver,
-    // Border
-    'border-color': neutral-400,
-    'secondary-border-color': neutral-300,
-    // Link
-    'link-color': brilliant-azure,
-    'link-hover-color': orange-800,
-    // Button
-    'button-text-color': white,
-    'button-color': primary-600,
-    'button-hover-color': primary-800,
-    'button-active-color': primary-900,
-    'button-focus-box-shadow-color': primary-100,
-    // Code
-    'code-text-color': pink-900,
-    'code-background-color': neutral-100,
-    // Input
-    'input-background-color': default-background-color,
-    'input-border-color': charcoal,
-    'input-secondary-background-color': neutral-400,
-    'input-secondary-border-color': secondary-text-color,
-    'input-primary-color': primary-600,
-    'input-focus-border-color': primary-500,
-    'input-focus-box-shadow-color': primary-100,
-    'input-error-color': red-600,
-    // Table
-    'table-odd-row-background-color': background-100,
-    // Site header
-    'site-header-background': default-background-color,
-    'site-nav-background': background-200,
-    // Toolbar
-    'toolbar-background': default-background-color,
-    // Warnings
-    'warning-background': brown-100,
-    'warning-text': brown-700,
-    // Enterprise
-    'enterprise-icon-color': red-700
-);
+    --icon-size: $spacing-size-8;
+
+    // Abstract colors
+    --color-white: #fff;
+    --color-black: #000;
+
+    --color-gray-25: #fcfcfd;
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f2f4f7;
+    --color-gray-200: #eaecf0;
+    --color-gray-300: #d0d5dd;
+    --color-gray-400: #98a2b3;
+    --color-gray-500: #667085;
+    --color-gray-600: #475467;
+    --color-gray-700: #344054;
+    --color-gray-800: #182230;
+    --color-gray-900: #101828;
+    --color-gray-950: #0c111d;
+
+    --color-brand-25: #fafcff;
+    --color-brand-50: #f4f8ff;
+    --color-brand-100: #e5effd;
+    --color-brand-200: #d4e3f8;
+    --color-brand-300: #a9c5ec;
+    --color-brand-400: #3d7acd;
+    --color-brand-500: #0e4491;
+    --color-brand-600: #0042a1;
+    --color-brand-700: #00388f;
+    --color-brand-800: #002e7e;
+    --color-brand-900: #00246c;
+    --color-brand-950: #001a5a;
+
+    --color-warning-25: #fffcf5;
+    --color-warning-50: #fffaeb;
+    --color-warning-100: #fef0c7;
+    --color-warning-200: #fedf89;
+    --color-warning-300: #fec84b;
+    --color-warning-400: #fdb022;
+    --color-warning-500: #f79009;
+    --color-warning-600: #dc6803;
+    --color-warning-700: #b54708;
+    --color-warning-800: #93370d;
+    --color-warning-900: #7a2e0e;
+    --color-warning-950: #4e1d09;
+
+    --color-logo-text: #003264;
+    --color-logo-aqua: #55b4c8;
+    --color-logo-orange: #ff8c00;
+    --color-logo-red: #f00;
+    --color-logo-grey: #b4bebe;
+
+    --color-positive: #28a745;
+    --color-negative: #dc3545;
+
+    // Background colors
+    --color-bg-primary: var(--color-white);
+    --color-bg-secondary: var(--color-gray-50);
+    --color-bg-tertiary: var(--color-gray-100);
+    --color-bg-brand-solid: var(--color-brand-500);
+    --color-bg-disabled_subtle: var(--color-gray-50);
+    --color-bg-toolbar: var(--color-gray-100);
+    --color-bg-code: var(--color-gray-100);
+    --color-bg-site-header: var(--color-brand-500);
+    --color-bg-mobile-nav: #003264; // TODO, review & replace color
+
+    // Foreground colors
+    --color-fg-primary: var(--color-gray-900);
+    --color-fg-secondary: var(--color-gray-700);
+    --color-fg-tertiary: var(--color-gray-600);
+    --color-fg-quinary: var(--color-gray-400);
+    --color-fg-disabled: var(--color-gray-400);
+    --color-fg-placeholder: var(--color-gray-500);
+    --color-fg-white: var(--color-white);
+    --color-fg-code: #e83e8d; // TODO, review & replace color
+
+    // Text colors
+    --color-text-primary: var(--color-gray-900);
+    --color-text-secondary: var(--color-gray-700);
+    --color-text-tertiary: var(--color-gray-600);
+
+    // Border colors
+    --color-border-primary: var(--color-gray-300);
+    --color-border-secondary: var(--color-gray-200);
+    --color-border-tertiary: var(--color-gray-100);
+    --color-border-disabled_subtle: var(--color-gray-200);
+
+    // Link colors
+    --color-link: var(--color-brand-500); // TODO, review & replace color
+    --color-link-hover: var(--color-brand-700); // TODO, review & replace color
+
+    // Button colors
+    --color-button-primary-bg: var(--color-brand-500);
+    --color-button-primary-bg-hover: var(--color-brand-700);
+    --color-button-primary-bg-active: var(--color-brand-800);
+    --color-button-primary-shadow-focus: var(--color-brand-200);
+    --color-button-primary-fg: var(--color-fg-white);
+    --color-button-primary-border: var(--color-brand-500);
+
+    --color-button-secondary-bg: var(--color-bg-primary);
+    --color-button-secondary-bg-hover: var(--color-bg-secondary);
+    --color-button-secondary-bg-active: var(--color-gray-300);
+    --color-button-secondary-shadow-focus: var(--color-gray-200);
+    --color-button-secondary-fg: var(--color-fg-secondary);
+    --color-button-secondary-border: var(--color-border-primary);
+
+    --color-button-tertiary-bg: var(--color-bg-primary);
+    --color-button-tertiary-bg-hover: var(--color-brand-50);
+    --color-button-tertiary-bg-active: var(--color-brand-100);
+    --color-button-tertiary-shadow-focus: var(--color-brand-100);
+    --color-button-tertiary-fg: var(--color-brand-500);
+    --color-button-tertiary-border: var(--color-brand-300);
+
+    --color-button-disabled-bg: var(--color-gray-100);
+    --color-button-disabled-fg: var(--color-gray-400);
+    --color-button-disabled-border: var(--color-gray-200);
+
+    // Input colors
+    --color-input-border: var(--color-border-primary);
+    --color-input-border-hover: var(--color-brand-300);
+    --color-input-bg-checked: var(--color-bg-brand-solid);
+    --color-input-shadow-focus: var(--color-brand-200);
+    --color-input-disabled-bg: var(--color-bg-disabled_subtle);
+    --color-input-disabled-fg: var(--color-fg-disabled);
+    --color-input-error: red; // TODO, review & replace color
+
+    // Enterprise color
+    --color-enterprise-icon: #dc3545; // TODO, review & replace color
+
+    // Warning colors
+    --color-util-warning-50: var(--color-warning-50);
+    --color-util-warning-100: var(--color-warning-100);
+    --color-util-warning-200: var(--color-warning-200);
+    --color-util-warning-300: var(--color-warning-300);
+    --color-util-warning-400: var(--color-warning-400);
+    --color-util-warning-500: var(--color-warning-500);
+    --color-util-warning-600: var(--color-warning-600);
+    --color-util-warning-700: var(--color-warning-700);
+
+    // Brand
+    --color-text-brand-primary: var(--color-brand-500);
+
+    --color-util-brand-50: var(--color-brand-50);
+    --color-util-brand-100: var(--color-brand-100);
+    --color-util-brand-200: var(--color-brand-200);
+    --color-util-brand-300: var(--color-brand-300);
+    --color-util-brand-400: var(--color-brand-400);
+    --color-util-brand-500: var(--color-brand-500);
+    --color-util-brand-600: var(--color-brand-600);
+    --color-util-brand-700: var(--color-brand-700);
+
+    // Gray
+    --color-util-gray-50: var(--color-gray-50);
+    --color-util-gray-100: var(--color-gray-100);
+    --color-util-gray-200: var(--color-gray-200);
+    --color-util-gray-300: var(--color-gray-300);
+    --color-util-gray-400: var(--color-gray-400);
+    --color-util-gray-500: var(--color-gray-500);
+    --color-util-gray-600: var(--color-gray-600);
+    --color-util-gray-700: var(--color-gray-700);
+
+    // Shadows
+    --shadow-xs: 0 1px 2px 0 color-mix(in srgb, var(--color-gray-950) 05%, transparent);
+    --shadow-sm: 0 1px 3px 0 color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+        0 1px 2px -1px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
+    --shadow-md: 0 4px 6px -1px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+        0 2px 4px -2px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
+    --shadow-lg: 0 10px 15px -3px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+        0 4px 6px -4px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
+    --shadow-xl: 0 20px 25px -5px color-mix(in srgb, var(--color-gray-950) 10%, transparent),
+        0 8px 10px -6px color-mix(in srgb, var(--color-gray-950) 10%, transparent);
+    --shadow-2xl: 0 25px 50px -12px color-mix(in srgb, var(--color-gray-950) 25%, transparent);
+}
+
+html[data-dark-mode='true'] {
+    --color-scheme: dark;
+
+    // Background colors
+    --color-bg-primary: var(--color-gray-900);
+    --color-bg-secondary: var(--color-gray-800);
+    --color-bg-tertiary: var(--color-gray-800);
+    --color-bg-brand-solid: var(--color-brand-500);
+    --color-bg-disabled_subtle: var(--color-gray-800);
+    --color-bg-toolbar: var(--color-bg-primary);
+    --color-bg-code: var(--color-gray-700);
+    --color-bg-site-header: var(--color-bg-primary);
+    --color-bg-mobile-nav: var(--color-bg-primary);
+
+    // Foreground colors
+    --color-fg-primary: var(--color-white);
+    --color-fg-secondary: var(--color-gray-300);
+    --color-fg-tertiary: var(--color-gray-400);
+    --color-fg-quinary: var(--color-gray-500);
+    --color-fg-disabled: var(--color-gray-500);
+    --color-fg-white: var(--color-white);
+    --color-fg-code: #f64f76; // TODO, review & replace color
+
+    // Text colors
+    --color-text-primary: var(--color-gray-50);
+    --color-text-secondary: var(--color-gray-300);
+    --color-text-tertiary: var(--color-gray-400);
+
+    // Border colors
+    --color-border-primary: var(--color-gray-700);
+    --color-border-secondary: var(--color-gray-800);
+    --color-border-tertiary: var(--color-gray-800);
+    --color-border-disabled_subtle: var(--color-gray-800);
+
+    // Link colors
+    --color-link: var(--color-brand-300); // TODO, review & replace color
+    --color-link-hover: var(--color-brand-200); // TODO, review & replace color
+
+    // Button colors
+    --color-button-primary-bg-hover: var(--color-brand-600);
+    --color-button-primary-bg-active: var(--color-brand-700);
+    --color-button-primary-shadow-focus: var(--color-brand-900);
+
+    --color-button-secondary-bg-hover: var(--color-gray-700);
+    --color-button-secondary-bg-active: var(--color-gray-600);
+    --color-button-secondary-shadow-focus: var(--color-gray-800);
+
+    --color-button-tertiary-bg-hover: var(--color-gray-700);
+    --color-button-tertiary-bg-active: var(--color-gray-600);
+    --color-button-tertiary-shadow-focus: var(--color-gray-700);
+    --color-button-tertiary-fg: var(--color-brand-300);
+
+    --color-button-disabled-bg: var(--color-gray-800);
+    --color-button-disabled-fg: var(--color-gray-500);
+    --color-button-disabled-border: var(--color-gray-700);
+
+    // Input colors
+    --color-input-shadow-focus: var(--color-gray-700);
+
+    // Warning colors
+    --color-util-warning-50: var(--color-warning-950);
+    --color-util-warning-100: var(--color-warning-900);
+    --color-util-warning-200: var(--color-warning-800);
+    --color-util-warning-300: var(--color-warning-700);
+    --color-util-warning-400: var(--color-warning-600);
+    --color-util-warning-500: var(--color-warning-500);
+    --color-util-warning-600: var(--color-warning-400);
+    --color-util-warning-700: var(--color-warning-300);
+
+    // Brand
+    --color-text-brand-primary: var(--color-brand-200);
+
+    --color-util-brand-50: var(--color-brand-950);
+    --color-util-brand-100: var(--color-brand-900);
+    --color-util-brand-200: var(--color-brand-800);
+    --color-util-brand-300: var(--color-brand-700);
+    --color-util-brand-400: var(--color-brand-600);
+    --color-util-brand-500: var(--color-brand-500);
+    --color-util-brand-600: var(--color-brand-400);
+    --color-util-brand-700: var(--color-brand-300);
+
+    // Gray
+    --color-util-gray-50: var(--color-gray-950);
+    --color-util-gray-100: var(--color-gray-900);
+    --color-util-gray-200: var(--color-gray-800);
+    --color-util-gray-300: var(--color-gray-700);
+    --color-util-gray-400: var(--color-gray-600);
+    --color-util-gray-500: var(--color-gray-500);
+    --color-util-gray-600: var(--color-gray-400);
+    --color-util-gray-700: var(--color-gray-300);
+}

@@ -16,7 +16,8 @@ body {
 
 html[data-color-scheme='dark'] {
     color-scheme: dark;
-    background-color: #0b1d28;
+    background-color: #101828; 
+    /* TODO: Replace with bg-primary variable */
 }
 
 html[data-color-scheme='dark'] button:not(.ag-root-wrapper button, #myChart button, button[class*='ag-']) , .ag-fill-direction  {

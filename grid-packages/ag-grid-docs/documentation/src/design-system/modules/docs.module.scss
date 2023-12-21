@@ -1,0 +1,130 @@
+@use '../core' as *;
+
+:global {
+    .pageSections article {
+        > h2 {
+            margin-top: $spacing-size-12;
+        }
+
+        > h3,
+        > h4 {
+            margin-top: $spacing-size-8;
+        }
+
+        p,
+        > ul,
+        > ol,
+        > table,
+        > pre {
+            font-size: var(--text-fs-base);
+        }
+    }
+}
+
+%enterprise-icon {
+    display: inline-block;
+    background-image: url('../../images/enterprise.svg');
+    text-indent: -10000px;
+    background-position-y: center;
+    background-repeat: no-repeat;
+    content: 'e';
+}
+
+.docPage {
+    position: relative;
+    max-width: 100%;
+    padding-top: $spacing-size-8 + $spacing-size-1;
+    padding-bottom: $spacing-size-16;
+
+    :global(#{$selector-darkmode}) & {
+        color: var(--color-fg-secondary);
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        width: var(--layout-width-9-12);
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        width: var(--layout-width-8-12);
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
+        width: var(--layout-width-6-12);
+        margin-right: calc(var(--layout-width-1-12) + var(--layout-gap));
+        margin-left: calc(var(--layout-width-1-12) + var(--layout-gap));
+    }
+
+    :global(h1),
+    :global(h2),
+    :global(h3),
+    :global(h4),
+    :global(h5),
+    :global(h6) {
+        :global(#{$selector-darkmode}) & {
+            color: var(--color-fg-primary);
+        }
+    }
+
+    :global(a) {
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: var(--color-brand-300);
+    }
+
+    :global(#{$selector-darkmode}) & {
+        :global(a) {
+            color: var(--color-brand-300);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            text-decoration-color: var(--color-brand-300);
+        }
+
+        :global(a):hover {
+            color: var(--color-fg-primary);
+            text-decoration-color: var(--color-brand-300);
+        }
+    }
+
+    enterprise-icon::after {
+        @extend %enterprise-icon;
+
+        width: 1rem;
+        margin-left: 0.25rem;
+    }
+
+    :global(.nav-link) {
+        p {
+            margin: 0;
+        }
+    }
+
+    ul li > p {
+        margin-bottom: 0.25rem;
+    }
+}
+
+// Align two column markdown tables
+.pageSections > :global(article) > :global(table) {
+    table-layout: fixed;
+}
+
+// Hack to target "intro" section of docs page
+.pageSections > :global(article) > :global(p:first-child) {
+    color: var(--color-fg-secondary);
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-regular);
+    margin-bottom: $spacing-size-8;
+
+    code {
+        font-size: 0.8em;
+    }
+}
+
+// Hack to target markdown images and not images within components
+.pageSections > :global(article) > :global(div) *:not([class]) :global(img) {
+    max-width: 100%;
+}
+
+.sideMenu {
+    padding-top: $spacing-size-8 + $spacing-size-1;
+}

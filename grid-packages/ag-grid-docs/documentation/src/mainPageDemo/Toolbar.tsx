@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import React from 'react';
 import { Icon } from '../components/Icon';
 import { trackDemoToolbar, trackOnceDemoToolbar } from '../utils/analytics';
-import styles from './Toolbar.module.scss';
+import styles from '@design-system/modules/Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
 const IS_SSR = typeof window === 'undefined';
@@ -55,7 +55,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
     return (
         <div className={styles.toolbar}>
-            <div className={styles.controlsContainer}>
+            <div className={classnames(styles.controlsContainer, 'layout-page-max-width')}>
                 <div className={styles.controls}>
                     <label htmlFor="data-size">Data Size:</label>
                     <select id="data-size" onChange={onDataSizeChanged} value={dataSize}>

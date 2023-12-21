@@ -34,7 +34,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         const compProxy: IGroupCellRenderer = {
             setInnerRenderer: (compDetails, valueToDisplay) => this.setRenderDetails(compDetails, valueToDisplay),
-            setChildCount: count => this.eChildCount.innerHTML = count,
+            setChildCount: count => this.eChildCount.textContent = count,
             addOrRemoveCssClass: (cssClass, value) => this.addOrRemoveCssClass(cssClass, value),
             setContractedDisplayed: expanded => setDisplayed(this.eContracted, expanded),
             setExpandedDisplayed: expanded => setDisplayed(this.eExpanded, expanded),

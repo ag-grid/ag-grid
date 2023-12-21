@@ -216,7 +216,7 @@ export class SideBarComp extends Component implements ISideBar {
     public getState(): SideBarState {
         const toolPanels: { [id: string]: any } = {};
         this.toolPanelWrappers.forEach(wrapper => {
-            toolPanels[wrapper.getToolPanelId()] = wrapper.getToolPanelInstance().getState?.();
+            toolPanels[wrapper.getToolPanelId()] = wrapper.getToolPanelInstance()?.getState?.();
         });
         return {
             visible: this.isDisplayed(),

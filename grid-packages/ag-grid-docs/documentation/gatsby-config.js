@@ -191,6 +191,16 @@ const plugins = [
       },
     },
   },
+  {
+    // Alias imports e.g. `import { Component } from "@components/Component";`
+    resolve: `gatsby-alias-imports`,
+    options: {
+      aliases: {
+        "@components": "src/components/",
+        "@design-system": "src/design-system/",
+      }
+    }
+  }
 ]
 
 module.exports = {

@@ -1,0 +1,326 @@
+// CSS directly lifted from Grid repo
+
+@use '../core' as *;
+
+.header {
+    display: flex;
+    align-items: center;
+    position: relative;
+    background-color: var(--color-bg-site-header);
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        position: sticky;
+        top: 0;
+        z-index: 4;
+    }
+
+    #{$selector-darkmode} & {
+        background: var(--color-bg-primary);
+        border-bottom: 1px solid var(--color-border-primary);
+    }
+}
+
+.headerInner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    min-height: var(--layout-site-header-height);
+
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        // Required for collapsible mobile menu
+        :global(#main-nav),
+        :global(#main-nav) > div {
+            width: 100%;
+        }
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        flex-wrap: unset;
+    }
+}
+
+.headerLogo {
+    display: flex;
+    align-items: center;
+    min-height: var(--layout-site-header-height);
+    padding: $spacing-size-2 10px;
+    margin-left: -16px;
+    margin-right: 100%;
+
+    svg {
+        width: unset;
+        height: 34px;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        margin-right: auto;
+    }
+}
+
+.mobileNavButton {
+    width: 100%;
+    margin-bottom: $spacing-size-2;
+
+    @media screen and (min-width: $breakpoint-docs-search-small) {
+        width: auto;
+        margin-right: $spacing-size-4;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        display: none;
+    }
+}
+
+.mobileMenuButton {
+    appearance: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: var(--layout-site-header-height);
+    margin-left: $spacing-size-2;
+    padding: 0 16px 0 14px;
+    border-radius: var(--radius-none);
+    border: none;
+    color: transparent;
+    transition: background-color 0.4s ease-in-out;
+
+    &:hover {
+        background-color: transparent;
+    }
+
+    &:focus {
+        box-shadow: none;
+    }
+
+    &:focus-visible {
+        box-shadow: inset 0 0 0 2px var(--color-button-primary-shadow-focus);
+    }
+
+    svg {
+        position: relative;
+        left: 1px;
+    }
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: transparent;
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        display: none;
+    }
+}
+
+.menuIcon {
+    g {
+        transition: transform 0.2s 0.2s;
+    }
+
+    rect {
+        fill: var(--color-white);
+        transition: transform 0.2s;
+    }
+
+    :global(.middle) {
+        transition: opacity 0s 0.2s;
+    }
+
+    :global(.top) rect {
+        transform-origin: center 8px;
+    }
+
+    :global(.bottom) rect {
+        transform-origin: center 28px;
+    }
+
+    .mobileMenuButton[aria-expanded='true'] & {
+        g {
+            transition: transform 0.2s;
+        }
+
+        rect {
+            transition: transform 0.2s 0.2s;
+        }
+
+        :global(.top) {
+            transform: translateY(10px);
+        }
+
+        :global(.top) rect {
+            transform: rotate(45deg);
+        }
+
+        :global(.middle) {
+            opacity: 0;
+        }
+
+        :global(.bottom) {
+            transform: translateY(-10px);
+        }
+
+        :global(.bottom) rect {
+            transform: rotate(-45deg);
+        }
+    }
+}
+
+#mainNav {
+    width: 100%;
+}
+
+.mainNav {
+    width: 100%;
+    background-color: var(--color-bg-mobile-nav);
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        position: absolute;
+        top: 0;
+        right: var(--layout-gap);
+        width: calc(100vw - 240px);
+        background-color: unset;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        position: unset;
+        width: unset;
+        margin-left: $spacing-size-4;
+        overflow: visible;
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        margin-left: auto;
+    }
+}
+
+.navItemList {
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        display: flex;
+        height: var(--layout-site-header-height);
+        align-items: center;
+        justify-content: flex-end;
+    }
+}
+
+.navItem {
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        &:hover a::after {
+            opacity: 0.25;
+            transform: scaleX(1);
+        }
+
+        &.navItemActive .navLink {
+            #{$selector-darkmode} & {
+                opacity: 1;
+            }
+        }
+
+        &.navItemActive a::after {
+            opacity: 0.5;
+            transform: scaleX(1);
+
+            #{$selector-darkmode} & {
+                opacity: 0.75;
+            }
+        }
+    }
+
+    #{$selector-darkmode} & {
+        @media screen and (min-width: $breakpoint-site-header-small) {
+            border-bottom: none;
+        }
+    }
+}
+
+.navLink {
+    --horizontal-padding: #{$spacing-size-4 - 2px};
+
+    display: block;
+    position: relative;
+    padding: 19px 18px 16px;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--color-white);
+    transition:
+        color $transition-default-timing,
+        opacity $transition-default-timing;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: none;
+        color: var(--color-white);
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        padding-left: var(--horizontal-padding);
+        padding-right: var(--horizontal-padding);
+
+        &::after {
+            content: '';
+            position: absolute;
+            height: 2px;
+            bottom: 12px;
+            left: calc(var(--horizontal-padding) - #{$spacing-size-1});
+            right: calc(var(--horizontal-padding) - #{$spacing-size-1});
+            border-radius: 2px;
+            background-color: var(--color-white);
+            opacity: 0;
+            transform: scaleX(0);
+            transition:
+                transform 0.33s ease-in-out,
+                opacity 0.33s ease-in-out;
+        }
+    }
+
+    #{$selector-darkmode} & {
+        font-weight: 500;
+        opacity: 0.8;
+    }
+}
+
+.githubItem {
+    order: 2;
+}
+
+.buttonItem {
+    .navLink {
+        padding: 19px 18px 16px;
+    }
+
+    a::after {
+        display: none;
+    }
+
+    svg {
+        --icon-size: 24px;
+
+        margin-right: 4px;
+        border-radius: 50%;
+        fill: var(--color-white);
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        span:not(.navLink) {
+            display: none;
+        }
+
+        .navLink {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        svg {
+            margin-right: 0;
+            transition: box-shadow 0.33s ease-in-out;
+        }
+
+        .navLink:hover svg {
+            box-shadow:
+                0 0 0 4px var(--color-bg-site-header),
+                0 0 0 6px rgba(white, 0.3);
+        }
+    }
+}

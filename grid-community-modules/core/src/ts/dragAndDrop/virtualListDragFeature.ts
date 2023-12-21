@@ -65,7 +65,7 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
     private createDropTarget(): void {
         const dropTarget: DropTarget = {
             isInterestedIn: (type: DragSourceType) => type === this.params.dragSourceType,
-            getIconName: () => DragAndDropService[this.moveBlocked ? 'ICON_NOT_ALLOWED' : 'ICON_MOVE'],
+            getIconName: () => this.moveBlocked ? DragAndDropService.ICON_PINNED : DragAndDropService.ICON_MOVE,
             getContainer: () => this.comp.getGui(),
             onDragging: (e) => this.onDragging(e),
             onDragStop: () => this.onDragStop(),

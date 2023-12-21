@@ -1,11 +1,7 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
 function formatNumber(number: number) {
-  // this puts commas into the number eg 1000 goes to 1,000,
-  // i pulled this from stack overflow, i have no idea how it works
-  return Math.floor(number)
-    .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+  return Math.floor(number).toLocaleString()
 }
 
 let gridApi: GridApi;

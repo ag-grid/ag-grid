@@ -921,15 +921,26 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private processRowGroupCallback(params: ProcessRowGroupForExportParams) {
-        const { node } = params;
-        const { key } = node;
+        const { node, column } = params;
 
-        let value = key != null ? key : '';
+        const isTreeData = this.gridOptionsService.get('treeData');
+        const isSuppressGroupMaintainValueType = this.gridOptionsService.get('suppressGroupMaintainValueType');
+
+        // if not tree data and not suppressGroupMaintainValueType then we get the value from the group data
+        const getValueFromNode = () => {
+            if (isTreeData || isSuppressGroupMaintainValueType || !column) {
+                return node.key;
+            }
+            const value = node.groupData?.[column.getId()];
+            if (!value || !node.rowGroupColumn) { return value; }
+            return this.valueFormatterService.formatValue(node.rowGroupColumn, node, value) ?? value;
+        }
+        let value = getValueFromNode();
 
         if (params.node.footer) {
             let suffix = '';
-            if (key && key.length) {
-                suffix = ` ${key}`;
+            if (value && value.length) {
+                suffix = ` ${value}`;
             }
             value = `Total${suffix}`;
         }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styles from './PromoBanner.module.scss';
+import styles from '@design-system/modules/PromoBanner.module.scss';
 import LogoMarkTransparent from '../LogoMarkTransparent';
 import CloseIcon from '../../images/inline-svgs/cross-banner.svg';
 

@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import styles from "./whats-new.module.scss";
-import { Icon } from "../components/Icon";
+import styles from "@design-system/modules/WhatsNew.module.scss";
 import { hostPrefix } from '../utils/consts';
 import versionsData from './whats-new.json';
 
@@ -21,7 +20,7 @@ const Version = ({ date, version, blogUrl, highlights, buttonURL, majorMinor }) 
                 <header>
 
                 <div className={styles.flex}>
-                    <span className={`${styles['text-secondary']} ${styles['font-size-small']}`}>{date}</span>
+                    <span className={styles.date}>{date}</span>
 
                     <div className={styles.flex}>
                     {version === "31.0.0" && <span className={styles['latest-tag']}>Latest</span>}
@@ -31,13 +30,13 @@ const Version = ({ date, version, blogUrl, highlights, buttonURL, majorMinor }) 
                     </div>
 
                     <div className={styles.flex}>
-                        <b className={styles['font-size-large']}>Version {version}</b>
+                        <b className={styles['text-lg']}>Version {version}</b>
                         <a className={styles.bloglink} href={blogHref}>Read more →</a>
                     </div>
                     <span className={styles.line}></span>
                 </header>
 
-                <p className={styles['font-size-small']}>
+                <p className={styles['text-sm']}>
                     Feature Highlights
                 </p>
 

@@ -770,11 +770,6 @@ export class LazyCache extends BeanStub {
             this.createRowAtIndex(rowIndex, data);
         });
 
-        const finishedRefreshing = this.nodesToRefresh.size === 0;
-        if (wasRefreshing && finishedRefreshing) {
-            this.fireRefreshFinishedEvent();
-        }
-
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
             this.numberOfRows = response.rowCount;
@@ -798,6 +793,12 @@ export class LazyCache extends BeanStub {
         }
 
         this.fireStoreUpdatedEvent();
+
+        // Happens after store updated, as store updating can clear our excess rows.
+        const finishedRefreshing = this.nodesToRefresh.size === 0;
+        if (wasRefreshing && finishedRefreshing) {
+            this.fireRefreshFinishedEvent();
+        }
     }
 
     public fireRefreshFinishedEvent() {

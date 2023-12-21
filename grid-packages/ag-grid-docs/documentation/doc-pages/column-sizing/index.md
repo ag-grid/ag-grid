@@ -163,12 +163,11 @@ By default the grid will also resize the column to fit the header. If you do not
 
 Just like Excel, each column can also be auto-resized by double clicking the right side of the header rather than dragging it. When you do this, the grid will work out the best width to fit the contents of the cells in the column.
 
-Note the following:
+<note>
 - The grid works out the best width by considering the virtually rendered rows only. For example, if your grid has 10,000 rows, but only 50 rendered due to virtualisation of rows, then only these 50 will be considered for working out the width to display. The rendered rows are all the rows you can see on the screen through the vertical scroll plus a small buffer (default buffer size is 20).
 - Only rendered cells on the screen are considered, and the grid works out the width based on what it sees. It cannot see the columns that are not rendered due to column virtualisation. Thus it is not possible to auto-size a column that is not visible on the screen.
-- Column Virtualisation is the technique the grid uses to render large amounts of columns without degrading performance by only rendering columns that are visible due to the horizontal scroll positions. For example, the grid can have 1,000 columns with only 10 rendered if the horizontal scroll is only showing 10 columns.
-
-To get around this, you can turn off column virtualisation by setting grid property `suppressColumnVirtualisation=true`. The choice is yours to decide whether you want column virtualisation working OR auto-size working using off-screen columns.
+- Column Virtualisation is the technique the grid uses to render large amounts of columns without degrading performance by only rendering columns that are visible due to the horizontal scroll positions. For example, the grid can have 1,000 columns with only 10 rendered if the horizontal scroll is only showing 10 columns. To get around this, you can turn off column virtualisation by setting grid property `suppressColumnVirtualisation=true`. The choice is yours to decide whether you want column virtualisation working OR auto-size working using off-screen columns.
+</note>
 
 ## Shift Resizing
 

@@ -2,7 +2,7 @@ import { navigate } from 'gatsby';
 import classnames from 'classnames';
 import React from 'react';
 import fwLogos from 'images/fw-logos';
-import styles from './FrameworkSelectorInsideDocs.module.scss';
+import styles from '@design-system/modules/FrameworkSelectorInsideDocs.module.scss';
 import supportedFrameworks from "../utils/supported-frameworks";
 
 export default function FrameworkSelectorInsideDocs({ path, currentFramework }) {
