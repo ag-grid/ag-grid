@@ -136,7 +136,13 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
 
     const canRefreshFullWidthRef = useRef(false);
     useEffect(() => {
-        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gridOptionsService.get('reactiveCustomComponents');
+        const reactiveCustomComponents = gridOptionsService.get('reactiveCustomComponents');
+        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails
+            && (reactiveCustomComponents === true || (
+                rowCtrl.getRowType() === 'FullWidthDetail'
+                    && Array.isArray(reactiveCustomComponents)
+                    && reactiveCustomComponents.indexOf('detailCellRenderer') >= 0
+            ));
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
     const showCellsJsx = () => cellCtrls?.map(cellCtrl => (

@@ -85,7 +85,10 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     }, [userCompDetails]);
 
 
-    const reactiveCustomComponents = useMemo(() => gridOptionsService.get('reactiveCustomComponents'), []);
+    const reactiveCustomComponents = useMemo(() => {
+        const reactiveCustomComponentsOption = gridOptionsService.get('reactiveCustomComponents');
+        return reactiveCustomComponentsOption === true || (Array.isArray(reactiveCustomComponentsOption) && reactiveCustomComponentsOption.indexOf('floatingFilter') >= 0);
+    }, []);
     const floatingFilterCompProxy = useMemo(() => {
         if (reactiveCustomComponents && userCompDetails) {
             const compProxy = new FloatingFilterComponentProxy(userCompDetails!.params, () => setRenderKey(prev => prev + 1));

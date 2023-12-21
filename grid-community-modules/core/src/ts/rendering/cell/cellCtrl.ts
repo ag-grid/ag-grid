@@ -408,7 +408,9 @@ export class CellCtrl extends BeanStub {
         const position: 'over' | 'under' | undefined = compDetails?.popupPositionFromSelector != null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
 
         this.setEditing(true);
-        this.cellComp.setEditDetails(compDetails, popup, position, this.beans.gridOptionsService.get('reactiveCustomComponents'));
+        const reactiveCustomComponents = this.beans.gridOptionsService.get('reactiveCustomComponents')
+        const cellEditorIsReactive = reactiveCustomComponents === true || (Array.isArray(reactiveCustomComponents) && reactiveCustomComponents.includes('cellEditor'));
+        this.cellComp.setEditDetails(compDetails, popup, position, cellEditorIsReactive);
 
         const e: CellEditingStartedEvent = this.createEvent(event, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(e);
