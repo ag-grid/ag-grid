@@ -1,5 +1,5 @@
 import { ReactPortal } from 'react';
-import { ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
+import { ComponentType, IComponent, WrappableInterface, _ } from '@ag-grid-community/core';
 import { LegacyPortalManager } from './portalManager';
 
 abstract class BaseReactComponent implements IComponent<any>, WrappableInterface {
@@ -56,8 +56,7 @@ export abstract class ReactComponent extends BaseReactComponent {
 
         (eParentElement as HTMLElement).classList.add('ag-react-container');
 
-        // DEPRECATED - use componentInstance.getReactContainerStyle or componentInstance.getReactContainerClasses instead
-        // so user can have access to the react container, to add css class or style
+        /** @deprecated v21.2 */
         params.reactContainer = eParentElement;
 
         return eParentElement;
@@ -69,10 +68,12 @@ export abstract class ReactComponent extends BaseReactComponent {
         }
 
         if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
+            _.warnOnce('Since v31.1 "getReactContainerStyle" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
             Object.assign(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
         }
-
+        
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
+            _.warnOnce('Since v31.1 "getReactContainerClasses" is deprecated. Apply styling directly to ".ag-react-container" if needed.');
             const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
             parentContainerClasses.forEach(className => this.eParentElement.classList.add(className));
         }
