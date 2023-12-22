@@ -96,7 +96,10 @@ export interface ColumnPinningState {
 }
 
 export interface ColumnVisibilityState {
+    /** Only includes colIds that were marked visible in colDef but are now hidden */
     hiddenColIds: string[];
+    /** Only includes colIds that were marked hidden in colDef but are now visible */
+    visibleColIds?: string[];
 }
 
 export interface ColumnSizeState {

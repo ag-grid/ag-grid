@@ -59,6 +59,7 @@ export class StateService extends BeanStub {
     private suppressEvents = true;
     private queuedUpdateSources: Set<(keyof GridState | 'gridInitializing')> = new Set();
     private dispatchStateUpdateEventDebounced = debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
+    private initialHiddenColIds: Set<string> = new Set();
 
     @PostConstruct
     private postConstruct(): void {
@@ -102,6 +103,8 @@ export class StateService extends BeanStub {
         const {
             columnGroup: columnGroupState
         } = initialState;
+
+        this.saveVisibilityState();
         this.setColumnState(initialState);
         if (columnGroupState) {
             this.setColumnGroupState(columnGroupState);
@@ -205,6 +208,16 @@ export class StateService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () => this.updateCachedState('scroll', this.getScrollState()));
     }
 
+    private saveVisibilityState(): void {
+        // get initial hide and save it
+        const allColumns = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();
+        for (const column of allColumns) {
+            if (column.getColDef().hide) {
+                this.initialHiddenColIds.add(column.getColId());
+            }
+        }
+    }
+
     private getColumnState(): {
         sort?: SortState;
         rowGroup?: RowGroupState;
@@ -217,12 +230,13 @@ export class StateService extends BeanStub {
     } {
         const pivotMode = this.columnModel.isPivotMode();
         const sortColumns: SortModelItem[] = [];
-        const groupColumns: string[] = [];
+        const groupColIds: string[] = [];
         const aggregationColumns: AggregationColumnState[] = [];
-        const pivotColumns: string[] = [];
-        const leftColumns: string[] = [];
-        const rightColumns: string[] = [];
-        const hiddenColumns: string[] = [];
+        const pivotColIds: string[] = [];
+        const leftColIds: string[] = [];
+        const rightColIds: string[] = [];
+        const hiddenColIds: string[] = [];
+        const visibleColIds: string[] = [];
         const columnSizes: ColumnSizeState[] = [];
         const columns: string[] = [];
 
@@ -247,19 +261,25 @@ export class StateService extends BeanStub {
                 sortColumns[sortIndex ?? 0] = { colId, sort };
             }
             if (rowGroup) {
-                groupColumns[rowGroupIndex ?? 0] = colId;
+                groupColIds[rowGroupIndex ?? 0] = colId;
             }
             if (typeof aggFunc === 'string') {
                 aggregationColumns.push({ colId, aggFunc });
             }
             if (pivot) {
-                pivotColumns[pivotIndex ?? 0] = colId;
+                pivotColIds[pivotIndex ?? 0] = colId;
             }
             if (pinned) {
-                (pinned === 'right' ? rightColumns : leftColumns).push(colId);
+                (pinned === 'right' ? rightColIds : leftColIds).push(colId);
             }
             if (hide) {
-                hiddenColumns.push(colId);
+                if (!this.initialHiddenColIds.has(colId)) {
+                    hiddenColIds.push(colId);
+                }
+            } else {
+                if (this.initialHiddenColIds.has(colId)) {
+                    visibleColIds.push(colId);
+                }
             }
             if (flex || width) {
                 columnSizes.push({ colId, flex: flex ?? undefined, width });
@@ -268,11 +288,11 @@ export class StateService extends BeanStub {
         
         return {
             sort: sortColumns.length ? { sortModel: sortColumns } : undefined,
-            rowGroup: groupColumns.length ? { groupColIds: groupColumns } : undefined,
+            rowGroup: groupColIds.length ? { groupColIds } : undefined,
             aggregation: aggregationColumns.length ? { aggregationModel: aggregationColumns } : undefined,
-            pivot: pivotColumns.length || pivotMode ? { pivotMode, pivotColIds: pivotColumns } : undefined,
-            columnPinning: leftColumns.length || rightColumns.length ? { leftColIds: leftColumns, rightColIds: rightColumns } : undefined,
-            columnVisibility: hiddenColumns.length ? { hiddenColIds: hiddenColumns } : undefined,
+            pivot: pivotColIds.length || pivotMode ? { pivotMode, pivotColIds } : undefined,
+            columnPinning: leftColIds.length || rightColIds.length ? { leftColIds, rightColIds } : undefined,
+            columnVisibility: hiddenColIds.length || visibleColIds.length ? { hiddenColIds, visibleColIds } : undefined,
             columnSizing: columnSizes.length ? { columnSizingModel: columnSizes } : undefined,
             columnOrder: columns.length ? { orderedColIds: columns } : undefined
         };
@@ -346,6 +366,9 @@ export class StateService extends BeanStub {
         if (columnVisibilityState) {
             columnVisibilityState.hiddenColIds.forEach(colId => {
                 getColumnState(colId).hide = true;
+            });
+            (columnVisibilityState.visibleColIds ?? []).forEach(colId => {
+                getColumnState(colId).hide = false;
             });
             defaultState.hide = null;
         }
