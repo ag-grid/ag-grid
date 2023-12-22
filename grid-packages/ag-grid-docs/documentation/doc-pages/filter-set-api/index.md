@@ -25,6 +25,8 @@ Get and set the state of the Set Filter by getting and setting the model on the 
 
 The filter model contains an array of string values where each item in the array corresponds to an element to be selected from the set.
 
+<interface-documentation interfaceName='SetFilterModel'></interface-documentation>
+
 ## Set Filter API
 
 The `ISetFilter` interface defines the public API for the Set Filter.
