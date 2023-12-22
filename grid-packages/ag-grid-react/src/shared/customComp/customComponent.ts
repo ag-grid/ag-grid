@@ -1,6 +1,6 @@
 import { AgPromise } from "ag-grid-community";
 import customWrapperComp from "../../reactUi/customComp/customWrapperComp";
-import { NewReactComponent } from "../newReactComponent";
+import { ReactComponent } from "../reactComponent";
 
 export type WrapperParams<P, M> = {
     initialProps: P;
@@ -18,7 +18,7 @@ export function addOptionalMethods<M, C>(optionalMethodNames: string[], provided
     });
 }
 
-export class CustomComponent<TInputParams, TOutputParams, TMethods> extends NewReactComponent {
+export class CustomComponent<TInputParams, TOutputParams, TMethods> extends ReactComponent {
     protected refreshProps!: () => void;
 
     protected providedMethods!: TMethods;

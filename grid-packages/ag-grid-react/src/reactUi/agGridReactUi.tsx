@@ -23,7 +23,7 @@ import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverla
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
 import { AgReactUiProps } from '../shared/interfaces';
-import { NewReactComponent } from '../shared/newReactComponent';
+import { ReactComponent } from '../shared/reactComponent';
 import { PortalManager } from '../shared/portalManager';
 import { BeansContext } from "./beansContext";
 import { CssClasses } from "./utils";
@@ -230,7 +230,7 @@ class ReactFrameworkComponentWrapper
                 return new ComponentClass(UserReactComponent, this.parent, componentType);
             }
         }
-        return new NewReactComponent(UserReactComponent, this.parent, componentType);
+        return new ReactComponent(UserReactComponent, this.parent, componentType);
     }
 }
 
