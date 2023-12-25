@@ -63,6 +63,7 @@
     "fs-extra": "10.0.0",
     "gatsby": "5.9.1",
     "gatsby-alias-imports": "1.0.6",
+    "gatsby-cli": "5.13.0",
     "gatsby-link": "5.9.0",
     "gatsby-plugin-catch-links": "5.9.0",
     "gatsby-plugin-compile-es6-packages": "2.1.1",
