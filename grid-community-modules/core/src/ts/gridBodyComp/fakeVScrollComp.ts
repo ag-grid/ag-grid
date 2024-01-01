@@ -42,11 +42,15 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     }
 
     private onRowContainerHeightChanged(): void {
-        const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        const { ctrlsService } = this;
+        const gridBodyCtrl = ctrlsService.getGridBodyCtrl();
         const gridBodyViewportEl = gridBodyCtrl.getBodyViewportElement();
 
-        if (this.eViewport.scrollTop != gridBodyViewportEl.scrollTop) {
-            this.eViewport.scrollTop = gridBodyViewportEl.scrollTop;
+        const eViewportScrollTop = this.getScrollPosition();
+        const gridBodyViewportScrollTop = gridBodyViewportEl.scrollTop;
+
+        if (eViewportScrollTop != gridBodyViewportScrollTop) {
+            this.setScrollPosition(gridBodyViewportScrollTop, true);
         }
     }
 
@@ -54,8 +58,8 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         return this.getViewport().scrollTop;
     }
 
-    public setScrollPosition(value: number): void {
-        if (!isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
+    public setScrollPosition(value: number, force?: boolean): void {
+        if (!force && !isVisible(this.getViewport())) { this.attemptSettingScrollPosition(value); }
         this.getViewport().scrollTop = value;
     }
 }
