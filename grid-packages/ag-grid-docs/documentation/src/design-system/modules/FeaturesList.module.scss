@@ -72,6 +72,6 @@
     }
 
     #{$selector-darkmode} & {
-        fill: var(--default-text-color);
+        fill: var(--color-link);
     }
 }
