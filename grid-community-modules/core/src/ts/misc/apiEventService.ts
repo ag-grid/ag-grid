@@ -9,12 +9,7 @@ export class ApiEventService extends BeanStub {
     private syncGlobalEventListeners: Set<AgGlobalEventListener> = new Set();
     private asyncGlobalEventListeners: Set<AgGlobalEventListener> = new Set();
 
-    public addEventListener(eventType: string, userListener: AgEventListener): void {
-        const listener = (event: any) => {
-            this.getFrameworkOverrides().wrapOutgoing(
-                () => userListener(event),
-            );
-        }
+    public addEventListener(eventType: string, listener: AgEventListener): void {
         const async = this.gridOptionsService.useAsyncEvents();
         const listeners = async ? this.asyncEventListeners : this.syncEventListeners;
         if (!listeners.has(eventType)) {
@@ -24,17 +19,12 @@ export class ApiEventService extends BeanStub {
         this.eventService.addEventListener(eventType, listener, async);
     }
 
-    public addGlobalListener(userListener: AgGlobalEventListener): void {
-        const listener = (eventType: string, event: any) => {
-            this.getFrameworkOverrides().wrapOutgoing(
-                () => userListener(eventType, event),
-            );
-        }
-
+    public addGlobalListener(listener: AgGlobalEventListener): void {
         const async = this.gridOptionsService.useAsyncEvents();
         const listeners = async ? this.asyncGlobalEventListeners : this.syncGlobalEventListeners;
         listeners.add(listener);
-        this.eventService.addGlobalListener(listener, async);
+        // Pass true to isExternal so that we can identify global event listeners added by the user
+        this.eventService.addGlobalListener(listener, async, true);
     }
 
     public removeEventListener(eventType: string, listener: AgEventListener): void {

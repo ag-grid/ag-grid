@@ -215,7 +215,7 @@ export class AnimationFrameService extends BeanStub {
         let pending = false;
         return () => {
             if (!this.isOn()) {
-                window.setTimeout(func, 0);
+                this.getFrameworkOverrides().setTimeout(func, 0);
                 return;
             }
             if (pending) {

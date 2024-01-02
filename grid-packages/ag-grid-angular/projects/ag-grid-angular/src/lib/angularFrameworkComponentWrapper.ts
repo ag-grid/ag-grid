@@ -1,34 +1,26 @@
-import {ComponentRef, Injectable, NgZone, ViewContainerRef} from "@angular/core";
-import {BaseComponentWrapper, FrameworkComponentWrapper, GridApi, WrappableInterface} from 'ag-grid-community';
+import {ComponentRef, Injectable, ViewContainerRef} from "@angular/core";
+import {BaseComponentWrapper, FrameworkComponentWrapper, WrappableInterface} from 'ag-grid-community';
 import {AgFrameworkComponent} from "./interfaces";
 
 @Injectable()
 export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
     private viewContainerRef: ViewContainerRef;
-    private zone: NgZone;
 
-    public setViewContainerRef(viewContainerRef: ViewContainerRef, zone: NgZone) {
+    public setViewContainerRef(viewContainerRef: ViewContainerRef) {
         this.viewContainerRef = viewContainerRef;
-        this.zone = zone;
     }
 
-    createWrapper(OriginalConstructor: { new(): any }, compType: any): WrappableInterface {
-        let zone = this.zone;
+    createWrapper(OriginalConstructor: { new(): any }): WrappableInterface {
         let that = this;
 
-        // Ensure methods within custom components are running inside the angular zone, so that
-        // change detection works properly with components.
-        function runInZone<T>(callback: () => T): T {
-            return zone ? zone.run(callback) : callback();
-        }
         class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrappableInterface {
             init(params: any): void {
-                runInZone(() => super.init(params));
+                super.init(params);
                 this._componentRef.changeDetectorRef.detectChanges();
             }
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
-                return runInZone(() => that.createComponent(OriginalConstructor));
+                return that.createComponent(OriginalConstructor);
             }
 
             hasMethod(name: string): boolean {
@@ -37,14 +29,16 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapp
 
             callMethod(name: string, args: IArguments): void {
                 const componentRef = this.getFrameworkComponentInstance();
-                return runInZone(() => wrapper.getFrameworkComponentInstance()[name].apply(componentRef, args));
+                return wrapper.getFrameworkComponentInstance()[name].apply(componentRef, args)
+
             }
 
             addMethod(name: string, callback: Function): void {
                 (wrapper as any)[name] = callback
             }
         }
-        let wrapper = new DynamicAgNg2Component();
+
+        let wrapper: DynamicAgNg2Component = new DynamicAgNg2Component();
         return wrapper;
     }
 

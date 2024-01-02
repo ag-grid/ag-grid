@@ -1,17 +1,18 @@
 import { Bean, Qualifier } from "./context/context";
-import { AgEvent, AgEventListener, AgGlobalEventListener, AgGridEvent } from "./events";
+import { AgEvent, AgGridEvent } from "./events";
 import { GridOptionsService } from "./gridOptionsService";
 import { IEventEmitter } from "./interfaces/iEventEmitter";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { LoggerFactory } from "./logger";
 
 @Bean('eventService')
 export class EventService implements IEventEmitter {
 
-    private allSyncListeners = new Map<string, Set<AgEventListener>>();
-    private allAsyncListeners = new Map<string, Set<AgEventListener>>();
+    private allSyncListeners = new Map<string, Set<Function>>();
+    private allAsyncListeners = new Map<string, Set<Function>>();
 
-    private globalSyncListeners = new Set<AgGlobalEventListener>();
-    private globalAsyncListeners = new Set<AgGlobalEventListener>();
+    private globalSyncListeners = new Map<Function, boolean>();
+    private globalAsyncListeners = new Map<Function, boolean>();
 
     private frameworkOverrides: IFrameworkOverrides;
     private gridOptionsService?: GridOptionsService;
@@ -32,10 +33,11 @@ export class EventService implements IEventEmitter {
     // the times when this class is used outside of the context (eg RowNode has an instance of this
     // class) then it is not a bean, and this setBeans method is not called.
     public setBeans(
+        @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
         @Qualifier('gridOptionsService') gridOptionsService: GridOptionsService,
         @Qualifier('frameworkOverrides') frameworkOverrides: IFrameworkOverrides,
-        @Qualifier('globalEventListener') globalEventListener: AgGlobalEventListener | null = null,
-        @Qualifier('globalSyncEventListener') globalSyncEventListener: AgGlobalEventListener | null = null
+        @Qualifier('globalEventListener') globalEventListener: Function | null = null,
+        @Qualifier('globalSyncEventListener') globalSyncEventListener: Function | null = null
     ) {
         this.frameworkOverrides = frameworkOverrides;
         this.gridOptionsService = gridOptionsService;
@@ -50,7 +52,7 @@ export class EventService implements IEventEmitter {
         }
     }
 
-    private getListeners(eventType: string, async: boolean, autoCreateListenerCollection: boolean): Set<AgEventListener> | undefined {
+    private getListeners(eventType: string, async: boolean, autoCreateListenerCollection: boolean): Set<Function> | undefined {
         const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
         let listeners = listenerMap.get(eventType);
 
@@ -59,7 +61,7 @@ export class EventService implements IEventEmitter {
         // against 'memory bloat' as empty collections will prevent the RowNode's event service from being removed after
         // the RowComp is destroyed, see noRegisteredListenersExist() below.
         if (!listeners && autoCreateListenerCollection) {
-            listeners = new Set<AgEventListener>();
+            listeners = new Set<Function>();
             listenerMap.set(eventType, listeners);
         }
 
@@ -71,11 +73,11 @@ export class EventService implements IEventEmitter {
             this.globalSyncListeners.size === 0 && this.globalAsyncListeners.size === 0;
     }
 
-    public addEventListener(eventType: string, listener: AgEventListener, async = false): void {
+    public addEventListener(eventType: string, listener: Function, async = false): void {
         this.getListeners(eventType, async, true)!.add(listener);
     }
 
-    public removeEventListener(eventType: string, listener: AgEventListener, async = false): void {
+    public removeEventListener(eventType: string, listener: Function, async = false): void {
         const listeners = this.getListeners(eventType, async, false);
         if (!listeners) { return; }
 
@@ -87,11 +89,11 @@ export class EventService implements IEventEmitter {
         }
     }
 
-    public addGlobalListener(listener: AgGlobalEventListener, async = false): void {
-        (async ? this.globalAsyncListeners : this.globalSyncListeners).add(listener);
+    public addGlobalListener(listener: Function, async = false, external = false): void {
+        (async ? this.globalAsyncListeners : this.globalSyncListeners).set(listener, external);
     }
 
-    public removeGlobalListener(listener: AgGlobalEventListener, async = false): void {
+    public removeGlobalListener(listener: Function, async = false): void {
         (async ? this.globalAsyncListeners : this.globalSyncListeners).delete(listener);
     }
 
@@ -115,7 +117,7 @@ export class EventService implements IEventEmitter {
         }
     }
 
-    private dispatchToListeners(event: AgGridEvent, async: boolean) {
+    private dispatchToListeners(event: AgEvent, async: boolean) {
         const eventType = event.type;
 
         if (async && 'event' in event) {
@@ -127,30 +129,29 @@ export class EventService implements IEventEmitter {
             }
         }
 
-        const processEventListeners = (listeners: Set<AgEventListener>, originalListeners: Set<AgEventListener>) => listeners.forEach(listener => {
+        const processEventListeners = (listeners: Set<Function>, originalListeners: Set<Function>) => listeners.forEach(listener => {
             if (!originalListeners.has(listener)) {
                 // A listener could have been removed by a previously processed listener. In this case we don't want to call 
                 return;
             }
-            const callback = this.frameworkOverrides ? () => this.frameworkOverrides.dispatchEvent(() => listener(event)) : () => listener(event);
             if (async) {
-                this.dispatchAsync(callback);
+                this.dispatchAsync(() => listener(event));
             } else {
-                callback();
+                listener(event);
             }
         });
 
-        const originalListeners = this.getListeners(eventType, async, false) ?? new Set<AgEventListener>();
+        const originalListeners = this.getListeners(eventType, async, false) ?? new Set();
         // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
-        const listeners = new Set<AgEventListener>(originalListeners);
+        const listeners = new Set(originalListeners);
         if (listeners.size > 0) {
             processEventListeners(listeners, originalListeners);
         }
 
         const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
 
-        globalListeners.forEach((listener) => {
-            const callback = () => this.frameworkOverrides ? this.frameworkOverrides.dispatchEvent(() => listener(eventType, event)) : listener(eventType, event);
+        globalListeners.forEach(([listener, isExternal]) => {
+            const callback = () => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), isExternal)
             if (async) {
                 this.dispatchAsync(callback);
             } else {
