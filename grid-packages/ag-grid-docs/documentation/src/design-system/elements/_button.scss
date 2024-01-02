@@ -178,3 +178,9 @@ input[type='submit']#{$selector-exclude-grid},
         color: var(--color-link-hover);
     }
 }
+.button {
+    &:hover,
+    &.hover {
+        color: var(--color-button-primary-fg);
+    }
+}

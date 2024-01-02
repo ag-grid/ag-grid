@@ -7,6 +7,7 @@ $selector-darkmode: "[data-dark-mode='true']";
 // Exclude simple selectors from interfering with grid styles
 $selector-exclude-grid: ':where(:not([class^=ag]))';
 
+
 $spacing-size-1: 4px;
 $spacing-size-2: 8px;
 $spacing-size-3: 12px;
