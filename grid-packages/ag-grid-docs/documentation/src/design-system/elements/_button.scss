@@ -73,7 +73,7 @@ input[type='submit']#{$selector-exclude-grid},
 
     .icon {
         --icon-size: 2em;
-
+        fill: var(--color-button-primary-fg);
         display: inline-block;
         position: relative;
         bottom: 0.05em;
