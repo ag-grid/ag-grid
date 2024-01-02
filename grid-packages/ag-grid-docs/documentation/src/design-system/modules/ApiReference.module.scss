@@ -250,3 +250,11 @@
         padding-left: $spacing-size-6;
     }
 }
+
+.expandedContent {
+    border-top: none;
+}
+
+.expandedContent > td {
+    padding: $spacing-size-4 $spacing-size-3
+}
