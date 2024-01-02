@@ -104,10 +104,10 @@
 
 .headerFramework {
     display: none;
-    font-size: var(--text-fs-xl);
-    font-weight: var(--text-regular);
-    color: var(--color-text-tertiary);
-    padding-bottom: 6px;
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-semibold);
+    color: var(--color-text-brand-primary);
+    padding-bottom: $spacing-size-3;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         display: block;
