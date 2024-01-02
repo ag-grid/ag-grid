@@ -16,7 +16,6 @@ import { getScrollbarWidth } from './utils/browser';
 import { IRowNode } from "./interfaces/iRowNode";
 import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
 import { ValidationService } from "./validation/validationService";
-import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -71,7 +70,6 @@ export class GridOptionsService {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
-    @Autowired('frameworkOverrides') frameworkOverrides: IFrameworkOverrides;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('validationService') private validationService: ValidationService;
 
@@ -148,7 +146,7 @@ export class GridOptionsService {
                 mergedParams.columnApi = this.columnApi;
                 mergedParams.context = this.context;
 
-                return this.frameworkOverrides.wrapOutgoing(() => callback(mergedParams));
+                return callback(mergedParams);
             };
             return wrapped;
         }
@@ -296,9 +294,7 @@ export class GridOptionsService {
 
             const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
             if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
-                this.frameworkOverrides.wrapOutgoing(() => {
-                    (this.gridOptions as any)[callbackMethodName](event);
-                })
+                (this.gridOptions as any)[callbackMethodName](event);
             }
         }
     };

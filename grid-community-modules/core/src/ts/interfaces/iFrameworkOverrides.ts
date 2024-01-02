@@ -2,25 +2,23 @@ import { AgPromise } from "../utils";
 
 export interface IFrameworkOverrides {
 
+    /** Because Angular uses Zones, you should not use setTimeout or setInterval (as it'll keep angular constantly doing dirty checks etc
+     * So to get around this, we allow the framework to specify how to execute setTimeout. The default is to just call the browser setTimeout().
+     */
+    setTimeout(action: any, timeout?: any): void;
     setInterval(action: any, interval?: any): AgPromise<number>;
 
+    /** Again because Angular uses Zones, we allow adding some events outside of Zone JS so that we do not kick off
+     * the Angular change detection. We do this for some events ONLY, and not all events, just events that get fired
+     * a lot (eg mouse move), but we need to make sure in AG Grid that we do NOT call any grid callbacks while processing
+     * these events, as we will be outside of ZoneJS and hence Angular2 Change Detection won't work. However it's fine
+     * for our code to result in AG Grid events (and Angular application action on these) as these go through
+     * Event Emitter's.
+     *
+     * This was done by Niall and Sean. The problematic events are mouseover, mouseout, mouseenter and mouseleave.
+     */
     addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
-    
-    /** Angular uses Zones, we run ALL events outside of Zone JS so that we do not kick off
-     * the Angular change detection. Any event listener or setTimeout() or setInterval() run by our code 
-     * would trigger change detection in Angular. 
-     * 
-     * Before events are returned to the user / callbacks called, those functions are wrapping in Angular's zone
-     * again so that the user's code triggers change detection as normal. See wrapOutgoing() below.
-     */
-    dispatchEvent(listener: () => void): void;
-
-    /**
-     * Any code that is executed outside of AG Grid should be wrapped in this method. This is to cater for Angular's
-     * change detection. This is currently used for events, callbacks that the user provides either via the component
-     * or via registration with the grid api.     
-     */
-    wrapOutgoing<T>(listener: () => T): T;
+    dispatchEvent(eventType: string, listener: () => {}, global: boolean): void;
 
     /*
     * vue components are specified in the "components" part of the vue component - as such we need a way to deteremine if a given component is

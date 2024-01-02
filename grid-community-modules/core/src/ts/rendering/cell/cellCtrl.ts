@@ -289,7 +289,7 @@ export class CellCtrl extends BeanStub {
                 const possiblyNoContentYet = autoHeight == 0;
 
                 if (notYetInDom || possiblyNoContentYet) {
-                    window.setTimeout(() => measureHeight(timesCalled + 1), 0);
+                    this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled + 1), 0);
                     return;
                 }
             }

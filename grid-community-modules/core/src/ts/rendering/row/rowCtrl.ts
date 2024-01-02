@@ -1079,7 +1079,7 @@ export class RowCtrl extends BeanStub {
                         this.beans.serverSideRowModel.onRowHeightChanged();
                     }
                 };
-                window.setTimeout(updateRowHeightFunc, 0);
+                this.beans.frameworkOverrides.setTimeout(updateRowHeightFunc, 0);
             }
         };
 
