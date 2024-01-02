@@ -1395,7 +1395,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * or the component props will not update reactively.
          * 
          * To enable, either set to `true` or pass an array of custom components to enable for.
-         * The custom component not in the array type (e.g. `'cellRenderer'`) either do not require imperative methods,
+         * The custom components not in the array type (e.g. `'cellRenderer'`) either do not require imperative methods,
          * or the props always update reactively.
          * @initial
          */
