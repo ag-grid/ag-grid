@@ -98,19 +98,19 @@
 }
 
 .buyTogether {
-    --card-color: #0665cb;
+    --card-color: var(--color-bg-primary);
     --header-tint: 0.95;
 
     width: 100%;
     display: flex;
     border-radius: 5px;
-    border: 2px solid var(--card-color);
+    border: 1px solid var(--color-border-primary);
     background-color: var(--card-color);
 
     #{$selector-darkmode} & {
         --card-color: var(--background-100);
 
-        border: 2px solid #0665cb;
+        border: 2px solid var(--color-brand-500)
     }
 }
 
@@ -191,6 +191,7 @@
 
     :global(.icon) {
         --icon-size: #{$spacing-size-4};
+        fill: var(--color-text-secondary);
 
         margin-top: -1px;
         margin-left: -1px;

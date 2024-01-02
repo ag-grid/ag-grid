@@ -2,15 +2,14 @@
 
 .buttonOuter {
     display: inline-block;
-    width: 262px;
+
 }
 
 .button {
-    $replay-width: 224px;
-    $control-width: 254px;
+    
 
     position: relative;
-    width: $replay-width;
+    width: auto;
     padding: 0.25em 0.5em 0.4em 0.5em !important;
     text-align: left;
     transition: background-color $transition-default-timing, border $transition-default-timing,
@@ -22,7 +21,6 @@
 
     :global(.icon) {
         --icon-size: 1.5em;
-
         margin: -1em 0 -1em 0.25em;
     }
 
@@ -31,7 +29,7 @@
     }
 
     &.isActive {
-        width: $control-width;
+        width: auto;
     }
 }
 
