@@ -61,7 +61,7 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "ag-charts-community": "9.0.1-beta.20231218.1431",
+    "ag-charts-community": "9.0.1-beta.20240101",
     "@ag-grid-community/all-modules": "~31.0.1",
     "@ag-grid-enterprise/advanced-filter": "~31.0.1",
     "@ag-grid-enterprise/charts": "~31.0.1",

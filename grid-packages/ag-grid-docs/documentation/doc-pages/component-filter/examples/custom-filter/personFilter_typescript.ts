@@ -71,7 +71,9 @@ export class PersonFilter implements IFilterComp {
     }
 
     setModel(model: any) {
-        this.eFilterText.value = model == null ? null : model.value;
+        const newValue = model == null ? null : model.value
+        this.eFilterText.value = newValue;
+        this.filterText = newValue;
     }
 }
 
