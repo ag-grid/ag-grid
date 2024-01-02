@@ -305,11 +305,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         const emitter = <EventEmitter<any>>(<any>this)[eventType];
         if (emitter && this.isEmitterUsed(eventType)) {
             if (eventType === 'gridReady') {
-                // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit the
-                // gridReady event
-                this._fullyReady.then((result => {
-                    emitter.emit(event);
-                }));
+                // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit the gridReady event
+                this._fullyReady.then(() => emitter.emit(event));
             } else {
                 emitter.emit(event);
             }
