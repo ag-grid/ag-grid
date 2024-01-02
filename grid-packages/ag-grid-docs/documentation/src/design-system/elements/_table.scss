@@ -68,3 +68,7 @@ table.small-header th {
 table.stack {
     @include stack-table();
 }
+
+thead > tr {
+    border-top: none;
+}
