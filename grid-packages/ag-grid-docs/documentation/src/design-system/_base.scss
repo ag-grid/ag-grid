@@ -8,8 +8,6 @@
 }
 
 html {
-    --color-scheme: light;
-
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
@@ -20,16 +18,18 @@ html {
     background-color: var(--color-bg-primary);
     color: var(--color-text-primary);
     scroll-padding-top: var(--layout-scroll-offset);
+    color-scheme: var(--color-scheme);
 
     @media (min-width: $breakpoint-docs-nav-medium) {
         --header-nav-height: 59px;
     }
-
-    #{$selector-darkmode} & {
-        color-scheme: dark;
-    }
 }
 
-h1, h2, h3, h4, h5, h6 {
-    color: var(--color-fg-primary)
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--color-fg-primary);
 }

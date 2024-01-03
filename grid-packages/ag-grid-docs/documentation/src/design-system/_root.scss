@@ -91,6 +91,8 @@
 
     --icon-size: $spacing-size-8;
 
+    --color-scheme: light;
+
     // Abstract colors
     --color-white: #fff;
     --color-black: #000;
@@ -165,7 +167,7 @@
     --color-fg-code: #e83e8d; // TODO, review & replace color
 
     // Text colors
-    --color-text-primary: var(--color-gray-900);
+    --color-text-primary: var(--color-gray-600);
     --color-text-secondary: var(--color-gray-700);
     --color-text-tertiary: var(--color-gray-600);
 
@@ -266,8 +268,8 @@ html[data-dark-mode='true'] {
     --color-scheme: dark;
 
     // Background colors
-    --color-bg-primary: var(--color-gray-900);
-    --color-bg-secondary: var(--color-gray-800);
+    --color-bg-primary: var(--color-gray-800);
+    --color-bg-secondary: var(--color-gray-700);
     --color-bg-tertiary: var(--color-gray-800);
     --color-bg-brand-solid: var(--color-brand-500);
     --color-bg-disabled_subtle: var(--color-gray-800);
@@ -286,13 +288,13 @@ html[data-dark-mode='true'] {
     --color-fg-code: #f64f76; // TODO, review & replace color
 
     // Text colors
-    --color-text-primary: var(--color-gray-50);
+    --color-text-primary: color-mix(in srgb, var(--color-gray-400), var(--color-fg-primary) 20%);
     --color-text-secondary: var(--color-gray-300);
     --color-text-tertiary: var(--color-gray-400);
 
     // Border colors
     --color-border-primary: var(--color-gray-700);
-    --color-border-secondary: var(--color-gray-800);
+    --color-border-secondary: color-mix(in srgb, var(--color-gray-700), var(--color-bg-primary) 40%);
     --color-border-tertiary: var(--color-gray-800);
     --color-border-disabled_subtle: var(--color-gray-800);
 
