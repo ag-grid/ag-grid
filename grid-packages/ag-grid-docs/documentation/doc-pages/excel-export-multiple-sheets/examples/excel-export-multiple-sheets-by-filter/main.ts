@@ -24,7 +24,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtExport() {
-  var sports: Record<string, boolean> = {}
+  const sports: Record<string, boolean> = {}
 
   gridApi!.forEachNode(function (node) {
     if (!sports[node.data!.sport]) {
@@ -32,35 +32,37 @@ function onBtExport() {
     }
   })
 
-  var spreadsheets = []
+  let spreadsheets: string[] = []
 
-  var sportFilterInstance = gridApi!.getFilterInstance('sport')!
+  const performExport = async () => {
+    for (const sport in sports) {
+      await gridApi!.setColumnFilterModel('sport', { values: [sport] })
+      gridApi!.onFilterChanged()
 
-  for (var sport in sports) {
-    sportFilterInstance.setModel({ values: [sport] })
+      if (gridApi!.getColumnFilterModel('sport') == null) {
+        throw new Error('Example error: Filter not applied');
+      }
+
+      const sheet = gridApi!.getSheetDataForExcel({
+        sheetName: sport,
+      });
+      if (sheet) {
+        spreadsheets.push(sheet)
+      }
+    }
+
+    await gridApi!.setColumnFilterModel('sport', null)
     gridApi!.onFilterChanged()
 
-    if (sportFilterInstance.getModel() == null) {
-      throw new Error('Example error: Filter not applied');
-    }
+    gridApi!.exportMultipleSheetsAsExcel({
+      data: spreadsheets,
+      fileName: 'ag-grid.xlsx',
+    })
 
-    const sheet = gridApi!.getSheetDataForExcel({
-      sheetName: sport,
-    });
-    if (sheet) {
-      spreadsheets.push(sheet)
-    }
-  }
+    spreadsheets = []
+  };
 
-  sportFilterInstance.setModel(null)
-  gridApi!.onFilterChanged()
-
-  gridApi!.exportMultipleSheetsAsExcel({
-    data: spreadsheets,
-    fileName: 'ag-grid.xlsx',
-  })
-
-  spreadsheets = []
+  performExport();
 }
 
 // setup the grid after the page has finished loading

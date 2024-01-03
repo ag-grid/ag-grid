@@ -53,7 +53,7 @@ There are two ways you can get fix this problem:
 <framework-specific-section frameworks="angular">
 | ## Accessing the Angular Component Instance
 |
-| AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
+| AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey, callback})` method.
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -76,8 +76,9 @@ There are two ways you can get fix this problem:
 |
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
-|     const angularFilterInstance = api.getFilterInstance&lt;PartialMatchFilterComponent>('name'); // assume filter on name column
-|     angularFilterInstance.myMethod();
+|     api.getFilterInstance&lt;PartialMatchFilterComponent>('name', angularFilterInstance => { // assume filter on name column
+|         angularFilterInstance.myMethod();
+|     });
 | }
 </snippet>
 </framework-specific-section>
@@ -135,7 +136,7 @@ There are two ways you can get fix this problem:
 <framework-specific-section frameworks="vue">
 | ## Accessing the VueJS Component Instance
 |
-| AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
+| AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey, callback)` method.
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
@@ -155,8 +156,9 @@ There are two ways you can get fix this problem:
 |
 |     // later in your app, if you want to execute myMethod()...
 |     laterOnInYourApplicationSomewhere() {
-|         const filterInstance = api.getFilterInstance('name'); // assume filter on name column
-|         filterInstance.myMethod();
+|         api.getFilterInstance('name', filterInstance => { // assume filter on name column
+|             filterInstance.myMethod();
+|         });
 |     }
 </snippet>
 </framework-specific-section>

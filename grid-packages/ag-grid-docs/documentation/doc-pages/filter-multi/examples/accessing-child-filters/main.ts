@@ -38,17 +38,17 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function getTextModel() {
-  var textFilter = gridApi!.getFilterInstance<IMultiFilter>(
-    'athlete'
-  )!.getChildFilterInstance(0)!;
-  console.log('Current Text Filter model: ', textFilter.getModel())
+  gridApi!.getFilterInstance<IMultiFilter>('athlete', multiFilterInstance => {
+    const textFilter = multiFilterInstance!.getChildFilterInstance(0)!;
+    console.log('Current Text Filter model: ', textFilter.getModel());
+  });
 }
 
 function getSetMiniFilter() {
-  var setFilter = gridApi!.getFilterInstance<IMultiFilter>(
-    'athlete'
-  )!.getChildFilterInstance(1) as ISetFilter;
-  console.log('Current Set Filter search text: ', setFilter.getMiniFilter())
+  gridApi!.getFilterInstance<IMultiFilter>('athlete', multiFilterInstance => {
+    var setFilter = multiFilterInstance!.getChildFilterInstance(1) as ISetFilter;
+    console.log('Current Set Filter search text: ', setFilter.getMiniFilter());
+  });
 }
 
 // setup the grid after the page has finished loading
