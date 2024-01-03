@@ -405,13 +405,6 @@ export class SelectionService extends BeanStub implements ISelectionService {
         return result;
     }
 
-    public isApiTriggeredSelectionEvent(source: SelectionEventSourceType): boolean {
-        // Using a variable of type SelectionEventSourceType[] here to force type check
-        // Example: When one of the sources in the array is removed/renamed, TS checker will throw an error.
-        const apiSelectionSources: SelectionEventSourceType[] = ['api', 'apiSelectAll', 'apiSelectAllFiltered', 'apiSelectAllCurrentPage'];
-        return apiSelectionSources.includes(source);
-    }
-
     public isEmpty(): boolean {
         let count = 0;
         this.selectedNodes.forEach((rowNode: RowNode) => {

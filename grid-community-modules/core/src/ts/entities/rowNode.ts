@@ -987,15 +987,19 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventSourceType = 'api'): boolean {
-        // we always check and toggle selection when the event is triggered by an API call.
-        const isApiSelection = this.beans.selectionService.isApiTriggeredSelectionEvent(source);
+        // We should only take into account the 'api' source which matches rowNode.setSelected() method.
+        // We should ignore other SelectionEventSourceType such as 'apiSelectAll' 'apiSelectAllCurrentPage', etc.
+        const isSelectionViaRowNodeApi = source === 'api';
 
-        // We only prevent selection when the event is triggered by the UI AND the node is not selectable.
-        // For events triggered by the API, we always allow updating the selection.
-        const changeSelectionNotAllowed = !isApiSelection && !this.selectable;
+        // We only change in selection for the following scenarios:
+        // 1. when the row is selectable
+        // 2. when selection is done rowNode.setSelected(true/false) - [ but not via gridApi.selectAll() ]
+        // 3. when the user would like to deselect the node (newValue = false) regardless of the node being selectable or not.
+        //    Use case: API call to deselect all nodes should also deselect currently selected nodes that cannot be re-selected.
+        const changeSelectionAllowed = isSelectionViaRowNodeApi || this.selectable || !newValue;
         const selectionNotChanged = this.selected === newValue;
 
-        if (changeSelectionNotAllowed || selectionNotChanged) { return false; }
+        if (this.detail || !changeSelectionAllowed || selectionNotChanged) { return false; }
 
         this.selected = newValue;
 

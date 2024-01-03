@@ -16,7 +16,6 @@ export interface ISelectionService {
     reset(source: SelectionEventSourceType): void;
     getBestCostNodeSelection(): RowNode[] | undefined;
     isEmpty(): boolean;
-    isApiTriggeredSelectionEvent(source: SelectionEventSourceType): boolean;
     /**
      * @param justFiltered whether to just include nodes which have passed the filter
      * @param justCurrentPage whether to just include nodes on the current page
