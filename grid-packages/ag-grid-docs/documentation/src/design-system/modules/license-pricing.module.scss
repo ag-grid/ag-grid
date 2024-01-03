@@ -110,7 +110,7 @@
     #{$selector-darkmode} & {
         --card-color: var(--background-100);
 
-        border: 2px solid var(--color-brand-500)
+        border: 2px solid var(--color-brand-500);
     }
 }
 
@@ -164,7 +164,7 @@
 
         #{$selector-darkmode} & {
             :global(#LogoType) * {
-                fill: var(--color-text-primary) !important;
+                fill: var(--color-fg-primary) !important;
             }
         }
     }
@@ -175,7 +175,7 @@
         color: #00366d;
 
         #{$selector-darkmode} & {
-            color: var(--color-text-primary) !important;
+            color: var(--color-fg-primary) !important;
         }
     }
 }
@@ -331,7 +331,7 @@
     display: inline-block;
     height: 2.5em;
     margin: -1.15em 0.33em -1em 0;
-    fill: var(--color-text-primary);
+    fill: var(--color-fg-primary);
 }
 
 .videoExplainer {
