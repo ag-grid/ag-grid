@@ -2,34 +2,29 @@
 
 // Copy of ag-grid.com menu styles, before we bring the whole component across
 
-.whatsNewLink {
-    margin-top: $spacing-size-4;
-    margin-bottom: $spacing-size-2;
+.whatsNewLink a {
+    display: block;
+    position: relative;
+    width: fit-content;
+    margin-bottom: $spacing-size-4;
+    padding: 2px 10px;
+    text-decoration: none;
+    font-size: var(--text-fs-sm);
+    color: var(--color-logo-orange);
+    border-radius: 24px;
+    border: 1px solid var(--color-logo-orange);
+    transition: background-color $transition-default-timing, color $transition-default-timing;
+    -webkit-font-smoothing: auto;
 
-    a {
-        display: block;
-        position: relative;
-        width: fit-content;
-        margin-bottom: $spacing-size-4;
-        padding: 2px 10px;
-        text-decoration: none;
-        font-size: var(--text-fs-sm);
-        color: var(--color-logo-orange);
-        border-radius: 24px;
-        border: 1px solid var(--color-logo-orange);
-        transition: background-color $transition-default-timing, color $transition-default-timing;
-        -webkit-font-smoothing: auto;
+    &:hover,
+    &:focus {
+        background-color: color-mix(in srgb, var(--color-logo-orange) 5%, var(--color-bg-primary));
+    }
 
+    #{$selector-darkmode} & {
         &:hover,
         &:focus {
-            background-color: color-mix(in srgb, var(--color-logo-orange) 5%, var(--color-bg-primary));
-        }
-
-        #{$selector-darkmode} & {
-            &:hover,
-            &:focus {
-                background-color: color-mix(in srgb, var(--color-logo-orange) 10%, var(--color-bg-primary));
-            }
+            background-color: color-mix(in srgb, var(--color-logo-orange) 10%, var(--color-bg-primary));
         }
     }
 }

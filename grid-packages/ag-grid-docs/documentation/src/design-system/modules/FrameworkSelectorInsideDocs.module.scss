@@ -8,10 +8,6 @@
     border-radius: var(--radius-sm);
     border: 1px solid var(--color-border-primary);
     margin-bottom: $spacing-size-4;
-
-    @media screen and (min-width: $breakpoint-docs-search-medium) {
-        margin-top: -6px;
-    }
 }
 
 .selectFrameworkContainer {

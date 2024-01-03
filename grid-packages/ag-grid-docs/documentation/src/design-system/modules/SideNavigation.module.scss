@@ -31,10 +31,10 @@
 
     > div {
         @supports (position: sticky) {
-            padding-top: $spacing-size-8;
+            padding-top: $spacing-size-6;
             padding-bottom: $spacing-size-16;
             position: sticky;
-            top: calc(var(--layout-site-header-height) + #{$top-bar-height});
+            top: var(--layout-site-header-height);
             max-height: calc(100vh - var(--layout-site-header-height) + #{$top-bar-height});
             overflow: hidden;
             overflow-y: auto;

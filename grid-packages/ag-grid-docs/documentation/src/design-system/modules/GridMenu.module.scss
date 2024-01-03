@@ -3,7 +3,7 @@
 .menu {
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         width: var(--layout-width-3-12);
-        padding-top: $spacing-size-8;
+        padding-top: $spacing-size-10;
         padding-bottom: $spacing-size-24;
 
         ul {
