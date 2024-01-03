@@ -736,7 +736,7 @@ export class DataTypeService extends BeanStub {
             number: {
                 baseDataType: 'number',
                 // can be empty space with legacy copy
-                valueParser: (params: ValueParserLiteParams<any, number>) => params.newValue === '' || params.newValue === ' '
+                valueParser: (params: ValueParserLiteParams<any, number>) => params.newValue?.trim?.() === ''
                     ? null
                     : Number(params.newValue),
                 valueFormatter: (params: ValueFormatterLiteParams<any, number>) => {
@@ -761,7 +761,7 @@ export class DataTypeService extends BeanStub {
                         return params.newValue;
                     }
                     // can be empty space with legacy copy
-                    return params.newValue === '' || params.newValue === ' '
+                    return params.newValue?.trim?.() === ''
                         ? null
                         : String(params.newValue).toLowerCase() === 'true'
                 },
