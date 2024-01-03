@@ -4,7 +4,7 @@
 const TYPE_LINKS = {
     AgChartTheme: '/integrated-charts-customisation/#custom-chart-themes',
     AgChartThemeName: '/integrated-charts-customisation/#provided-themes',
-    AgChartThemeOverrides: '/charts-api-themes/',
+    AgChartThemeOverrides: 'https://charts.ag-grid.com/themes-api/',
     AgChartThemePalette: '/charts-api-themes/#reference-theme.overrides',
     AgCartesianChartOptions: '/integrated-charts-customisation/#overriding-existing-themes',
     AgCartesianAxesTheme: '/integrated-charts-customisation/#overriding-existing-themes',
