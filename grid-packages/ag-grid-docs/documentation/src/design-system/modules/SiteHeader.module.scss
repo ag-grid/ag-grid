@@ -247,6 +247,10 @@
     transition: color $transition-default-timing, opacity $transition-default-timing;
     cursor: pointer;
 
+    @at-root button#{&} {
+        color: var(--color-white);
+    }
+
     &:hover {
         text-decoration: none;
         color: var(--color-white);
