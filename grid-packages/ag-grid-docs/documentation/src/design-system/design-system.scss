@@ -1,6 +1,7 @@
 @use 'sass:meta';
 @use 'index' as *;
 
+@include meta.load-css('./root');
 @include meta.load-css('./base');
 @include meta.load-css('./layout');
 @include meta.load-css('./typography');
