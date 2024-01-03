@@ -169,11 +169,21 @@ button.mobileNavButton {
 
 #mainNav {
     width: 100%;
+
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        position: relative;
+        min-width: calc(100% + var(--layout-horizontal-margins) * 2);
+        left: calc(var(--layout-horizontal-margins) * -1);
+    }
 }
 
 .mainNav {
     width: 100%;
     background-color: var(--color-bg-mobile-nav);
+
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        width: calc(100% + var(--layout-horizontal-margins) * 2);
+    }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
         position: absolute;
@@ -239,7 +249,7 @@ button.mobileNavButton {
 
     display: block;
     position: relative;
-    padding: 19px 18px 16px;
+    padding: 19px var(--layout-horizontal-margins) 16px;
     font-size: 17px;
     font-weight: 500;
     letter-spacing: 0.01em;
@@ -287,7 +297,7 @@ button.mobileNavButton {
 
 .buttonItem {
     .navLink {
-        padding: 19px 18px 16px;
+        padding: 19px var(--layout-horizontal-margins) 16px;
     }
 
     a::after {
