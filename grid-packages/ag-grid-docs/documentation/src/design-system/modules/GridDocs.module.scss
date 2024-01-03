@@ -88,6 +88,10 @@
 .docsPageTitle {
     margin-bottom: $spacing-size-4;
 
+    span:nth-of-type(2) {
+        letter-spacing: -1.2px;
+    }
+
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         line-height: var(--line-height-ultra-tight);
     }
