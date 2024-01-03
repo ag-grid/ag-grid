@@ -136,7 +136,6 @@ import {
     RangeDeleteEndEvent,
     RangeDeleteStartEvent,
     RangeSelectionChangedEvent,
-    ReactiveCustomComponent,
     RedoEndedEvent,
     RedoStartedEvent,
     RowClassParams,
@@ -1388,18 +1387,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public initialState: GridState | undefined = undefined;
-    /**     **React only**.
-         * 
-         * If enabled, makes it easier to set up custom components.
-         * If disabled, custom components will either need to have methods declared imperatively,
-         * or the component props will not update reactively.
-         * 
-         * To enable, either set to `true` or pass an array of custom components to enable for.
-         * The custom components not in the array type (e.g. `'cellRenderer'`) either do not require imperative methods,
-         * or the props always update reactively.
-         * @initial
-         */
-    @Input() public reactiveCustomComponents: boolean | ReactiveCustomComponent[] | undefined = undefined;
     /** For customising the context menu.
          */
     @Input() public getContextMenuItems: GetContextMenuItems<TData> | undefined = undefined;
@@ -1961,6 +1948,5 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_masterDetail: boolean | null | '';
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
-    static ngAcceptInputType_reactiveCustomComponents: boolean | null | '';
     // @END@
 }
