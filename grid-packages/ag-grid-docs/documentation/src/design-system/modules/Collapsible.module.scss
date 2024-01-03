@@ -7,19 +7,25 @@
     gap: $spacing-size-2;
     width: 100%;
 
-    .isOpen & {
+    &:hover {
+        color: var(--color-link-hover);
+    }
+
+    &:disabled {
+        cursor: default;
+        color: black;
+    }
+
+    &:not(:disabled) {
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
     }
-
 
     svg {
         width: 20px;
         height: 20px;
         fill: var(--color-link);
-        transition:
-            fill $transition-default-timing,
-            transform $transition-default-timing;
+        transition: fill $transition-default-timing, transform $transition-default-timing;
     }
 
     #{$selector-darkmode} & {
