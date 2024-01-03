@@ -2,7 +2,7 @@ import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { includes } from "./utils/array";
 import { AgPromise } from "./utils";
 
-const OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'mousemove'];
+const OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'mousemove', 'wheel', 'scroll'];
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
 /** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */

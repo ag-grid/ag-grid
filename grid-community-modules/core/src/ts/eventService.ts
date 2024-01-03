@@ -151,11 +151,10 @@ export class EventService implements IEventEmitter {
         const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
 
         globalListeners.forEach(([listener, isExternal]) => {
-            const callback = () => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), isExternal)
             if (async) {
-                this.dispatchAsync(callback);
+                this.dispatchAsync(() => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), isExternal));
             } else {
-                callback();
+                this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), isExternal)
             }
         });
     }
@@ -174,7 +173,7 @@ export class EventService implements IEventEmitter {
         // set to 'true' so it will know it's already scheduled for subsequent calls.
         if (!this.scheduled) {
             // if not scheduled, schedule one
-            window.setTimeout(this.flushAsyncQueue.bind(this), 0);
+            this.frameworkOverrides.setTimeout(this.flushAsyncQueue.bind(this), 0);
             // mark that it is scheduled
             this.scheduled = true;
         }
