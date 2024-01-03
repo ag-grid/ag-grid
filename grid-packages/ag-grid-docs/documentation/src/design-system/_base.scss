@@ -18,7 +18,7 @@ html {
     line-height: var(--text-lh-base);
     font-weight: var(--text-regular);
     background-color: var(--color-bg-primary);
-    color: var(--color-fg-primary);
+    color: var(--color-text-primary);
     scroll-padding-top: var(--layout-scroll-offset);
 
     @media (min-width: $breakpoint-docs-nav-medium) {
@@ -28,4 +28,8 @@ html {
     #{$selector-darkmode} & {
         color-scheme: dark;
     }
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-fg-primary)
 }

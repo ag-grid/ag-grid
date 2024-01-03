@@ -76,7 +76,7 @@ pre.code > code {
     margin-bottom: -6px;
     padding: $vertical-padding $spacing-size-4;
     font-size: 15px;
-    background-color: var(--color-bg-secondary);
+    background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
     background-size: 3em 3em;
     background-origin: content-box;
     background-attachment: local;
