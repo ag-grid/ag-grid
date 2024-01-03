@@ -1,3 +1,5 @@
+@use 'breakpoints' as  breakpoint;
+
 // // Darkmode selector. To be used as an interpolated Sass parent selector
 // // #{$selector-darkmode} & {
 // //     [DARKMODE STYLES]
@@ -6,7 +8,6 @@ $selector-darkmode: "[data-dark-mode='true']";
 
 // Exclude simple selectors from interfering with grid styles
 $selector-exclude-grid: ':where(:not([class^=ag]))';
-
 
 $spacing-size-1: 4px;
 $spacing-size-2: 8px;
@@ -32,9 +33,14 @@ $transition-default-timing: 0.25s ease-in-out;
     // Layout
     --layout-gap: 32px;
     --layout-max-width: 1800px;
+    --layout-horizontal-margins: var(--layout-gap);
     --layout-copy-max-width: 1020px;
     --layout-site-header-height: 64px;
     --layout-scroll-offset: calc(var(--layout-site-header-height) + 13px);
+
+    @media screen and (min-width: breakpoint.$horizontal-margins-large) {
+        --layout-horizontal-margins: #{$spacing-size-12};
+    }
 
     --layout-width-1-4: calc((100% - var(--layout-gap) * (4 / 1 - 1)) / 4 * 1);
     --layout-width-2-4: calc((100% - var(--layout-gap) * (4 / 2 - 1)) / 4 * 2);

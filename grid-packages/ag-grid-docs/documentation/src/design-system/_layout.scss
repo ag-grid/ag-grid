@@ -3,19 +3,19 @@
 .layout-grid {
     display: flex;
     gap: var(--layout-gap);
-    max-width: min(calc(100% - var(--layout-gap) * 2), var(--layout-max-width));
+    max-width: min(calc(100% - var(--layout-horizontal-margins) * 2), var(--layout-max-width));
     margin-right: auto;
     margin-left: auto;
 }
 
 @media screen and (max-width: $breakpoint-docs-nav-medium) {
-.layout-grid {
-    flex-wrap: wrap;
-}
+    .layout-grid {
+        flex-wrap: wrap;
+    }
 }
 
 .layout-page-max-width {
-    max-width: min(calc(100% - var(--layout-gap) * 2), var(--layout-max-width));
+    max-width: min(calc(100% - var(--layout-horizontal-margins) * 2), var(--layout-max-width));
     margin-right: auto;
     margin-left: auto;
 }

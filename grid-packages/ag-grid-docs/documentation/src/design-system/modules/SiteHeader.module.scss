@@ -178,7 +178,7 @@
     @media screen and (min-width: $breakpoint-site-header-small) {
         position: absolute;
         top: 0;
-        right: var(--layout-gap);
+        right: var(--layout-horizontal-margins);
         width: calc(100vw - 240px);
         background-color: unset;
     }

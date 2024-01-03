@@ -21,7 +21,7 @@
 }
 
 .gridWrapper {
-    padding: var(--layout-gap);
+    padding: var(--layout-gap) var(--layout-horizontal-margins);
     flex: 1 1 auto;
     overflow: hidden;
     display: flex;
