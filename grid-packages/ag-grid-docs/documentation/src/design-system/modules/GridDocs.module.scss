@@ -7,7 +7,7 @@
 .doc-page {
     flex: 1 1 0px;
     min-width: 0px;
-    padding-top: $spacing-size-8 + $spacing-size-1;
+    padding-top: $spacing-size-8 + $spacing-size-2;
     padding-bottom: $spacing-size-16;
 
     padding-right: $spacing-size-6;
@@ -197,6 +197,5 @@
     }
 }
 
-#doc-content {
-    border-right: 1px solid red;
-}
+
+
