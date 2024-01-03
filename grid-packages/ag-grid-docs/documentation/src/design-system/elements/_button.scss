@@ -39,6 +39,14 @@ input[type='submit']#{$selector-exclude-grid},
         }
     }
 
+    // Fix hover issues for links with .button class
+    @at-root a#{&} {
+        &:hover,
+        &.hover {
+            color: var(--color-button-primary-fg);
+        }
+    }
+
     &:active {
         background-color: var(--color-button-primary-bg-active);
         transition: background-color 0.125s ease-in-out;
@@ -176,11 +184,5 @@ input[type='submit']#{$selector-exclude-grid},
     &:hover,
     &.hover {
         color: var(--color-link-hover);
-    }
-}
-.button {
-    &:hover,
-    &.hover {
-        color: var(--color-button-primary-fg);
     }
 }
