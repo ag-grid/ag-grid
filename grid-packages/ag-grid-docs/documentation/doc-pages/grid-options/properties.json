@@ -587,6 +587,9 @@
             "more": {
                 "name": "Custom Chart Themes",
                 "url": "/integrated-charts-customisation/#custom-chart-themes"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgChartThemeDefinition"]                
             }
         },
         "chartThemeOverrides": {

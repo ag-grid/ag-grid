@@ -4,8 +4,9 @@
 const TYPE_LINKS = {
     AgChartTheme: '/integrated-charts-customisation/#custom-chart-themes',
     AgChartThemeName: '/integrated-charts-customisation/#provided-themes',
-    AgChartThemeOverrides: 'https://charts.ag-grid.com/themes-api/',
-    AgChartThemePalette: '/charts-api-themes/#reference-theme.overrides',
+    AgChartThemeDefinition: 'https://charts.ag-grid.com/themes-api',
+    AgChartThemeOverrides: 'https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides',
+    AgChartThemePalette: 'https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-palette',
     AgCartesianChartOptions: '/integrated-charts-customisation/#overriding-existing-themes',
     AgCartesianAxesTheme: '/integrated-charts-customisation/#overriding-existing-themes',
     AgCartesianSeriesTheme: '/integrated-charts-customisation/#overriding-existing-themes',
