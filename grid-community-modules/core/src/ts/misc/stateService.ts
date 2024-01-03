@@ -59,7 +59,6 @@ export class StateService extends BeanStub {
     private suppressEvents = true;
     private queuedUpdateSources: Set<(keyof GridState | 'gridInitializing')> = new Set();
     private dispatchStateUpdateEventDebounced = debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
-    private initialHiddenColIds: Set<string> = new Set();
 
     @PostConstruct
     private postConstruct(): void {
@@ -104,7 +103,6 @@ export class StateService extends BeanStub {
             columnGroup: columnGroupState
         } = initialState;
 
-        this.saveVisibilityState();
         this.setColumnState(initialState);
         if (columnGroupState) {
             this.setColumnGroupState(columnGroupState);
@@ -208,16 +206,6 @@ export class StateService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () => this.updateCachedState('scroll', this.getScrollState()));
     }
 
-    private saveVisibilityState(): void {
-        // get initial hide and save it
-        const allColumns = this.columnModel.getPrimaryAndSecondaryAndAutoColumns();
-        for (const column of allColumns) {
-            if (column.getColDef().hide) {
-                this.initialHiddenColIds.add(column.getColId());
-            }
-        }
-    }
-
     private getColumnState(): {
         sort?: SortState;
         rowGroup?: RowGroupState;
@@ -236,7 +224,6 @@ export class StateService extends BeanStub {
         const leftColIds: string[] = [];
         const rightColIds: string[] = [];
         const hiddenColIds: string[] = [];
-        const visibleColIds: string[] = [];
         const columnSizes: ColumnSizeState[] = [];
         const columns: string[] = [];
 
@@ -273,13 +260,7 @@ export class StateService extends BeanStub {
                 (pinned === 'right' ? rightColIds : leftColIds).push(colId);
             }
             if (hide) {
-                if (!this.initialHiddenColIds.has(colId)) {
-                    hiddenColIds.push(colId);
-                }
-            } else {
-                if (this.initialHiddenColIds.has(colId)) {
-                    visibleColIds.push(colId);
-                }
+                hiddenColIds.push(colId);
             }
             if (flex || width) {
                 columnSizes.push({ colId, flex: flex ?? undefined, width });
@@ -292,7 +273,7 @@ export class StateService extends BeanStub {
             aggregation: aggregationColumns.length ? { aggregationModel: aggregationColumns } : undefined,
             pivot: pivotColIds.length || pivotMode ? { pivotMode, pivotColIds } : undefined,
             columnPinning: leftColIds.length || rightColIds.length ? { leftColIds, rightColIds } : undefined,
-            columnVisibility: hiddenColIds.length || visibleColIds.length ? { hiddenColIds, visibleColIds } : undefined,
+            columnVisibility: hiddenColIds.length ? { hiddenColIds } : undefined,
             columnSizing: columnSizes.length ? { columnSizingModel: columnSizes } : undefined,
             columnOrder: columns.length ? { orderedColIds: columns } : undefined
         };
@@ -310,7 +291,9 @@ export class StateService extends BeanStub {
             columnOrder: columnOrderState
         } = initialState;
         const columnStateMap: { [colId: string]: ColumnState } = {};
-        const defaultState: ColumnStateParams = {};
+        const defaultState: ColumnStateParams = {
+            hide: false // always show everything unless explicitly hidden
+        };
         const getColumnState = (colId: string) => {
             let columnState = columnStateMap[colId];
             if (columnState) {
@@ -367,10 +350,6 @@ export class StateService extends BeanStub {
             columnVisibilityState.hiddenColIds.forEach(colId => {
                 getColumnState(colId).hide = true;
             });
-            (columnVisibilityState.visibleColIds ?? []).forEach(colId => {
-                getColumnState(colId).hide = false;
-            });
-            defaultState.hide = null;
         }
         if (columnSizingState) {
             columnSizingState.columnSizingModel.forEach(({ colId, flex, width }) => {
