@@ -988,7 +988,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventSourceType = 'api'): boolean {
         // we always check and toggle selection when the event is triggered by an API call.
-        const isApiSelection = source === 'api';
+        const isApiSelection = this.beans.selectionService.isApiTriggeredSelectionEvent(source);
 
         // We only prevent selection when the event is triggered by the UI AND the node is not selectable.
         // For events triggered by the API, we always allow updating the selection.

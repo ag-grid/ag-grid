@@ -94,7 +94,6 @@ export class SelectionService extends BeanStub implements ISelectionService {
         }
         
 
-        const isApiSelection = source === 'api';
         let updatedCount = 0;
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
@@ -102,7 +101,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
             // trying to set it to true / false. this group will be calculated further on
             // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
             // here, otherwise the updatedCount would include it.
-            const skipThisNode = !isApiSelection && groupSelectsFiltered && node.group;
+            const skipThisNode = groupSelectsFiltered && node.group;
 
             if (!skipThisNode) {
                 const thisNodeWasSelected = node.selectThisNode(newValue, params.event, source);
@@ -404,6 +403,13 @@ export class SelectionService extends BeanStub implements ISelectionService {
         traverse(topLevelNodes);
 
         return result;
+    }
+
+    public isApiTriggeredSelectionEvent(source: SelectionEventSourceType): boolean {
+        // Using a variable of type SelectionEventSourceType[] here to force type check
+        // Example: When one of the sources in the array is removed/renamed, TS checker will throw an error.
+        const apiSelectionSources: SelectionEventSourceType[] = ['api', 'apiSelectAll', 'apiSelectAllFiltered', 'apiSelectAllCurrentPage'];
+        return apiSelectionSources.includes(source);
     }
 
     public isEmpty(): boolean {
