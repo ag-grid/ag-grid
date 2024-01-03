@@ -1,19 +1,20 @@
 @use '../../design-system' as *;
 
+$replay-button-width: 222px;
+$control-button-width: 256px;
+
 .buttonOuter {
     display: inline-block;
-
+    width: $control-button-width;
 }
 
 .button {
-    
-
     position: relative;
-    width: auto;
-    padding: 0.25em 0.5em 0.4em 0.5em !important;
+    max-width: $replay-button-width;
+    padding: 7px 12px 9px !important;
     text-align: left;
     transition: background-color $transition-default-timing, border $transition-default-timing,
-        box-shadow $transition-default-timing, width $transition-default-timing !important;
+        box-shadow $transition-default-timing, max-width $transition-default-timing !important;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         display: none;
@@ -21,6 +22,7 @@
 
     :global(.icon) {
         --icon-size: 1.5em;
+
         margin: -1em 0 -1em 0.25em;
     }
 
@@ -29,7 +31,7 @@
     }
 
     &.isActive {
-        width: auto;
+        max-width: $control-button-width;
     }
 }
 

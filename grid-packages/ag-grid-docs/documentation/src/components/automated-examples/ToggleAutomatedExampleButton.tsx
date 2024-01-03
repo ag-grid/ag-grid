@@ -13,7 +13,7 @@ export const ToggleAutomatedExampleButton: FunctionComponent<Props> = ({ isHover
     return (
         <span className={styles.buttonOuter}>
             <button
-                className={classnames(styles.button, {
+                className={classnames(styles.button, "text-xl", {
                     hover: isHoveredOver,
                     [styles.isActive]: scriptIsActive,
                 })}
