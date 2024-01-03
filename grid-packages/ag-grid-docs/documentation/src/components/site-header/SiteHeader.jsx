@@ -131,7 +131,7 @@ const HeaderNav = ({ path, currentFramework }) => {
             { isDocsUrl ? <>
                 <button
                     id="mobile-docs-nav-button"
-                    className={classnames(styles.mobileNavButton, 'button-input')}
+                    className={classnames(styles.mobileNavButton, 'button-secondary')}
                     type="button"
                     data-toggle="collapse"
                     data-target="#side-nav"
