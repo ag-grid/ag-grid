@@ -31,7 +31,7 @@
 
     > div {
         @supports (position: sticky) {
-            padding-top: $spacing-size-6;
+            padding-top: $spacing-size-8;
             padding-bottom: $spacing-size-16;
             position: sticky;
             top: var(--layout-site-header-height);
