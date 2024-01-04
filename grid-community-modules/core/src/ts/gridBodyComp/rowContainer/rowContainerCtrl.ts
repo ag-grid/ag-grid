@@ -333,7 +333,7 @@ export class RowContainerCtrl extends BeanStub {
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
-    public isViewportVisible(): boolean {
+    public isViewportInTheDOMTree(): boolean {
         return isInDOM(this.eViewport);
     }
 

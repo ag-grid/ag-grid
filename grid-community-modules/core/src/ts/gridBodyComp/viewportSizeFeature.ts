@@ -60,7 +60,7 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private onCenterViewportResized(): void {
-        if (this.centerContainerCtrl.isViewportVisible()) {
+        if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
             this.keepPinnedColumnsNarrowerThanViewport();
             this.checkViewportAndScrolls();
 
