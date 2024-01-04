@@ -114,7 +114,6 @@
         top: -$spacing-size-1;
         bottom: -$spacing-size-1;
         left: 0;
-        // border-left: 1px solid var(--nav-line-color);
         opacity: 0;
         z-index: -1;
         transition: color 0.33s ease-in-out, border-color 0.33s ease-in-out, background-color 0.33s ease-in-out;
@@ -122,13 +121,10 @@
 
     &:hover::before {
         opacity: 1;
-        // background-color: var(--hover-background);
     }
 
     &:global(.active)::before {
         opacity: 1;
-        // border-left-color: var(--active-border);
-        // background-color: var(--active-background);
     }
 }
 
