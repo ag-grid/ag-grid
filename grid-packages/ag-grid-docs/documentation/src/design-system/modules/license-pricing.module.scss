@@ -228,6 +228,7 @@
 .rightPrice {
     text-align: left;
     margin-top: $spacing-size-4;
+    color: var(--color-fg-primary);
 
     p {
         font-weight: var(--text-bold);
@@ -316,12 +317,11 @@
     padding-right: 32px;
 
     svg {
-        --text-color: var(--color-enterprise-icon);
+        --color-icon: var(--color-enterprise-icon);
 
         position: absolute;
         top: 0;
         right: 0;
-        margin-top: -4px;
         margin-left: 4px;
         width: 26px;
     }

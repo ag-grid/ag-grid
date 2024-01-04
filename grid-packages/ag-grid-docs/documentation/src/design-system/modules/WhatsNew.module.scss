@@ -49,7 +49,6 @@
         margin-top: 8px;
         margin-bottom: 4px;
         font-size: 1rem;
-        color: var(--text-color);
 
         #{$selector-darkmode} & {
             color: var(--color-text-secondary);
