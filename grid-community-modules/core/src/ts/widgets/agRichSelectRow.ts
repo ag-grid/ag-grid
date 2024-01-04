@@ -26,7 +26,7 @@ export class RichSelectRow<TValue> extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.getGui(), 'mouseup', this.onMouseUp.bind(this));
+        this.addManagedListener(this.getGui(), 'click', this.onClick.bind(this));
     }
 
     public setState(value: TValue): void {
@@ -137,7 +137,7 @@ export class RichSelectRow<TValue> extends Component {
         return false;
     }
 
-    private onMouseUp(): void {
+    private onClick(): void {
         const parent = this.getParentComponent();
         const event: WithoutGridCommon<FieldPickerValueSelectedEvent> = {
             type: Events.EVENT_FIELD_PICKER_VALUE_SELECTED,

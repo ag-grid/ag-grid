@@ -211,9 +211,9 @@ export class ColumnModel extends BeanStub {
 
     // all columns & groups to be rendered, index by row. used by header rows to get all items
     // to render for that row.
-    private viewportRowLeft: { [row: number]: IHeaderColumn[]; };
-    private viewportRowRight: { [row: number]: IHeaderColumn[]; };
-    private viewportRowCenter: { [row: number]: IHeaderColumn[]; };
+    private viewportRowLeft: { [row: number]: IHeaderColumn[]; } = {};
+    private viewportRowRight: { [row: number]: IHeaderColumn[]; } = {};
+    private viewportRowCenter: { [row: number]: IHeaderColumn[]; } = {};
 
     // true if we are doing column spanning
     private colSpanActive: boolean;
