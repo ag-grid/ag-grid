@@ -16,7 +16,7 @@ body {
 
 html[data-color-scheme='dark'] {
     color-scheme: dark;
-    background-color: #101828; 
+    background-color: #182230;
     /* TODO: Replace with bg-primary variable */
 }
 
