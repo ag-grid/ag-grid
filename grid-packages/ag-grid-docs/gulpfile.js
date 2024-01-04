@@ -31,6 +31,12 @@ const populateDevFolder = () => {
             .pipe(gulp.dest(`${distFolder}/${DEV_DIR}/${destination}`));
     }
 
+    const createCopyDirectoryTask = (source, destination) => {
+        return gulp
+            .src('**/*.*', { cwd: source })
+            .pipe(gulp.dest(`${distFolder}/${DEV_DIR}/${destination}`))
+    }
+
     const createChartsCopyTask = (source, cwd, destination) => {
         return gulp
             .src([source, '!src/**/*', '!cypress/**/*'], { base: cwd })
@@ -61,13 +67,14 @@ const populateDevFolder = () => {
     const packageReact = createCopyTask('../../grid-packages/ag-grid-react/**/*.*', '../../grid-packages/ag-grid-react/', 'ag-grid-react');
     const packageVue = createCopyTask('../../grid-packages/ag-grid-vue/**/*.*', '../../grid-packages/ag-grid-vue/', 'ag-grid-vue');
     const packageVue3 = createCopyTask('../../grid-packages/ag-grid-vue3/**/*.*', '../../grid-packages/ag-grid-vue3/', 'ag-grid-vue3');
+    const packageSystemJs = createCopyDirectoryTask('../../grid-packages/ag-grid-systemjs-plugin/dist/', 'ag-grid-systemjs-plugin');
 
     return merge(
         ...moduleCopyTasks,
         react, angular, vue, vue3,
         styles,
         chartsCommmunity, chartsReact, chartsAngular, chartsVue, chartsVue3,
-        packageCommunity, packageEnterprise, packageAngular, packageReact, packageVue, packageVue3
+        packageCommunity, packageEnterprise, packageAngular, packageReact, packageVue, packageVue3, packageSystemJs
     );
     // return merge(
     //     ...moduleCopyTasks,

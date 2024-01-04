@@ -1,9 +1,10 @@
 import isDevelopment from 'utils/is-development';
 
-const IS_SSR = typeof window === "undefined"
+export const IS_SSR = typeof window === "undefined"
 
 export const agGridVersion = require('../../../../../grid-community-modules/core/package.json').version;
 export const agGridEnterpriseVersion = require('../../../../../grid-enterprise-modules/core/package.json').version;
+export const agGridStylesVersion = require('../../../../../grid-community-modules/styles/package.json').version;
 export const agGridReactVersion = require('../../../../../grid-community-modules/react/package.json').version;
 export const agGridAngularVersion = require('../../../../../grid-community-modules/angular/package.json').version;
 export const agGridVueVersion = require('../../../../../grid-community-modules/vue/package.json').version;
@@ -25,3 +26,5 @@ export const isBuildServerBuild = () => (!isDevelopment() && process.env.GATSBY_
 
 // used in docs app code to determine if prod type features should be exposed
 export const isProductionEnvironment = () => (isProductionBuild() || isPreProductionBuild());
+
+export const NPM_CDN = 'https://cdn.jsdelivr.net/npm';

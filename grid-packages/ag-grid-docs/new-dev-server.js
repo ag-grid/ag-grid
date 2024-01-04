@@ -280,6 +280,11 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         type: linkType,
         rename: 'ag-grid-vue3'
     });
+    lnk('../../grid-packages/ag-grid-systemjs-plugin/dist/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-grid-systemjs-plugin'
+    });
 }
 
 const exampleDirMatch = new RegExp('src/([\-\\w]+)/');
@@ -365,58 +370,6 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
 function updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules) {
     console.log("Updating webpack config with modules...");
     updateWebpackSourceFiles(gridCommunityModules, gridEnterpriseModules);
-}
-
-function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules) {
-    console.log("Updating SystemJS mapping with modules...");
-
-    const utilityFilename = 'documentation/src/components/example-runner/SystemJs.jsx';
-    const utilFileContents = fs.readFileSync(utilityFilename, 'UTF-8');
-
-    let updatedUtilFileContents = updateBetweenStrings(utilFileContents,
-        '            /* START OF GRID MODULES DEV - DO NOT DELETE */',
-        '            /* END OF GRID MODULES DEV - DO NOT DELETE */',
-        gridCommunityModules.concat(chartCommunityModules),
-        gridEnterpriseModules.concat(chartEnterpriseModules),
-        module => `            "${module.publishedName}": \`\${localPrefix}/${module.publishedName}\`,`,
-        module => `            "${module.publishedName}": \`\${localPrefix}/${module.publishedName}\`,`);
-
-    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '        /* START OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
-        '        /* END OF GRID COMMUNITY MODULES PATHS DEV - DO NOT DELETE */',
-        gridCommunityModules.filter(module => module.moduleDirName !== 'all-modules'),
-        [],
-        module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`,
-        () => {
-        });
-
-    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '        /* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
-        '        /* END OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
-        gridCommunityModules.filter(module => module.moduleDirName !== 'all-modules'),
-        gridEnterpriseModules.filter(module => module.moduleDirName !== 'all-modules'),
-        module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`,
-        module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`);
-
-
-    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '        /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
-        '        /* END OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
-        gridCommunityModules.filter(module => module.moduleDirName !== 'all-modules'),
-        [],
-        module => `        "${module.publishedName}": \`https://cdn.jsdelivr.net/npm/${module.minVersionedCjs}\`,`,
-        () => {
-        });
-
-    updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
-        '        /* START OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
-        '        /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
-        gridCommunityModules.filter(module => module.moduleDirName !== 'all-modules'),
-        gridEnterpriseModules.filter(module => module.moduleDirName !== 'all-modules'),
-        module => `        "${module.publishedName}": \`https://cdn.jsdelivr.net/npm/${module.minVersionedCjs}\`,`,
-        module => `        "${module.publishedName}": \`https://cdn.jsdelivr.net/npm/${module.minVersionedCjs}\`,`);
-
-    fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
 
 const watchCoreModules = async (skipFrameworks) => {
@@ -536,40 +489,6 @@ const buildCoreModules = async (exitOnError, skipFrameworks) => {
         console.log("Changed Packages Rebuilt");
     }
 };
-
-function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartsCommunityModules, chartEnterpriseModules) {
-    console.log("Updating framework SystemJS boilerplate config with modules...");
-
-    const systemJsFiles = [
-        './documentation/static/example-runner/grid-typescript-boilerplate/systemjs.config.dev.js',
-        './documentation/static/example-runner/grid-angular-boilerplate/systemjs.config.dev.js',
-        './documentation/static/example-runner/grid-react-boilerplate/systemjs.config.dev.js',
-        './documentation/static/example-runner/grid-react-ts-boilerplate/systemjs.config.dev.js',
-        './documentation/static/example-runner/grid-vue-boilerplate/systemjs.config.dev.js',
-        './documentation/static/example-runner/grid-vue3-boilerplate/systemjs.config.dev.js'
-    ];
-
-    const getModuleConfig = module => [
-        `            '${module.publishedName}': {
-                main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js'${module.publishedName === 'ag-charts-community' ? ",\n                format: 'cjs'" : ""}
-            },`].join(EOL);
-
-    systemJsFiles.forEach(systemJsFile => {
-        const fileLines = fs.readFileSync(systemJsFile, 'UTF-8');
-
-        let updateFileLines = updateBetweenStrings(fileLines,
-            '            /* START OF MODULES - DO NOT DELETE */',
-            '            /* END OF MODULES - DO NOT DELETE */',
-            gridCommunityModules.concat(chartsCommunityModules),
-            gridEnterpriseModules.concat(chartEnterpriseModules),
-            getModuleConfig,
-            getModuleConfig,
-        );
-
-        fs.writeFileSync(systemJsFile, updateFileLines, 'UTF-8');
-    });
-}
 
 const performInitialBuild = async (skipFrameworks) => {
     // if we encounter a build failure on startup we exit
@@ -713,6 +632,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
     servePackage(app, 'ag-grid-vue');
     servePackage(app, 'ag-grid-vue3');
     servePackage(app, 'ag-grid-react');
+    servePackage(app, 'ag-grid-systemjs-plugin');
 };
 
 module.exports = async (skipFrameworks, skipExampleFormatting, skipExampleGeneration, skipAutoDocGeneration, done) => {
@@ -796,9 +716,6 @@ module.exports = async (skipFrameworks, skipExampleFormatting, skipExampleGenera
 
             addWebpackMiddleware(app);
             symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
-
-            updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
-            updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
             serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 

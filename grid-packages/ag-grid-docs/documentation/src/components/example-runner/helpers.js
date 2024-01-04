@@ -25,7 +25,7 @@ export function stripOutDarkModeCode(files) {
         }
     });
    /* RTI-1751 Would break JS master detail example that provides a grid too,
-   if (files['index.html']) {        
+   if (files['index.html']) {
         files['index.html'].source = files['index.html'].source?.replace(/(['"\s])ag-theme-quartz(['"\s])/g, "$1" + defaultTheme + "$2");
     } */
 }
@@ -154,16 +154,7 @@ const getFrameworkFiles = (framework, internalFramework) => {
         return [];
     }
 
-    // spl temporary css loader
-    let files = ['css.js'];
-
-    if (isDevelopment()) {
-        files.push('systemjs.config.dev.js');
-    }else{
-        files.push('systemjs.config.js');
-    }
-
-    return files;
+    return ['systemjs.config.js'];
 };
 
 export const getExampleFiles = (exampleInfo, forPlunker = false) => {
@@ -345,7 +336,7 @@ export const openCodeSandbox = (exampleInfo) => {
             return file;
         }
 
-        const exclude = key => isFrameworkReact() && ['systemjs.config.js', 'systemjs.config.dev.js', 'css.js'].includes(key)
+        const exclude = key => isFrameworkReact() && ['systemjs.config.js'].includes(key)
 
         const filesToSubmit = {};
         Object.keys(files)

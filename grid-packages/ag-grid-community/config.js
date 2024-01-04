@@ -41,6 +41,24 @@ const builds = {
         format: 'esm',
         env: 'production',
         banner
+    },
+    'community-umd-dev': {
+        entry: path.resolve(__dirname, './src/main.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-community.umd.js'),
+        format: 'umd',
+        env: 'development',
+        banner,
+        moduleName: 'agGrid',
+        nodeFormatOverride: 'es5-cjs'
+    },
+    'community-umd-prod': {
+        entry: path.resolve(__dirname, './src/main.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-community.umd.min.js'),
+        format: 'umd',
+        env: 'production',
+        banner,
+        moduleName: 'agGrid',
+        nodeFormatOverride: 'es5-cjs'
     }
 };
 
@@ -59,6 +77,7 @@ function genConfig(name) {
             format: opts.format,
             banner: opts.banner,
             name: opts.moduleName,
+            globals: opts.globals
         },
         onwarn: (msg, warn) => {
             if (msg.code === 'THIS_IS_UNDEFINED') return;
