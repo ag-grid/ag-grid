@@ -60,20 +60,19 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private onCenterViewportResized(): void {
-        if (this.centerContainerCtrl.isViewportVisible()) {
-            this.keepPinnedColumnsNarrowerThanViewport();
-            this.checkViewportAndScrolls();
+        this.keepPinnedColumnsNarrowerThanViewport();
+        this.checkViewportAndScrolls();
 
-            const newWidth = this.centerContainerCtrl.getCenterWidth();
+        let newWidth = this.centerContainerCtrl.getCenterWidth();
+        if (isNaN(newWidth)) {
+            newWidth = 0;
+        }
 
-            if (newWidth !== this.centerWidth) {
-                this.centerWidth = newWidth;
-                this.columnModel.refreshFlexedColumns(
-                    { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
-                );
-            }
-        } else {
-            this.bodyHeight = 0;
+        if (newWidth !== this.centerWidth) {
+            this.centerWidth = newWidth;
+            this.columnModel.refreshFlexedColumns(
+                { viewportWidth: this.centerWidth, updateBodyWidths: true, fireResizedEvent: true }
+            );
         }
     }
 
@@ -156,7 +155,10 @@ export class ViewportSizeFeature extends BeanStub {
 
     private checkBodyHeight(): void {
         const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
-        const bodyHeight = getInnerHeight(eBodyViewport);
+        let bodyHeight = getInnerHeight(eBodyViewport);
+        if (isNaN(bodyHeight)) {
+            bodyHeight = 0;
+        }
 
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
