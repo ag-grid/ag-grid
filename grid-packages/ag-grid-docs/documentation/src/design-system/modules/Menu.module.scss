@@ -191,6 +191,7 @@ button:not([class^='ag-']).sectionHeader {
     border-left: 1px solid transparent;
     outline: none;
     transition: color 0.33s ease-in-out, border-color 0.33s ease-in-out, background-color 0.33s ease-in-out;
+    line-height: var(--text-lh-sm);
 
     #{$selector-darkmode} & {
         --active-color: var(--color-brand-300);
