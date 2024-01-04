@@ -1,5 +1,5 @@
 ---
-title: "Components"
+title: "Custom Components"
 ---
 
 <framework-specific-section frameworks="javascript,vue">

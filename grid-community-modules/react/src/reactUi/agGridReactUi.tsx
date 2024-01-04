@@ -6,8 +6,7 @@ import {
     GridCoreCreator,
     GridOptions,
     GridParams, IDetailCellRenderer, IDetailCellRendererCtrl,
-    IDetailCellRendererParams, ModuleRegistry, VanillaFrameworkOverrides, WrappableInterface, _,
-    ReactiveCustomComponent
+    IDetailCellRendererParams, ModuleRegistry, VanillaFrameworkOverrides, WrappableInterface, _
 } from '@ag-grid-community/core';
 import React, {
     forwardRef,
@@ -176,53 +175,28 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
     implements FrameworkComponentWrapper {
-    constructor(private readonly parent: PortalManager, private readonly reactiveCustomComponents?: boolean | ReactiveCustomComponent[]) {
+    constructor(private readonly parent: PortalManager, private readonly reactiveCustomComponents?: boolean) {
         super();
     }
 
     createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
         if (this.reactiveCustomComponents) {
-            const reactiveCustomComponents = this.reactiveCustomComponents;
-            const isReactiveCustomComponentsEnabled = (
-                componentName: ReactiveCustomComponent
-            ) => reactiveCustomComponents === true || reactiveCustomComponents.indexOf(componentName) >= 0;
             const getComponentClass = (propertyName: string) => {
                 switch (propertyName) {
                     case 'filter':
-                        if (isReactiveCustomComponentsEnabled('filter')) {
-                            return FilterComponentWrapper;
-                        }
-                        break;
+                        return FilterComponentWrapper;
                     case 'floatingFilterComponent':
-                        if (isReactiveCustomComponentsEnabled('floatingFilter')) {
-                            return FloatingFilterComponentWrapper;
-                        }
-                        break;
+                        return FloatingFilterComponentWrapper;
                     case 'dateComponent':
-                        if (isReactiveCustomComponentsEnabled('date')) {
-                            return DateComponentWrapper;
-                        }
-                        break;
+                        return DateComponentWrapper;
                     case 'loadingOverlayComponent':
-                        if (isReactiveCustomComponentsEnabled('loadingOverlay')) {
-                            return LoadingOverlayComponentWrapper;
-                        }
-                        break;
+                        return LoadingOverlayComponentWrapper;
                     case 'noRowsOverlayComponent':
-                        if (isReactiveCustomComponentsEnabled('noRowsOverlay')) {
-                            return NoRowsOverlayComponentWrapper;
-                        }
-                        break;
+                        return NoRowsOverlayComponentWrapper;
                     case 'statusPanel':
-                        if (isReactiveCustomComponentsEnabled('statusPanel')) {
-                            return StatusPanelComponentWrapper;
-                        }
-                        break;
+                        return StatusPanelComponentWrapper;
                     case 'toolPanel':
-                        if (isReactiveCustomComponentsEnabled('toolPanel')) {
-                            return ToolPanelComponentWrapper;
-                        }
-                        break;
+                        return ToolPanelComponentWrapper;
                 }
             }
             const ComponentClass = getComponentClass(componentType.propertyName);

@@ -491,8 +491,7 @@ export {
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
     DomLayoutType,
-    UseGroupFooter,
-    ReactiveCustomComponent
+    UseGroupFooter
 } from "./entities/gridOptions";
 
 export {

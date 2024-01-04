@@ -134,15 +134,10 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
         return !!res;
     }, [fullWidthCompDetails]);
 
+    // needs to be a ref to avoid stale closure, as used in compProxy passed to row ctrl
     const canRefreshFullWidthRef = useRef(false);
     useEffect(() => {
-        const reactiveCustomComponents = gridOptionsService.get('reactiveCustomComponents');
-        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails
-            && (reactiveCustomComponents === true || (
-                rowCtrl.getRowType() === 'FullWidthDetail'
-                    && Array.isArray(reactiveCustomComponents)
-                    && reactiveCustomComponents.indexOf('detailCellRenderer') >= 0
-            ));
+        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gridOptionsService.get('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
     const showCellsJsx = () => cellCtrls?.map(cellCtrl => (

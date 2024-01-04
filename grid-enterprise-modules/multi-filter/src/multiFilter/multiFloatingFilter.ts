@@ -75,9 +75,15 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         if (allFloatingFilterCompsUnchanged) {
             floatingFilterParamsList.forEach((floatingFilterParams, index) => {
                 const floatingFilter = this.floatingFilters[index] as IFloatingFilterComp<IFilter>;
+                let hasRefreshed = false;
                 if (floatingFilter.refresh) {
-                    floatingFilter.refresh(floatingFilterParams);
-                } else {
+                    const result = floatingFilter.refresh(floatingFilterParams);
+                    // framework wrapper always implements optional methods, but returns null if no underlying method
+                    if (result !== null) {
+                        hasRefreshed = true;
+                    }
+                }
+                if (!hasRefreshed) {
                     floatingFilter.onParamsUpdated?.(floatingFilterParams);
                 }
             });

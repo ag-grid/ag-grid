@@ -1549,13 +1549,9 @@ export interface GridOptions<TData = any> {
      * If enabled, makes it easier to set up custom components.
      * If disabled, custom components will either need to have methods declared imperatively,
      * or the component props will not update reactively.
-     * 
-     * To enable, either set to `true` or pass an array of custom components to enable for.
-     * The custom components not in the array type (e.g. `'cellRenderer'`) either do not require imperative methods,
-     * or the props always update reactively.
      * @initial
      */
-    reactiveCustomComponents?: boolean | ReactiveCustomComponent[];
+    reactiveCustomComponents?: boolean;
 
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
@@ -2354,5 +2350,3 @@ export interface LoadingCellRendererSelectorResult {
 }
 
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
-
-export type ReactiveCustomComponent = 'cellEditor' | 'date' | 'filter' | 'floatingFilter' | 'loadingOverlay' | 'noRowsOverlay' | 'statusPanel' | 'toolPanel' | 'detailCellRenderer';
