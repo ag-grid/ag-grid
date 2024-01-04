@@ -4,7 +4,7 @@
     // Layout
     --layout-gap: 32px;
     --layout-max-width: 1800px;
-    --layout-horizontal-margins: var(--layout-gap);
+    --layout-horizontal-margins: 8px;
     --layout-copy-max-width: 1020px;
     --layout-site-header-height: 64px;
     --layout-scroll-offset: calc(var(--layout-site-header-height) + 13px);
@@ -268,7 +268,7 @@ html[data-dark-mode='true'] {
     --color-scheme: dark;
 
     // Background colors
-    --color-bg-primary: var(--color-gray-800);
+    --color-bg-primary: color-mix(in srgb,var(--color-gray-800), var(--color-gray-900) 50%);
     --color-bg-secondary: var(--color-gray-700);
     --color-bg-tertiary: var(--color-gray-800);
     --color-bg-brand-solid: var(--color-brand-500);
