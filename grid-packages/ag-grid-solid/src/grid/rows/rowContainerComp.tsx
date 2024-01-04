@@ -76,7 +76,7 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
         <div
             class={ containerClasses() }
             ref={ eContainer }
-            role={ rowCtrls().length ? "rowgroup" : "presentation" }
+            role={ "rowgroup" }
             >
                 <For each={rowCtrlsOrdered()}>{(rowCtrl, i) =>
                     <RowComp rowCtrl={ rowCtrl } containerType={ containerType() }></RowComp>

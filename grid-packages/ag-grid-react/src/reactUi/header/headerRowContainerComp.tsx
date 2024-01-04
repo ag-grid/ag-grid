@@ -67,13 +67,13 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
         <>
             {
                 pinnedLeft && 
-                <div ref={setRef} className={"ag-pinned-left-header " + className} aria-hidden={!displayed} role="presentation">
+                <div ref={setRef} className={"ag-pinned-left-header " + className} aria-hidden={!displayed} role="rowgroup">
                     { insertRowsJsx() }
                 </div>
             }
             { 
                 pinnedRight && 
-                <div ref={setRef} className={"ag-pinned-right-header " + className} aria-hidden={!displayed} role="presentation">
+                <div ref={setRef} className={"ag-pinned-right-header " + className} aria-hidden={!displayed} role="rowgroup">
                 { insertRowsJsx() }
             </div>
             }

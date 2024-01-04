@@ -1,6 +1,5 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
-import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { Events } from "../../eventKeys";
 import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { DragService } from "../../dragAndDrop/dragService";
@@ -8,7 +7,6 @@ import { CtrlsService } from "../../ctrlsService";
 import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isInDOM, setScrollLeft } from "../../utils/dom";
 import { ColumnModel } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
-import { AnimationFrameService } from "../../misc/animationFrameService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { convertToMap } from "../../utils/map";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
@@ -138,12 +136,10 @@ export class RowContainerCtrl extends BeanStub {
         }
     }
 
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private readonly name: RowContainerName;
