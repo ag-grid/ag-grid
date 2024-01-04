@@ -76,9 +76,7 @@ input[type='submit']#{$selector-exclude-grid},
 }
 
 // Fix hover issues for links with .button class
-a.button:hover,
-a.button-secondary:hover,
-a.button-tertiary:hover {
+a.button:hover {
     color: var(--color-button-primary-fg);
 }
 
@@ -101,6 +99,11 @@ a.button-tertiary:hover {
     }
 }
 
+// Fix hover issues for links with .button-secondary class
+a.button-secondary:hover {
+    color: var(--color-button-secondary-fg);
+}
+
 .button-tertiary {
     background-color: var(--color-button-tertiary-bg);
     color: var(--color-button-tertiary-fg);
@@ -118,6 +121,11 @@ a.button-tertiary:hover {
     .icon {
         fill: var(--color-button-tertiary-fg);
     }
+}
+
+// Fix hover issues for links with .button-tertiary class
+a.button-tertiary:hover {
+    color: var(--color-button-tertiary-fg);
 }
 
 .button-secondary,
