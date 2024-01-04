@@ -5,7 +5,7 @@ import { Events } from "../../eventKeys";
 import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { DragService } from "../../dragAndDrop/dragService";
 import { CtrlsService } from "../../ctrlsService";
-import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
+import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isInDOM, setScrollLeft } from "../../utils/dom";
 import { ColumnModel } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
 import { AnimationFrameService } from "../../misc/animationFrameService";
@@ -19,7 +19,6 @@ import { CenterWidthFeature } from "../centerWidthFeature";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { ColumnPinnedType } from "../../entities/column";
-import { isInvisibleScrollbar } from "../../utils/browser";
 import { DisplayedRowsChangedEvent } from "../../events";
 
 export enum RowContainerName {
@@ -335,7 +334,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public isViewportVisible(): boolean {
-        return isVisible(this.eViewport);
+        return isInDOM(this.eViewport);
     }
 
     public getViewportScrollLeft(): number {
