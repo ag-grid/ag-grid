@@ -572,7 +572,7 @@ export class GridApi<TData = any> {
     /**
      * Set all of the provided nodes selection state to the provided value.
      */
-    public setNodesSelected(params: { ignoreSelectable: boolean, nodes: IRowNode[], newValue: boolean, source?: SelectionEventSourceType }) {
+    public setNodesSelected(params: { nodes: IRowNode[], newValue: boolean, source?: SelectionEventSourceType }) {
         const allNodesValid = params.nodes.every(node => {
             if (node.rowPinned) {
                 console.warn('AG Grid: cannot select pinned rows');

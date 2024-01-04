@@ -165,6 +165,8 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
 
     /**
      * Select (or deselect) the node.
+     * When `isRowSelectable()` method is present, it will be ignored.
+     *
      * @param newValue -`true` for selection, `false` for deselection.
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact. Default: `false`
      * @param source - Source property that will appear in the `selectionChanged` event. Default: `'api'`
