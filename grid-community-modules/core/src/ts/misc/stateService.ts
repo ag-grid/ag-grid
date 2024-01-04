@@ -292,7 +292,16 @@ export class StateService extends BeanStub {
         } = initialState;
         const columnStateMap: { [colId: string]: ColumnState } = {};
         const defaultState: ColumnStateParams = {
-            hide: false // always show everything unless explicitly hidden
+            sort: null,
+            sortIndex: null,
+            rowGroup: null,
+            rowGroupIndex: null,
+            aggFunc: null,
+            pivot: null,
+            pivotIndex: null,
+            pinned: null,
+            hide: null,
+            flex: null,
         };
         const getColumnState = (colId: string) => {
             let columnState = columnStateMap[colId];
@@ -309,8 +318,6 @@ export class StateService extends BeanStub {
                 columnState.sort = sort;
                 columnState.sortIndex = sortIndex;
             });
-            defaultState.sort = null;
-            defaultState.sortIndex = null;
         }
         if (groupState) {
             groupState.groupColIds.forEach((colId, rowGroupIndex) => {
@@ -318,14 +325,11 @@ export class StateService extends BeanStub {
                 columnState.rowGroup = true;
                 columnState.rowGroupIndex = rowGroupIndex;
             });
-            defaultState.rowGroup = null;
-            defaultState.rowGroupIndex = null;
         }
         if (aggregationState) {
             aggregationState.aggregationModel.forEach(({ colId, aggFunc }) => {
                 getColumnState(colId).aggFunc = aggFunc;
             });
-            defaultState.aggFunc = null;
         }
         if (pivotState) {
             pivotState.pivotColIds.forEach((colId, pivotIndex) => {
@@ -333,8 +337,6 @@ export class StateService extends BeanStub {
                 columnState.pivot = true;
                 columnState.pivotIndex = pivotIndex;
             });
-            defaultState.pivot = null;
-            defaultState.pivotIndex = null;
             this.gridOptionsService.updateGridOptions({ options: { pivotMode: pivotState.pivotMode }, source: 'gridInitializing' as any });
         }
         if (columnPinningState) {
@@ -344,7 +346,6 @@ export class StateService extends BeanStub {
             columnPinningState.rightColIds.forEach(colId => {
                 getColumnState(colId).pinned = 'right';
             });
-            defaultState.pinned = null;
         }
         if (columnVisibilityState) {
             columnVisibilityState.hiddenColIds.forEach(colId => {
@@ -357,7 +358,6 @@ export class StateService extends BeanStub {
                 columnState.flex = flex ?? null;
                 columnState.width = width;
             });
-            defaultState.flex = null;
         }
         const columns = columnOrderState?.orderedColIds;
         const applyOrder = !!columns?.length;
