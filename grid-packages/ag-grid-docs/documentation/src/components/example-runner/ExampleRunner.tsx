@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import GlobalContextConsumer from 'components/GlobalContext';
+import { useGlobalContext } from 'components/GlobalContext';
 import { Icon } from 'components/Icon';
 import fs from 'fs';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -20,22 +20,17 @@ import { useExampleFileNodes } from './use-example-file-nodes';
  * a Plunker based on the example code.
  */
 export const ExampleRunner = (props) => {
-    return (
-        <GlobalContextConsumer>
-            {({ exampleImportType, enableVue3, useVue3, useTypescript, darkMode }) => {
-                const innerProps = {
-                    ...props,
-                    // Allow overriding of the global context values per example
-                    exampleImportType: props.exampleImportType ?? exampleImportType,
-                    useVue3: enableVue3 ? useVue3 : false,
-                    useTypescript: props.useTypescript ?? useTypescript,
-                    darkMode
-                };
+    const { exampleImportType, enableVue3, useVue3, useTypescript, darkMode } = useGlobalContext();
+    const innerProps = {
+        ...props,
+        // Allow overriding of the global context values per example
+        exampleImportType: props.exampleImportType ?? exampleImportType,
+        useVue3: enableVue3 ? useVue3 : false,
+        useTypescript: props.useTypescript ?? useTypescript,
+        darkMode
+    };
 
-                return <ExampleRunnerInner {...innerProps} />;
-            }}
-        </GlobalContextConsumer>
-    );
+    return <ExampleRunnerInner {...innerProps} />;
 };
 
 const saveGridIndexHtmlPermutations = (

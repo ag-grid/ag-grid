@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import React from 'react';
 import Gif from './Gif';
-import GlobalContextConsumer from './GlobalContext';
+import { useGlobalContext } from './GlobalContext';
 import styles from '@design-system/modules/ImageCaption.module.scss';
 import { getImage, useImageFileNodes } from './use-image-file-nodes';
 
@@ -25,6 +25,7 @@ const ImageCaption = ({
     filterdarkmode: filterDarkMode
 }) => {
     const { fluidImages, images } = useImageFileNodes();
+    const { darkMode } = useGlobalContext();
 
     const style = {};
 
@@ -51,55 +52,49 @@ const ImageCaption = ({
         </div>
     );
 
+    if (toggleDarkMode) {
+        const splitName = src.split('.');
+        const extension = splitName[splitName.length - 1];
+        src = src.replace(`-dark.${extension}`, `.${extension}`);
+        if (darkMode) {
+            src = src.replace(`.${extension}`, `-dark.${extension}`);
+        }
+    }
+
+    let imgSrc;
+    const fluidImage = getImage(fluidImages, pageName, src);
+
+    if (fluidImage) {
+        imgSrc = fluidImage.childImageSharp.gatsbyImageData.images.fallback.src;
+    } else {
+        const image = getImage(images, pageName, src);
+
+        if (image) {
+            imgSrc = image.publicURL;
+        }
+    }
+
+    if (!imgSrc) {
+        throw new Error(`Could not find requested image: ${src}`);
+    }
+
     return (
-        <GlobalContextConsumer>
-        {({ darkMode }) => {
-            if (toggleDarkMode) {
-                const splitName = src.split('.');
-                const extension = splitName[splitName.length - 1];
-                src = src.replace(`-dark.${extension}`, `.${extension}`);
-                if (darkMode) {
-                    src = src.replace(`.${extension}`, `-dark.${extension}`);
-                }
-            }
-
-            let imgSrc;
-            const fluidImage = getImage(fluidImages, pageName, src);
-        
-            if (fluidImage) {
-                imgSrc = fluidImage.childImageSharp.gatsbyImageData.images.fallback.src;
-            } else {
-                const image = getImage(images, pageName, src);
-        
-                if (image) {
-                    imgSrc = image.publicURL;
-                }
-            }
-        
-            if (!imgSrc) {
-                throw new Error(`Could not find requested image: ${src}`);
-            }
-
-            return (
-                <div
-                    className={classnames(styles.imageCaption, {
-                        [styles.centered]: centered,
-                        [styles.constrained]: constrained,
-                        [styles.filterDarkMode]: filterDarkMode
-                    })}
-                    style={style}
-                >
-                    {descriptionTop && description}
-                    {src.endsWith('.gif') ? (
-                        <Gif src={src} alt={alt} className={styles.image} wrapped={true} toggledarkmode={toggleDarkMode} />
-                    ) : (
-                        <img src={imgSrc} className={styles.image} alt={alt} />
-                    )}
-                    {!descriptionTop && description}
-                </div>
-            );
-        }}
-        </GlobalContextConsumer>
+        <div
+            className={classnames(styles.imageCaption, {
+                [styles.centered]: centered,
+                [styles.constrained]: constrained,
+                [styles.filterDarkMode]: filterDarkMode
+            })}
+            style={style}
+        >
+            {descriptionTop && description}
+            {src.endsWith('.gif') ? (
+                <Gif src={src} alt={alt} className={styles.image} wrapped={true} toggledarkmode={toggleDarkMode} />
+            ) : (
+                <img src={imgSrc} className={styles.image} alt={alt} />
+            )}
+            {!descriptionTop && description}
+        </div>
     )
 };
 
