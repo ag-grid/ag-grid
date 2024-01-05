@@ -36,18 +36,6 @@ const EVENTS = (<any>Object).values(Events);
 const PROPERTIES = PropertyKeys.ALL_PROPERTIES;
 const FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
 
-function tsNodeIsDocumentContentLoaded(node) {
-    try {
-        if (tsNodeIsFunctionCall(node)) {
-            return node.expression.arguments.length > 0 &&
-                ts.isStringLiteral(node.expression.arguments[0]) &&
-                node.expression.arguments[0].text === 'DOMContentLoaded';
-        }
-    } catch (e) {
-        console.error('We found something which we do not understand', node);
-    }
-}
-
 function tsNodeIsHttpOpen(node) {
     const callee = node.expression && node.expression.callee;
     const calleeObject = callee && callee.object;
@@ -175,7 +163,6 @@ function internalParser(examplePath, {
 
     const tsCollectors = [];
     const tsGridOptionsCollectors = [];
-    const tsOnReadyCollectors = [];
     const registered = ['gridOptions'];
 
     // handler is the function name, params are any function parameters
@@ -260,7 +247,7 @@ function internalParser(examplePath, {
     });
 
     // extract the xmlhttpreq call
-    tsOnReadyCollectors.push({
+    tsCollectors.push({
         matches: tsNodeIsHttpOpen,
         apply: (bindings, node) => {
             const url = node.expression.arguments[1].raw;
@@ -271,7 +258,7 @@ function internalParser(examplePath, {
     });
 
     // extract the Http Request call
-    tsOnReadyCollectors.push({
+    tsCollectors.push({
         matches: tsNodeIsSimpleFetchRequest,
         apply: (bindings, node) => {
             const url = node.arguments[0].getText();
@@ -281,7 +268,7 @@ function internalParser(examplePath, {
     });
 
     // extract the resizeColumnsToFit
-    tsOnReadyCollectors.push({
+    tsCollectors.push({
         matches: node => {
             if (ts.isExpressionStatement(node) && ts.isCallExpression(node.expression) && ts.isPropertyAccessExpression(node.expression.expression)) {
                 //
@@ -298,15 +285,6 @@ function internalParser(examplePath, {
         apply: bindings => {
             bindings.resizeToFit = true;
         }
-    });
-
-    // extract onready
-    tsCollectors.push({
-        matches: tsNodeIsDocumentContentLoaded,
-        apply: (bindings, node) => {
-            return tsCollect(node.expression.arguments[1].body, bindings, tsOnReadyCollectors)
-        }
-
     });
 
     // all onXXX will be handled here
