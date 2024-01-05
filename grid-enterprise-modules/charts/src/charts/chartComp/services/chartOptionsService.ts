@@ -80,7 +80,7 @@ export class ChartOptionsService extends BeanStub {
 
     public getSeriesOption<T = string>(expression: string, seriesType: ChartSeriesType): T {
         const series = this.getChart().series.find((s: any) => ChartOptionsService.isMatchingSeries(seriesType, s));
-        return _.get(series, expression, undefined) as T;
+        return _.get(series, `properties.${expression}`, undefined) as T;
     }
 
     public setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {
