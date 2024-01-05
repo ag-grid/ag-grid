@@ -14,7 +14,7 @@ import { ColumnModel } from "../columns/columnModel";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 import { Column } from "../entities/column";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { IRowNode } from "../interfaces/iRowNode";
+import { IRowNode, VerticalScrollPosition } from "../interfaces/iRowNode";
 import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } from "../utils/dom";
 
 enum ScrollDirection {
@@ -358,7 +358,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.eBodyViewport.scrollTop = vScrollPosition;
     }
 
-    public getVScrollPosition(): { top: number, bottom: number; } {
+    public getVScrollPosition(): VerticalScrollPosition {
         const result = {
             top: this.eBodyViewport.scrollTop,
             bottom: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight

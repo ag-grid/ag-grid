@@ -64,8 +64,7 @@ export class RowComp extends Component {
 
     private getInitialStyle(containerType: RowContainerType): string {
         const transform = this.rowCtrl.getInitialTransform(containerType);
-        const top = this.rowCtrl.getInitialRowTop(containerType);
-        return transform ? `transform: ${transform}` : `top: ${top}`;
+        return transform ? `transform: ${transform}` : `top: ${this.rowCtrl.getInitialRowTop(containerType)}`;
     }
 
     private showFullWidth(compDetails: UserCompDetails): void {
