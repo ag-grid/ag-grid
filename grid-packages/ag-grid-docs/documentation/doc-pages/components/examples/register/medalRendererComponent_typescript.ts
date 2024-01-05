@@ -19,7 +19,7 @@ export class MedalRenderer implements ICellRendererComp {
         this.eButton = document.createElement('button');
         this.buttonListener = this.buttonClicked.bind(this);
         this.eButton.addEventListener("click", this.buttonListener);
-        this.eButton.innerHTML = 'Push For Total';
+        this.eButton.textContent = 'Push For Total';
 
         this.eGui.appendChild(label);
         this.eGui.appendChild(this.eButton);

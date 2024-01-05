@@ -166,7 +166,7 @@ function onChangeMonth(i: number) {
   }
   // Mutate the context object in place
   context.month = newMonth
-  document.querySelector('#monthName')!.innerHTML = monthNames[newMonth + 1]
+  document.querySelector('#monthName')!.textContent = monthNames[newMonth + 1]
   gridApi!.refreshClientSideRowModel('aggregate')
   gridApi!.refreshCells()
 }

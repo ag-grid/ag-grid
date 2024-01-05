@@ -70,7 +70,7 @@ function saveFilterModel() {
   var keys = Object.keys(savedFilterModel)
   var savedFilters: string = keys.length > 0 ? keys.join(', ') : '(none)';
 
-  (document.querySelector('#savedFilters') as any).innerHTML = savedFilters
+  (document.querySelector('#savedFilters') as any).textContent = savedFilters
 }
 
 function restoreFilterModel() {
