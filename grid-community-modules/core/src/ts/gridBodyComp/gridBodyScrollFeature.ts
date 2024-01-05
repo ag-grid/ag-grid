@@ -359,9 +359,10 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public getVScrollPosition(): VerticalScrollPosition {
+        const scrollTop = this.eBodyViewport.scrollTop
         const result = {
-            top: this.eBodyViewport.scrollTop,
-            bottom: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
+            top: scrollTop,
+            bottom: scrollTop + this.eBodyViewport.offsetHeight
         };
         return result;
     }
