@@ -13,7 +13,7 @@ class NodeIdRenderer implements ICellRendererComp {
 
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = params.node!.id! + 1;
+        this.eGui.textContent = params.node!.id! + 1;
     }
 
     getGui() {

@@ -111,7 +111,7 @@ export class RowContainerComp extends Component {
             oldRowComp.destroy();
         });
 
-        setAriaRole(this.eContainer, rowCtrls.length ? "rowgroup" :  "presentation");
+        setAriaRole(this.eContainer, "rowgroup");
     }
 
     public appendRow(element: HTMLElement) {

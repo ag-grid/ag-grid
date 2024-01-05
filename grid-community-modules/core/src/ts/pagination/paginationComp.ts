@@ -123,7 +123,7 @@ export class PaginationComp extends Component {
         const currentPage = this.paginationProxy.getCurrentPage();
         const toDisplay = pagesExist ? currentPage + 1 : 0;
 
-        this.lbCurrent.innerHTML = this.formatNumber(toDisplay);
+        this.lbCurrent.textContent = this.formatNumber(toDisplay);
     }
 
     private formatNumber(value: number): string {
@@ -239,12 +239,12 @@ export class PaginationComp extends Component {
             }
         }
 
-        this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
+        this.lbFirstRowOnPage.textContent = this.formatNumber(startRow);
         if (this.rowNodeBlockLoader.isLoading()) {
             const translate = this.localeService.getLocaleTextFunc();
             this.lbLastRowOnPage.innerHTML = translate('pageLastRowUnknown', '?');
         } else {
-            this.lbLastRowOnPage.innerHTML = this.formatNumber(endRow);
+            this.lbLastRowOnPage.textContent = this.formatNumber(endRow);
         }
     }
 
@@ -274,8 +274,8 @@ export class PaginationComp extends Component {
         }
 
         if (lastPageFound) {
-            this.lbTotal.innerHTML = this.formatNumber(totalPages);
-            this.lbRecordCount.innerHTML = this.formatNumber(rowCount!);
+            this.lbTotal.textContent = this.formatNumber(totalPages);
+            this.lbRecordCount.textContent = this.formatNumber(rowCount!);
         } else {
             const moreText = this.localeService.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;
@@ -284,10 +284,10 @@ export class PaginationComp extends Component {
     }
 
     private setTotalLabelsToZero() {
-        this.lbFirstRowOnPage.innerHTML = this.formatNumber(0);
-        this.lbCurrent.innerHTML = this.formatNumber(0);
-        this.lbLastRowOnPage.innerHTML = this.formatNumber(0);
-        this.lbTotal.innerHTML = this.formatNumber(0);
-        this.lbRecordCount.innerHTML = this.formatNumber(0);
+        this.lbFirstRowOnPage.textContent = this.formatNumber(0);
+        this.lbCurrent.textContent = this.formatNumber(0);
+        this.lbLastRowOnPage.textContent = this.formatNumber(0);
+        this.lbTotal.textContent = this.formatNumber(0);
+        this.lbRecordCount.textContent = this.formatNumber(0);
     }
 }

@@ -38,7 +38,7 @@ export class CustomGroupCellRenderer implements ICellRendererComp {
         this.eGui.append(' ');
 
         this.eValueContainer = document.createElement('span');
-        this.eValueContainer.innerHTML = params.value == null ? '' : params.value;
+        this.eValueContainer.textContent = params.value == null ? '' : params.value;
         this.eValueContainer.setAttribute('class', 'eValueContainer');
         this.eGui.appendChild(this.eValueContainer);
     }
@@ -48,7 +48,7 @@ export class CustomGroupCellRenderer implements ICellRendererComp {
     }
 
     refresh(params: ICellRendererParams): boolean {
-        this.eValueContainer!.innerHTML = params.value == null ? '' : params.value;
+        this.eValueContainer!.textContent = params.value == null ? '' : params.value;
         return true;
     }
 

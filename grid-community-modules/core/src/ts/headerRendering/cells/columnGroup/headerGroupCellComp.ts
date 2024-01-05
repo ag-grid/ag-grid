@@ -1,5 +1,5 @@
-import { UserCompDetails, UserComponentFactory } from "../../../components/framework/userComponentFactory";
-import { Autowired, PostConstruct } from "../../../context/context";
+import { UserCompDetails } from "../../../components/framework/userComponentFactory";
+import { PostConstruct } from "../../../context/context";
 import { setDisplayed } from "../../../utils/dom";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
@@ -12,8 +12,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
         `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
-
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     @RefSelector('eResize') private eResize: HTMLElement;
 

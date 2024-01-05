@@ -8,10 +8,10 @@ export class CellRenderer implements ICellRendererComp {
 
     createGui() {
       const template =
-        '<span><button id="theButton" style="height: 30px">✎</button><span id="theValue" style="padding-left: 4px;"></span></span>';
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = template;
-      this.eGui = tempDiv.firstElementChild;
+        '<button id="theButton" style="height: 30px">✎</button><span id="theValue" style="padding-left: 4px;"></span>';
+      const span = document.createElement('span');
+      span.innerHTML = template;
+      this.eGui = span;
     }
 
     init(params: ICellRendererParams) {
@@ -23,7 +23,7 @@ export class CellRenderer implements ICellRendererComp {
       // attach the value to the value span
       const eValue = this.eGui.querySelector('#theValue');
 
-      eValue.innerHTML = params.value;
+      eValue.textContent = params.value;
       // setup the button, first get reference to it
       this.eButton = this.eGui.querySelector('#theButton');
 

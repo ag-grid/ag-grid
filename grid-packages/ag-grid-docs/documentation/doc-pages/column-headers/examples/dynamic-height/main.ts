@@ -73,7 +73,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function setIdText(id: string, value: string | number | undefined) {
-  document.getElementById(id)!.innerHTML = value == undefined ? 'undefined' : value + ''
+  document.getElementById(id)!.textContent = value == undefined ? 'undefined' : value + ''
 }
 
 function setPivotOn() {

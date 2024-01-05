@@ -93,7 +93,6 @@ export class FocusService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
         this.registerKeyboardFocusEvents();
-        
 
         this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
