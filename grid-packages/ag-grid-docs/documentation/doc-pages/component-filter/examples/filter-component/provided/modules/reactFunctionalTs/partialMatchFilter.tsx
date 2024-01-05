@@ -1,10 +1,9 @@
 import { IDoesFilterPassParams } from '@ag-grid-community/core';
 import { CustomFilterProps, useGridFilter } from '@ag-grid-community/react';
 import React, { ChangeEvent, forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
-import ReactDOM from 'react-dom';
 
 export default forwardRef(({ model, onModelChange, getValue }: CustomFilterProps< any, any, { value: string }>, ref) => {
-    const refInput = useRef(null);
+    const refInput = useRef<HTMLInputElement>(null);
 
     const doesFilterPass = useCallback(({ node }: IDoesFilterPassParams) => {
         const value = getValue(node).toString().toLowerCase();
@@ -16,10 +15,7 @@ export default forwardRef(({ model, onModelChange, getValue }: CustomFilterProps
 
     const afterGuiAttached = useCallback(() => {
         window.setTimeout(() => {
-            const container = ReactDOM.findDOMNode(refInput.current) as HTMLElement;
-            if (container) {
-                container.focus();
-            }
+            refInput.current?.focus();
         });
     }, []);
 

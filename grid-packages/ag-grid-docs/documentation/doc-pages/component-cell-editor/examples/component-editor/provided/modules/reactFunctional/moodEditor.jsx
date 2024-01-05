@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from "react";
 
 export default memo(({ value, onValueChange, stopEditing }) => {
     const isHappy = (value) => value === 'Happy';

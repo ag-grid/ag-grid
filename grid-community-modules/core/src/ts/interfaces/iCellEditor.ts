@@ -5,49 +5,52 @@ import { IPopupComponent } from "./iPopupComponent";
 import { IRowNode } from "./iRowNode";
 
 export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
-    /** Gets called once after initialised. If you return true, the editor will
+    /** Optional: Gets called once after initialised. If you return true, the editor will
      * appear in a popup, so is not constrained to the boundaries of the cell.
      * This is great if you want to, for example, provide you own custom dropdown list
      * for selection. Default is false (ie if you don't provide the method).
      */
     isPopup?(): boolean;
 
-    /** Gets called once, only if isPopup() returns true. Return "over" if the popup
+    /** Optional: Gets called once, only if isPopup() returns true. Return "over" if the popup
      * should cover the cell, or "under" if it should be positioned below leaving the
      * cell value visible. If this method is not present, the default is "over".
      */
     getPopupPosition?(): 'over' | 'under' | undefined;
 
-    /** Gets called once after initialised. If you return true, the editor will not be
+    /** Optional: Gets called once after initialised. If you return true, the editor will not be
      * used and the grid will continue editing. Use this to make a decision on editing
      * inside the init() function, eg maybe you want to only start editing if the user
      * hits a numeric key, but not a letter, if the editor is for numbers.
      */
     isCancelBeforeStart?(): boolean;
 
-    /** Gets called once after editing is complete. If your return true, then the new
+    /** Optional: Gets called once after editing is complete. If your return true, then the new
      * value will not be used. The editing will have no impact on the record. Use this
      * if you do not want a new value from your gui, i.e. you want to cancel the editing.
      */
     isCancelAfterEnd?(): boolean;
 
     /**
-     * If doing full line edit, then gets called when focus should be put into the editor
+     * Optional: If doing full line edit, then gets called when focus should be put into the editor
      */
     focusIn?(): void;
 
     /**
-     * If doing full line edit, then gets called when focus is leaving the editor
+     * Optional: If doing full line edit, then gets called when focus is leaving the editor
      */
     focusOut?(): void;
 
     /**
-     * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+     * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
      * This method is called each time the edit component is activated.
      * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
      */
     afterGuiAttached?(): void;
 
+    /**
+     * Optional: Gets called with the latest cell editor params every time they update
+     */
     refresh?(params: ICellEditorParams<TData, TValue, TContext>): void;
 }
 

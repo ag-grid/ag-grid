@@ -1,11 +1,11 @@
 import React, { ChangeEvent, Fragment } from 'react';
 import { CustomFloatingFilterProps } from '@ag-grid-community/react';
 
-export interface CustomParams extends CustomFloatingFilterProps {
+export interface CustomProps extends CustomFloatingFilterProps {
     color: string
 }
 
-export default ({ model, onModelChange, color }: CustomParams) => {
+export default ({ model, onModelChange, color }: CustomProps) => {
     const value = (model && model.filter) || '';
 
     const onInput = ({ target: { value: newValue } }: ChangeEvent<HTMLInputElement>) => {

@@ -59,7 +59,7 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
 
 export interface BaseFloatingFilter {
     /**
-     * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+     * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
      * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
      * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
      */

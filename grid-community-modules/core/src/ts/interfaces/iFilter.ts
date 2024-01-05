@@ -41,7 +41,7 @@ export interface BaseFilter {
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 
     /**
-     * Gets called when new rows are inserted into the grid. If the filter needs to change its
+     * Optional: Gets called when new rows are inserted into the grid. If the filter needs to change its
      * state after rows are loaded, it can do it here. For example the set filters uses this
      * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for
      * Country filter). To get the list of available values from within this method from the
@@ -49,25 +49,25 @@ export interface BaseFilter {
      */
      onNewRowsLoaded?(): void;
  
-     /** Called whenever any filter is changed. */
+     /** Optional: Called whenever any filter is changed. */
      onAnyFilterChanged?(): void;
  
      /**
-      * Optional method used by AG Grid when rendering floating filters and there isn't a floating filter
+      * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
       * associated for this filter, this will happen if you create a custom filter and NOT a custom floating
       * filter.
       */
      getModelAsString?(model: any): string;
  
      /**
-      * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+      * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
       * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
       * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
       */
      afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
  
      /**
-      * A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.
+      * Optional: A hook to perform any necessary operation just after the GUI for this component has been removed from the screen.
       * If a parent popup is opened and closed (e.g. for filters), this method is called each time the component is hidden.
       * This is useful for any logic to reset the UI state back to the model before the component is reopened.
       */

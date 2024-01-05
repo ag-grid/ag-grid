@@ -1,6 +1,5 @@
 import { useGridFilter } from '@ag-grid-community/react';
 import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
-import ReactDOM from 'react-dom';
 
 export default forwardRef(({ model, onModelChange, getValue }, ref) => {
     const refInput = useRef(null);
@@ -15,10 +14,7 @@ export default forwardRef(({ model, onModelChange, getValue }, ref) => {
 
     const afterGuiAttached = useCallback((params) => {
         window.setTimeout(() => {
-            const container = ReactDOM.findDOMNode(refInput.current);
-            if (container) {
-                container.focus();
-            }
+            refInput.current.focus();
         });
     }, []);
 

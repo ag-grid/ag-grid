@@ -1,12 +1,13 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from "react";
+import { CustomCellEditorProps } from "@ag-grid-community/react";
 
-export default memo(({ value, onValueChange, stopEditing }) => {
-    const isHappy = (value) => value === 'Happy';
+export default memo(({ value, onValueChange, stopEditing }: CustomCellEditorProps) => {
+    const isHappy = (value: string) => value === 'Happy';
 
     const [ready, setReady] = useState(false);
-    const refContainer = useRef(null);
+    const refContainer = useRef<HTMLDivElement>(null);
 
-    const checkAndToggleMoodIfLeftRight = (event) => {
+    const checkAndToggleMoodIfLeftRight = (event: any) => {
         if (ready) {
             if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
                 const isLeft = event.key === 'ArrowLeft';
@@ -17,7 +18,7 @@ export default memo(({ value, onValueChange, stopEditing }) => {
     };
 
     useEffect(() => {
-        refContainer.current.focus();
+        refContainer.current?.focus();
         setReady(true);
     }, [])
 
@@ -29,7 +30,7 @@ export default memo(({ value, onValueChange, stopEditing }) => {
         };
     }, [checkAndToggleMoodIfLeftRight, ready]);
 
-    const onClick = (happy) => {
+    const onClick = (happy: boolean) => {
         onValueChange(happy ? 'Happy' : 'Sad');
         stopEditing();
     };
@@ -39,7 +40,7 @@ export default memo(({ value, onValueChange, stopEditing }) => {
         border: '1px solid grey',
         backgroundColor: '#e6e6e6',
         padding: 15,
-        textAlign: 'center',
+        textAlign: 'center' as const,
         display: 'inline-block'
     };
 

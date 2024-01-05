@@ -1,5 +1,4 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
 
 export default memo(({ value, onValueChange, stopEditing }) => {
     const isHappy = (value) => value === 'Happy';
@@ -18,7 +17,7 @@ export default memo(({ value, onValueChange, stopEditing }) => {
     };
 
     useEffect(() => {
-        (ReactDOM.findDOMNode(refContainer.current)).focus();
+        refContainer.current.focus();
         setReady(true);
     }, [])
 

@@ -1,12 +1,11 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
 import { CustomCellEditorProps } from '@ag-grid-community/react';
 
 export default memo(({ value, onValueChange, stopEditing }: CustomCellEditorProps) => {
     const isHappy = (value: string) => value === 'Happy';
 
     const [ready, setReady] = useState(false);
-    const refContainer = useRef(null);
+    const refContainer = useRef<HTMLDivElement>(null);
 
     const checkAndToggleMoodIfLeftRight = (event: any) => {
         if (ready) {
@@ -19,7 +18,7 @@ export default memo(({ value, onValueChange, stopEditing }: CustomCellEditorProp
     };
 
     useEffect(() => {
-        (ReactDOM.findDOMNode(refContainer.current) as any).focus();
+        refContainer.current?.focus();
         setReady(true);
     }, [])
 
