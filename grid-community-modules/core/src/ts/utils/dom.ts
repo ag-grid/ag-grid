@@ -119,20 +119,20 @@ export function getElementSize(el: HTMLElement): {
     boxSizing: string;
 } {
     const {
-        height,
-        width,
-        borderTopWidth,
-        borderRightWidth,
-        borderBottomWidth,
-        borderLeftWidth,
-        paddingTop,
-        paddingRight,
-        paddingBottom,
-        paddingLeft,
-        marginTop,
-        marginRight,
-        marginBottom,
-        marginLeft,
+        height = '0',
+        width = '0',
+        borderTopWidth = '0',
+        borderRightWidth = '0',
+        borderBottomWidth = '0',
+        borderLeftWidth = '0',
+        paddingTop = '0',
+        paddingRight = '0',
+        paddingBottom = '0',
+        paddingLeft = '0',
+        marginTop = '0',
+        marginRight = '0',
+        marginBottom = '0',
+        marginLeft = '0',
         boxSizing
     } = window.getComputedStyle(el);
 
