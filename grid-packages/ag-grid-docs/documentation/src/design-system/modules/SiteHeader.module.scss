@@ -77,6 +77,14 @@ button.mobileNavButton {
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         display: none;
     }
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-white), transparent 94%);
+
+        &:hover {
+            background-color: var(--color-button-secondary-bg-hover);
+        }
+    }
 }
 
 .mobileMenuButton {
