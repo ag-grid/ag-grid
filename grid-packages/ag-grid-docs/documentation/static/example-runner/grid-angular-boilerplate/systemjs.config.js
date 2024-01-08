@@ -1,5 +1,6 @@
 (function (global) {
     var ANGULAR_VERSION = "14.2.6";
+    window.ENABLE_PROD_MODE = true;
 
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
