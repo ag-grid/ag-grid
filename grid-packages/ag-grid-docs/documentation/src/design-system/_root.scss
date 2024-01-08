@@ -4,17 +4,13 @@
     // Layout
     --layout-gap: 32px;
     --layout-max-width: 1800px;
-    --layout-horizontal-margins: 8px;
+    --layout-horizontal-margins: #{$spacing-size-6};
     --layout-copy-max-width: 1020px;
     --layout-site-header-height: 64px;
     --layout-scroll-offset: calc(var(--layout-site-header-height) + 13px);
 
     @media screen and (min-width: $breakpoint-horizontal-margins-large) {
         --layout-horizontal-margins: #{$spacing-size-5};
-    }
-    // mobile breakpoint horizontal columns
-    @media screen and (max-width: $breakpoint-horizontal-margins-large) {
-        --layout-horizontal-margins: #{$spacing-size-6};
     }
 
     --layout-width-1-4: calc((100% - var(--layout-gap) * (4 / 1 - 1)) / 4 * 1);
