@@ -1,0 +1,41 @@
+{
+  "name": "ag-grid-docs",
+  "description": "Documentation for AG Grid",
+  "type": "module",
+  "version": "31.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "web-components",
+    "grid",
+    "data",
+    "table",
+    "angular",
+    "angular-component",
+    "react",
+    "react-component",
+    "reactjs",
+    "vue",
+    "vuejs"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid-docs/issues"
+  },
+  "private": true,
+  "homepage": "https://www.ag-grid.com/",
+  "scripts": {
+    "dev": "astro dev --port 4610 --host",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview --port 4611",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.3.4",
+    "astro": "^4.1.1",
+    "typescript": "^5.3.3"
+  }
+}
