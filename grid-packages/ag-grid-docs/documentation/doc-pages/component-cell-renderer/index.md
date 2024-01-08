@@ -131,6 +131,8 @@ md-include:complementing-component-javascript.md
 md-include:complementing-component-angular.md
 md-include:complementing-component-react.md
 md-include:complementing-component-vue.md
+
+Cell renderer params can be updated by [Updating Column Definitions](/column-updating-definitions/#changing-column-definition) with the new params. This is demonstrated in the [Complex Cell Renderer Example](/component-cell-renderer/#complex-cell-renderer-example) below.
  
 ## Data in Cell Renderers
 

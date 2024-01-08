@@ -2,6 +2,7 @@ import React from 'react';
 
 export default props => (
     <span>
+        {props.showPrefix && (<span>Days: </span>)}
         {
             new Array(props.value).fill('')
                 .map((_, idx) =>

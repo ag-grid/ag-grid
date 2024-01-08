@@ -76,7 +76,9 @@ class RainPerTenMmRenderer {
 const GridExample = () => {
     const [rowData, setRowData] = useState<any[]>();
 
-    const [columnDefs] = useState<ColDef[]>([
+    const [frostPrefix, setFrostPrefix] = useState(false);
+
+    const columnDefs = useMemo<ColDef[]>(() => [
         {
             headerName: "Month",
             field: "Month",
@@ -100,7 +102,7 @@ const GridExample = () => {
             field: "Days of air frost (days)",
             width: 233,
             cellRenderer: DaysFrostRenderer,
-            cellRendererParams: { rendererImage: "frost.png" }
+            cellRendererParams: { rendererImage: "frost.png", showPrefix: frostPrefix }
         },
         {
             headerName: "Days Sunshine",
@@ -116,7 +118,7 @@ const GridExample = () => {
             cellRenderer: RainPerTenMmRenderer,
             cellRendererParams: { rendererImage: "rain.png" }
         }
-    ]);
+    ], [frostPrefix]);
 
     const gridRef = useRef<AgGridReact>(null);
 
@@ -149,9 +151,9 @@ const GridExample = () => {
     return (
         <div style={{ width: '100%', height: '100%' }}>
             <div className="example-wrapper">
-                <div style={{ "marginBottom": "5px" }}>
-                    <input type="button" value="Frostier Year"
-                        onClick={() => frostierYear()} />
+                <div style={{ marginBottom: '5px' }}>
+                    <button onClick={frostierYear}>Frostier Year</button>
+                    <button style={{ marginLeft: '5px' }} onClick={() => setFrostPrefix(oldFrostPrefix => !oldFrostPrefix)}>Toggle Frost Prefix</button>
                 </div>
 
                 <div
