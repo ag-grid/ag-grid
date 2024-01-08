@@ -2656,7 +2656,7 @@ export class ColumnModel extends BeanStub {
         return this.gridColumnsMap[key];
     }
 
-    private getSecondaryColumn(key: ColKey): Column | null {
+    public getSecondaryColumn(key: ColKey): Column | null {
         if (!this.secondaryColumns) { return null; }
         return this.getColumn(key, this.secondaryColumns, this.secondaryColumnsMap);
     }
