@@ -83,7 +83,7 @@
     padding: 0;
     color: var(--color-util-gray-500);
     transition: color $transition-default-timing;
-    font-weight: var(--text-semibold);
+    font-weight: var(--text-regular);
     font-size: var(--text-fs-regular);
 
     #{$selector-darkmode} & {
@@ -136,9 +136,10 @@
 }
 
 .sideNav .level3 {
+    --item-gap: 0.5em;
+
     padding-top: $spacing-size-1;
     padding-bottom: $spacing-size-1;
-    --item-gap: 0.5em;
     font-weight: var(--text-regular);
 }
 
