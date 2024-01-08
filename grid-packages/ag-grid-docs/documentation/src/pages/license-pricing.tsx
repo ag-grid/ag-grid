@@ -82,40 +82,30 @@ export const LicensePricing = () => {
                     <div className={styles.buyTogether}>
                         <div className={styles.buyTogetherInner}>
                             <div className={styles.products}>
-                                <AGGridLogo /> <span>+</span> <AGChartsLogo />
-                            </div>
-
-                            <div className={styles.left}>
+                                <div className={styles.productLogos}>
+                                    <AGGridLogo /> <span>+</span> <AGChartsLogo />
+                                </div>
+                                
                                 <div className={classnames(styles.enterpriseProducts, 'text-sm')}>
                                     <p>
                                         <Icon name="enterprise" /> Enterprise 
                                     </p>
                                 </div>
-
-                                <div className={styles.rightPrice}>
-                                    <p>Starting at...</p>
-                                    <p className={styles.price}>$1,198</p>
-                                    <p>Per Developer</p>
-                                </div>
                             </div>
 
-                            <div className={styles.right}>
-                                {/* <div className={styles.rightInner}>
-                                    <div className={styles.rightInfo}>
-                                        <p className="text-sm">Perpetual License</p>
-                                        <p className="text-sm">1 Year of Support</p>
-                                        <p className="text-sm">1 Year of Updates</p>
-                                    </div>
-                                </div> */}
-
-                                <a
-                                    href="https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both"
-                                    target='_blank'
-                                    className="button button-secondary"
-                                >
-                                    Configure Now
-                                </a>
+                            <div className={styles.buyTogetherPrice}>
+                                <p>Starting at...</p>
+                                <p className={styles.price}>$1,198</p>
+                                <p>Per Developer</p>
                             </div>
+
+                            <a
+                                href="https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both"
+                                target='_blank'
+                                className={classnames(styles.buyTogetherConfigureButton, "button", "button-secondary")}
+                            >
+                                Configure Now
+                            </a>
                         </div>
                     </div>
                 </div>

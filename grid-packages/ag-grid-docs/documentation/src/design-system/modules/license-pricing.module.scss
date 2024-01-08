@@ -98,26 +98,23 @@
 }
 
 .buyTogether {
-    --card-color: #0665cb;
+    --card-color: var(--color-bg-primary);
     --header-tint: 0.95;
 
     width: 100%;
     display: flex;
     border-radius: 5px;
-    border: 2px solid var(--card-color);
+    border: 1px solid var(--color-border-primary);
     background-color: var(--card-color);
 
     #{$selector-darkmode} & {
         --card-color: var(--background-100);
 
-        border: 2px solid #0665cb;
+        border: 2px solid var(--color-brand-500);
     }
 }
 
 .buyTogetherInner {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-size-4;
     width: 100%;
     padding: $spacing-size-4;
     text-align: center;
@@ -126,11 +123,9 @@
     opacity: var(--header-tint);
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 0 $spacing-size-8;
-        padding: $spacing-size-4 $spacing-size-4;
+        display: grid;
+        grid-template: auto auto / auto auto;
+        padding: $spacing-size-4;
         text-align: left;
     }
 
@@ -155,19 +150,7 @@
 .products {
     width: 100%;
     margin-top: -10px;
-    margin-left: -10px;
     font-size: var(--text-fs-2xl);
-
-    svg {
-        height: 54px;
-        width: fit-content;
-
-        #{$selector-darkmode} & {
-            :global(#LogoType) * {
-                fill: var(--color-text-primary) !important;
-            }
-        }
-    }
 
     span {
         margin-left: -$spacing-size-2;
@@ -175,7 +158,22 @@
         color: #00366d;
 
         #{$selector-darkmode} & {
-            color: var(--color-text-primary) !important;
+            color: var(--color-fg-primary) !important;
+        }
+    }
+}
+
+.productLogos svg {
+    height: 54px;
+    width: fit-content;
+
+    &:first-child {
+        margin-left: -10px;
+    }
+
+    #{$selector-darkmode} & {
+        :global(#LogoType) * {
+            fill: var(--color-fg-primary) !important;
         }
     }
 }
@@ -192,41 +190,21 @@
     :global(.icon) {
         --icon-size: #{$spacing-size-4};
 
+        fill: var(--color-text-secondary);
+
         margin-top: -1px;
         margin-left: -1px;
         opacity: 0.6666;
     }
 }
 
-.right {
+.buyTogetherPrice {
+    text-align: center;
+    color: var(--color-fg-primary);
+
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        display: flex;
-        align-items: flex-end;
-        width: calc(50% - $spacing-size-4);
-        max-width: 340px;
+        text-align: right;
     }
-
-    :global(.button) {
-        width: 100%;
-        margin-top: $spacing-size-2;
-        text-align: center;
-    }
-}
-
-.rightInner {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: $spacing-size-2;
-}
-
-.rightInfo {
-    text-align: right;
-}
-
-.rightPrice {
-    text-align: left;
-    margin-top: $spacing-size-4;
 
     p {
         font-weight: var(--text-bold);
@@ -239,6 +217,16 @@
 
     p:last-child {
         margin-top: $spacing-size-1;
+    }
+}
+
+.buyTogetherConfigureButton {
+    width: 100%;
+    margin-top: $spacing-size-6;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        grid-area: 2 / 1 / 2 / 3;
+        text-align: center;
     }
 }
 
@@ -315,12 +303,11 @@
     padding-right: 32px;
 
     svg {
-        --text-color: var(--color-enterprise-icon);
+        --color-icon: var(--color-enterprise-icon);
 
         position: absolute;
         top: 0;
         right: 0;
-        margin-top: -4px;
         margin-left: 4px;
         width: 26px;
     }
@@ -330,7 +317,7 @@
     display: inline-block;
     height: 2.5em;
     margin: -1.15em 0.33em -1em 0;
-    fill: var(--color-text-primary);
+    fill: var(--color-fg-primary);
 }
 
 .videoExplainer {

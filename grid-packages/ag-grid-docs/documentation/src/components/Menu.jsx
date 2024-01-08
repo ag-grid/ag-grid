@@ -56,7 +56,11 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
                 {filteredMenuData.map(({group, items}, index) => (
                     <React.Fragment key={group}>
 
-                        <h5>{group}</h5>
+                        { group &&
+                            <h5>{group}</h5>
+                        }
+                        
+
                         {items.map(({title, items: childItems}) => (
                             <MenuSection
                                 key={`${title}-menu`}
@@ -114,11 +118,13 @@ const MenuSection = ({title, items, currentFramework, activeParentItems, toggleA
 
     return (
         <li className={styles.menuSection}>
-            <button onClick={handleToggle} tabIndex="0" className={buttonClasses} aria-expanded={isActive}
-                    aria-controls={`#${elementId}`}>
-                {!hideChevrons && title && <Icon name="chevronRight" svgClasses={iconClasses}/>}
-                {title}
-            </button>
+            { title &&
+                <button onClick={handleToggle} tabIndex="0" className={buttonClasses} aria-expanded={isActive}
+                        aria-controls={`#${elementId}`}>
+                    {!hideChevrons && title && <Icon name="chevronRight" svgClasses={iconClasses}/>}
+                    {title}
+                </button>
+            }
             <MenuGroup
                 group={{group: title, items}}
                 currentFramework={currentFramework}

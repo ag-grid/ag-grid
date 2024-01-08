@@ -82,7 +82,7 @@ gatsby-fast-refresh {
 .heroInner {
     display: flex;
     flex-direction: column;
-    gap: 0 $spacing-size-8;
+    gap: 0 $spacing-size-16;
 
     @media screen and (min-width: $breakpoint-hero-large) {
         flex-direction: row;
@@ -340,7 +340,8 @@ gatsby-fast-refresh {
     background-color: var(--color-util-brand-100);
 
     #{$selector-darkmode} & {
-        background-color: var(--color-fg-primary);
+        background-color: var(--color-gray-800);
+      
     }
 }
 

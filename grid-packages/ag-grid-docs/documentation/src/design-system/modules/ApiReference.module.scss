@@ -61,7 +61,7 @@
     scroll-margin-top: var(--anchor-offset, 0);
 
     &:where(:not(:first-child)) {
-        border-top: 1px solid var(--color-border-primary);
+        border-top: 1px solid var(--color-border-secondary);
     }
 
     &:hover .linkIcon {
@@ -228,8 +228,13 @@
     }
 
     .description p,
+    .description ul,
     .actions button {
         font-size: calc(var(--text-fs-base) * 0.9);
+    }
+
+    .description code {
+        font-size: calc(var(--text-fs-base) * 0.8125);
     }
 
     .metaValue {
@@ -249,4 +254,12 @@
     .level-3 .rightColumn {
         padding-left: $spacing-size-6;
     }
+}
+
+.expandedContent {
+    border-top: none;
+}
+
+.expandedContent > td {
+    padding: $spacing-size-4 $spacing-size-3;
 }

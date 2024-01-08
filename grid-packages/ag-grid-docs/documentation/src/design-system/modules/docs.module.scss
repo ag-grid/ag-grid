@@ -31,27 +31,29 @@
 }
 
 .docPage {
-    position: relative;
-    max-width: 100%;
-    padding-top: $spacing-size-8 + $spacing-size-1;
+    flex: 1 1 0px;
+    min-width: 0px;
+    padding-top: $spacing-size-4;
     padding-bottom: $spacing-size-16;
 
     :global(#{$selector-darkmode}) & {
         color: var(--color-fg-secondary);
     }
 
+    @media screen and (max-width: $breakpoint-docs-nav-large) {
+        border: none;
+    }
+
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         width: var(--layout-width-9-12);
+        padding-top: $spacing-size-10;
+        padding-right: $spacing-size-3;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
-        width: var(--layout-width-8-12);
-    }
-
-    @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
         width: var(--layout-width-6-12);
-        margin-right: calc(var(--layout-width-1-12) + var(--layout-gap));
-        margin-left: calc(var(--layout-width-1-12) + var(--layout-gap));
+        max-width: var(--layout-width-6-12);
+        padding-right: 0;
     }
 
     :global(h1),

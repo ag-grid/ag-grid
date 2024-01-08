@@ -4,6 +4,7 @@
     width: 100%;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border-primary);
+    color: var(--color-fg-primary);
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         max-width: calc(50% - $spacing-size-4);
@@ -58,7 +59,7 @@
 
     #{$selector-darkmode} & {
         :global(#LogoType) * {
-            fill: var(--color-text-primary) !important; // !important required to override SVG inline styles
+            fill: var(--color-fg-primary) !important; // !important required to override SVG inline styles
         }
     }
 }

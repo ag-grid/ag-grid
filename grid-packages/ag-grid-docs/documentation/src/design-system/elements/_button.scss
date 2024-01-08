@@ -15,7 +15,6 @@ input[type='submit']#{$selector-exclude-grid},
 .button-tertiary {
     appearance: none;
     display: inline-block;
-    font-size: var(--text-fs-base);
     font-weight: var(--text-bold);
     padding: 0.375em 1em 0.5em;
     white-space: nowrap;
@@ -23,19 +22,16 @@ input[type='submit']#{$selector-exclude-grid},
     background-color: var(--color-button-primary-bg);
     color: var(--color-button-primary-fg);
     border: 1px solid var(--color-button-primary-border);
-    box-shadow:
-        0 0 0 $spacing-size-1 transparent,
-        var(--shadow-xs);
+    box-shadow: 0 0 0 $spacing-size-1 transparent, var(--shadow-xs);
     cursor: pointer;
     outline: none;
-    transition:
-        background-color $transition-default-timing,
-        border $transition-default-timing,
+    transition: background-color $transition-default-timing, border $transition-default-timing,
         box-shadow $transition-default-timing;
 
     &:hover,
     &.hover {
         background-color: var(--color-button-primary-bg-hover);
+        color: var(--color-button-primary-fg);
 
         &[aria-disabled] {
             background-color: var(--color-button-primary-bg);
@@ -49,9 +45,7 @@ input[type='submit']#{$selector-exclude-grid},
 
     &:focus-visible,
     &.focus {
-        box-shadow:
-            0 0 0 $spacing-size-1 var(--color-button-primary-shadow-focus),
-            var(--shadow-xs);
+        box-shadow: 0 0 0 $spacing-size-1 var(--color-button-primary-shadow-focus), var(--shadow-xs);
     }
 
     &:disabled,
@@ -73,12 +67,17 @@ input[type='submit']#{$selector-exclude-grid},
 
     .icon {
         --icon-size: 2em;
-
+        fill: var(--color-button-primary-fg);
         display: inline-block;
         position: relative;
         bottom: 0.05em;
         margin: -1em 0.125em -1em 0;
     }
+}
+
+// Fix hover issues for links with .button class
+a.button:hover {
+    color: var(--color-button-primary-fg);
 }
 
 .button-secondary {
@@ -100,6 +99,11 @@ input[type='submit']#{$selector-exclude-grid},
     }
 }
 
+// Fix hover issues for links with .button-secondary class
+a.button-secondary:hover {
+    color: var(--color-button-secondary-fg);
+}
+
 .button-tertiary {
     background-color: var(--color-button-tertiary-bg);
     color: var(--color-button-tertiary-fg);
@@ -117,6 +121,11 @@ input[type='submit']#{$selector-exclude-grid},
     .icon {
         fill: var(--color-button-tertiary-fg);
     }
+}
+
+// Fix hover issues for links with .button-tertiary class
+a.button-tertiary:hover {
+    color: var(--color-button-tertiary-fg);
 }
 
 .button-secondary,

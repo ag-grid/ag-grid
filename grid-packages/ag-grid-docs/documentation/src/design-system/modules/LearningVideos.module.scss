@@ -41,7 +41,7 @@
     #{$selector-darkmode} & {
         color: var(--color-text-primary);
         text-decoration: none !important;
-        background: var(--color-bg-secondary);
+        background: var(--color-bg-primary);
         border: 1px solid var(--color-border-primary);
     }
 
