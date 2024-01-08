@@ -7,21 +7,16 @@
 .doc-page {
     flex: 1 1 0px;
     min-width: 0px;
-    padding-top: $spacing-size-8 + $spacing-size-2;
+    padding-top: $spacing-size-4;
     padding-bottom: $spacing-size-16;
 
-    padding-right: $spacing-size-6;
-    padding-left: $spacing-size-6;
-
-
-    @media screen and (max-width: $breakpoint-docs-nav-large) {   
+    @media screen and (max-width: $breakpoint-docs-nav-large) {
         border: none;
-        padding-right: 0;
-        padding-left: 0;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         width: var(--layout-width-9-12);
+        padding-top: $spacing-size-10;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
@@ -198,6 +193,3 @@
         line-height: var(--text-lh-xs);
     }
 }
-
-
-

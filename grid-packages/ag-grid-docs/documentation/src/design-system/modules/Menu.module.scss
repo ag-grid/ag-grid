@@ -56,7 +56,7 @@
 .menuInner {
     flex-basis: auto;
     flex-direction: column;
-    padding-top: 0;
+    padding-top: $spacing-size-8;
     padding-bottom: $spacing-size-16;
 
     li {
@@ -82,6 +82,7 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         display: block;
+        padding-top: 0;
     }
 }
 
