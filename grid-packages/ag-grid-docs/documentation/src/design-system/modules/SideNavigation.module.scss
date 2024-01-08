@@ -16,7 +16,7 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         display: block;
-        width: var(--layout-width-2-12);
+        width: var(--layout-width-3-12);
 
         :global(.noLeftMenu) & {
             width: var(--layout-width-3-12);
