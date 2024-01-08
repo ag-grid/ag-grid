@@ -68,9 +68,10 @@
     }
 
     hr {
+        max-width: $spacing-size-64;
+        height: 1px;
         margin-top: $spacing-size-4;
         margin-bottom: $spacing-size-4;
-        height: 1px;
         background-color: var(--color-border-secondary);
     }
 

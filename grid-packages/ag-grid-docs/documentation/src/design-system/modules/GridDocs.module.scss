@@ -21,14 +21,6 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         width: var(--layout-width-6-12);
-        margin-right: calc(var(--layout-width-1-12) + var(--layout-gap));
-        margin-left: calc(var(--layout-width-1-12) + var(--layout-gap));
-    }
-
-    @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
-        width: var(--layout-width-6-12);
-        margin-right: calc(var(--layout-width-1-12) + var(--layout-gap));
-        margin-left: calc(var(--layout-width-1-12) + var(--layout-gap));
     }
 
     h1,

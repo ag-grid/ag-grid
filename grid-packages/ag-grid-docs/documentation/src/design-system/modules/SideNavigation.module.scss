@@ -3,8 +3,11 @@
 .sideNav {
     $top-bar-height: 8px;
 
+    --left-margin: #{$spacing-size-16};
+
     display: none;
-    width: var(--layout-width-3-12);
+    width: calc(var(--layout-width-3-12) - var(--left-margin));
+    margin-left: var(--left-margin);
     padding-top: $spacing-size-8;
     padding-bottom: $spacing-size-16;
     line-height: var(--text-lh-sm);
