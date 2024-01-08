@@ -27,10 +27,12 @@ Icon font variables:
   - `--ag-icon-font-family[-icon-name]` set the icon font family.
   - `--ag-icon-font-code[-icon-name]` set the unicode character of the icon within the icon font, using a unicode escape sequence like `"\f247"`.
   - `--ag-icon-font-weight[-icon-name]` sets the font weight, used for icon fonts that require a specific weight to work.
-  - `--ag-icon-font-color[-icon-name]` set the color of the icon, or can be set to `transparent` to hide the icon font if you want to provide an image instead.
+  - `--ag-icon-font-color[-icon-name]` set the color of the icon.
+  - `--ag-icon-font-display[-icon-name]` set this to `none` to hide the icon font if you want to provide an image-based icon instead.
 
 Icon image variables:
   - `--ag-icon-image[-icon-name]` set this to `url(/path/to/icon.svg)`
+  - `--ag-icon-image-opacity[-icon-name]` set the opacity of an icon. Defaults to 0.9 if not set.
   - `--ag-icon-image-display[-icon-name]` set this to `none` to hide the icon image if you want to provide an font-based icon instead.
 
 Other icon variables:
@@ -82,7 +84,7 @@ This example demonstrates using the `--ag-icon-image-icon-name` variables to set
 
 The following example replaces the grid's icons with SVG images:
 
-<grid-example title='SVG Icons' name='icons-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"], "extras": ["fontawesome", "materialdesignicons"]  }'></grid-example>
+<grid-example title='SVG Icons' name='icons-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel", "charts"], "extras": ["fontawesome", "materialdesignicons"]  }'></grid-example>
 
 ## Set the Icons Through gridOptions (JavaScript)
 
