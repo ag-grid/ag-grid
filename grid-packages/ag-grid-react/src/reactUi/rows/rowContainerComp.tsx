@@ -99,7 +99,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         <div
             className={ containerClasses }
             ref={setContainerRef}
-            role={ rowCtrlsOrdered.length ? "rowgroup" : "presentation" }
+            role={ "rowgroup" }
         >
             {
                 rowCtrlsOrdered.map(rowCtrl =>

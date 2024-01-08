@@ -211,9 +211,9 @@ export class ColumnModel extends BeanStub {
 
     // all columns & groups to be rendered, index by row. used by header rows to get all items
     // to render for that row.
-    private viewportRowLeft: { [row: number]: IHeaderColumn[]; };
-    private viewportRowRight: { [row: number]: IHeaderColumn[]; };
-    private viewportRowCenter: { [row: number]: IHeaderColumn[]; };
+    private viewportRowLeft: { [row: number]: IHeaderColumn[]; } = {};
+    private viewportRowRight: { [row: number]: IHeaderColumn[]; } = {};
+    private viewportRowCenter: { [row: number]: IHeaderColumn[]; } = {};
 
     // true if we are doing column spanning
     private colSpanActive: boolean;
@@ -3293,6 +3293,24 @@ export class ColumnModel extends BeanStub {
             this.lastSecondaryOrder = this.gridColumns;
         }
 
+        // create the new auto columns
+        const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
+        // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
+        if (areAutoColsChanged) {
+            const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
+
+            // if group cols have changed, remove them from any previous orders and add them to the start.
+            if (this.lastPrimaryOrder) {
+                this.lastPrimaryOrder = this.lastPrimaryOrder.filter(col => !groupAutoColsMap.has(col));
+                this.lastPrimaryOrder = [...this.groupAutoColumns!, ...this.lastPrimaryOrder];
+            }
+
+            if (this.lastSecondaryOrder) {
+                this.lastSecondaryOrder = this.lastSecondaryOrder.filter(col => !groupAutoColsMap.has(col));
+                this.lastSecondaryOrder = [...this.groupAutoColumns!, ...this.lastSecondaryOrder];
+            }
+        }
+
         let sortOrderToRecover: Column[] | undefined;
 
         if (this.secondaryColumns && this.secondaryBalancedTree) {
@@ -3322,16 +3340,6 @@ export class ColumnModel extends BeanStub {
             sortOrderToRecover = this.lastPrimaryOrder;
         }
 
-        // create the new auto columns
-        const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
-        // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
-        if (areAutoColsChanged && sortOrderToRecover) {
-            const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
-            // if group columns has changed, we don't preserve the group column order, so remove them from the old order
-            sortOrderToRecover = sortOrderToRecover.filter(col => !groupAutoColsMap.has(col));
-            // and add them to the start of the order
-            sortOrderToRecover = [...this.groupAutoColumns!, ...sortOrderToRecover];
-        }
         this.addAutoGroupToGridColumns();
         this.orderGridColsLike(sortOrderToRecover);
 

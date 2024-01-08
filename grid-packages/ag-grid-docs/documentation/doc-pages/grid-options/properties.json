@@ -587,12 +587,18 @@
             "more": {
                 "name": "Custom Chart Themes",
                 "url": "/integrated-charts-customisation/#custom-chart-themes"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgChartThemeDefinition"]                
             }
         },
         "chartThemeOverrides": {
             "more": {
                 "name": "Chart Groups and Types Customisation",
                 "url": "/integrated-charts-customisation/#overriding-themes"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgChartThemeOverrides"]                
             }
         },
         "chartToolPanelsDef": {

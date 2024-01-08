@@ -24,7 +24,7 @@ export class TotalValueRenderer implements ICellRendererComp {
 
         // set value into cell
         this.cellValue = this.getValueToDisplay(params);
-        this.eValue.innerHTML = this.cellValue;
+        this.eValue.textContent = this.cellValue;
 
         // add event listener to button
         this.eventListener = () => alert(`${this.cellValue} medals won!`);
@@ -39,7 +39,7 @@ export class TotalValueRenderer implements ICellRendererComp {
     refresh(params: ICellRendererParams) {
         // set value into cell again
         this.cellValue = this.getValueToDisplay(params);
-        this.eValue.innerHTML = this.cellValue;
+        this.eValue.textContent = this.cellValue;
 
         // return true to tell the grid we refreshed successfully
         return true;

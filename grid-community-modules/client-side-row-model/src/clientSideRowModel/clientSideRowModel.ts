@@ -85,6 +85,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
      * (which is about to be run by the original call).
      */
     private isRefreshingModel: boolean = false;
+    private rowCountReady: boolean = false;
 
     @PostConstruct
     public init(): void {
@@ -1004,10 +1005,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             this.rootNode.updateHasChildren();
         }
 
+        this.rowCountReady = true;
         this.eventService.dispatchEventOnce({
             type: Events.EVENT_ROW_COUNT_READY
         });
-
     }
 
     private doFilter(changedPath: ChangedPath) {
@@ -1265,6 +1266,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public isRowDataLoaded(): boolean {
-        return this.nodeManager.hasData();
+        return this.rowCountReady;
     }
 }

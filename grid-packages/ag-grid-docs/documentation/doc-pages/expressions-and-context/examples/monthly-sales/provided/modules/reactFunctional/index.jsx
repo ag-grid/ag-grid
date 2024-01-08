@@ -182,7 +182,7 @@ const GridExample = () => {
         }
         // Mutate the context object in place
         context.current.month = newMonth;
-        document.querySelector('#monthName').innerHTML = monthNames[newMonth + 1];
+        document.querySelector('#monthName').textContent = monthNames[newMonth + 1];
         gridRef.current.api.refreshClientSideRowModel('aggregate');
         gridRef.current.api.refreshCells();
     }, [monthNames])

@@ -55,7 +55,7 @@ var includeHiddenColumns = false;
 function onIncludeHiddenColumnsToggled() {
   includeHiddenColumns = !includeHiddenColumns;
   gridApi!.setGridOption('includeHiddenColumnsInQuickFilter', includeHiddenColumns);
-  document.querySelector('#includeHiddenColumns')!.innerHTML = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
+  document.querySelector('#includeHiddenColumns')!.textContent = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
 }
 
 function onFilterTextBoxChanged() {

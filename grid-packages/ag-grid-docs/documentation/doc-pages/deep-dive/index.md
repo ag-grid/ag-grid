@@ -744,7 +744,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 |    companyLogo.src = `https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`
 |    companyLogo.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
 |    let companyName = document.createElement('p');
-|    companyName.innerHTML = params.value;
+|    companyName.textContent = params.value;
 |    companyName.setAttribute('style', 'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;');
 |    this.eGui = document.createElement('span');
 |    this.eGui.setAttribute('style', 'display: flex; height: 100%; width: 100%; align-items: center')

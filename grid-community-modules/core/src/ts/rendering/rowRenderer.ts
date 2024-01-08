@@ -36,7 +36,7 @@ import { StickyRowFeature } from "./features/stickyRowFeature";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { browserSupportsPreventScroll } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { IRowNode } from "../interfaces/iRowNode";
+import { IRowNode, VerticalScrollPosition } from "../interfaces/iRowNode";
 
 export interface RowCtrlMap {
     [key: string]: RowCtrl;
@@ -885,14 +885,33 @@ export class RowRenderer extends BeanStub {
         return ctrlsByIdMap;
     }
 
+    /**
+    * Used to provide the scroll position with a short lived cache to avoid querying the DOM
+    * with every row that is removed in the same task.
+    * Currently used by destroyFirstPass for setting up animation speed so not critical that the
+    * value is correct, just close enough.
+    */
+    private getCachedVScrollPosition(): () => VerticalScrollPosition {
+        let cachedPos: VerticalScrollPosition | null = null;
+        return () => {
+            if (!cachedPos) {
+                cachedPos = this.gridBodyCtrl.getScrollFeature().getVScrollPosition();
+            }
+            return cachedPos;
+        };
+    }
+
     // takes array of row indexes
     private removeRowCtrls(rowsToRemove: any[]) {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
-        rowsToRemove.forEach(indexToRemove => {
+
+        const cachedVScrollGetter = this.getCachedVScrollPosition();
+
+        rowsToRemove.forEach((indexToRemove) => {
             const rowCtrl = this.rowCtrlsByRowIndex[indexToRemove];
             if (rowCtrl) {
-                rowCtrl.destroyFirstPass();
+                rowCtrl.destroyFirstPass(cachedVScrollGetter);
                 rowCtrl.destroySecondPass();
             }
             delete this.rowCtrlsByRowIndex[indexToRemove];
@@ -1138,6 +1157,7 @@ export class RowRenderer extends BeanStub {
 
     private destroyRowCtrls(rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
+        const cachedVScrollGetter = this.getCachedVScrollPosition();
         iterateObject(rowCtrlsMap, (nodeId: string, rowCtrl: RowCtrl) => {
             // if row was used, then it's null
             if (!rowCtrl) { return; }
@@ -1147,7 +1167,7 @@ export class RowRenderer extends BeanStub {
                 return;
             }
 
-            rowCtrl.destroyFirstPass();
+            rowCtrl.destroyFirstPass(cachedVScrollGetter);
             if (animate) {
                 this.zombieRowCtrls[rowCtrl.getInstanceId()] = rowCtrl;
                 executeInAWhileFuncs.push(() => {

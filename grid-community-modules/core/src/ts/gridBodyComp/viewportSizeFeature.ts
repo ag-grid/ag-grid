@@ -60,7 +60,7 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private onCenterViewportResized(): void {
-        if (this.centerContainerCtrl.isViewportVisible()) {
+        if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
             this.keepPinnedColumnsNarrowerThanViewport();
             this.checkViewportAndScrolls();
 
@@ -81,7 +81,7 @@ export class ViewportSizeFeature extends BeanStub {
         const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
         const bodyWidth = getInnerWidth(eBodyViewport);
 
-        if (isNaN(bodyWidth) || bodyWidth <= 50) { return; }
+        if (bodyWidth <= 50) { return; }
 
         // remove 50px from the bodyWidth to give some margin
         let columnsToRemove = this.getPinnedColumnsOverflowingViewport(bodyWidth - 50);

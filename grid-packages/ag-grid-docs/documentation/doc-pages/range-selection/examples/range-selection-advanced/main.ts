@@ -82,14 +82,14 @@ function onRangeSelectionChanged(event: RangeSelectionChangedEvent) {
 
   // if no selection, clear all the results and do nothing more
   if (!cellRanges || cellRanges.length === 0) {
-    lbRangeCount.innerHTML = '0'
-    lbEagerSum.innerHTML = '-'
-    lbLazySum.innerHTML = '-'
+    lbRangeCount.textContent = '0'
+    lbEagerSum.textContent = '-'
+    lbLazySum.textContent = '-'
     return
   }
 
   // set range count to the number of ranges selected
-  lbRangeCount.innerHTML = cellRanges.length + ''
+  lbRangeCount.textContent = cellRanges.length + ''
 
   var sum = 0;
 
@@ -113,13 +113,13 @@ function onRangeSelectionChanged(event: RangeSelectionChangedEvent) {
   }
 
 
-  lbEagerSum.innerHTML = sum + ''
+  lbEagerSum.textContent = sum + ''
 
   if (event.started) {
-    lbLazySum.innerHTML = '?'
+    lbLazySum.textContent = '?'
   }
   if (event.finished) {
-    lbLazySum.innerHTML = sum + ''
+    lbLazySum.textContent = sum + ''
   }
 }
 

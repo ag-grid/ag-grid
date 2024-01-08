@@ -15,7 +15,7 @@ class CompanyLogoRenderer {
         companyLogo.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
         
         let companyName = document.createElement('p');
-        companyName.innerHTML = params.value;
+        companyName.textContent = params.value;
         companyName.setAttribute('style', 'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;');
 
         this.eGui = document.createElement('span');

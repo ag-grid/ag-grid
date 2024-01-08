@@ -35,7 +35,7 @@ export class DaysFrostRenderer implements ICellRendererComp {
     refresh(params: ImageCellRendererParams) {
         this.value = params.value;
 
-        this.eGui.innerHTML = '';
+        this.eGui.textContent = '';
         this.updateImages();
 
         return true;

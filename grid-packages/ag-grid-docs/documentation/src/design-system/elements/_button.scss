@@ -36,6 +36,10 @@ input[type='submit']#{$selector-exclude-grid},
     &:hover,
     &.hover {
         background-color: var(--color-button-primary-bg-hover);
+
+        &[aria-disabled] {
+            background-color: var(--color-button-primary-bg);
+        }
     }
 
     &:active {
@@ -52,12 +56,19 @@ input[type='submit']#{$selector-exclude-grid},
 
     &:disabled,
     &[disabled],
+    &[aria-disabled],
     &.disabled {
         background-color: var(--color-button-disabled-bg);
         color: var(--color-button-disabled-fg);
         border: 1px solid var(--color-button-disabled-border);
-        pointer-events: none;
         cursor: default;
+    }
+
+    /* Disable pointer events for `disabled` but not `aria-disabled` */
+    &:disabled,
+    &[disabled],
+    &.disabled {
+        pointer-events: none;
     }
 
     .icon {
@@ -112,8 +123,16 @@ input[type='submit']#{$selector-exclude-grid},
 .button-tertiary {
     &:disabled,
     &[disabled],
+    &[aria-disabled],
     &.disabled {
         color: var(--color-button-disabled-fg);
+    }
+
+    &:hover,
+    &.hover {
+        &[aria-disabled] {
+            background-color: var(--color-button-disabled-bg);
+        }
     }
 }
 
@@ -131,6 +150,7 @@ input[type='submit']#{$selector-exclude-grid},
     &.hover,
     &:disabled,
     &[disabled],
+    &[aria-disabled],
     &.disabled {
         background-color: transparent;
         border: none;
@@ -139,6 +159,14 @@ input[type='submit']#{$selector-exclude-grid},
     &:focus-visible,
     &.focus {
         box-shadow: none;
+    }
+
+    &:hover,
+    &.hover {
+        &[aria-disabled] {
+            background-color: transparent;
+            color: var(--color-button-disabled-fg);
+        }
     }
 }
 

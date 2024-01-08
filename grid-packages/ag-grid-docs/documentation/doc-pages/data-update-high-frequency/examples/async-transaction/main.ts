@@ -190,7 +190,7 @@ function onNormalUpdate() {
 
   function setMessage(msg: string) {
     var eMessage = document.querySelector('#eMessage') as any
-    eMessage.innerHTML = msg
+    eMessage.textContent = msg
   }
 }
 
@@ -232,7 +232,7 @@ function onAsyncUpdate() {
 
   function setMessage(msg: string) {
     var eMessage = document.querySelector('#eMessage') as any
-    eMessage.innerHTML = msg
+    eMessage.textContent = msg
   }
 }
 
