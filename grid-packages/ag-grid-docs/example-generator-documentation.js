@@ -549,9 +549,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                         jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
 
-                        if (tsFile.includes('integrated-charts') && tsFile.includes('main.ts')) {
-                            jsFile = jsFile.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${getIntegratedDarkModeCode(tsFile, false, 'gridApi')}`);
-                        }
+                        jsFile = jsFile.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${getIntegratedDarkModeCode(tsFile, false, 'gridApi')}`);
 
                         const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
                         jsFiles[jsFileName] = jsFile;
