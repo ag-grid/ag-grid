@@ -65,11 +65,6 @@ export interface DragSource {
      */
     getDefaultIconName?: () => string;
     /**
-     * The drop target associated with this dragSource. When dragging starts, this
-     * target does not get an onDragEnter event.
-     */
-    dragSourceDropTarget?: DropTarget;
-    /**
      * The drag source DOM Data Key, this is useful to detect if the origin grid is the same
      * as the target grid.
      */
@@ -243,7 +238,6 @@ export class DragAndDropService extends BeanStub {
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.getDragItem();
-        this.lastDropTarget = this.dragSource.dragSourceDropTarget;
 
         if (this.dragSource.onDragStarted) {
             this.dragSource.onDragStarted();
@@ -275,7 +269,6 @@ export class DragAndDropService extends BeanStub {
         const vDirection = this.getVerticalDirection(mouseEvent);
 
         this.eventLastTime = mouseEvent;
-
         this.positionGhost(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
@@ -295,9 +288,6 @@ export class DragAndDropService extends BeanStub {
 
             this.lastDropTarget = dropTarget;
         } else if (dropTarget && dropTarget.onDragging) {
-            const newGhostIcon = this.lastDropTarget?.getIconName ? this.lastDropTarget.getIconName() : null;
-            this.setGhostIcon(newGhostIcon);
-
             const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
@@ -507,6 +497,7 @@ export class DragAndDropService extends BeanStub {
         }
 
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
+        this.setGhostIcon(null);
 
         const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
         let dragItemName = this.dragSource.dragItemName;
@@ -556,12 +547,13 @@ export class DragAndDropService extends BeanStub {
     }
 
     public setGhostIcon(iconName: string | null, shake = false): void {
+        clearElement(this.eGhostIcon);
+
         let eIcon: Element | null = null;
 
         if (!iconName) {
             iconName = this.dragSource.getDefaultIconName ? this.dragSource.getDefaultIconName() : DragAndDropService.ICON_NOT_ALLOWED;
         }
-
         switch (iconName) {
             case DragAndDropService.ICON_PINNED:      eIcon = this.ePinnedIcon; break;
             case DragAndDropService.ICON_MOVE:        eIcon = this.eMoveIcon; break;
@@ -574,18 +566,11 @@ export class DragAndDropService extends BeanStub {
             case DragAndDropService.ICON_HIDE:        eIcon = this.eHideIcon; break;
         }
 
-        const iconUnchanged = eIcon == null ? !this.eGhostIcon.hasChildNodes() : this.eGhostIcon.contains(eIcon);
-        if (iconUnchanged) {
-            return;
-        }
-        clearElement(this.eGhostIcon);
-
         this.eGhostIcon.classList.toggle('ag-shake-left-to-right', shake);
 
         if (eIcon === this.eHideIcon && this.gridOptionsService.get('suppressDragLeaveHidesColumns')) {
             return;
         }
-
         if (eIcon) {
             this.eGhostIcon.appendChild(eIcon);
         }

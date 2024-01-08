@@ -111,6 +111,10 @@ export class DropZoneColumnComp extends Component {
         
     }
 
+    public getColumn(): Column {
+        return this.column;
+    }
+
     private setupAria() {
         const translate = this.localeService.getLocaleTextFunc();
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
@@ -188,23 +192,24 @@ export class DropZoneColumnComp extends Component {
     }
 
     private addDragSource(): void {
+        const { dragAndDropService, displayName, eDragHandle, column } = this;
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
-            eElement: this.eDragHandle,
+            eElement: eDragHandle,
             getDefaultIconName: () => DragAndDropService.ICON_HIDE,
-            getDragItem: () => this.createDragItem(),
-            dragItemName: this.displayName,
-            dragSourceDropTarget: this.dragSourceDropTarget
+            getDragItem: () => this.createDragItem(column),
+            dragItemName: displayName
         };
-        this.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
+
+        dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(() => dragAndDropService.removeDragSource(dragSource));
     }
 
-    private createDragItem() {
+    private createDragItem(column: Column) {
         const visibleState: { [key: string]: boolean } = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
+        visibleState[column.getId()] = column.isVisible();
         return {
-            columns: [this.column],
+            columns: [column],
             visibleState: visibleState
         };
     }
@@ -408,6 +413,12 @@ export class DropZoneColumnComp extends Component {
 
     private isGroupingZone() {
         return this.dropZonePurpose === 'rowGroup';
+    }
+
+    protected destroy(): void {
+        super.destroy();
+        (this.column as any) = null;
+        (this.dragSourceDropTarget as any) = null;
     }
 }
 
