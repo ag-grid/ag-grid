@@ -21,7 +21,7 @@ export default ({ model, onModelChange, getValue }: CustomFilterProps) => {
         <div className='person-filter'>
             <div>Custom Athlete Filter</div>
             <div>
-            <input
+                <input
                     type="text"
                     value={model || ''}
                     onChange={({ target: { value }}) => onModelChange(value === '' ? null : value)}
