@@ -1389,9 +1389,8 @@ export class RowCtrl extends BeanStub {
     // otherwise the row would move so fast, it would appear to disappear. so this method
     // moves the row closer to the viewport if it is far away, so the row slide in / out
     // at a speed the user can see.
-    private roundRowTopToBounds(rowTop: number, providedScrollPosition?: VerticalScrollPosition): number {
-        // provideScrollPosition should be provided to avoid calling getVScrollPosition() which may trigger the browser to recalculate styles (slow)
-        const range = providedScrollPosition ?? this.beans.ctrlsService.getGridBodyCtrl().getScrollFeature().getVScrollPosition();
+    private roundRowTopToBounds(rowTop: number): number {
+        const range = this.beans.ctrlsService.getGridBodyCtrl().getScrollFeature().getApproximateVScollPosition();
         const minPixel = this.applyPaginationOffset(range.top, true) - 100;
         const maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
 
@@ -1451,20 +1450,20 @@ export class RowCtrl extends BeanStub {
     }
 
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
-    public destroyFirstPass(vScrollGetter?: () => VerticalScrollPosition): void {
+    public destroyFirstPass(suppressAnimation: boolean = false): void {
         this.active = false;
 
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
 
-        if (this.gridOptionsService.isAnimateRows() && !this.isSticky()) {
+        if (!suppressAnimation && this.gridOptionsService.isAnimateRows() && !this.isSticky()) {
             const rowStillVisibleJustNotInViewport = this.rowNode.rowTop != null;
             if (rowStillVisibleJustNotInViewport) {
                 // if the row is not rendered, but in viewport, it means it has moved,
                 // so we animate the row out. if the new location is very far away,
                 // the animation will be so fast the row will look like it's just disappeared,
                 // so instead we animate to a position just outside the viewport.
-                const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop!, vScrollGetter ? vScrollGetter() : undefined);
+                const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop!);
                 this.setRowTop(rowTop);
             } else {
                 this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', true));
