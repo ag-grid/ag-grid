@@ -700,8 +700,17 @@ export function getActiveTheme(theme: string, typescript: boolean) {
     return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
 }
 
+// TODO detecting "enableCharts" in the example source would do this more reliably
+const chartsExamplePathSubstrings = [
+    '/integrated-charts-',
+    '/custom-icons/examples/icons-images',
+    '/modules/examples/individual-registration',
+    '/localisation/examples/callback',
+    '/localisation/examples/localisation',
+];
+
 export function getIntegratedDarkModeCode(exampleName: string, typescript?: boolean, apiName = 'params.api'): string {
-    if (!exampleName.includes('integrated-charts-')) {
+    if (!chartsExamplePathSubstrings.find(s => exampleName.includes(s))) {
         return '';
     }
     return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace(/params\.api/g, apiName)}${DARK_INTEGRATED_END}`;
