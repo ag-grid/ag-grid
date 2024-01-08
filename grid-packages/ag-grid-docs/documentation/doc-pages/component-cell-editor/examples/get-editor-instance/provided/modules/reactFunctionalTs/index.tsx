@@ -2,13 +2,13 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, getInstance } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import MySimpleEditor, { MySimpleInterface } from './mySimpleEditor';
 
-import { ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, GridReadyEvent, ICellEditor, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -111,13 +111,14 @@ const GridExample = () => {
             const interval = window.setInterval(() => {
                 const instances = params.api.getCellEditorInstances();
                 if (instances.length > 0) {
-                    const instance = instances[0] as Partial<MySimpleInterface>;
-                    if (instance.myCustomFunction) {
-                        const result = instance.myCustomFunction();
-                        console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);
-                    } else {
-                        console.log('found editing cell, but method myCustomFunction not found, must be the default editor.');
-                    }
+                    getInstance<ICellEditor, MySimpleInterface>(instances[0], instance => {
+                        if (instance && instance.myCustomFunction) {
+                            const result = instance.myCustomFunction();
+                            console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);
+                        } else {
+                            console.log('found editing cell, but method myCustomFunction not found, must be the default editor.');
+                        }
+                    });
                 } else {
                     console.log('found not editing cell.');
                 }
@@ -147,6 +148,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     rowData={rowData}
                     columnDefs={columnDefs}
+                    reactiveCustomComponents
                     onGridReady={onGridReady}
                 />
             </div>

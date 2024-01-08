@@ -25,6 +25,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private inProgress = false;
     private destroyRequested = false;
     private activeOverlayWrapperCssClass: string;
+    private updateListenerDestroyFunc?: () => null;
 
     constructor() {
         super(OverlayWrapperComponent.TEMPLATE);
@@ -54,7 +55,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         overlayWrapperClassList.toggle(overlayWrapperCssClass, true);
     }
 
-    public showOverlay(overlayComp: AgPromise<Component> | null, overlayWrapperCssClass: string): void {
+    public showOverlay(overlayComp: AgPromise<Component> | null, overlayWrapperCssClass: string, updateListenerDestroyFunc: () => null): void {
         if (this.inProgress) {
             return;
         }
@@ -70,6 +71,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
                 this.eOverlayWrapper.appendChild(comp!.getGui());
                 this.activeOverlay = comp!;
+                this.updateListenerDestroyFunc = updateListenerDestroyFunc;
 
                 if (this.destroyRequested) {
                     this.destroyRequested = false;
@@ -92,6 +94,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         }
 
         this.activeOverlay = this.getContext().destroyBean(this.activeOverlay)!;
+        this.updateListenerDestroyFunc?.();
 
         clearElement(this.eOverlayWrapper);
     }

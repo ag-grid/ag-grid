@@ -2,7 +2,7 @@ import { HeaderGroupCellCtrl, IHeaderGroupCellComp, IHeaderGroupComp, UserCompDe
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
-import { CssClasses } from '../utils';
+import { CssClasses, isComponentStateless } from '../utils';
 
 const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
@@ -56,6 +56,11 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
         }
     }, [userCompDetails]);
 
+    const userCompStateless = useMemo(() => {
+        const res = userCompDetails?.componentFromFramework && isComponentStateless(userCompDetails.componentClass);
+        return !!res;
+    }, [userCompDetails]);
+
     const className = useMemo( ()=> 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses] );
     const resizableClassName = useMemo( ()=> 'ag-header-cell-resize ' + cssResizableClasses.toString(), [cssResizableClasses] );
 
@@ -65,7 +70,8 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     return (
         <div ref={setRef} className={className} col-id={colId} 
                     role="columnheader" tabIndex={-1} aria-expanded={ariaExpanded}>
-            { reactUserComp && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef } /> }
+            { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
+            { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef } /> }
             <div ref={eResize} aria-hidden={resizableAriaHidden} className={resizableClassName}></div>
         </div>
     );

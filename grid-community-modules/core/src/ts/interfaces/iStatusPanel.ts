@@ -10,6 +10,18 @@ export interface StatusPanelDef {
 
 export interface IStatusPanelParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> { }
 
-export interface IStatusPanel { }
+export type AggregationStatusPanelAggFunc = 'count' | 'sum' | 'min' | 'max' | 'avg';
 
-export interface IStatusPanelComp extends IStatusPanel, IComponent<IStatusPanelParams> { }
+export interface IAggregationStatusPanelParams {
+    aggFuncs: AggregationStatusPanelAggFunc[];
+}
+
+export interface AggregationStatusPanelParams<TData = any, TContext = any> extends IAggregationStatusPanelParams, IStatusPanelParams<TData, TContext> {
+    aggFuncs: AggregationStatusPanelAggFunc[];
+}
+
+export interface IStatusPanel<TData = any, TContext = any> {
+    refresh?(params: IStatusPanelParams<TData, TContext>): boolean;
+}
+
+export interface IStatusPanelComp<TData = any, TContext = any> extends IStatusPanel<TData, TContext>, IComponent<IStatusPanelParams<TData, TContext>> { }

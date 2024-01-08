@@ -132,7 +132,7 @@ export class BeanStub implements IEventEmitter {
     private setupGridOptionListener<K extends keyof GridOptions>(
         event: keyof GridOptions,
         listener: PropertyValueChangedListener<K>
-    ) {
+    ): (() => null) {
         this.gridOptionsService.addEventListener(event, listener);
         const destroyFunc: () => null = () => {
             this.gridOptionsService.removeEventListener(event, listener);
@@ -140,6 +140,7 @@ export class BeanStub implements IEventEmitter {
             return null;
         };
         this.destroyFunctions.push(destroyFunc);
+        return destroyFunc;
     }
 
     /**
@@ -150,12 +151,12 @@ export class BeanStub implements IEventEmitter {
     public addManagedPropertyListener<K extends keyof GridOptions>(
         event: K,
         listener: PropertyValueChangedListener<K>
-    ): void {
+    ): (() => null) {
         if (this.destroyed) {
-            return;
+            return () => null;
         }
 
-        this.setupGridOptionListener(event, listener);
+        return this.setupGridOptionListener(event, listener);
     }
 
     private propertyListenerId = 0;

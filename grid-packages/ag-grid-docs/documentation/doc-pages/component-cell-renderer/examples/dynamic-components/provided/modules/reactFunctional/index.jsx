@@ -155,7 +155,9 @@ const GridExample = () => {
                         context={{
                             methodFromParent
                         }}
-                        defaultColDef={defaultColDef} />
+                        defaultColDef={defaultColDef}
+                        reactiveCustomComponents
+                    />
                 </div>
             </div>
         </div>

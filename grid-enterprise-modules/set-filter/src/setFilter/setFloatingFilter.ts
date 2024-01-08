@@ -53,6 +53,10 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
     }
 
     public onParamsUpdated(params: IFloatingFilterParams): void {
+        this.refresh(params);
+    }
+
+    public refresh(params: IFloatingFilterParams): void {
         this.params = params;
         this.setParams(params);
     }

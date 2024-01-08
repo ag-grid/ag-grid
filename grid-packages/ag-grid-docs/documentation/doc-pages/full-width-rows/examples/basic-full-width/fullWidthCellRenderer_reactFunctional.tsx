@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default (props: ICellRendererParams) => {
+export default (props: CustomCellRendererProps) => {
     const [cssClass] = useState(props.node.rowPinned ? 'example-full-width-pinned-row' :
         'example-full-width-row');
     const [message] = useState(props.node.rowPinned ? `Pinned full width row at index ${props.node.rowIndex}` :

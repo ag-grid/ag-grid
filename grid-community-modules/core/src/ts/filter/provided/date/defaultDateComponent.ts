@@ -108,6 +108,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public onParamsUpdated(params: IDateParams): void {
+        this.refresh(params);
+    }
+
+    public refresh(params: IDateParams): void {
         this.params = params;
         this.setParams(params);
     }

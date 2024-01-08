@@ -1,42 +1,40 @@
-import { ReactPortal } from 'react';
-import { ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
-import { LegacyPortalManager } from './portalManager';
+import { createElement, ReactPortal } from 'react';
+import { AgPromise, ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
+import { PortalManager } from './portalManager';
+import generateNewKey from './keyGenerator';
+import { createPortal } from 'react-dom';
+import { renderToStaticMarkup } from 'react-dom/server';
 
-abstract class BaseReactComponent implements IComponent<any>, WrappableInterface {
-    abstract getGui(): HTMLElement;
-
-    abstract getFrameworkComponentInstance(): any;
-
-    abstract rendered(): boolean;
-
-    abstract getReactComponentName(): string;
-
-    abstract hasMethod(name: string): boolean;
-
-    abstract callMethod(name: string, args: IArguments): void;
-
-    abstract addMethod(name: string, callback: Function): void;
-
-}
-
-export abstract class ReactComponent extends BaseReactComponent {
-
+export class ReactComponent implements IComponent<any>, WrappableInterface {
     protected eParentElement!: HTMLElement;
     protected componentInstance: any;
     protected reactComponent: any;
-    protected portalManager: LegacyPortalManager;
+    protected portalManager: PortalManager;
     protected portal: ReactPortal | null = null;
     protected statelessComponent: boolean;
     protected componentType: ComponentType;
 
-    constructor(reactComponent: any, portalManager: LegacyPortalManager, componentType: ComponentType) {
-        super();
+    protected key: string;
+    private portalKey: string;
+    private oldPortal: ReactPortal | null = null;
+    private reactElement: any;
+    private params: any;
+    protected instanceCreated: AgPromise<boolean>;
+    private resolveInstanceCreated?: (value: boolean) => void;
 
+    constructor(reactComponent: any, portalManager: PortalManager, componentType: ComponentType) {
         this.reactComponent = reactComponent;
         this.portalManager = portalManager;
         this.componentType = componentType;
 
         this.statelessComponent = this.isStateless(this.reactComponent);
+
+        this.key = generateNewKey();
+        this.portalKey = generateNewKey();
+
+        this.instanceCreated = this.isStatelessComponent() ? AgPromise.resolve(false) : new AgPromise(resolve => {
+            this.resolveInstanceCreated = resolve;
+        })
     }
 
     public getGui(): HTMLElement {
@@ -108,13 +106,13 @@ export abstract class ReactComponent extends BaseReactComponent {
             || (typeof Component === 'object' && Component.$$typeof === this.getMemoType());
     }
 
-    hasMethod(name: string): boolean {
+    public hasMethod(name: string): boolean {
         const frameworkComponentInstance = this.getFrameworkComponentInstance();
         return (!!frameworkComponentInstance && frameworkComponentInstance[name] !== null) ||
             this.fallbackMethodAvailable(name);
     }
 
-    callMethod(name: string, args: IArguments): void {
+    public callMethod(name: string, args: IArguments): void {
         const frameworkComponentInstance = this.getFrameworkComponentInstance();
 
         if (this.isStatelessComponent()) {
@@ -136,13 +134,107 @@ export abstract class ReactComponent extends BaseReactComponent {
         }
     }
 
-    addMethod(name: string, callback: Function): void {
+    public addMethod(name: string, callback: Function): void {
         (this as any)[name] = callback;
     }
 
-    protected abstract fallbackMethod(name: string, params: any): any;
+    public init(params: any): AgPromise<void> {
+        this.eParentElement = this.createParentElement(params);
+        this.params = params;
 
-    protected abstract fallbackMethodAvailable(name: string): boolean;
+        this.createOrUpdatePortal(params);
 
-    public abstract isNullValue(): boolean;
+        return new AgPromise<void>(resolve => this.createReactComponent(resolve));
+    }
+
+    private createOrUpdatePortal(params: any) {
+        if (!this.isStatelessComponent()) {
+            // grab hold of the actual instance created
+            params.ref = (element: any) => {
+                this.componentInstance = element;
+                this.addParentContainerStyleAndClasses();
+                this.resolveInstanceCreated?.(true);
+                this.resolveInstanceCreated = undefined;
+            };
+        }
+
+        this.reactElement = this.createElement(this.reactComponent, { ...params, key: this.key });
+
+        this.portal = createPortal(
+            this.reactElement,
+            this.eParentElement as any,
+            this.portalKey // fixed deltaRowModeRefreshCompRenderer
+        );
+    }
+
+    protected createElement(reactComponent: any, props: any): any {
+        return createElement(reactComponent, props);
+    }
+
+    private createReactComponent(resolve: (value: any) => void) {
+        this.portalManager.mountReactPortal(this.portal!, this, (value: any) => {
+            resolve(value);
+        });
+    }
+
+    public isNullValue(): boolean {
+        return this.valueRenderedIsNull(this.params);
+    }
+
+    public rendered(): boolean {
+        return (this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            !!(!this.isStatelessComponent() && this.getFrameworkComponentInstance());
+    }
+
+    private valueRenderedIsNull(params: any): boolean {
+        // we only do this for cellRenderers
+        if (!this.componentType.cellRenderer) {
+            return false;
+        }
+
+        // we've no way of knowing if a component returns null without rendering it first
+        // so we render it to markup and check the output - if it'll be null we know and won't timeout
+        // waiting for a component that will never be created
+
+        const originalConsoleError = console.error;
+        try {
+            // if a user is doing anything that uses useLayoutEffect (like material ui) then it will throw and we
+            // can't do anything to stop it; this is just a warning and has no effect on anything so just suppress it
+            // for this single operation
+            console.error = () => {
+            };
+            const staticMarkup = renderToStaticMarkup(createElement(this.reactComponent, params));
+            return staticMarkup === '';
+        } catch (ignore) {
+        } finally {
+            console.error = originalConsoleError;
+        }
+
+        return false;
+    }
+
+    /*
+    * fallback methods - these will be invoked if a corresponding instance method is not present
+    * for example if refresh is called and is not available on the component instance, then refreshComponent on this
+    * class will be invoked instead
+    *
+    * Currently only refresh is supported
+    */
+    protected refreshComponent(args: any): void {
+        this.oldPortal = this.portal;
+        this.createOrUpdatePortal(args);
+        this.portalManager.updateReactPortal(this.oldPortal!, this.portal!);
+    }
+
+    protected fallbackMethod(name: string, params: any): any {
+        const method = (this as any)[`${name}Component`];
+        if (!!method) {
+            return method.bind(this)(params);
+        }
+    }
+
+    protected fallbackMethodAvailable(name: string): boolean {
+        const method = (this as any)[`${name}Component`];
+        return !!method;
+    }
 }

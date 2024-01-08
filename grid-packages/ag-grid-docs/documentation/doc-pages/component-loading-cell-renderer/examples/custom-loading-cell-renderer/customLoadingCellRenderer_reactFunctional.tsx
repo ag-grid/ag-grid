@@ -1,7 +1,7 @@
 import React from 'react';
-import { ILoadingCellRendererParams } from "@ag-grid-community/core";
+import { CustomLoadingCellRendererProps } from "@ag-grid-community/react";
 
-export default (props: ILoadingCellRendererParams & { loadingMessage: string }) => {
+export default (props: CustomLoadingCellRendererProps & { loadingMessage: string }) => {
     return (
         <div className="ag-custom-loading-cell" style={{ paddingLeft: '10px', lineHeight: '25px' }}>
             <i className="fas fa-spinner fa-pulse"></i> <span> {props.loadingMessage}</span>

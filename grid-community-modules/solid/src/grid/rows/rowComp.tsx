@@ -128,6 +128,12 @@ const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) =>
             setCellCtrls: next => setCellCtrls(maintainOrderOnColumns(getCellCtrls(), next, getDomOrder())),
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: ()=> fullWidthCompRef,
+            refreshFullWidth: getUpdatedParams => {
+                if (!fullWidthCompRef || !fullWidthCompRef.refresh) {
+                    return false;
+                }
+                return fullWidthCompRef.refresh(getUpdatedParams());
+            }
         };
         rowCtrl.setComp(compProxy, eGui, containerType);
         onCleanup(() => rowCtrl.unsetComp(containerType));

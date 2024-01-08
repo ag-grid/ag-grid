@@ -22,7 +22,7 @@ export class ComponentMetadataProvider extends BeanStub {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel']
+                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel', 'setDisabled', 'onParamsUpdated', 'refresh']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
@@ -43,19 +43,15 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             loadingOverlayComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['refresh']
             },
             noRowsOverlayComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['refresh']
             },
             floatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: ['afterGuiAttached']
-            },
-            floatingFilterWrapperComponent: {
-                mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['afterGuiAttached', 'onParamsUpdated', 'refresh']
             },
             cellRenderer: {
                 mandatoryMethodList: [],
@@ -64,7 +60,7 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             cellEditor: {
                 mandatoryMethodList: ['getValue'],
-                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached']
+                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached', 'refresh']
             },
             innerRenderer: {
                 mandatoryMethodList: [],
@@ -83,11 +79,7 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             filter: {
                 mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'onAnyFilterChanged']
-            },
-            filterComponent: {
-                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'onAnyFilterChanged']
+                optionalMethodList: ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'onAnyFilterChanged', 'refresh']
             },
             statusPanel: {
                 mandatoryMethodList: [],
@@ -95,7 +87,7 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             toolPanel: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['refresh', 'afterGuiAttached']
+                optionalMethodList: ['refresh', 'getState']
             },
             tooltipComponent: {
                 mandatoryMethodList: [],

@@ -52,7 +52,11 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     public onParamsUpdated(params: IFloatingFilterParams<DateFilter>): void {
-        super.onParamsUpdated(params);
+        this.refresh(params);
+    }
+
+    public refresh(params: IFloatingFilterParams<DateFilter>): void {
+        super.refresh(params);
         this.params = params;
         this.filterParams = params.filterParams;
 

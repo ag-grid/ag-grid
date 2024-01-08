@@ -1,7 +1,7 @@
-import { ITooltipParams } from '@ag-grid-community/core';
+import { CustomTooltipProps } from '@ag-grid-community/react';
 import React, { useMemo, useRef } from 'react';
 
-export default (props: ITooltipParams & { type: string }) => {
+export default (props: CustomTooltipProps & { type: string }) => {
 
     const data = useMemo(() => props.api.getDisplayedRowAtIndex(props.rowIndex!)!.data, []);
     const inputEl = useRef<HTMLInputElement>(null);

@@ -2061,6 +2061,11 @@ AddType text/javascript ts jsx
     RedirectMatch 301 "^/documentation/react/charts.*" "https://charts.ag-grid.com/react/quick-start/"
     RedirectMatch 301 "^/documentation/vue/charts.*" "https://charts.ag-grid.com/vue/quick-start/"
 
+    Redirect 301 /javascript-data-grid/component-types/ /javascript-data-grid/components/
+    Redirect 301 /angular-data-grid/component-types/ /angular-data-grid/components/
+    Redirect 301 /react-data-grid/component-types/ /react-data-grid/components/
+    Redirect 301 /vue-data-grid/component-types/ /vue-data-grid/components/
+
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy
     Redirect 301 /about.php /about

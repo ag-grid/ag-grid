@@ -9,39 +9,30 @@
 |const KEY_PAGE_HOME = 'Home';
 |const KEY_PAGE_END = 'End';
 |
-|const MyCellEditor = forwardRef((props, ref) => {
-|    const [value, setValue] = useState(props.value);
-|
-|    /* Component Editor Lifecycle methods */
-|    useImperativeHandle(ref, () => {
-|        return {
-|            getValue() {
-|                return value;
-|            }
-|        };
-|    });
-|
-|    onKeyDown(event) {
-|       const key = event.key;
+|const MyCellEditor = ({ value, onValueChange }) => {
+|    const onKeyDown = (event) => {
+|        const key = { event };
 |
 |        const isNavigationKey = key === KEY_LEFT ||
-|           key === KEY_RIGHT ||
-|           key === KEY_UP ||
-|           key === KEY_DOWN ||
-|           key === KEY_PAGE_DOWN ||
-|           key === KEY_PAGE_UP ||
-|           key === KEY_PAGE_HOME ||
-|           key === KEY_PAGE_END;
+|            key === KEY_RIGHT ||
+|            key === KEY_UP ||
+|            key === KEY_DOWN ||
+|            key === KEY_PAGE_DOWN ||
+|            key === KEY_PAGE_UP ||
+|            key === KEY_PAGE_HOME ||
+|            key === KEY_PAGE_END;
 |
-|           if (isNavigationKey) {
-|               // this stops the grid from receiving the event and executing keyboard navigation
-|               event.stopPropagation();
-|           }
+|        if (isNavigationKey) {
+|            // this stops the grid from receiving the event and executing keyboard navigation
+|            event.stopPropagation();
+|        }
 |    }
 |
 |    return (
-|        &lt;input value={value}
-|               onKeyDown={event => onKeyDown(event)}
+|        &lt;input
+|            value={value || ''}
+|            onChange={({ target: { value: newValue }) => onValueChange(newValue)}
+|            onKeyDownCapture={onKeyDown}
 |        />
 |    );
 |});

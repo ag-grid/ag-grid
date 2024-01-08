@@ -1,7 +1,7 @@
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 import React, { useEffect, useState } from 'react';
 
-interface GroupFlagCellRendererParams extends ICellRendererParams {
+interface GroupFlagCellRendererParams extends CustomCellRendererProps {
     flagCodes: Record<string, string>
 }
 

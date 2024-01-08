@@ -9,6 +9,8 @@ import {
     IFloatingFilter,
     IHeader,
     IHeaderGroup,
+    ILoadingOverlay,
+    INoRowsOverlay,
     IStatusPanel,
     IToolPanel,
     Module
@@ -72,10 +74,10 @@ export interface ICellEditorReactComp extends ICellEditor, AgReactComponent {
 export interface ILoadingCellRendererReactComp extends AgReactComponent {
 }
 
-export interface ILoadingOverlayReactComp extends AgReactComponent {
+export interface ILoadingOverlayReactComp extends ILoadingOverlay, AgReactComponent {
 }
 
-export interface INoRowsOverlayReactComp extends AgReactComponent {
+export interface INoRowsOverlayReactComp extends INoRowsOverlay, AgReactComponent {
 }
 
 export interface IStatusPanelReactComp extends IStatusPanel, AgReactComponent {

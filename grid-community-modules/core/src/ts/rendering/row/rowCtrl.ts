@@ -48,6 +48,7 @@ export interface IRowComp {
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
     setUserStyles(styles: RowStyle | undefined): void;
+    refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean;
 }
 
 interface RowGui {
@@ -674,21 +675,7 @@ export class RowCtrl extends BeanStub {
         const tryRefresh = (gui: RowGui | undefined, pinned: ColumnPinnedType): boolean => {
             if (!gui) { return true; } // no refresh needed
 
-            const cellRenderer = gui.rowComp.getFullWidthCellRenderer();
-
-            // no cell renderer, either means comp not yet ready, or comp ready but now reference
-            // to it (happens in react when comp is stateless). if comp not ready, we don't need to
-            // refresh, however we don't know which one, so we refresh to cover the case where it's
-            // react comp without reference so need to force a refresh
-            if (!cellRenderer) { return false; }
-
-            // no refresh method present, so can't refresh, hard refresh needed
-            if (!cellRenderer.refresh) { return false; }
-
-            const params = this.createFullWidthParams(gui.element, pinned);
-            const refreshSucceeded = cellRenderer.refresh(params);
-
-            return refreshSucceeded;
+            return gui.rowComp.refreshFullWidth(() => this.createFullWidthParams(gui.element, pinned));
         };
 
         const fullWidthSuccess = tryRefresh(this.fullWidthGui, null);

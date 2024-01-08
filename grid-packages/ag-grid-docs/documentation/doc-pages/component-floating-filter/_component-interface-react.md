@@ -1,45 +1,46 @@
 <framework-specific-section frameworks="react">
-|## Custom Floating Filter Interface
+|To configure custom floating filters, first enable the grid option `reactiveCustomComponents`.
 |
-|The interface for a custom filter component is as follows:
+|Custom floating filter components are controlled components, which receive a filter model as part of the props, and pass model updates back to the grid via the `onModelChange` callback. A filter model of `null` means that no filter is applied (the filter displays as inactive). Note that the filter is applied immediately when `onModelChange` is called.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet transform={false} language="ts">
-|interface IFloatingFilterReactComp {
-|    // Gets called every time the parent filter changes. Your floating
-|    // filter would typically refresh its UI to reflect the new filter
-|    // state. The provided parentModel is what the parent filter returns
-|    // from its getModel() method. The event is the FilterChangedEvent
-|    // that the grid fires.
-|    onParentModelChanged(parentModel: any, event: FilterChangedEvent): void;
-|
-|    // Gets called every time the popup is shown, after the GUI returned in
-|    // getGui is attached to the DOM. If the filter popup is closed and re-opened, this method is
-|    // called each time the filter is shown. This is useful for any logic that requires attachment
-|    // before executing, such as putting focus on a particular DOM element. 
-|    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
-|
+<snippet transform={false} language="jsx">
+|export default ({ model, onModelChange }) => {
+|    return (
+|        &lt;div>
+|            &lt;input
+|                type="text"
+|                value={model || ''}
+|                onChange={({ target: { value }}) => onModelChange(value === '' ? null : value)}
+|            />
+|        &lt;/div>
+|    );
 |}
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<note>
-|Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the
-|grid will call (for example, the `onParentModelChanged` callback from an Editor Component), then you'll need to expose them with
-|`forwardRef` & `useImperativeHandle`.
-|
-|Please refer to the [Hooks](../react-hooks/) documentation (or the examples on this page) for more information.
-</note>
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom floating filters, however this will involve declaring your React component imperatively, and is not recommend. See [Imperative Floating Filter Component](../component-floating-filter-imperative-react/).</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-|### Custom Filter Parameters
+<h2 id="custom-floating-filter-parameters">Custom Floating Filter Parameters</h2>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|### Floating Filter Props
 |
-|When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
-|row values available to you via `props` - the interface for what is provided is documented below.
+|The following props are passed to the custom floating filter components (`CustomFloatingFilterProps` interface). If custom props are provided via the `colDef.floatingFilterParams` property, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomFloatingFilterProps' config='{ "description": "" }'></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+|### Floating Filter Callbacks
 |
-|If custom params are provided via the `colDef.floatingFilterComponentParams` property, these
-|will be additionally added to the params object, overriding items of the same name if a name clash exists.
+|The following callbacks can be passed to the `useGridFloatingFilter` hook (`CustomFloatingFilterCallbacks` interface). All the callbacks are optional, and the hook only needs to be used if callbacks are provided.
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomFloatingFilterCallbacks' config='{ "description": "" }'></interface-documentation>
 </framework-specific-section>

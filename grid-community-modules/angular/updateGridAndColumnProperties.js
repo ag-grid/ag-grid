@@ -51,7 +51,7 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
 
 
 function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, docLookup }) {
-    const skippableProperties = ['gridOptions'];
+    const skippableProperties = ['gridOptions', 'reactiveCustomComponents'];
 
     let propsToWrite = [];
     const typeKeysOrder = Object.keys(typeLookup);
@@ -95,17 +95,19 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
     }
 
     result = writeSortedLines(eventsToWrite, result);
-    result = addTypeCoercionHints(result, compUtils.BOOLEAN_PROPERTIES);
+    result = addTypeCoercionHints(result, compUtils.BOOLEAN_PROPERTIES, skippableProperties);
 
     const typesToImport = extractTypes({ eventTypeLookup, typeLookup }, skippableProperties);
     return { code: result, types: typesToImport };
 }
 
-function addTypeCoercionHints(result, boolProps) {
+function addTypeCoercionHints(result, boolProps, skippableProperties) {
     result += `${EOL}    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' ${EOL}`;
     result += `    // https://angular.io/guide/template-typecheck#input-setter-coercion ${EOL}`;
     boolProps.forEach((property) => {
-        result += `    static ngAcceptInputType_${property}: boolean | null | '';${EOL}`;
+        if (skippableProperties.indexOf(property) === -1) {
+            result += `    static ngAcceptInputType_${property}: boolean | null | '';${EOL}`;
+        }
     });
     return result;
 }

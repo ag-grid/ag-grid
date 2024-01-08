@@ -2,12 +2,12 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CellClassParams, CellClassRules, ColDef, ModuleRegistry, ValueParserParams, GridReadyEvent } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 
-import { CellClassParams, CellClassRules, ColDef, ICellRendererParams, ModuleRegistry, ValueParserParams, GridReadyEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -38,7 +38,7 @@ const numberToColor = (val: number) => {
     }
 }
 
-const ragRenderer = (params: ICellRendererParams) => {
+const ragRenderer = (params: CustomCellRendererProps) => {
     return <span className="rag-element">{params.value}</span>;
 }
 

@@ -1,23 +1,53 @@
-import { IDoesFilterPassParams, IFilterComp } from "@ag-grid-community/core";
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
 
-//Empty class to setup import path even though there is not a typescript version of this example.
 export class PartialMatchFilter implements IFilterComp {
+    filterParams!: IFilterParams;
+    gui!: HTMLDivElement;
+    filterText: string = '';
+    eFilterText!: HTMLInputElement;
+
+    init(params: IFilterParams): void {
+        this.filterParams = params;
+        this.gui = document.createElement('div');
+        this.gui.innerHTML = 'Partial Match Filter: <input id="filterText" type="text" />';
+        this.eFilterText = this.gui.querySelector('#filterText')!;
+        const listener = (event: any) => {
+            this.filterText = event.target.value;
+            params.filterChangedCallback();
+        }
+        this.eFilterText.addEventListener('changed', listener);
+        this.eFilterText.addEventListener('paste', listener);
+        this.eFilterText.addEventListener('input', listener);
+    }
+
     isFilterActive(): boolean {
-        throw new Error("Method not implemented.");
+        return this.filterText != null && this.filterText !== '';
     }
+
     doesFilterPass(params: IDoesFilterPassParams): boolean {
-        throw new Error("Method not implemented.");
+        const { node } = params;
+        const value = this.filterParams.getValue(node).toString().toLowerCase();
+
+        return this.filterText.toLowerCase()
+            .split(' ')
+            .every(filterWord => value.indexOf(filterWord) >= 0);
     }
+
     getModel() {
-        throw new Error("Method not implemented.");
+        if (!this.isFilterActive()) { return null; }
+
+        return { value: this.filterText };
     }
+
     setModel(model: any): void {
-        throw new Error("Method not implemented.");
+        this.eFilterText.value = model == null ? '' : model.value;
     }
+
     getGui(): HTMLElement {
-        throw new Error("Method not implemented.");
+        return this.gui;
     }
+
     componentMethod(message: string): void {
-        // just for compilation
+        alert(`Alert from PartialMatchFilterComponent: ${message}`);
     }
 }

@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -11,7 +11,7 @@ import './styles.css';
 
 import { getData } from "./data";
 
-import { ColDef, ICellRendererParams, ModuleRegistry, ValueParserParams } from '@ag-grid-community/core';
+import { ColDef, ModuleRegistry, ValueParserParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -25,7 +25,7 @@ function numberParser(params: ValueParserParams) {
     return parseInt(params.newValue);
 }
 
-function countryCellRenderer(params: ICellRendererParams) {
+function countryCellRenderer(params: CustomCellRendererProps) {
     if (params.value === undefined || params.value === null) {
         return null;
     } else {
@@ -37,7 +37,7 @@ function countryCellRenderer(params: ICellRendererParams) {
     }
 }
 
-function stateCellRenderer(params: ICellRendererParams) {
+function stateCellRenderer(params: CustomCellRendererProps) {
     if (params.value === undefined || params.value === null) {
         return null;
     } else {
@@ -50,7 +50,7 @@ function stateCellRenderer(params: ICellRendererParams) {
     }
 }
 
-function cityCellRenderer(params: ICellRendererParams) {
+function cityCellRenderer(params: CustomCellRendererProps) {
     if (params.value === undefined || params.value === null) {
         return null;
     } else {

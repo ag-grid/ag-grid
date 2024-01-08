@@ -12,14 +12,16 @@ The example below shows a few cell editors in action.
 
 <grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370, "includeNgFormsModule" : true }'></grid-example>
 
-## Cell Editor Component
+## Implementing a Cell Editor Component
 
 md-include:component-interface-javascript.md 
 md-include:component-interface-angular.md
-md-include:component-interface-react.md 
+md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
+<framework-specific-section frameworks="javascript,angular,vue">
 <interface-documentation interfaceName='ICellEditorParams' config='{"hideHeader":false, "headerLevel": 3}'></interface-documentation>
+</framework-specific-section>
 
 md-include:params_vue.md       
 
@@ -129,14 +131,30 @@ After the grid has created an instance of a cell editor for a cell it is possibl
 
 If you are doing normal editing, then only one cell is editable at any given time. For this reason if you call `getCellEditorInstances()` with no params, it will return back the editing cell's editor if a cell is editing, or an empty list if no cell is editing.
 
+<framework-specific-section frameworks="react">
+|The instances returned by the grid will be wrapper components that match the provided grid cell editor components that implement `ICellEditor`. To get the React custom cell editor component, the helper function `getInstance` can be used with this.
+</framework-specific-section>
+
 An example of calling `getCellEditorInstances()` is as follows:
 
+<framework-specific-section frameworks="javascript,angular,vue">
 <snippet transform={false}>
-const instances = api.getCellEditorInstances(params);
-if (instances.length > 0) {
-    const instance = instances[0];
-}
+|const instances = api.getCellEditorInstances(params);
+|if (instances.length > 0) {
+|    const instance = instances[0];
+|}
 </snippet>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
+|const instances = api.getCellEditorInstances(params);
+|if (instances.length > 0) {
+|    getInstance(instances[0], instance => {
+|        ...
+|    });
+|}
+</snippet>
+</framework-specific-section>
 
 The example below shows using `getCellEditorInstances`. The following can be noted:
 

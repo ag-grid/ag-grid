@@ -1,6 +1,4 @@
 <framework-specific-section frameworks="javascript">
-|## Loading Cell Renderer Component
-|
 |The interface for the loading cell renderer component is as follows:
 </framework-specific-section>
 

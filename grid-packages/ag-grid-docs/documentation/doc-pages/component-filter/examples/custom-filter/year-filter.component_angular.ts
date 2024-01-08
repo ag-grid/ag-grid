@@ -8,16 +8,16 @@ import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
   standalone: true,
   imports: [FormsModule],
   template: `
-      <div style="display: inline-block; width: 400px;">
-      <div style="padding: 10px; text-align: center;">Select Year Range</div>
-      <label style="margin: 10px; padding: 10px; display: inline-block;">
+    <div class="year-filter">
+      <div>Select Year Range</div>
+      <label>
         <input type="radio" name="year" [(ngModel)]="year" (ngModelChange)="updateFilter()" [value]="'All'"/> All
       </label>
-      <label style="margin: 10px; padding: 10px; display: inline-block;">
+      <label>
         <input type="radio" name="year" [(ngModel)]="year" (ngModelChange)="updateFilter()" [value]="'2010'"/> Since 2010
       </label>
-      </div>
-    `
+    </div>
+  `
 })
 export class YearFilter implements IFilterAngularComp {
   params!: IFilterParams;
