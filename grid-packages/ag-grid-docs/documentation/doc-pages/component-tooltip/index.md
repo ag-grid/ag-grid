@@ -15,16 +15,23 @@ The example below demonstrates how to provide custom tooltips to the grid. Notic
 
 <grid-example title='Custom Tooltip Component' name='custom-tooltip-component' type='generated'></grid-example>
 
+## Implementing a Tooltip Component
+
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
-<interface-documentation interfaceName='ITooltipParams' ></interface-documentation>
+<framework-specific-section frameworks="javascript,angular,vue">
+<interface-documentation interfaceName='ITooltipParams'></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomTooltipProps'></interface-documentation>
+</framework-specific-section>
 
 ## Registering Custom Tooltip Components
 
-See the [registering custom components](/components/#registering-custom-components) section for details on registering and using custom tooltip components.
+See [Registering Custom Components](/components/#registering-custom-components) for details on registering and using custom tooltip components.
 
 ## Default Browser Tooltip
 

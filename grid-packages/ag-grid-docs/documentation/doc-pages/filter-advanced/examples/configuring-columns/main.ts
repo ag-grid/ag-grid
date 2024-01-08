@@ -73,7 +73,7 @@ var includeHiddenColumns = false;
 function onIncludeHiddenColumnsToggled() {
   includeHiddenColumns = !includeHiddenColumns;
   gridApi!.setGridOption('includeHiddenColumnsInAdvancedFilter', includeHiddenColumns);
-  document.querySelector('#includeHiddenColumns')!.innerHTML = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
+  document.querySelector('#includeHiddenColumns')!.textContent = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
 }
 
 // setup the grid after the page has finished loading

@@ -91,11 +91,15 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
     }
 
     public onParamsUpdated(params: INumberFloatingFilterParams): void {
+        this.refresh(params);
+    }
+
+    public refresh(params: INumberFloatingFilterParams): void {
         const allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {
             this.recreateFloatingFilterInputService(params);
         }
-        super.onParamsUpdated(params);
+        super.refresh(params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }
 

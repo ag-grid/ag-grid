@@ -183,7 +183,7 @@ export class AppComponent {
     }
     // Mutate the context object in place
     this.context.month = newMonth
-    document.querySelector("#monthName")!.innerHTML = monthNames[newMonth + 1]
+    document.querySelector("#monthName")!.textContent = monthNames[newMonth + 1]
     this.gridApi.refreshClientSideRowModel("aggregate")
     this.gridApi.refreshCells()
   }

@@ -1,7 +1,7 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
-import { ICellRendererParams } from "@ag-grid-community/core";
+import React from 'react';
+import { CustomCellRendererProps } from "@ag-grid-community/react";
 
-export default (props: ICellRendererParams) => {
+export default (props: CustomCellRendererProps) => {
     const country = props.valueFormatted ? props.valueFormatted : props.value;
     const total = props.data.total;
 

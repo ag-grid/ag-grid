@@ -105,7 +105,7 @@ export { RowNode } from "./entities/rowNode";
 export { RowHighlightPosition, RowPinnedType, IRowNode } from "./interfaces/iRowNode";
 
 // filter
-export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType, FilterModel } from "./interfaces/iFilter";
+export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType, FilterModel, BaseFilter, BaseFilterParams } from "./interfaces/iFilter";
 export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams, ISetFilterTreeListTooltipParams } from "./interfaces/iSetFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, MultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
@@ -118,7 +118,7 @@ export { NumberFilter, INumberFilterParams, NumberFilterParams, NumberFilterMode
 export { TextFilter, ITextFilterParams, TextFilterParams, TextFilterModel, TextFormatter, TextMatcherParams, TextMatcher } from "./filter/provided/text/textFilter";
 export { DateFilter, IDateFilterParams, DateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
 
-export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange, IFloatingFilterParent, IFloatingFilterParentCallback } from "./filter/floating/floatingFilter";
+export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange, IFloatingFilterParent, IFloatingFilterParentCallback, BaseFloatingFilter } from "./filter/floating/floatingFilter";
 export { TextFloatingFilter, ITextFloatingFilterParams } from './filter/provided/text/textFloatingFilter';
 export { INumberFloatingFilterParams } from './filter/provided/number/numberFloatingFilter';
 export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
@@ -183,7 +183,7 @@ export { AlignedGrid } from "./interfaces/iAlignedGrid";
 export { ExpansionService } from "./misc/expansionService";
 
 // editing / cellEditors
-export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
+export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from "./interfaces/iCellEditor";
 export { LargeTextCellEditor, ILargeTextEditorParams } from "./rendering/cellEditors/largeTextCellEditor";
 export { PopupEditorWrapper } from "./rendering/cellEditors/popupEditorWrapper";
 export { SelectCellEditor, ISelectCellEditorParams } from "./rendering/cellEditors/selectCellEditor";
@@ -204,17 +204,17 @@ export { GroupCellRenderer, } from "./rendering/cellRenderers/groupCellRenderer"
 export { GroupCellRendererParams, IGroupCellRendererParams, IGroupCellRendererFullRowParams, FooterValueGetterFunc, IGroupCellRenderer, GroupCellRendererCtrl, GroupCheckboxSelectionCallback, GroupCheckboxSelectionCallbackParams } from "./rendering/cellRenderers/groupCellRendererCtrl";
 
 // status bar components
-export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams } from "./interfaces/iStatusPanel";
+export { StatusPanelDef, IStatusPanel, IStatusPanelComp, IStatusPanelParams, AggregationStatusPanelAggFunc, IAggregationStatusPanelParams, AggregationStatusPanelParams } from "./interfaces/iStatusPanel";
 export { IStatusBarService } from "./interfaces/iStatusBarService";
 
 // tool panel components
-export { IToolPanel, IToolPanelComp, IToolPanelParams, IPrimaryColsPanel, ToolPanelColumnCompParams } from "./interfaces/iToolPanel";
+export { IToolPanel, IToolPanelComp, IToolPanelParams, IPrimaryColsPanel, ToolPanelColumnCompParams, BaseToolPanelParams } from "./interfaces/iToolPanel";
 export { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
 export { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
 
 // overlays
-export { ILoadingOverlayComp, ILoadingOverlayParams } from "./rendering/overlays/loadingOverlayComponent";
-export { INoRowsOverlayComp, INoRowsOverlayParams } from "./rendering/overlays/noRowsOverlayComponent";
+export { ILoadingOverlayComp, ILoadingOverlayParams, ILoadingOverlay } from "./rendering/overlays/loadingOverlayComponent";
+export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from "./rendering/overlays/noRowsOverlayComponent";
 
 // features
 export { SetLeftFeature } from "./rendering/features/setLeftFeature";
@@ -535,7 +535,7 @@ export { IHeaderColumn } from "./interfaces/iHeaderColumn";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
-export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
+export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams, ContainerType } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";
 export { IEventEmitter } from "./interfaces/iEventEmitter";

@@ -578,7 +578,7 @@ export class FilterManager extends BeanStub {
         if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
             defaultFilter = 'agSetColumnFilter';
         } else {
-            const cellDataType = column.getColDef().cellDataType;
+            const cellDataType = this.dataTypeService.getBaseDataType(column);
             if (cellDataType === 'number') {
                 defaultFilter = 'agNumberColumnFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
@@ -595,7 +595,7 @@ export class FilterManager extends BeanStub {
         if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
         } else {
-            const cellDataType = column.getColDef().cellDataType;
+            const cellDataType = this.dataTypeService.getBaseDataType(column);
             if (cellDataType === 'number') {
                 defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
@@ -766,16 +766,6 @@ export class FilterManager extends BeanStub {
     }
 
     public getFloatingFilterCompDetails(column: Column, showParentFilter: () => void): UserCompDetails | undefined {
-        const colDef = column.getColDef();
-        const filterParams = this.createFilterParams(column, colDef);
-        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
-
-        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef, () => this.getDefaultFloatingFilter(column));
-
-        if (defaultFloatingFilterType == null) {
-            defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
-        }
-
         const parentFilterInstance = (callback: IFloatingFilterParentCallback<IFilter>) => {
             const filterComponent = this.getFilterComponent(column, 'NO_UI');
 
@@ -785,6 +775,19 @@ export class FilterManager extends BeanStub {
                 callback(unwrapUserComp(instance!));
             });
         };
+
+        const colDef = column.getColDef();
+        const filterParams = {
+            ...this.createFilterParams(column, colDef),
+            filterChangedCallback: () => parentFilterInstance(filterInstance => this.filterChangedCallbackFactory(filterInstance as IFilterComp, column)()),
+        }
+        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
+
+        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef, () => this.getDefaultFloatingFilter(column));
+
+        if (defaultFloatingFilterType == null) {
+            defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
+        }
 
         const params: WithoutGridCommon<IFloatingFilterParams<IFilter>> = {
             column: column,

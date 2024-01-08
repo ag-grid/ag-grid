@@ -64,7 +64,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     protected isColumnDroppable(column: Column): boolean {
         // we never allow grouping of secondary columns
         if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) { return false; }
-        return column.isAllowRowGroup() && !column.isRowGroupActive();
+        return column.isAllowRowGroup();
     }
 
     protected updateColumns(columns: Column[]) {

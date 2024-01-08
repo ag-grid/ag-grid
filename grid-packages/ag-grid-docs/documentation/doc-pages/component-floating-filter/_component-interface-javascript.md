@@ -1,7 +1,5 @@
 <framework-specific-section frameworks="javascript">
-|## Custom Floating Filter Interface
-|
-|The interface for a custom filter component is as follows:
+|The interface for a custom floating filter component is as follows:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -41,7 +39,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-|### Custom Filter Parameters
+|### Custom Floating Filter Parameters
 |
 |The `init(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.floatingFilterComponentParams` property, these 
 |will be additionally added to the params object, overriding items of the same name if a name clash exists.

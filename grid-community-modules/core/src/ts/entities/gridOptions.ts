@@ -160,7 +160,6 @@ export interface GridOptions<TData = any> {
     // *** Accessories *** //
     /**
      * Specifies the status bar components to use in the status bar.
-     * @initial
      */
     statusBar?: { statusPanels: StatusPanelDef[]; };
     /**
@@ -764,7 +763,6 @@ export interface GridOptions<TData = any> {
     loadingOverlayComponent?: any;
     /**
      * Customise the parameters provided to the loading overlay component.
-     * @initial
      */
     loadingOverlayComponentParams?: any;
 
@@ -788,7 +786,6 @@ export interface GridOptions<TData = any> {
     noRowsOverlayComponent?: any;
     /**
      * Customise the parameters provided to the no rows overlay component.
-     * @initial
      */
     noRowsOverlayComponentParams?: any;
 
@@ -1545,6 +1542,16 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     initialState?: GridState;
+
+    /**
+     * **React only**.
+     * 
+     * If enabled, makes it easier to set up custom components.
+     * If disabled, custom components will either need to have methods declared imperatively,
+     * or the component props will not update reactively.
+     * @initial
+     */
+    reactiveCustomComponents?: boolean;
 
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *

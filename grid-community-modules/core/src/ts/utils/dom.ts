@@ -137,20 +137,20 @@ export function getElementSize(el: HTMLElement): {
     } = window.getComputedStyle(el);
 
     return {
-        height: parseFloat(height),
-        width: parseFloat(width),
-        borderTopWidth: parseFloat(borderTopWidth),
-        borderRightWidth: parseFloat(borderRightWidth),
-        borderBottomWidth: parseFloat(borderBottomWidth),
-        borderLeftWidth: parseFloat(borderLeftWidth),
-        paddingTop: parseFloat(paddingTop),
-        paddingRight: parseFloat(paddingRight),
-        paddingBottom: parseFloat(paddingBottom),
-        paddingLeft: parseFloat(paddingLeft),
-        marginTop: parseFloat(marginTop),
-        marginRight: parseFloat(marginRight),
-        marginBottom: parseFloat(marginBottom),
-        marginLeft: parseFloat(marginLeft),
+        height: parseFloat(height || '0'),
+        width: parseFloat(width || '0'),
+        borderTopWidth: parseFloat(borderTopWidth || '0'),
+        borderRightWidth: parseFloat(borderRightWidth || '0'),
+        borderBottomWidth: parseFloat(borderBottomWidth || '0'),
+        borderLeftWidth: parseFloat(borderLeftWidth || '0'),
+        paddingTop: parseFloat(paddingTop || '0'),
+        paddingRight: parseFloat(paddingRight || '0'),
+        paddingBottom: parseFloat(paddingBottom || '0'),
+        paddingLeft: parseFloat(paddingLeft || '0'),
+        marginTop: parseFloat(marginTop || '0'),
+        marginRight: parseFloat(marginRight || '0'),
+        marginBottom: parseFloat(marginBottom || '0'),
+        marginLeft: parseFloat(marginLeft || '0'),
         boxSizing
     };
 }
@@ -271,13 +271,17 @@ export function removeFromParent(node: Element | null) {
     }
 }
 
+export function isInDOM(element: HTMLElement): boolean {
+    return !!element.offsetParent;
+}
+
 export function isVisible(element: HTMLElement) {
     const el = element as any;
     if (el.checkVisibility) {
         return el.checkVisibility({ checkVisibilityCSS: true })
     }
 
-    const isHidden = !element.offsetParent || window.getComputedStyle(element).visibility !== 'visible';
+    const isHidden = !isInDOM(element) || window.getComputedStyle(element).visibility !== 'visible';
     return !isHidden;
 }
 

@@ -57,8 +57,16 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
     showParentFilter: () => void;
 }
 
-export interface IFloatingFilter<P = any> {
+export interface BaseFloatingFilter {
+    /**
+     * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
+     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
+     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
+     */
+    afterGuiAttached?(): void;
+}
 
+export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
     /**
      * Gets called every time the parent filter changes.
      * Your floating filter would typically refresh its UI to reflect the new filter state.
@@ -67,15 +75,11 @@ export interface IFloatingFilter<P = any> {
      */
     onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null): void;
 
-    /**
-     * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
-     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
-     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
-     */
-    afterGuiAttached?(): void;
+    // /** @deprecated v31.1 - Use `refresh` instead */
+    onParamsUpdated?(params: IFloatingFilterParams<P>): void;
 
     /** A hook to perform any necessary operations when the column definition is updated. */
-    onParamsUpdated?(params: IFloatingFilterParams<P>): void;
+    refresh?(params: IFloatingFilterParams<P>): void;
 }
 
 export interface IFloatingFilterComp<P = any> extends IFloatingFilter<P>, IComponent<IFloatingFilterParams<P>> {

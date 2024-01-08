@@ -8,7 +8,7 @@ export class MedalCellRenderer implements ICellRendererComp {
     init(params: ICellRendererParams<IOlympicData, number>) {
         this.params = params;
         this.eGui = document.createElement('span');
-        this.eGui.innerHTML = new Array(params.value!).fill('#').join('');
+        this.eGui.textContent = new Array(params.value!).fill('#').join('');
     }
 
     getGui() {

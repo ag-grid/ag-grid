@@ -101,7 +101,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/ /react-data-grid/
     Redirect 301 /angular-grid/ /angular-data-grid/
     Redirect 301 /vue-grid/ /vue-data-grid/
-    Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/8-performance-hacks-for-javascript/
+    Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/
     Redirect 301 /ag-grid-angular-aot-dynamic-components/ https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845
     Redirect 301 /ag-grid-angular-connect-2016/ https://medium.com/ag-grid/were-gonna-need-a-bigger-boat-from-speaker-to-sponsor-with-ag-grid-cf5e01a2d9ba
     Redirect 301 /ag-grid-angular-systemjs/ /angular-data-grid/
@@ -407,7 +407,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/webpack/ /angular-data-grid/
     Redirect 301 /angular-data-grid/webpack/ /angular-data-grid/
     Redirect 301 /documentation/angular/ /angular-data-grid/
-    Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-data-grid/8-performance-hacks-for-javascript/
+    Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-data-grid/
     Redirect 301 /documentation/javascript/accessibility/ /javascript-data-grid/accessibility/
     Redirect 301 /documentation/javascript/accessing-data/ /javascript-data-grid/accessing-data/
     Redirect 301 /documentation/javascript/aggregation/ /javascript-data-grid/aggregation/
@@ -2060,6 +2060,11 @@ AddType text/javascript ts jsx
     RedirectMatch 301 "^/documentation/angular/charts.*" "https://charts.ag-grid.com/angular/quick-start/"
     RedirectMatch 301 "^/documentation/react/charts.*" "https://charts.ag-grid.com/react/quick-start/"
     RedirectMatch 301 "^/documentation/vue/charts.*" "https://charts.ag-grid.com/vue/quick-start/"
+
+    Redirect 301 /javascript-data-grid/component-types/ /javascript-data-grid/components/
+    Redirect 301 /angular-data-grid/component-types/ /angular-data-grid/components/
+    Redirect 301 /react-data-grid/component-types/ /react-data-grid/components/
+    Redirect 301 /vue-data-grid/component-types/ /vue-data-grid/components/
 
     Redirect 301 /cookies.php /cookies
     Redirect 301 /privacy.php /privacy

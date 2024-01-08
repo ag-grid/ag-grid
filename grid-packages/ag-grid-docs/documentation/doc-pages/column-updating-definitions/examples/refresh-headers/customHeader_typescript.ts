@@ -52,7 +52,7 @@ export class CustomHeader implements IHeaderComp {
     }
 
     updateHeaderNameText() {
-        this.eText.innerHTML = this.params.displayName;
+        this.eText.textContent = this.params.displayName;
     }
 
     onMenuClick() {

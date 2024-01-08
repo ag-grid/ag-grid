@@ -8,8 +8,6 @@
 }
 
 html {
-    --color-scheme: light;
-
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
@@ -18,14 +16,11 @@ html {
     line-height: var(--text-lh-base);
     font-weight: var(--text-regular);
     background-color: var(--color-bg-primary);
-    color: var(--color-fg-primary);
+    color: var(--color-text-primary);
     scroll-padding-top: var(--layout-scroll-offset);
+    color-scheme: var(--color-scheme);
 
     @media (min-width: $breakpoint-docs-nav-medium) {
         --header-nav-height: 59px;
-    }
-
-    #{$selector-darkmode} & {
-        color-scheme: dark;
     }
 }

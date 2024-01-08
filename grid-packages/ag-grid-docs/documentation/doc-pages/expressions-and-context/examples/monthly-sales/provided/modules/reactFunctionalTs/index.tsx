@@ -3,11 +3,11 @@
 
 import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps, CustomGroupCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
-import { ColDef, ColGroupDef, GridReadyEvent, ICellRendererParams, IGroupCellRendererParams } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridReadyEvent } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
@@ -27,7 +27,7 @@ const monthCellClassRules = {
 
 const yearToDateValueGetter = 'var total = 0; ctx.months.forEach( function(monthName, monthIndex) { if (monthIndex<=ctx.month) { total += data[monthName + "_act"]; } }); return total; ';
 
-const accountingCellRenderer = function (params: ICellRendererParams) {
+const accountingCellRenderer = function (params: CustomCellRendererProps) {
     if (params.value == null) {
         return '';
     }
@@ -160,7 +160,7 @@ const GridExample = () => {
             cellRenderer: 'agGroupCellRenderer',
             cellRendererParams: {
                 checkbox: true,
-            } as IGroupCellRendererParams,
+            } as CustomGroupCellRendererProps,
         }
     }, []);
 
@@ -183,7 +183,7 @@ const GridExample = () => {
         }
         // Mutate the context object in place
         context.current.month = newMonth;
-        document.querySelector('#monthName')!.innerHTML = monthNames[newMonth + 1];
+        document.querySelector('#monthName')!.textContent = monthNames[newMonth + 1];
         gridRef.current!.api.refreshClientSideRowModel('aggregate');
         gridRef.current!.api.refreshCells();
     }, [monthNames])

@@ -55,7 +55,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
     return (
         <div className={styles.toolbar}>
-            <div className={classnames(styles.controlsContainer, 'layout-page-max-width')}>
+            <div className={styles.controlsContainer}>
                 <div className={styles.controls}>
                     <label htmlFor="data-size">Data Size:</label>
                     <select id="data-size" onChange={onDataSizeChanged} value={dataSize}>

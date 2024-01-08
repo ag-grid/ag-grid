@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
-import GlobalContextConsumer from '../components/GlobalContext';
+import { useGlobalContext } from '../components/GlobalContext';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
 import { Icon } from '../components/Icon';
@@ -36,6 +36,7 @@ const Changelog = ({ location }) => {
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
     const autoSizeStrategy = useMemo(() => ({ type: 'fitGridWidth' }), []);
+    const { darkMode } = useGlobalContext();
 
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
@@ -288,30 +289,24 @@ const Changelog = ({ location }) => {
                         </span>
                     </div>
 
-                    <GlobalContextConsumer>
-                        {({ darkMode }) => {
-                            return (
-                                <Grid
-                                    gridHeight={'70.5vh'}
-                                    columnDefs={COLUMN_DEFS}
-                                    rowData={rowData}
-                                    defaultColDef={defaultColDef}
-                                    detailRowAutoHeight={true}
-                                    enableCellTextSelection={true}
-                                    detailCellRendererParams={detailCellRendererParams}
-                                    detailCellRenderer={DetailCellRenderer}
-                                    isRowMaster={isRowMaster}
-                                    masterDetail
-                                    autoSizeStrategy={autoSizeStrategy}
-                                    onGridReady={gridReady}
-                                    onFirstDataRendered={() => {
-                                        applyFixVersionFilter();
-                                    }}
-                                    theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
-                                ></Grid>
-                            );
+                    <Grid
+                        gridHeight={'70.5vh'}
+                        columnDefs={COLUMN_DEFS}
+                        rowData={rowData}
+                        defaultColDef={defaultColDef}
+                        detailRowAutoHeight={true}
+                        enableCellTextSelection={true}
+                        detailCellRendererParams={detailCellRendererParams}
+                        detailCellRenderer={DetailCellRenderer}
+                        isRowMaster={isRowMaster}
+                        masterDetail
+                        autoSizeStrategy={autoSizeStrategy}
+                        onGridReady={gridReady}
+                        onFirstDataRendered={() => {
+                            applyFixVersionFilter();
                         }}
-                    </GlobalContextConsumer>
+                        theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
+                    ></Grid>
                 </div>
             )}
         </>

@@ -166,9 +166,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     private setDisplayName(params: IHeaderParams): void {
         if (this.currentDisplayName != params.displayName) {
             this.currentDisplayName = params.displayName;
-            const displayNameSanitised = escapeString(this.currentDisplayName);
+            const displayNameSanitised = escapeString(this.currentDisplayName, true);
             if (this.eText) {
-                this.eText.innerHTML = displayNameSanitised!;
+                this.eText.textContent = displayNameSanitised!;
             }
         }
     }

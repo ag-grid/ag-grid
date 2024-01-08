@@ -51,6 +51,23 @@ export const Buttons: FunctionComponent = () => {
                     Button style none
                 </button>
             </div>
+
+            <div className={styles.buttonExamples}>
+                <label>Aria Disabled: </label>
+                <button disabled>Primary</button>
+                <button className="button-secondary" aria-disabled>
+                    Secondary
+                </button>
+                <button className="button-tertiary" aria-disabled>
+                    Tertiary
+                </button>
+                <button className="button-as-link" aria-disabled>
+                    Button as link
+                </button>
+                <button className="button-style-none" aria-disabled>
+                    Button style none
+                </button>
+            </div>
         </>
     );
 };

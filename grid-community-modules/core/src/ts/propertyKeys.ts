@@ -32,7 +32,6 @@ type CallbackKeys = KeysOfType<(any: AgGridCommon<any, any>) => any>;
 type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
 
 export const INITIAL_GRID_OPTION_KEYS = {
-    statusBar: true,
     enableBrowserTooltips: true,
     tooltipTrigger: true,
     tooltipMouseTrack: true,
@@ -72,10 +71,8 @@ export const INITIAL_GRID_OPTION_KEYS = {
     suppressPropertyNamesCheck: true,
     debug: true,
     loadingOverlayComponent: true,
-    loadingOverlayComponentParams: true,
     suppressLoadingOverlay: true,
     noRowsOverlayComponent: true,
-    noRowsOverlayComponentParams: true,
     paginationPageSizeSelector: true,
     paginateChildRows: true,
     pivotPanelShow: true,
@@ -122,6 +119,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     createChartContainer: true,
     getLocaleText: true,
     getRowId: true,
+    reactiveCustomComponents: true,
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
@@ -192,7 +190,7 @@ export class PropertyKeys {
         'maintainColumnOrder', 'groupMaintainOrder', 'columnHoverHighlight', 'readOnlyEdit', 'suppressRowVirtualisation', 'enableCellEditingOnBackspace',
         'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky', 'suppressCutToClipboard',
         'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter','enableAdvancedFilter', 'masterDetail', 'treeData',
-        'suppressGroupMaintainValueType'
+        'suppressGroupMaintainValueType', 'reactiveCustomComponents'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

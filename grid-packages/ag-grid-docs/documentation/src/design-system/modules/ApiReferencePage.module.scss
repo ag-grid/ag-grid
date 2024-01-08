@@ -5,17 +5,17 @@
 }
 
 .objectViewOuter {
-    width: calc(100% + var(--layout-gap) * 2);
-    margin-left: calc(var(--layout-gap) * -1);
+    width: calc(100% + var(--layout-horizontal-margins) * 2);
+    margin-left: calc(var(--layout-horizontal-margins) * -1);
 
     @media screen and (min-width: $breakpoint-options-medium) {
-        width: calc(var(--layout-width-4-12) + var(--layout-gap));
+        width: calc(var(--layout-width-4-12) + var(--layout-horizontal-margins));
         box-shadow: -1px 0 0 0 var(--color-border-primary);
         border-right: 1px solid var(--color-border-primary);
     }
 
     @media screen and (min-width: $breakpoint-options-large) {
-        width: calc(var(--layout-width-3-12) + var(--layout-gap));
+        width: calc(var(--layout-width-3-12) + var(--layout-horizontal-margins));
     }
 
     @media screen and (min-width: $breakpoint-options-extra-large) {

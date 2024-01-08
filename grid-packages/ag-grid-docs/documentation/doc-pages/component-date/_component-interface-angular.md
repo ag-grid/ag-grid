@@ -1,6 +1,4 @@
 <framework-specific-section frameworks="angular">
-|## Custom Date Interface
-|
 |The interface for a custom date component is as follows:
 </framework-specific-section>
 <framework-specific-section frameworks="angular">

@@ -6,12 +6,6 @@
     justify-content: space-between;
     gap: $spacing-size-2;
     width: 100%;
-    padding: $spacing-size-2 $spacing-size-2 $spacing-size-2 $spacing-size-4;
-    text-align: left;
-    font-weight: var(--text-bold);
-    color: var(--color-link);
-    background-color: transparent;
-    transition: color $transition-default-timing;
 
     &:hover {
         color: var(--color-link-hover);
@@ -20,7 +14,6 @@
     &:disabled {
         cursor: default;
         color: black;
-        background-color: var(--color-util-brand-100);
     }
 
     &:not(:disabled) {
@@ -32,9 +25,7 @@
         width: 20px;
         height: 20px;
         fill: var(--color-link);
-        transition:
-            fill $transition-default-timing,
-            transform $transition-default-timing;
+        transition: fill $transition-default-timing, transform $transition-default-timing;
     }
 
     #{$selector-darkmode} & {
@@ -82,7 +73,6 @@
 .showMoreLink {
     display: block;
     position: absolute;
-    font-size: var(--text-fs-lg);
     width: 100%;
     left: 0;
     bottom: 0;
@@ -111,5 +101,9 @@
 
 .versionLabel {
     font-weight: var(--text-regular);
-    color: var(--color-fg-secondary);
+    color: var(--color-button-primary-fg);
+
+    [aria-disabled] & {
+        color: var(--color-button-secondary-fg);
+    }
 }

@@ -51,6 +51,15 @@ h2#{$selector-exclude-grid},
 h3#{$selector-exclude-grid},
 h4#{$selector-exclude-grid},
 h5#{$selector-exclude-grid},
+h6#{$selector-exclude-grid} {
+    color: var(--color-fg-primary);
+}
+
+h1#{$selector-exclude-grid},
+h2#{$selector-exclude-grid},
+h3#{$selector-exclude-grid},
+h4#{$selector-exclude-grid},
+h5#{$selector-exclude-grid},
 h6#{$selector-exclude-grid},
 b#{$selector-exclude-grid},
 strong#{$selector-exclude-grid},

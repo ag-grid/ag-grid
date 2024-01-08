@@ -16,7 +16,7 @@ class RowIndexRenderer implements ICellRendererComp {
   eGui!: HTMLDivElement;
   init(params: ICellRendererParams) {
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '' + params.node.rowIndex;
+    this.eGui.textContent = '' + params.node.rowIndex;
 
   }
   refresh(params: ICellRendererParams): boolean {

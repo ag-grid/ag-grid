@@ -6,7 +6,7 @@ import { CellPosition } from "../../entities/cellPositionUtils";
 import { Column, ColumnPinnedType } from "../../entities/column";
 import { RowClassParams, RowStyle } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
-import { DataChangedEvent, IRowNode, RowHighlightPosition } from "../../interfaces/iRowNode";
+import { DataChangedEvent, IRowNode, RowHighlightPosition, VerticalScrollPosition } from "../../interfaces/iRowNode";
 import { RowPosition } from "../../entities/rowPositionUtils";
 import { AgEventListener, CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowEvent, RowValueChangedEvent, VirtualRowRemovedEvent } from "../../events";
 import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
@@ -48,6 +48,7 @@ export interface IRowComp {
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
     setUserStyles(styles: RowStyle | undefined): void;
+    refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean;
 }
 
 interface RowGui {
@@ -674,21 +675,7 @@ export class RowCtrl extends BeanStub {
         const tryRefresh = (gui: RowGui | undefined, pinned: ColumnPinnedType): boolean => {
             if (!gui) { return true; } // no refresh needed
 
-            const cellRenderer = gui.rowComp.getFullWidthCellRenderer();
-
-            // no cell renderer, either means comp not yet ready, or comp ready but now reference
-            // to it (happens in react when comp is stateless). if comp not ready, we don't need to
-            // refresh, however we don't know which one, so we refresh to cover the case where it's
-            // react comp without reference so need to force a refresh
-            if (!cellRenderer) { return false; }
-
-            // no refresh method present, so can't refresh, hard refresh needed
-            if (!cellRenderer.refresh) { return false; }
-
-            const params = this.createFullWidthParams(gui.element, pinned);
-            const refreshSucceeded = cellRenderer.refresh(params);
-
-            return refreshSucceeded;
+            return gui.rowComp.refreshFullWidth(() => this.createFullWidthParams(gui.element, pinned));
         };
 
         const fullWidthSuccess = tryRefresh(this.fullWidthGui, null);
@@ -1389,9 +1376,8 @@ export class RowCtrl extends BeanStub {
     // otherwise the row would move so fast, it would appear to disappear. so this method
     // moves the row closer to the viewport if it is far away, so the row slide in / out
     // at a speed the user can see.
-    public roundRowTopToBounds(rowTop: number): number {
-        const gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
-        const range = gridBodyCon.getScrollFeature().getVScrollPosition();
+    private roundRowTopToBounds(rowTop: number): number {
+        const range = this.beans.ctrlsService.getGridBodyCtrl().getScrollFeature().getApproximateVScollPosition();
         const minPixel = this.applyPaginationOffset(range.top, true) - 100;
         const maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
 
@@ -1451,14 +1437,24 @@ export class RowCtrl extends BeanStub {
     }
 
     // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
-    public destroyFirstPass(): void {
+    public destroyFirstPass(suppressAnimation: boolean = false): void {
         this.active = false;
 
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
 
-        if (this.gridOptionsService.isAnimateRows()) {
-            this.setupRemoveAnimation();
+        if (!suppressAnimation && this.gridOptionsService.isAnimateRows() && !this.isSticky()) {
+            const rowStillVisibleJustNotInViewport = this.rowNode.rowTop != null;
+            if (rowStillVisibleJustNotInViewport) {
+                // if the row is not rendered, but in viewport, it means it has moved,
+                // so we animate the row out. if the new location is very far away,
+                // the animation will be so fast the row will look like it's just disappeared,
+                // so instead we animate to a position just outside the viewport.
+                const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop!);
+                this.setRowTop(rowTop);
+            } else {
+                this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', true));
+            }
         }
 
         this.rowNode.setHovered(false);
@@ -1468,23 +1464,6 @@ export class RowCtrl extends BeanStub {
         this.dispatchEvent(event);
         this.beans.eventService.dispatchEvent(event);
         super.destroy();
-    }
-
-    private setupRemoveAnimation(): void {
-        // we don't animate sticky rows
-        if (this.isSticky()) { return; }
-
-        const rowStillVisibleJustNotInViewport = this.rowNode.rowTop != null;
-        if (rowStillVisibleJustNotInViewport) {
-            // if the row is not rendered, but in viewport, it means it has moved,
-            // so we animate the row out. if the new location is very far away,
-            // the animation will be so fast the row will look like it's just disappeared,
-            // so instead we animate to a position just outside the viewport.
-            const rowTop = this.roundRowTopToBounds(this.rowNode.rowTop!);
-            this.setRowTop(rowTop);
-        } else {
-            this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass('ag-opacity-zero', true));
-        }
     }
 
     public destroySecondPass(): void {

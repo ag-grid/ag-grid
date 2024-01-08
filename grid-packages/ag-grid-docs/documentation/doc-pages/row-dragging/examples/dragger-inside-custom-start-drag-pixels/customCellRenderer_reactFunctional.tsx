@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-const CustomCellRenderer = (props: ICellRendererParams) => {
+const CustomCellRenderer = (props: CustomCellRendererProps) => {
     const myRef = useRef(null);
 
     useEffect(() => {

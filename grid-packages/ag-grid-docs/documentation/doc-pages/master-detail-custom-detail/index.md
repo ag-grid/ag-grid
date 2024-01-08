@@ -65,15 +65,24 @@ this.masterGridApi.removeDetailGridInfo(detailId);
 
 ## Refreshing
 
-When data is updated in the grid using [Transaction Updates](/data-update-transactions/), the grid will call refresh on all Detail Cell Renderers.
+<framework-specific-section frameworks="javascript,angular,vue">
+|When data is updated in the grid using [Transaction Updates](/data-update-transactions/), the grid will call refresh on all Detail Cell Renderers.
+|
+|It is up to the Detail Cell Renderer whether it wants to act on the refresh or not. If the `refresh()` method returns `true`, the grid will assume the Detail Cell Renderer has refreshed successfully and nothing more will happen. However if `false` is returned, the grid will destroy the Detail Cell Renderer and re-create it again.
+|
+|This pattern is similar to how refresh works for normal grid Cell Renderers.
+|
+|The example below shows how components can refresh on updates. The example refreshes the first row every one second. The `refresh()` method gets called on the corresponding Detail Cell Renderer after the transaction is applied. The Detail Cell Renderer refresh method reads the latest call count from the params, and the last updated time is also changed.
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+|If the grid option `reactiveCustomComponents` is enabled, when data is updated in the grid using [Transaction Updates](/data-update-transactions/), Detail Cell Renderers will be refreshed with updated props.
+|
+|If `reactiveCustomComponents` is not enabled, Detail Cell Renderers will be destroyed and recreated on update, unless the `refresh()` method is implemented (via `useImperativeHandle`) and returns `true`.
+|
+|The example below demonstrates Detail Cell Renderers refreshing when `reactiveCustomComponents` is enabled.
+</framework-specific-section>
 
-It is up to the Detail Cell Renderer whether it wants to act on the refresh or not. If the `refresh()` method returns `true`, the grid will assume the Detail Cell Renderer has refreshed successfully and nothing more will happen. However if `false` is returned, the grid will destroy the Detail Cell Renderer and re-create it again.
-
-This pattern is similar to how refresh works for normal grid Cell Renderers.
-
-The example below shows how components can refresh on updates. The example refreshes the first row every one second. The `refresh()` method gets called on the corresponding Detail Cell Renderer after the transaction is applied. The Detail Cell Renderer refresh method reads the latest call count from the params, and the last updated time is also changed.
-
-<grid-example title='Custom Detail with Refresh' name='custom-detail-with-refresh' type='generated' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Custom Detail with Refresh' name='custom-detail-with-refresh' type='mixed' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
 ## Keyboard Navigation
 

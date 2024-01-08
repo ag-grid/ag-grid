@@ -587,6 +587,9 @@
             "more": {
                 "name": "Custom Chart Themes",
                 "url": "/integrated-charts-customisation/#custom-chart-themes"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": ["AgChartThemeDefinition"]                
             }
         },
         "chartThemeOverrides": {
@@ -783,7 +786,13 @@
                 "url": "/change-detection/#triggering-value-change-detection"
             }
         },
-        "debug": {}
+        "debug": {},
+        "reactiveCustomComponents": {
+            "more": {
+                "name": "Registering Custom Components",
+                "url": "/components/#registering-custom-components"
+            }
+        }
     },
     "overlays": {
         "meta": {
