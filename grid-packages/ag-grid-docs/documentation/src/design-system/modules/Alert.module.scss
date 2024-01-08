@@ -16,7 +16,6 @@
 
     #{$selector-darkmode} & {
         background-color: color-mix(in srgb, var(--color-util-brand-50), var(--color-bg-primary) 60%);
-
     }
 
     :global(.icon) {
@@ -53,4 +52,9 @@
     :global(.icon) {
         fill: var(--color-util-warning-700);
     }
+}
+
+.alert a {
+    font-weight: var(--text-semibold);
+    text-decoration: underline;
 }

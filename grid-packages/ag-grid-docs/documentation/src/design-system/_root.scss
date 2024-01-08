@@ -10,7 +10,11 @@
     --layout-scroll-offset: calc(var(--layout-site-header-height) + 13px);
 
     @media screen and (min-width: $breakpoint-horizontal-margins-large) {
-        --layout-horizontal-margins: #{$spacing-size-12};
+        --layout-horizontal-margins: #{$spacing-size-5};
+    }
+    // mobile breakpoint horizontal columns
+    @media screen and (max-width: $breakpoint-horizontal-margins-large) {
+        --layout-horizontal-margins: #{$spacing-size-6};
     }
 
     --layout-width-1-4: calc((100% - var(--layout-gap) * (4 / 1 - 1)) / 4 * 1);
@@ -268,7 +272,7 @@ html[data-dark-mode='true'] {
     --color-scheme: dark;
 
     // Background colors
-    --color-bg-primary: color-mix(in srgb,var(--color-gray-800), var(--color-gray-900) 50%);
+    --color-bg-primary: color-mix(in srgb, var(--color-gray-800), var(--color-gray-900) 50%);
     --color-bg-secondary: var(--color-gray-700);
     --color-bg-tertiary: var(--color-gray-800);
     --color-bg-brand-solid: var(--color-brand-500);

@@ -20,7 +20,9 @@
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
-        width: var(--layout-width-8-12);
+        width: var(--layout-width-6-12);
+        margin-right: calc(var(--layout-width-1-12) + var(--layout-gap));
+        margin-left: calc(var(--layout-width-1-12) + var(--layout-gap));
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
@@ -68,6 +70,10 @@
 
     :global(.alert) {
         margin-bottom: $spacing-size-4;
+    }
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        padding-top: var(--spacing-size-5);
     }
 }
 

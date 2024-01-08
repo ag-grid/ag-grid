@@ -33,7 +33,7 @@
         @supports (position: sticky) {
             margin-right: calc(var(--layout-horizontal-margins) * -1); // Improve scrollbar position
             padding-top: $spacing-size-8;
-            padding-right: var(--layout-horizontal-margins); // Improve scrollbar position
+            padding-right: $spacing-size-16;
             padding-bottom: $spacing-size-16;
             position: sticky;
             top: var(--layout-site-header-height);
