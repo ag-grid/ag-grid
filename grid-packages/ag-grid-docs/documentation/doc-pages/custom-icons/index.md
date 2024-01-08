@@ -71,14 +71,14 @@ This example demonstrates using the `--ag-icon-image-icon-name` variables to set
 ```css
 .ag-theme-quartz {
   /* hide all font icons */
-  --ag-icon-font-color: transparent;
+  --ag-icon-font-display: none;
   /* provide a SVG icon */
   --ag-icon-image-aggregation: url("https://www.ag-grid.com/example-assets/svg-icons/aggregation.svg");
   --ag-icon-image-arrows: url("https://www.ag-grid.com/example-assets/svg-icons/arrows.svg");
   --ag-icon-image-asc: url("https://www.ag-grid.com/example-assets/svg-icons/asc.svg");
-  /* ... and so on - because --ag-icon-font-color:transparent hides all
+  /* ... and so on - because --ag-icon-font-display: none; hides all
      icons, an image must be provided for every one. If you only wanted
-     to replace some icons, use --ag-icon-font-color-{icon-name} */
+     to replace some icons, use --ag-icon-font-display-{icon-name} */
 }
 ```
 
