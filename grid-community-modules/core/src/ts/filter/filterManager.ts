@@ -564,7 +564,7 @@ export class FilterManager extends BeanStub {
         if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
             defaultFilter = 'agSetColumnFilter';
         } else {
-            const cellDataType = column.getColDef().cellDataType;
+            const cellDataType = this.dataTypeService.getBaseDataType(column);
             if (cellDataType === 'number') {
                 defaultFilter = 'agNumberColumnFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
@@ -581,7 +581,7 @@ export class FilterManager extends BeanStub {
         if (ModuleRegistry.__isRegistered(ModuleNames.SetFilterModule, this.context.getGridId())) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
         } else {
-            const cellDataType = column.getColDef().cellDataType;
+            const cellDataType = this.dataTypeService.getBaseDataType(column);
             if (cellDataType === 'number') {
                 defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
