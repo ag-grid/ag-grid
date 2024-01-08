@@ -3,7 +3,11 @@ import { CustomToolPanelProps } from '@ag-grid-community/react';
 
 const totalStyle = { paddingBottom: '15px' };
 
-export default (props: CustomToolPanelProps) => {
+export interface CustomStatsToolPanelProps extends CustomToolPanelProps {
+    title: string;
+}
+
+export default (props: CustomStatsToolPanelProps) => {
     const [numMedals, setNumMedals] = useState(0);
     const [numGold, setNumGold] = useState(0);
     const [numSilver, setNumSilver] = useState(0);
@@ -41,7 +45,7 @@ export default (props: CustomToolPanelProps) => {
     return (
         <div style={{ textAlign: "center" }}>
             <span>
-                <h2><i className="fa fa-calculator"></i> Custom Stats</h2>
+                <h2><i className="fa fa-calculator"></i> {props.title}</h2>
                 <dl style={{ fontSize: 'large', padding: '30px 40px 10px 30px' }}>
                     <dt style={totalStyle}>Total Medals: <b>{numMedals}</b></dt>
                     <dt style={totalStyle}>Total Gold: <b>{numGold}</b></dt>
