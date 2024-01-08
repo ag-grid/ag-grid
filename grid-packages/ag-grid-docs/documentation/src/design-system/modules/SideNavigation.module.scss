@@ -34,13 +34,13 @@
 
     > div {
         @supports (position: sticky) {
+            display: flex;
             margin-right: calc(var(--layout-horizontal-margins) * -1); // Improve scrollbar position
             padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
-            padding-right: $spacing-size-16;
-            padding-bottom: $spacing-size-16;
+            padding-right: $spacing-size-8;
             position: sticky;
             top: var(--layout-site-header-height);
-            max-height: calc(100vh - var(--layout-site-header-height) + #{$top-bar-height});
+            max-height: calc(100vh - var(--layout-site-header-height));
             overflow: hidden;
             overflow-y: auto;
         }
@@ -50,11 +50,17 @@
 .sideNav ul {
     --nav-line-color: var(--color-util-gray-300);
 
+    display: inline-flex;
     position: relative;
-    list-style: none;
-    padding-bottom: $spacing-size-12;
+    flex-direction: column;
+    margin-left: auto;
     padding-left: 0;
+    list-style: none;
     z-index: -2;
+
+    > li:last-child {
+        min-height: $spacing-size-48;
+    }
 
     #{$selector-darkmode} & {
         --nav-line-color: var(--color-border-primary);
