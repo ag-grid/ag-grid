@@ -1,5 +1,6 @@
 import React from 'react';
-import { ColGroupDef, CustomTooltipProps } from '@ag-grid-community/react'
+import { ColGroupDef } from '@ag-grid-community/core'
+import { CustomTooltipProps } from '@ag-grid-community/react'
 
 export default (props: CustomTooltipProps) => {
     const isHeader = props.rowIndex === undefined;
