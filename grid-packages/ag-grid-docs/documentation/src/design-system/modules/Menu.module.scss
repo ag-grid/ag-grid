@@ -56,6 +56,7 @@
 .menuInner {
     flex-basis: auto;
     flex-direction: column;
+    max-width: $spacing-size-64 + $spacing-size-4;
     padding-top: $spacing-size-8;
     padding-bottom: $spacing-size-16;
 
@@ -68,7 +69,6 @@
     }
 
     hr {
-        max-width: $spacing-size-64;
         height: 1px;
         margin-top: $spacing-size-4;
         margin-bottom: $spacing-size-4;

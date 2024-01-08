@@ -17,10 +17,12 @@
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         width: var(--layout-width-9-12);
         padding-top: $spacing-size-10;
+        padding-right: $spacing-size-3;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         width: var(--layout-width-6-12);
+        padding-right: 0;
     }
 
     h1,
