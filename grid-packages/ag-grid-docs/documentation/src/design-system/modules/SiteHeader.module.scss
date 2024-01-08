@@ -62,6 +62,13 @@ button.mobileNavButton {
     width: 100%;
     margin-bottom: $spacing-size-2;
 
+    :global(.icon) {
+        --icon-size: #{$spacing-size-6};
+
+        margin-left: $spacing-size-1;
+        margin-right: -$spacing-size-1;
+    }
+
     @media screen and (min-width: $breakpoint-docs-search-small) {
         width: auto;
         margin-right: $spacing-size-4;
