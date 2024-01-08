@@ -8,7 +8,7 @@
     display: none;
     width: calc(var(--layout-width-3-12) - var(--left-margin));
     margin-left: var(--left-margin);
-    padding-top: $spacing-size-8;
+    padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
     padding-bottom: $spacing-size-16;
     line-height: var(--text-lh-sm);
 
@@ -35,7 +35,7 @@
     > div {
         @supports (position: sticky) {
             margin-right: calc(var(--layout-horizontal-margins) * -1); // Improve scrollbar position
-            padding-top: $spacing-size-8;
+            padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
             padding-right: $spacing-size-16;
             padding-bottom: $spacing-size-16;
             position: sticky;
