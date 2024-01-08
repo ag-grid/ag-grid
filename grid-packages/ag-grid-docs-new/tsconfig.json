@@ -1,7 +1,24 @@
 {
-  "extends": "astro/tsconfigs/strict",
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react"
-  }
+    "extends": "astro/tsconfigs/strict",
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "react",
+
+        // Import aliases
+        "baseUrl": ".",
+        "paths": {
+            "@astro/*": ["src/astro/*"],
+            "@components/*": ["src/components/*"],
+            "@design-system/*": ["src/design-system/*"],
+            "@features/*": ["src/features/*"],
+            "@images/*": ["src/images/*"],
+            "@layouts/*": ["src/layouts/*"],
+            "@stores/*": ["src/stores/*"],
+            "@ag-grid-types": ["src/types/ag-grid.d.ts"],
+            "@utils/*": ["src/utils/*"],
+            "@constants": ["src/constants.ts"],
+            "ag-charts-community": ["../ag-charts-community/src/main.ts"],
+            "ag-charts-enterprise": ["../ag-charts-enterprise/src/main.ts"]
+        }
+    }
 }

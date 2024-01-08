@@ -1,0 +1,27 @@
+@use 'sass:meta';
+
+@use 'core' as *;
+
+@use 'root';
+@use 'base';
+@use 'layout';
+@use 'typography';
+@use 'color';
+@use 'interactions';
+
+@use 'elements/block';
+@use 'elements/inline';
+@use 'elements/button';
+@use 'elements/form-elements';
+@use 'elements/table';
+
+@use 'components/containers';
+@use 'components/code';
+
+.site-header {
+    @include meta.load-css('./modules/SiteHeader.module.scss');
+}
+
+.site-footer {
+    @include meta.load-css('./modules/Footer.module.scss');
+}
