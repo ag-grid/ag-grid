@@ -3,6 +3,8 @@
 :global(#docs-nav-collapser) {
     $top-bar-height: 58px;
 
+    --right-margin: #{$spacing-size-16};
+
     font-size: var(--text-fs-base);
     width: var(--layout-width-3-12);
 
@@ -30,7 +32,8 @@
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
-        width: var(--layout-width-2-12);
+        width: calc(var(--layout-width-3-12) - var(--right-margin));
+        margin-right: var(--right-margin);
     }
 }
 
@@ -74,9 +77,7 @@ button .menuIcon {
     bottom: 0.15em;
     margin-right: $spacing-size-1;
     opacity: 0.6666;
-    transition:
-        fill $transition-default-timing,
-        opacity $transition-default-timing;
+    transition: fill $transition-default-timing, opacity $transition-default-timing;
 }
 
 .activeMenuItem .menuIcon {
@@ -90,9 +91,7 @@ a :global(.icon).menuIcon {
     margin-bottom: $spacing-size-1;
     margin-right: $spacing-size-1;
     opacity: 0.75;
-    transition:
-        fill $transition-default-timing,
-        opacity $transition-default-timing;
+    transition: fill $transition-default-timing, opacity $transition-default-timing;
 
     #{$selector-darkmode} & {
         fill: var(--color-fg-secondary);
@@ -108,9 +107,7 @@ a :global(.icon).menuIcon {
     padding: 2px 10px;
     position: relative;
     text-decoration: none;
-    transition:
-        background-color 0.25s ease-in-out,
-        color 0.25s ease-in-out;
+    transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
     width: fit-content;
 
     &:hover {
