@@ -295,6 +295,9 @@ export class DragAndDropService extends BeanStub {
 
             this.lastDropTarget = dropTarget;
         } else if (dropTarget && dropTarget.onDragging) {
+            const newGhostIcon = this.lastDropTarget?.getIconName ? this.lastDropTarget.getIconName() : null;
+            this.setGhostIcon(newGhostIcon);
+
             const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
@@ -507,10 +510,8 @@ export class DragAndDropService extends BeanStub {
 
         // In order for getIconName() to retrieve the correct icon, we need to wait for the dragging to start.
         // We use timeout to wait for the next tick, so that onDragging() has been called at least once.
-        setTimeout(() => {
-            const newGhostIcon = this.lastDropTarget?.getIconName ? this.lastDropTarget.getIconName() : null;
-            this.setGhostIcon(newGhostIcon);
-        }, 0);
+        // setTimeout(() => {
+        // }, 0);
 
         const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
         let dragItemName = this.dragSource.dragItemName;
@@ -560,8 +561,6 @@ export class DragAndDropService extends BeanStub {
     }
 
     public setGhostIcon(iconName: string | null, shake = false): void {
-        clearElement(this.eGhostIcon);
-
         let eIcon: Element | null = null;
 
         if (!iconName) {
@@ -579,6 +578,12 @@ export class DragAndDropService extends BeanStub {
             case DragAndDropService.ICON_NOT_ALLOWED: eIcon = this.eDropNotAllowedIcon; break;
             case DragAndDropService.ICON_HIDE:        eIcon = this.eHideIcon; break;
         }
+
+        const iconUnchanged = eIcon == null ? !this.eGhostIcon.hasChildNodes() : this.eGhostIcon.contains(eIcon);
+        if (iconUnchanged) {
+            return;
+        }
+        clearElement(this.eGhostIcon);
 
         this.eGhostIcon.classList.toggle('ag-shake-left-to-right', shake);
 
