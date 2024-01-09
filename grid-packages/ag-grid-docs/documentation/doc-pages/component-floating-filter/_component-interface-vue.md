@@ -1,10 +1,8 @@
 <framework-specific-section frameworks="vue">
-|## Custom Floating Filter Interface
-|
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and
 |row values available to you via `this.params`.
 |
-|The interface for a custom filter component is as follows:
+|The interface for a custom floating filter component is as follows:
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
@@ -37,7 +35,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-|### Custom Filter Parameters
+|### Custom Floating Filter Parameters
 |
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and 
 |row values available to you via `this.params` - the interface for what is provided is documented below.  

@@ -3,9 +3,12 @@
 .sideNav {
     $top-bar-height: 8px;
 
+    --left-margin: #{$spacing-size-16};
+
     display: none;
-    width: var(--layout-width-3-12);
-    padding-top: $spacing-size-8;
+    width: calc(var(--layout-width-3-12) - var(--left-margin));
+    margin-left: var(--left-margin);
+    padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
     padding-bottom: $spacing-size-16;
     line-height: var(--text-lh-sm);
 
@@ -16,26 +19,17 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         display: block;
-        width: var(--layout-width-2-12);
-
-        :global(.noLeftMenu) & {
-            width: var(--layout-width-3-12);
-        }
-    }
-
-    @media screen and (min-width: $breakpoint-docs-nav-large) {
-        :global(.noLeftMenu) & {
-            width: var(--layout-width-2-12);
-        }
     }
 
     > div {
         @supports (position: sticky) {
-            padding-top: $spacing-size-8;
-            padding-bottom: $spacing-size-16;
+            display: flex;
+            margin-right: calc(var(--layout-horizontal-margins) * -1); // Improve scrollbar position
+            padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
+            padding-right: $spacing-size-8;
             position: sticky;
-            top: calc(var(--layout-site-header-height) + #{$top-bar-height});
-            max-height: calc(100vh - var(--layout-site-header-height) + #{$top-bar-height});
+            top: var(--layout-site-header-height);
+            max-height: calc(100vh - var(--layout-site-header-height));
             overflow: hidden;
             overflow-y: auto;
         }
@@ -45,12 +39,17 @@
 .sideNav ul {
     --nav-line-color: var(--color-util-gray-300);
 
+    display: inline-flex;
     position: relative;
-    list-style: none;
-    padding-top: $spacing-size-2;
-    padding-bottom: $spacing-size-12;
+    flex-direction: column;
+    margin-left: auto;
     padding-left: 0;
+    list-style: none;
     z-index: -2;
+
+    > li:last-child {
+        min-height: $spacing-size-48;
+    }
 
     #{$selector-darkmode} & {
         --nav-line-color: var(--color-border-primary);
@@ -79,7 +78,7 @@
     padding: 0;
     color: var(--color-util-gray-500);
     transition: color $transition-default-timing;
-    font-weight: var(--text-semibold);
+    font-weight: var(--text-regular);
     font-size: var(--text-fs-regular);
 
     #{$selector-darkmode} & {
@@ -113,21 +112,20 @@
         top: -$spacing-size-1;
         bottom: -$spacing-size-1;
         left: 0;
-        // border-left: 1px solid var(--nav-line-color);
         opacity: 0;
         z-index: -1;
-        transition: color 0.33s ease-in-out, border-color 0.33s ease-in-out, background-color 0.33s ease-in-out;
+        transition:
+            color 0.33s ease-in-out,
+            border-color 0.33s ease-in-out,
+            background-color 0.33s ease-in-out;
     }
 
     &:hover::before {
         opacity: 1;
-        // background-color: var(--hover-background);
     }
 
     &:global(.active)::before {
         opacity: 1;
-        // border-left-color: var(--active-border);
-        // background-color: var(--active-background);
     }
 }
 
@@ -136,9 +134,10 @@
 }
 
 .sideNav .level3 {
+    --item-gap: 0.5em;
+
     padding-top: $spacing-size-1;
     padding-bottom: $spacing-size-1;
-    --item-gap: 0.5em;
     font-weight: var(--text-regular);
 }
 
@@ -159,7 +158,7 @@
 .sideNav .level6 {
     --item-gap: 0.4375em;
 
-    font-size: var(--text-fs-xs);
+    font-size: var(--text-fs-base);
     opacity: 0.8;
 }
 

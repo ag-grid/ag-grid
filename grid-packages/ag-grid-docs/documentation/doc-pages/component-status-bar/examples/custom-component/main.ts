@@ -1,4 +1,4 @@
-import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, ColDef, GridOptions, IAggregationStatusPanelParams } from '@ag-grid-community/core';
 import { ClickableStatusBarComponent } from './clickableStatusBarComponent_typescript'
 import { CountStatusBarComponent } from './countStatusBarComponent_typescript'
 
@@ -51,7 +51,7 @@ const gridOptions: GridOptions = {
         statusPanel: 'agAggregationComponent',
         statusPanelParams: {
           aggFuncs: ['count', 'sum'],
-        },
+        } as IAggregationStatusPanelParams,
       },
     ],
   },

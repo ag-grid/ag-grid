@@ -41,58 +41,63 @@ function rainPerTenMmRenderer(params: ICellRendererParams) {
   return createImageSpan(rainPerTenMm, p2.rendererImage)
 }
 
-const columnDefs: ColDef[] = [
-  {
-    headerName: 'Month',
-    field: 'Month',
-    width: 75,
-    cellStyle: { backgroundColor: '#CC222244' },
-  },
-  {
-    headerName: 'Max Temp (˚C)',
-    field: 'Max temp (C)',
-    width: 120,
-    cellRenderer: deltaIndicator, // Function cell renderer
-  },
-  {
-    headerName: 'Min Temp (˚C)',
-    field: 'Min temp (C)',
-    width: 120,
-    cellRenderer: deltaIndicator, // Function cell renderer
-  },
-  {
-    headerName: 'Days of Air Frost',
-    field: 'Days of air frost (days)',
-    width: 233,
-    cellRenderer: DaysFrostRenderer, // Component Cell Renderer
-    cellRendererParams: {
-      rendererImage: 'frost.png', // Complementing the Cell Renderer parameters
-    },
-  },
-  {
-    headerName: 'Days Sunshine',
-    field: 'Sunshine (hours)',
-    width: 190,
-    cellRenderer: daysSunshineRenderer,
-    cellRendererParams: {
-      rendererImage: 'sun.png', // Complementing the Cell Renderer parameters
-    },
-  },
-  {
-    headerName: 'Rainfall (10mm)',
-    field: 'Rainfall (mm)',
-    width: 180,
-    cellRenderer: rainPerTenMmRenderer,
-    cellRendererParams: {
-      rendererImage: 'rain.png', // Complementing the Cell Renderer parameters
-    },
-  },
-]
-
 let gridApi: GridApi;
 
+let frostPrefix = false;
+
+function getColumnDefs() {
+  return [
+    {
+      headerName: 'Month',
+      field: 'Month',
+      width: 75,
+      cellStyle: { backgroundColor: '#CC222244' },
+    },
+    {
+      headerName: 'Max Temp (˚C)',
+      field: 'Max temp (C)',
+      width: 120,
+      cellRenderer: deltaIndicator, // Function cell renderer
+    },
+    {
+      headerName: 'Min Temp (˚C)',
+      field: 'Min temp (C)',
+      width: 120,
+      cellRenderer: deltaIndicator, // Function cell renderer
+    },
+    {
+      headerName: 'Days of Air Frost',
+      field: 'Days of air frost (days)',
+      width: 233,
+      cellRenderer: DaysFrostRenderer, // Component Cell Renderer
+      cellRendererParams: {
+        rendererImage: 'frost.png', // Complementing the Cell Renderer parameters
+        showPrefix: frostPrefix,
+      },
+    },
+    {
+      headerName: 'Days Sunshine',
+      field: 'Sunshine (hours)',
+      width: 190,
+      cellRenderer: daysSunshineRenderer,
+      cellRendererParams: {
+        rendererImage: 'sun.png', // Complementing the Cell Renderer parameters
+      },
+    },
+    {
+      headerName: 'Rainfall (10mm)',
+      field: 'Rainfall (mm)',
+      width: 180,
+      cellRenderer: rainPerTenMmRenderer,
+      cellRendererParams: {
+        rendererImage: 'rain.png', // Complementing the Cell Renderer parameters
+      },
+    },
+  ];
+}
+
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
+  columnDefs: getColumnDefs(),
   rowData: null,
   defaultColDef: {
     editable: true,
@@ -124,6 +129,11 @@ function frostierYear(extraDaysFrost: number) {
       rowNode.data['Days of air frost (days)'] + extraDaysFrost
     )
   })
+}
+
+function togglePrefix() {
+  frostPrefix = !frostPrefix;
+  gridApi.setGridOption('columnDefs', getColumnDefs());
 }
 
 // setup the grid after the page has finished loading

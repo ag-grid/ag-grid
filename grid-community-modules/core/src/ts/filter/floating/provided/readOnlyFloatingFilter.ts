@@ -39,7 +39,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     }
 
     public onParentModelChanged(parentModel: any): void {
-        if (!parentModel) {
+        if (parentModel == null) {
             this.eFloatingFilterText.setValue('');
             return;
         }
@@ -57,6 +57,10 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     }
 
     public onParamsUpdated(params: IFloatingFilterParams): void {
+        this.refresh(params);
+    }
+
+    public refresh(params: IFloatingFilterParams): void {
         this.init(params);
     }
 }

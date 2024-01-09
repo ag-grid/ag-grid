@@ -1,50 +1,47 @@
 <framework-specific-section frameworks="react">
+|To configure custom cell editors, first enable the grid option `reactiveCustomComponents`.
 |
-|When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
-|row values available to you via `props`.
-|
-|The editor interface is as follows:
-|
+|Custom cell editors components are controlled components, which receive a value as part of the props, and pass value updates back to the grid via the `onValueChange` callback. Note that the value is not set until editing stops.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet transform={false} language="ts">
-|interface ICellEditorReactComp {
-|
-|    // Mandatory - Return the final value - called by the grid once after editing is complete
-|    getValue(): any;
-|
-|    // Gets called once after initialised. If you return true, the editor will not be
-|    // used and the grid will continue editing. Use this to make a decision on editing
-|    // inside the init() function, eg maybe you want to only start editing if the user
-|    // hits a numeric key, but not a letter, if the editor is for numbers.
-|    isCancelBeforeStart?(): boolean;
-|
-|    // Gets called once after editing is complete. If your return true, then the new
-|    // value will not be used. The editing will have no impact on the record. Use this
-|    // if you do not want a new value from your gui, i.e. you want to cancel the editing.
-|    isCancelAfterEnd?(): boolean;
-|
-|    // If doing full line edit, then gets called when focus should be put into the editor
-|    focusIn?(): boolean;
-|
-|    // If doing full line edit, then gets called when focus is leaving the editor
-|    focusOut?(): boolean;
+<snippet transform={false} language="jsx">
+|export default ({ value, onValueChange }) => {
+|    return (
+|        &lt;input
+|            type="text"
+|            value={value || ''}
+|            onChange={({ target: { value }}) => onValueChange(value === '' ? null : value)}
+|        />
+|    );
 |}
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<note>
-|Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the
-|grid will call (for example, the `getValue` callback from an Editor Component), then you'll need to expose them with
-|`forwardRef` & `useImperativeHandle`.
-|
-|Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
-</note>
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom cell editors, however this will involve declaring your React component imperatively, and is not recommend. See [Imperative Cell Editor Component](../component-cell-editor-imperative-react/).</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-The interface for values available on component creation (via `props`) is `ICellEditorParams`:
+<h2 id="custom-cell-editor-parameters">Custom Cell Editor Parameters</h2>
 </framework-specific-section>
 
+<framework-specific-section frameworks="react">
+|### Cell Editor Props
+|
+|The following props are passed to the custom cell editor components (`CustomCellEditorProps` interface). If custom props are provided via the `colDef.cellEditorParams property`, these will be additionally added to the props object, overriding items of the same name if a name clash exists.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomCellEditorProps' config='{ "description": "" }'></interface-documentation>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|### Cell Editor Callbacks
+|
+|The following callbacks can be passed to the `useGridCellEditor` hook (`CustomCellEditorCallbacks` interface). All the callbacks are optional, and the hook only needs to be used if callbacks are provided.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomCellEditorCallbacks' config='{ "description": "" }'></interface-documentation>
+</framework-specific-section>

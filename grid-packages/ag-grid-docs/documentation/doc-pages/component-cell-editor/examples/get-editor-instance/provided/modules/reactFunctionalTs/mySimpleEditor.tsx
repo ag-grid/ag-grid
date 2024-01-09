@@ -1,6 +1,5 @@
-import { ICellEditorParams } from '@ag-grid-community/core';
-import { ICellEditorReactComp } from '@ag-grid-community/react';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { CustomCellEditorProps, ICellEditorReactComp } from '@ag-grid-community/react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -9,53 +8,47 @@ export interface MySimpleInterface extends ICellEditorReactComp {
     myCustomFunction(): { rowIndex: number, colId: string };
 }
 
-export default forwardRef((props: ICellEditorParams, ref) => {
-    const getInitialValue = (props: ICellEditorParams) => {
-        let startValue = props.value;
+export default forwardRef(({ value, onValueChange, eventKey, rowIndex, column }: CustomCellEditorProps, ref) => {
+    const updateValue = (val: string) => {
+        onValueChange(val === '' ? null : val);
+    };
 
-        const eventKey = props.eventKey;
-        const isBackspace = eventKey === KEY_BACKSPACE;
+    useEffect(() => {
+        let startValue;
 
-        if (isBackspace) {
+        if (eventKey === KEY_BACKSPACE) {
             startValue = '';
         } else if (eventKey && eventKey.length === 1) {
             startValue = eventKey;
+        } else {
+            startValue = value;
+        }
+        if (startValue == null) {
+            startValue = '';
         }
 
-        if (startValue !== null && startValue !== undefined) {
-            return startValue;
-        }
+        updateValue(startValue);
 
-        return '';
-    }
-
-    const [value, setValue] = useState(getInitialValue(props));
-    const refInput = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        refInput.current!.focus();
+        refInput.current?.focus();
     }, []);
 
+    const refInput = useRef<HTMLInputElement>(null);
 
     useImperativeHandle(ref, () => {
         return {
-            getValue() {
-                return value;
-            },
-
             myCustomFunction() {
                 return {
-                    rowIndex: props.rowIndex,
-                    colId: props.column.getId()
+                    rowIndex: rowIndex,
+                    colId: column.getId()
                 };
             }
         };
     });
 
     return (
-        <input value={value}
+        <input value={value || ''}
             ref={refInput}
-            onChange={event => setValue(event.target.value)}
+            onChange={(event) => updateValue(event.target.value)}
             className="my-simple-editor" />
     );
 })

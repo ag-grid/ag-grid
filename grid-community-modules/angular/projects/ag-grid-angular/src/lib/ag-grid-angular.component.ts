@@ -339,7 +339,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     // @START@
     /** Specifies the status bar components to use in the status bar.
-         * @initial
          */
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     /** Specifies the side bar components.
@@ -798,7 +797,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public loadingOverlayComponent: any = undefined;
     /** Customise the parameters provided to the loading overlay component.
-         * @initial
          */
     @Input() public loadingOverlayComponentParams: any = undefined;
     /** Disables the 'loading' overlay.
@@ -815,7 +813,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public noRowsOverlayComponent: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.
-         * @initial
          */
     @Input() public noRowsOverlayComponentParams: any = undefined;
     /** Disables the 'no rows' overlay.

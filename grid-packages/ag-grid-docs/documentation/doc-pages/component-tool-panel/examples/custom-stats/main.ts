@@ -48,6 +48,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         labelKey: 'customStats',
         iconKey: 'custom-stats',
         toolPanel: CustomStatsToolPanel,
+        toolPanelParams: {
+          title: 'Custom Stats'
+        },
       },
     ],
     defaultToolPanel: 'customStats',

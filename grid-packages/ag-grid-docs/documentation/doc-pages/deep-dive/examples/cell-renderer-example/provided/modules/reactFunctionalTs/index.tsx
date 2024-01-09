@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react'; // React Grid Logic
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react'; // React Grid Logic
 import "@ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "@ag-grid-community/styles/ag-theme-quartz.css"; // Theme
-import { ColDef, ICellRendererParams, ModuleRegistry, ValueFormatterParams } from '@ag-grid-community/core';
+import { ColDef, ModuleRegistry, ValueFormatterParams } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Custom Cell Renderer (Display logos based on cell value)
-const CompanyLogoRenderer = (params: ICellRendererParams) => (
+const CompanyLogoRenderer = (params: CustomCellRendererProps) => (
   <span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{params.value && <img alt={`${params.value} Flag`} src={`https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}<p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{params.value}</p></span>
 );
 

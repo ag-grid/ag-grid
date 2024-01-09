@@ -1,6 +1,4 @@
 <framework-specific-section frameworks="vue">
-|## Custom Filter Interface
-|
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
 |row values available to you via `this.params`.
 |
@@ -85,14 +83,4 @@
 |    afterGuiDetached?(): void;
 |}
 </snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-|### Custom Filter Parameters
-|
-|When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and 
-|row values available to you via `this.params` - the interface for what is provided is documented below.  
-|
-|If custom params are provided via the `colDef.filterParams` property, these
-|will be additionally added to the params object, overriding items of the same name if a name clash exists.
 </framework-specific-section>

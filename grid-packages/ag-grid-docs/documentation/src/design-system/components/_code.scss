@@ -32,15 +32,15 @@ pre.code code {
 pre.code {
     --comment-color: #5d6376;
     --tag-color: #984f4e;
-    --string-color: #0087bf;
+    --string-color: #0E4491;
     --punctuation-color: #393a34;
     --keyword-color: #b31ea7;
-    --symbol-color: #0087bf;
-    --function-color: #2d7df7;
+    --symbol-color: #0E4491;
+    --function-color: #393a34;
     --deleted-color: #f54946;
-    --selector-color: #00009f;
+    --selector-color: #0E4491;
     --important-color: #e90;
-    --class-name-color: #2b91af;
+    --class-name-color: #0E4491;
     --property-color: #2ea248;
 
     position: relative;
@@ -76,7 +76,7 @@ pre.code > code {
     margin-bottom: -6px;
     padding: $vertical-padding $spacing-size-4;
     font-size: 15px;
-    background-color: var(--color-bg-secondary);
+    background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
     background-size: 3em 3em;
     background-origin: content-box;
     background-attachment: local;

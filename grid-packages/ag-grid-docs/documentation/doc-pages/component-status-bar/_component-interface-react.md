@@ -1,8 +1,5 @@
 <framework-specific-section frameworks="react">
-|## Status Bar Panel Interface
+|To configure custom status bar panels, first enable the grid option `reactiveCustomComponents`.
 |
-|Any valid React component can be a status bar component. 
-|
-|When a status bar component is instantiated then the following will be made available on `props`:
-|
+|When a status bar component is instantiated then the following will be made available on `props`.
 </framework-specific-section>

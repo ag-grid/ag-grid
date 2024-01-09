@@ -1,6 +1,4 @@
 <framework-specific-section frameworks="javascript">
-|## Status Bar Panel Interface
-|
 |Implement this interface to create a status bar component.
 </framework-specific-section>
 
@@ -23,5 +21,3 @@
 <framework-specific-section frameworks="javascript">
 |The method init(params) takes a params object with the interface `IStatusPanelParams`.
 </framework-specific-section>
-
-

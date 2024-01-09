@@ -2,24 +2,29 @@ import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnEventType } from "../events";
 import { IComponent } from "./iComponent";
 import { AgGridCommon } from "./iCommon";
+import { ColumnToolPanelState } from "./gridState";
 
-export interface IToolPanelParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
     /** The tool-panel-specific initial state as provided in grid options if applicable */
-    initialState?: any;
+    initialState?: TState | undefined;
+}
+
+export interface IToolPanelParams<TData = any, TContext = any, TState = any> extends BaseToolPanelParams<TData, TContext, TState> {
     /** If tool panel is saving and restoring state, this should be called after the state is updated */
     onStateUpdated: () => void;
 }
 
-export interface IToolPanel {
-    refresh(): void;
+export interface IToolPanel<TData = any, TContext = any, TState = any> {
+    refresh(params: IToolPanelParams<TData, TContext, TState>): boolean | void;
 
     /** If saving and restoring state, this should return the current state */
-    getState?(): any;
+    getState?(): TState | undefined;
 }
 
-export interface IToolPanelComp extends IToolPanel, IComponent<IToolPanelParams> { }
+export interface IToolPanelComp<TData = any, TContext = any, TState = any>
+    extends IToolPanel<TData, TContext, TState>, IComponent<IToolPanelParams<TData, TContext, TState>> { }
 
-export interface ToolPanelColumnCompParams extends IToolPanelParams {
+export interface ToolPanelColumnCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, ColumnToolPanelState> {
     /** Suppress Column Move */
     suppressColumnMove: boolean;
     /** Suppress Row Groups section */

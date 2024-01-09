@@ -1,11 +1,11 @@
 import React from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
 function removeSpaces(str: string) {
     return str ? str.replace(/\s/g, '') : str
 }
 
-export default (props: ICellRendererParams) => (
+export default (props: CustomCellRendererProps) => (
     <React.Fragment>
         {(props.value) === '(Select All)'
             ? <div>{props.value}</div>

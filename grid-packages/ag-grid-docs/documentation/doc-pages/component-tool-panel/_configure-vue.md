@@ -9,6 +9,9 @@
 |                labelKey: 'customStats',
 |                iconKey: 'custom-stats',
 |                toolPanel: 'customStatsToolPanel',
+|                toolPanelParams: {
+|                    // can pass any custom params here
+|                },
 |            }
 |        ]
 |    },

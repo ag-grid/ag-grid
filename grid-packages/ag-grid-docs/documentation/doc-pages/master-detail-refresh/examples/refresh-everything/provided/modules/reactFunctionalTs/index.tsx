@@ -2,10 +2,10 @@
 
 import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomDetailCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColDef, FirstDataRenderedEvent, GetRowIdParams, GridReadyEvent, ModuleRegistry, IDetailCellRendererParams, GetRowIdFunc } from '@ag-grid-community/core';
+import { ColDef, FirstDataRenderedEvent, GetRowIdParams, GridReadyEvent, ModuleRegistry, GetRowIdFunc } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -63,7 +63,7 @@ const GridExample = () => {
             getDetailRowData: (params) => {
                 params.successCallback(params.data.callRecords);
             },
-        } as IDetailCellRendererParams<IAccount, ICallRecord>
+        } as CustomDetailCellRendererProps<IAccount, ICallRecord>
     }, []);
 
 

@@ -1,7 +1,7 @@
 import React from 'react';
-import { ColumnPinnedType, ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default function DetailCellRenderer (props: ICellRendererParams) {
+export default function DetailCellRenderer (props: CustomCellRendererProps) {
       
     return (
       <h1 className="custom-detail" style={{ padding: '20px' }}>

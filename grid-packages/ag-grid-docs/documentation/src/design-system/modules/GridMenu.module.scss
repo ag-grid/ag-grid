@@ -2,8 +2,10 @@
 
 .menu {
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        --right-margin: #{$spacing-size-16};
+
         width: var(--layout-width-3-12);
-        padding-top: $spacing-size-8;
+        padding-top: $spacing-size-10;
         padding-bottom: $spacing-size-24;
 
         ul {
@@ -12,6 +14,7 @@
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
-        width: var(--layout-width-2-12);
+        width: calc(var(--layout-width-3-12) - var(--right-margin));
+        margin-right: var(--right-margin);
     }
 }
