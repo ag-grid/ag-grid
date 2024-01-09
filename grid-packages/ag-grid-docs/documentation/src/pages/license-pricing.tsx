@@ -102,7 +102,7 @@ export const LicensePricing = () => {
                             <a
                                 href="https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both"
                                 target='_blank'
-                                className={classnames(styles.buyTogetherConfigureButton, "button", "button-secondary")}
+                                className={classnames(styles.buyTogetherConfigureButton, "button")}
                             >
                                 Configure Now
                             </a>
