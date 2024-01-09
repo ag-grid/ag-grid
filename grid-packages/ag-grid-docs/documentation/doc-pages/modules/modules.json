@@ -43,7 +43,7 @@
   },
   {
     "title": "Vue Support",
-    "module": "@ag-grid-community/vue",
+    "module": "@ag-grid-community/vue3",
     "framework": true,
     "exported": "Vue Support",
     "vue": true
