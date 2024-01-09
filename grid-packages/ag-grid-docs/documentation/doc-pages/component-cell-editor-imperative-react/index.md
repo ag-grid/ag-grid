@@ -32,6 +32,14 @@ An example cell editor component looks like this:
 |});
 </snippet>
 
+The example below shows a few cell editors in action.
+
+- The `Doubling` Cell Editor will double a given input and reject values over a 1000
+- The `Mood` Cell Editor illustrates a slightly more complicated editor with values changed depending on the smiley chosen
+- The `Numeric` Cell Editor illustrates a slightly more complicated numeric editor to the `Doubling` editor, with increased input validation
+
+<grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370 }'></grid-example>
+
 ## Custom Cell Editor Interface
 
 The interface for a custom cell editor component is as follows:

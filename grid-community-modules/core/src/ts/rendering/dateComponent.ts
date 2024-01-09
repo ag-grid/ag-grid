@@ -14,9 +14,12 @@ export interface BaseDate {
     setInputAriaLabel?(placeholder: string): void;
 
     /**
-     * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
-     * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
-     * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
+     * Optional: A hook to perform any necessary operation just after
+     * the GUI for this component has been rendered on the screen.
+     * If a parent popup is closed and reopened (e.g. for filters),
+     * this method is called each time the component is shown.
+     * This is useful for any logic that requires attachment before executing,
+     * such as putting focus on a particular DOM element.
      */
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
@@ -31,7 +34,10 @@ export interface IDate extends BaseDate {
     // /** @deprecated v31.1 - Use `refresh` instead. */
     onParamsUpdated?(params: IDateParams): void;
 
-    /** When used in a floating filter, a hook to perform any necessary operations when the column definition is updated. */
+    /**
+     * When used in a floating filter, a hook to perform any necessary operations
+     * when the column definition is updated.
+     */
     refresh?(params: IDateParams): void;
 }
 

@@ -1,5 +1,23 @@
 <framework-specific-section frameworks="vue">
-|Any valid Vue component can be a tool panel component.
+|Any valid Vue component can be a tool panel component, however it is also possible to implement the following optional methods:
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="ts">
+|interface IToolPanel {
+|    // Called when `api.refreshToolPanel()` is called (with the current params).
+|    // Also called when the `sideBar` grid option is updated (with the updated params).
+|    // When `sideBar` is updated, if this method returns `true`,
+|    // then the grid will take no further action.
+|    // Otherwise, the tool panel will be destroyed and recreated.
+|    refresh(params: IToolPanelParams): boolean | void;
 |
+|    // If saving and restoring state, this should return the current state
+|    getState(): any;
+|}
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 |When a custom tool panel component is instantiated then the following will be made available on `this.params`:
 </framework-specific-section>

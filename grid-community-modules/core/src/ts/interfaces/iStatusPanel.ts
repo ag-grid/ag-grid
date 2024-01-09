@@ -21,6 +21,14 @@ export interface AggregationStatusPanelParams<TData = any, TContext = any> exten
 }
 
 export interface IStatusPanel<TData = any, TContext = any> {
+    /**
+     * Called when the `statusBar` grid option is updated.
+     * If this method returns `true`,
+     * the grid assumes that the status panel has updated with the latest params,
+     * and takes no further action.
+     * If this method returns `false`, or is not implemented,
+     * the grid will destroy and recreate the status panel.
+     */
     refresh?(params: IStatusPanelParams<TData, TContext>): boolean;
 }
 

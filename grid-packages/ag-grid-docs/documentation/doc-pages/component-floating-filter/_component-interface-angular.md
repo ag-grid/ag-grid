@@ -5,8 +5,9 @@
 <framework-specific-section frameworks="angular">
 <snippet transform={false} language="ts">
 |interface IFloatingFilterAngularComp&lt;ParentFilter = any> {
+|    // Mandatory methods
 |
-|    // Mandatory - The agInit(params) method is called on the floating filter once.
+|    // The agInit(params) method is called on the floating filter once.
 |    // See below for details on the parameters.
 |    agInit(params: IFloatingFilterParams&lt;ParentFilter>): void;
 |
@@ -16,6 +17,11 @@
 |    // from its getModel() method. The event is the FilterChangedEvent
 |    // that the grid fires.
 |    onParentModelChanged(parentModel: any, event: FilterChangedEvent): void;
+|
+|    // Optional methods
+|
+|    // A hook to perform any necessary operations when the column definition is updated.
+|    refresh?(params: IFloatingFilterParams): void;
 |
 |    // Gets called every time the popup is shown, after the GUI returned in
 |    // getGui is attached to the DOM. If the filter popup is closed and re-opened, this method is

@@ -51,6 +51,10 @@ An example filter component looks like this:
 |});
 </snippet>
 
+The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the second is on the `Year` column with preset options.
+
+<grid-example title='Filter Component' name='custom-filter' type='mixed'></grid-example>
+
 ## Custom Filter Interface
 
 The interface for a custom filter component is as follows:

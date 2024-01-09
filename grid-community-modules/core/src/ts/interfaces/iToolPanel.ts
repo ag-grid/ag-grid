@@ -15,6 +15,13 @@ export interface IToolPanelParams<TData = any, TContext = any, TState = any> ext
 }
 
 export interface IToolPanel<TData = any, TContext = any, TState = any> {
+    /**
+     * Called when `api.refreshToolPanel()` is called (with the current params).
+     * Also called when the `sideBar` grid option is updated (with the updated params).
+     * When `sideBar` is updated, if this method returns `true`,
+     * then the grid will take no further action.
+     * Otherwise, the tool panel will be destroyed and recreated.
+     */
     refresh(params: IToolPanelParams<TData, TContext, TState>): boolean | void;
 
     /** If saving and restoring state, this should return the current state */

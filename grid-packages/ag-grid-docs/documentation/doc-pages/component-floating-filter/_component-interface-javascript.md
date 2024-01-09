@@ -7,10 +7,6 @@
 |interface IFloatingFilterComp&lt;ParentFilter = any> {
 |    // Mandatory methods
 |
-|    // The init(params) method is called on the floating filter once.
-|    // See below for details on the parameters.
-|    init(params: IFloatingFilterParams&lt;ParentFilter>): void;
-|
 |    // Gets called every time the parent filter changes. Your floating
 |    // filter would typically refresh its UI to reflect the new filter
 |    // state. The provided parentModel is what the parent filter returns
@@ -22,6 +18,13 @@
 |    getGui(): HTMLElement;
 |
 |    // Optional methods
+|
+|    // The init(params) method is called on the floating filter once.
+|    // See below for details on the parameters.
+|    init(params: IFloatingFilterParams&lt;ParentFilter>): void;
+|
+|    // A hook to perform any necessary operations when the column definition is updated.
+|    refresh?(params: IFloatingFilterParams): void;
 |
 |    // Gets called every time the popup is shown, after the GUI returned in
 |    // getGui is attached to the DOM. If the filter popup is closed and re-opened, this method is
