@@ -2,7 +2,7 @@
 
 import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, getInstance } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
@@ -69,8 +69,9 @@ const GridExample = () => {
     }, []);
 
     const toggleStatusBarComp = useCallback(() => {
-        const statusBarComponent = gridRef.current.api.getStatusPanel('statusBarCompKey');
-        statusBarComponent.setVisible(!statusBarComponent.isVisible());
+        getInstance(gridRef.current.api.getStatusPanel('statusBarCompKey'), statusBarComponent => {
+            statusBarComponent.setVisible(!statusBarComponent.isVisible());
+        });
     }, [])
 
     return (

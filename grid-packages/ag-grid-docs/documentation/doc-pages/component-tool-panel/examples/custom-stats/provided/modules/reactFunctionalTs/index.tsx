@@ -6,7 +6,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
-import { ColDef, GridReadyEvent, SideBarDef } from '@ag-grid-community/core';
+import { CellValueChangedEvent, ColDef, GridReadyEvent, SideBarDef } from '@ag-grid-community/core';
 import CustomStatsToolPanel from './customStatsToolPanel';
 import { IOlympicData } from './interfaces'
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -88,6 +88,10 @@ const GridExample = () => {
             });
     }, []);
 
+    const onCellValueChanged = useCallback((params: CellValueChangedEvent) => {
+        params.api.refreshClientSideRowModel();
+    }, []);
+
     return (
         <div style={containerStyle}>
             <div style={{ "height": "100%", "boxSizing": "border-box" }}>
@@ -100,6 +104,7 @@ const GridExample = () => {
                         sideBar={sideBar}
                         reactiveCustomComponents
                         onGridReady={onGridReady}
+                        onCellValueChanged={onCellValueChanged}
                     />
                 </div>
             </div>

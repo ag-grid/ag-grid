@@ -84,6 +84,10 @@ const GridExample = () => {
             });
     }, []);
 
+    const onCellValueChanged = useCallback((params) => {
+        params.api.refreshClientSideRowModel();
+    }, []);
+
     return (
         <div style={containerStyle}>
             <div style={{ "height": "100%", "boxSizing": "border-box" }}>
@@ -96,6 +100,7 @@ const GridExample = () => {
                         sideBar={sideBar}
                         reactiveCustomComponents
                         onGridReady={onGridReady}
+                        onCellValueChanged={onCellValueChanged}
                     />
                 </div>
             </div>

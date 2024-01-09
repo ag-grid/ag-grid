@@ -67,7 +67,10 @@ export interface CustomFloatingFilterProps<P = IFilter, TData = any, TContext = 
 
 /** Props provided to custom tool panel components */
 export interface CustomToolPanelProps<TData = any, TContext = any, TState = any> extends BaseToolPanelParams<TData, TContext, TState> {
-    /** The current state for the component (used in grid state) */
+    /**
+     * The current state for the component (used in grid state).
+     * Initially set to the same value as `initialState`
+     */
     state: TState | undefined,
     /**
      * If using grid state, callback that should be called every time the state in the component changes.

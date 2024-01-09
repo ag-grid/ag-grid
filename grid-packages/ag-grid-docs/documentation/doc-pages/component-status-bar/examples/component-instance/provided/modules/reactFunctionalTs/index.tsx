@@ -2,11 +2,11 @@
 
 import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, getInstance } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
-import { ColDef, StatusPanelDef } from '@ag-grid-community/core';
+import { ColDef, IStatusPanel, StatusPanelDef } from '@ag-grid-community/core';
 import ClickableStatusBarComponent from './clickableStatusBarComponent';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -16,7 +16,7 @@ import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule])
 
-export interface IClickableStatusBar {
+export interface IClickableStatusBar extends IStatusPanel {
     setVisible(visible: boolean): void;
     isVisible(): boolean;
 }
@@ -77,8 +77,9 @@ const GridExample = () => {
     }, []);
 
     const toggleStatusBarComp = useCallback(() => {
-        const statusBarComponent = gridRef.current!.api.getStatusPanel<IClickableStatusBar>('statusBarCompKey')!;
-        statusBarComponent.setVisible(!statusBarComponent.isVisible());
+        getInstance(gridRef.current!.api.getStatusPanel<IClickableStatusBar>('statusBarCompKey')!, statusBarComponent => {
+            statusBarComponent!.setVisible(!statusBarComponent!.isVisible());
+        });
     }, [])
 
     return (

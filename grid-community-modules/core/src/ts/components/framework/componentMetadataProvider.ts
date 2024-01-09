@@ -83,7 +83,7 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             statusPanel: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['afterGuiAttached'],
+                optionalMethodList: ['refresh'],
             },
             toolPanel: {
                 mandatoryMethodList: [],
