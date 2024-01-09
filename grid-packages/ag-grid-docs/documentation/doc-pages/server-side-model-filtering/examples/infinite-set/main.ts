@@ -85,8 +85,9 @@ function onFilterChanged() {
     selectedCountries = selected
 
     console.log('Refreshing sports filter')
-    var sportFilter = gridApi!.getFilterInstance<ISetFilter>('sport');
-    sportFilter!.refreshFilterValues()
+    gridApi!.getFilterInstance<ISetFilter>('sport', sportFilter => {
+      sportFilter!.refreshFilterValues()
+    });
   }
 }
 

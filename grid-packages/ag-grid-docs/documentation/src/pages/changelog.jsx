@@ -40,10 +40,9 @@ const Changelog = ({ location }) => {
 
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
-             const versionsFilterComponent = gridApi.getFilterInstance('version');
-             const newModel = fixVersion === ALL_FIX_VERSIONS ? null : { values: [fixVersion], filterType: 'set' };
-             if(versionsFilterComponent.getModel() === newModel) return;
-             versionsFilterComponent.setModel(newModel).then(() => {;
+            const newModel = fixVersion === ALL_FIX_VERSIONS ? null : { values: [fixVersion], filterType: 'set' };
+            if (gridApi.getColumnFilterModel('version') === newModel) { return; };
+            gridApi.setColumnFilterModel('version', newModel).then(() => {
                 gridApi.onFilterChanged();
             });
         }

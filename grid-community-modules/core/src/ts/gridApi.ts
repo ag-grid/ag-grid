@@ -77,9 +77,8 @@ import {
     ExcelFactoryMode,
     IExcelCreator
 } from "./interfaces/iExcelCreator";
-import { IFilter } from "./interfaces/iFilter";
+import { FilterModel, IFilter } from "./interfaces/iFilter";
 import { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
-import { IImmutableService } from "./interfaces/iImmutableService";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
@@ -860,13 +859,30 @@ export class GridApi<TData = any> {
      * To always perform this synchronously, set `cellDataType = false` on the default column definition,
      * or provide cell data types for every column.
      */
-    public setFilterModel(model: any) {
+    public setFilterModel(model: FilterModel | null): void {
         this.filterManager.setFilterModel(model);
     }
 
     /** Gets the current state of all the column filters. Used for saving filter state. */
-    public getFilterModel(): { [key: string]: any; } {
+    public getFilterModel(): FilterModel {
         return this.filterManager.getFilterModel();
+    }
+
+    /**
+     * Gets the current filter model for the specified column.
+     * Will return `null` if no active filter.
+     */
+    public getColumnFilterModel<TModel>(column: string | Column): TModel | null {
+        return this.filterManager.getColumnFilterModel(column);
+    }
+
+    /**
+     * Sets the filter model for the specified column.
+     * Setting a `model` of `null` will reset the filter (make inactive).
+     * Must wait on the response before calling `api.onFilterChanged()`.
+     */
+    public setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void> {
+        return this.filterManager.setColumnFilterModel(column, model);
     }
 
     /** Returns the focused cell (or the last focused cell if the grid lost focus). */

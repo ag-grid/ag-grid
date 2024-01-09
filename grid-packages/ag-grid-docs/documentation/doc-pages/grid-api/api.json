@@ -424,6 +424,18 @@
                 "url": "/filter-api/#get--set-all-filter-models"
             }
         },
+        "getColumnFilterModel": {
+            "more": {
+                "name": "Get / Set Individual Filter Model",
+                "url": "/filter-api/#get--set-individual-filter-model"
+            }
+        },
+        "setColumnFilterModel": {
+            "more": {
+                "name": "Get / Set Individual Filter Model",
+                "url": "/filter-api/#get--set-individual-filter-model"
+            }
+        },
         "onFilterChanged": {
             "more": {
                 "name": "Re-running Grid Filtering",
