@@ -24,19 +24,19 @@
 |    init(params: IFloatingFilterParams&lt;ParentFilter>): void;
 |
 |    // A hook to perform any necessary operations when the column definition is updated.
-|    refresh?(params: IFloatingFilterParams): void;
+|    refresh(params: IFloatingFilterParams): void;
 |
 |    // Gets called every time the popup is shown, after the GUI returned in
 |    // getGui is attached to the DOM. If the filter popup is closed and re-opened, this method is
 |    // called each time the filter is shown. This is useful for any logic that requires attachment
 |    // before executing, such as putting focus on a particular DOM element. 
-|    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
+|    afterGuiAttached(params?: IAfterGuiAttachedParams): void;
 |
 |    // Gets called when the floating filter is destroyed. Like column headers,
 |    // the floating filter lifespan is only when the column is visible,
 |    // so they are destroyed if the column is made not visible or when a user
 |    // scrolls the column out of view with horizontal scrolling.
-|    destroy?(): void;
+|    destroy(): void;
 |}
 </snippet>
 </framework-specific-section>
