@@ -5,10 +5,14 @@
 }
 
 .docsPageTitle {
-    margin-bottom: $spacing-size-2;
+    margin-bottom: $spacing-size-4;
+
+    span:nth-of-type(2) {
+        letter-spacing: -1.2px;
+    }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        line-height: var(--text-lh-ultra-tight);
+        line-height: var(--line-height-ultra-tight);
     }
 
     > span {
@@ -31,6 +35,7 @@
 .pageTitleGroup {
     display: flex;
     flex-direction: column;
+    color: var(--color-fg-primary);
 }
 
 .headerFramework {
@@ -51,7 +56,7 @@
     bottom: 0.05em;
     font-size: var(--text-fs-xl);
     font-weight: var(--text-regular);
-    color: var(--color-fg-secondary);
+    color: var(--color-text-tertiary);
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         position: absolute;

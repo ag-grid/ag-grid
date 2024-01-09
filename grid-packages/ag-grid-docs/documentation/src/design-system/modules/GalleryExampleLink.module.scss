@@ -10,7 +10,7 @@
     border: 1px solid var(--link-border-color);
 
     &::after {
-        $border-width: 2px;
+        $border-width: 1px;
 
         content: '';
         position: absolute;
@@ -19,7 +19,7 @@
         bottom: $border-width * -1;
         left: $border-width * -1;
         border-radius: calc(var(--radius-sm) + 1px);
-        border: $border-width solid var(--color-link-hover);
+        border: $border-width solid var(--color-border-primary);
         opacity: 0;
         transition: opacity 0.5s ease-in-out;
     }
@@ -43,8 +43,6 @@
 
     #{$selector-darkmode} & {
         --link-border-color: color-mix(in srgb, var(--color-bg-primary), white 10%);
-
-        background-color: var(--color-bg-secondary);
     }
 }
 
