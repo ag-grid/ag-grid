@@ -377,6 +377,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                 fs.copySync(sourcePath, destPath);
             }
             addPackageJson(exampleType, framework, importType, destPath);
+            addAngularMainFile(framework, destPath);
         };
 
         const genDir = createExamplePath(`_gen`);
@@ -602,6 +603,12 @@ const moduleMapping = require('./documentation/doc-pages/modules/modules.json');
 const modules = moduleMapping
     .filter(moduleConfig => !moduleConfig.framework)
     .map(moduleConfig => moduleConfig.module);
+
+function addAngularMainFile(framework, basePath) {
+    if (framework === 'angular') {
+       writeFile(path.join(basePath, 'main.ts'), ANGULAR_MAIN_FILE);
+    }
+}
 
 /** Used for type checking in plunker, and type checking & dep installation with codesandbox */
 function addPackageJson(type, framework, importType, basePath) {
