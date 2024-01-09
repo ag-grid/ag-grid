@@ -885,33 +885,15 @@ export class RowRenderer extends BeanStub {
         return ctrlsByIdMap;
     }
 
-    /**
-    * Used to provide the scroll position with a short lived cache to avoid querying the DOM
-    * with every row that is removed in the same task.
-    * Currently used by destroyFirstPass for setting up animation speed so not critical that the
-    * value is correct, just close enough.
-    */
-    private getCachedVScrollPosition(): () => VerticalScrollPosition {
-        let cachedPos: VerticalScrollPosition | null = null;
-        return () => {
-            if (!cachedPos) {
-                cachedPos = this.gridBodyCtrl.getScrollFeature().getVScrollPosition();
-            }
-            return cachedPos;
-        };
-    }
-
     // takes array of row indexes
-    private removeRowCtrls(rowsToRemove: any[]) {
+    private removeRowCtrls(rowsToRemove: any[], suppressAnimation: boolean = false) {
         // if no fromIndex then set to -1, which will refresh everything
         // let realFromIndex = -1;
-
-        const cachedVScrollGetter = this.getCachedVScrollPosition();
 
         rowsToRemove.forEach((indexToRemove) => {
             const rowCtrl = this.rowCtrlsByRowIndex[indexToRemove];
             if (rowCtrl) {
-                rowCtrl.destroyFirstPass(cachedVScrollGetter);
+                rowCtrl.destroyFirstPass(suppressAnimation);
                 rowCtrl.destroySecondPass();
             }
             delete this.rowCtrlsByRowIndex[indexToRemove];
@@ -967,7 +949,7 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    private removeRowCompsNotToDraw(indexesToDraw: number[]): void {
+    private removeRowCompsNotToDraw(indexesToDraw: number[], suppressAnimation: boolean): void {
         // for speedy lookup, dump into map
         const indexesToDrawMap: { [index: string]: boolean; } = {};
         indexesToDraw.forEach(index => (indexesToDrawMap[index] = true));
@@ -975,7 +957,7 @@ export class RowRenderer extends BeanStub {
         const existingIndexes = Object.keys(this.rowCtrlsByRowIndex);
         const indexesNotToDraw: string[] = existingIndexes.filter(index => !indexesToDrawMap[index]);
 
-        this.removeRowCtrls(indexesNotToDraw);
+        this.removeRowCtrls(indexesNotToDraw, suppressAnimation);
     }
 
     private calculateIndexesToDraw(rowsToRecycle?: { [key: string]: RowCtrl; } | null): number[] {
@@ -1022,14 +1004,15 @@ export class RowRenderer extends BeanStub {
         // this is all the indexes we want, including those that already exist, so this method
         // will end up going through each index and drawing only if the row doesn't already exist
         const indexesToDraw = this.calculateIndexesToDraw(rowsToRecycle);
-
-        this.removeRowCompsNotToDraw(indexesToDraw);
-
+        
         // never animate when doing print layout - as we want to get things ready to print as quickly as possible,
         // otherwise we risk the printer printing a row that's half faded (half way through fading in)
-        if (this.printLayout) {
+        // Don't animate rows that have been added or removed as part of scrolling
+        if (this.printLayout || afterScroll) {
             animate = false;
         }
+        
+        this.removeRowCompsNotToDraw(indexesToDraw, !animate);
 
         // add in new rows
         const rowCtrls: RowCtrl[] = [];
@@ -1157,7 +1140,6 @@ export class RowRenderer extends BeanStub {
 
     private destroyRowCtrls(rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
-        const cachedVScrollGetter = this.getCachedVScrollPosition();
         iterateObject(rowCtrlsMap, (nodeId: string, rowCtrl: RowCtrl) => {
             // if row was used, then it's null
             if (!rowCtrl) { return; }
@@ -1167,7 +1149,7 @@ export class RowRenderer extends BeanStub {
                 return;
             }
 
-            rowCtrl.destroyFirstPass(cachedVScrollGetter);
+            rowCtrl.destroyFirstPass(!animate);
             if (animate) {
                 this.zombieRowCtrls[rowCtrl.getInstanceId()] = rowCtrl;
                 executeInAWhileFuncs.push(() => {

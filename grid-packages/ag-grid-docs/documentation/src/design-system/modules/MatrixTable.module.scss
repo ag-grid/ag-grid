@@ -6,6 +6,7 @@
 
 .matrix {
     table-layout: fixed;
+    margin-top: $spacing-size-8;
 
     @container (max-width: #{$breakpoint-table-small}) {
         div {
@@ -40,9 +41,9 @@
 }
 
 .tick {
-    --text-color: #28a745;
+    fill: #28a745;
 }
 
 .cross {
-    --text-color: #dc3545;
+    fill: #dc3545;
 }

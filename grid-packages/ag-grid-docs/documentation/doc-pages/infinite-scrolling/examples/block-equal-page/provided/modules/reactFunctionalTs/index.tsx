@@ -2,7 +2,8 @@
 declare function countries(): string[];
 import React, { useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
+import { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -12,7 +13,6 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
-import { ColDef, GetRowIdParams, GridReadyEvent, ICellRendererParams, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([InfiniteRowModelModule, SetFilterModule, MenuModule, ColumnsToolPanelModule]);
 
@@ -107,7 +107,7 @@ const GridExample = () => {
             headerName: 'ID',
             maxWidth: 100,
             valueGetter: 'node.id',
-            cellRenderer: (props: ICellRendererParams) => {
+            cellRenderer: (props: CustomCellRendererProps) => {
                 if (props.value !== undefined) {
                     return props.value;
                 } else {

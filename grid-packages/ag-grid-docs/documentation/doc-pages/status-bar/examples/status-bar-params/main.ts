@@ -1,4 +1,4 @@
-import { GridApi, createGrid, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, FirstDataRenderedEvent, GridOptions, IAggregationStatusPanelParams } from '@ag-grid-community/core';
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -26,9 +26,8 @@ const gridOptions: GridOptions<IOlympicData> = {
       {
         statusPanel: 'agAggregationComponent',
         statusPanelParams: {
-          // possible values are: 'count', 'sum', 'min', 'max', 'avg'
           aggFuncs: ['sum', 'avg'],
-        },
+        } as IAggregationStatusPanelParams,
       },
     ],
   },

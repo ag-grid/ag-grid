@@ -59,6 +59,7 @@ export class StateService extends BeanStub {
     private suppressEvents = true;
     private queuedUpdateSources: Set<(keyof GridState | 'gridInitializing')> = new Set();
     private dispatchStateUpdateEventDebounced = debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
+    private columnStates?: ColumnState[];
 
     @PostConstruct
     private postConstruct(): void {
@@ -179,7 +180,8 @@ export class StateService extends BeanStub {
         const {
             scroll: scrollState,
             rangeSelection: rangeSelectionState,
-            focusedCell: focusedCellState
+            focusedCell: focusedCellState,
+            columnOrder: columnOrderState,
         } = this.gridOptionsService.get('initialState') ?? {};
         if (focusedCellState) {
             this.setFocusedCellState(focusedCellState);
@@ -190,6 +192,7 @@ export class StateService extends BeanStub {
         if (scrollState) {
             this.setScrollState(scrollState);
         }
+        this.setColumnPivotState(!!columnOrderState?.orderedColIds);
 
         // reset sidebar as it could have updated when columns changed
         this.updateCachedState('sideBar', this.getSideBarState());
@@ -291,18 +294,6 @@ export class StateService extends BeanStub {
             columnOrder: columnOrderState
         } = initialState;
         const columnStateMap: { [colId: string]: ColumnState } = {};
-        const defaultState: ColumnStateParams = {
-            sort: null,
-            sortIndex: null,
-            rowGroup: null,
-            rowGroupIndex: null,
-            aggFunc: null,
-            pivot: null,
-            pivotIndex: null,
-            pinned: null,
-            hide: null,
-            flex: null,
-        };
         const getColumnState = (colId: string) => {
             let columnState = columnStateMap[colId];
             if (columnState) {
@@ -364,12 +355,44 @@ export class StateService extends BeanStub {
         const columnStates = applyOrder ? columns.map(colId => getColumnState(colId)) : Object.values(columnStateMap);
 
         if (columnStates.length) {
+            this.columnStates = columnStates;
+            const defaultState: ColumnStateParams = {
+                sort: null,
+                sortIndex: null,
+                rowGroup: null,
+                rowGroupIndex: null,
+                aggFunc: null,
+                pivot: null,
+                pivotIndex: null,
+                pinned: null,
+                hide: null,
+                flex: null,
+            };
             this.columnModel.applyColumnState({
                 state: columnStates,
                 applyOrder,
                 defaultState
             }, 'gridInitializing');
         }
+    }
+
+    private setColumnPivotState(applyOrder: boolean): void {
+        const columnStates = this.columnStates;
+        this.columnStates = undefined;
+
+        if (!columnStates || !this.columnModel.isSecondaryColumnsPresent()) { return; }
+
+        let secondaryColumnStates: ColumnState[] = [];
+        for (const columnState of columnStates) {
+            if (this.columnModel.getSecondaryColumn(columnState.colId)) {
+                secondaryColumnStates.push(columnState);
+            }
+        }
+
+        this.columnModel.applyColumnState({
+            state: secondaryColumnStates,
+            applyOrder
+        }, 'gridInitializing');
     }
 
     private getColumnGroupState(): ColumnGroupState | undefined {

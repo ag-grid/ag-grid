@@ -358,8 +358,16 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         const params = userCompDetails.params;
 
         this.comp.getFloatingFilterComp()?.then(floatingFilter => {
-            if (floatingFilter?.onParamsUpdated && typeof floatingFilter.onParamsUpdated === 'function') {
-                floatingFilter.onParamsUpdated(params)
+            let hasRefreshed = false;
+            if (floatingFilter?.refresh && typeof floatingFilter.refresh === 'function') {
+                const result = floatingFilter.refresh(params);
+                // framework wrapper always implements optional methods, but returns null if no underlying method
+                if (result !== null) {
+                    hasRefreshed = true;
+                }
+            }
+            if (!hasRefreshed && floatingFilter?.onParamsUpdated && typeof floatingFilter.onParamsUpdated === 'function') {
+                floatingFilter.onParamsUpdated(params);
             }
         })
     }

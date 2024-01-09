@@ -78,7 +78,7 @@ const Version = ({ date, version, blogUrl, highlights, buttonURL, majorMinor }) 
 const WhatsNew = () => {
 
     return (
-        <div className={styles.heading}>
+        <div className={styles.whatsNewContainer}>
             <h1 id="top" className="whats-new">
                 What's New in AG Grid
             </h1>

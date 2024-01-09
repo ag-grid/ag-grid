@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default (props: ICellRendererParams & { isFilterRenderer?: boolean }) => {
+export default (props: CustomCellRendererProps & { isFilterRenderer?: boolean }) => {
     const [value, setValue] = useState<string>('');
 
     useEffect(() => {

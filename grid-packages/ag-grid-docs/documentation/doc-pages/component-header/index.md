@@ -20,12 +20,41 @@ The example below shows a header component in action. The following can be obser
 
 <grid-example title='Header component' name='header-component' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
 
+## Implementing a Header Component
+
+<framework-specific-section frameworks="javascript,angular,vue">
+|The interface for a custom header component is as follows:
+</framework-specific-section>
+
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
-md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
+### Custom Header Parameters
+
+<framework-specific-section frameworks="javascript">
+|The `init(params)` method takes a params object with the items listed below.
+</framework-specific-section>
+<framework-specific-section frameworks="angular">
+|The `agInit(params)` method takes a params object with the items listed below.
+</framework-specific-section>
+<framework-specific-section frameworks="vue">
+|When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and 
+|row values available to you via `this.params` - the interface for what is provided is documented below.
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+|The following props are passed to the custom header components (`CustomHeaderProps` interface).
+</framework-specific-section>
+
+If custom params are provided via the `colDef.headerComponentParams` property, these 
+will be additionally added to the params object, overriding items of the same name if a name clash exists.
+
+<framework-specific-section frameworks="javascript,angular,vue">
 <interface-documentation interfaceName='IHeaderParams' ></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomHeaderProps' ></interface-documentation>
+</framework-specific-section>
 
 ## Specifying Header Components 
 
@@ -230,17 +259,14 @@ How you get the user to ask for the column menu is up to you. When you want to d
 </snippet>
 </framework-specific-section>
 
-### Refresh
+<framework-specific-section frameworks="javascript,angular,vue">
+<h3 id="refresh">Refresh</h3>
+</framework-specific-section>
 
-The `refresh(params)` method gets called when the application updates the Column Definitions. For example the application could set a `headerName` attribute and then set the Column Definitions again. In this instance, the Header Component should update the displayed header name.
-
-It is the responsibility of the Header Component to inspect the Column Definition for relevant changes and updated if needed. If the refresh was successful then `true` should be returned. If the refresh was not successful then `false` should be returned. If `false` is returned, then the grid will destroy and recreate the component. This pattern is consistent with the `refresh` method of Cell Renderers.
-
-<framework-specific-section frameworks="react">
-<note>
-|Implementing `refresh` is entirely optional - if you omit it then the `props` of the Custom Header Component will get updated when changes occur
-|as per the normal React lifecycle.
-</note>
+<framework-specific-section frameworks="javascript,angular,vue">
+|The `refresh(params)` method gets called when the application updates the Column Definitions. For example the application could set a `headerName` attribute and then set the Column Definitions again. In this instance, the Header Component should update the displayed header name.
+|
+|It is the responsibility of the Header Component to inspect the Column Definition for relevant changes and updated if needed. If the refresh was successful then `true` should be returned. If the refresh was not successful then `false` should be returned. If `false` is returned, then the grid will destroy and recreate the component. This pattern is consistent with the `refresh` method of Cell Renderers.
 </framework-specific-section>
 
 ### Complementing Params
@@ -311,7 +337,12 @@ md-include:group-component-interface-angular.md
 md-include:group-component-interface-react.md
 md-include:group-component-interface-vue.md
 
+<framework-specific-section frameworks="javascript,angular,vue">
 <interface-documentation interfaceName='IHeaderGroupParams' ></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomHeaderGroupProps' ></interface-documentation>
+</framework-specific-section>
 
 md-include:open-close-javascript.md
 md-include:open-close-angular.md

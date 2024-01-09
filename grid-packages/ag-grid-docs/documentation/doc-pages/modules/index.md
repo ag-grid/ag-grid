@@ -4,6 +4,12 @@ title: "AG Grid Modules"
 
 AG Grid modules allow you to cherry pick grid features resulting in a smaller application bundle size overall.
 
+<framework-specific-section frameworks="vue">
+<note>
+|Note that the following describes the setup for Vue 3. For Vue 2, use `@ag-grid-community/vue` instead of `@ag-grid-community/vue3`.
+</note>
+</framework-specific-section>
+
 ## Modules
 
 The table below summarises the modules provided in AG Grid Community and AG Grid Enterprise. See [Module Examples](/modules/#module-examples) to learn how the Example Runner can be used to determine the module required for a given feature.
@@ -91,7 +97,7 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-| Additionally we're writing a Vue application, so we need to specify the `@ag-grid-community/vue` dependency:
+| Additionally we're writing a Vue application, so we need to specify the `@ag-grid-community/vue3` dependency:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -139,7 +145,7 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 |    "@ag-grid-community/csv-export": "~@AG_GRID_VERSION@",
 |    "@ag-grid-enterprise/excel-export": "~@AG_GRID_VERSION@",
 |    "@ag-grid-enterprise/master-detail": "~@AG_GRID_VERSION@",
-|    "@ag-grid-community/vue": "~@AG_GRID_VERSION@",
+|    "@ag-grid-community/vue3": "~@AG_GRID_VERSION@",
 |    //...other dependencies...
 |}
 </snippet>
@@ -158,7 +164,7 @@ A real-world example might be that we wish to use the `Client Side Row Model` (t
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-| We now need to register the Grid modules we wish to use - note that this does not include `@ag-grid-community/vue` as the Vue support is not a Grid feature, but rather a support library:
+| We now need to register the Grid modules we wish to use - note that this does not include `@ag-grid-community/vue3` as the Vue support is not a Grid feature, but rather a support library:
 </framework-specific-section>
 
 <snippet transform={false}>

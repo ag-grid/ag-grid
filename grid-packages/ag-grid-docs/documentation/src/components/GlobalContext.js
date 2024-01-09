@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { LocalStorage } from 'utils/local-storage';
 
 // bypasses local storage
@@ -14,9 +14,11 @@ const defaultContextValue = {
     ...storageOverrides,
 };
 
-const { Provider, Consumer } = React.createContext(defaultContextValue);
+const GlobalContext = React.createContext(defaultContextValue);
 
 const contextStorageKey = 'context';
+
+const useGlobalContext = () => useContext(GlobalContext);
 
 /**
  * This provides state which can be used across the website; for example, if the user chooses to use packages for
@@ -54,8 +56,8 @@ class GlobalContextProvider extends React.PureComponent {
     };
 
     render() {
-        return <Provider value={this.state}>{this.props.children}</Provider>;
+        return <GlobalContext.Provider value={this.state}>{this.props.children}</GlobalContext.Provider>;
     }
 }
 
-export { Consumer as default, GlobalContextProvider };
+export { GlobalContextProvider, useGlobalContext };

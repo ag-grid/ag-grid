@@ -4,7 +4,12 @@ import { Component } from "../../widgets/component";
 
 export interface INoRowsOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> { }
 
-export interface INoRowsOverlayComp extends IComponent<INoRowsOverlayParams> { }
+export interface INoRowsOverlay<TData = any, TContext = any> {
+    // Gets called when the `noRowsOverlayComponentParams` grid option is updated
+    refresh?(params: INoRowsOverlayParams<TData, TContext>): void;
+}
+
+export interface INoRowsOverlayComp<TData = any, TContext = any> extends IComponent<INoRowsOverlayParams<TData, TContext>>, INoRowsOverlay<TData, TContext> { }
 
 export class NoRowsOverlayComponent extends Component implements INoRowsOverlayComp {
     private static DEFAULT_NO_ROWS_TEMPLATE = /* html */ `<span class="ag-overlay-no-rows-center"></span>`;

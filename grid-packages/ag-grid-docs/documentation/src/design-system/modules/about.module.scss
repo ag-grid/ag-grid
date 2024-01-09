@@ -34,6 +34,10 @@
         @media screen and (min-width: $breakpoint-about-five-column) {
             max-width: calc((100% - $spacing-size-8 * 4) / 5);
         }
+
+        @media screen and (min-width: $breakpoint-about-six-column) {
+            max-width: calc((100% - $spacing-size-8 * 5) / 6);
+        }
     }
 
     img {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { IHeaderGroupParams } from "@ag-grid-community/core";
+import { CustomHeaderGroupProps } from "@ag-grid-community/react";
 
-export default (props: IHeaderGroupParams) => {
+export default (props: CustomHeaderGroupProps) => {
     const [expandState, setExpandState] = useState('collapsed');
 
     const expandOrCollapse = () => {

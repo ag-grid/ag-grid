@@ -11,7 +11,7 @@ import {
 import { FiltersToolPanelHeaderPanel } from "./filtersToolPanelHeaderPanel";
 import { FiltersToolPanelListPanel } from "./filtersToolPanelListPanel";
 
-export interface ToolPanelFiltersCompParams extends IToolPanelParams {
+export interface ToolPanelFiltersCompParams<TData = any, TContext = any> extends IToolPanelParams<TData, TContext, FiltersToolPanelState> {
     /** To suppress Expand / Collapse All */
     suppressExpandAll: boolean;
     /** To suppress the Filter Search */
@@ -132,8 +132,9 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         this.filtersToolPanelListPanel.syncFilterLayout();
     }
 
-    public refresh(): void {
-        this.init(this.params);
+    public refresh(params: ToolPanelFiltersCompParams): boolean {
+        this.init(params);
+        return true;
     }
 
     public getState(): FiltersToolPanelState {

@@ -1,7 +1,7 @@
 import React from "react"
-import { IHeaderParams } from '@ag-grid-community/core'
+import { CustomHeaderProps } from '@ag-grid-community/react'
 
-export default ({ displayName }: IHeaderParams) => {
+export default ({ displayName }: CustomHeaderProps) => {
     return (
         <div className="custom-header">
             <span>{displayName}</span>

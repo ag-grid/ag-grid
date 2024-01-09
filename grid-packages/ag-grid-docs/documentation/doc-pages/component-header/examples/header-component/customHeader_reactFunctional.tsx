@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IHeaderParams } from '@ag-grid-community/core'
+import { CustomHeaderProps } from '@ag-grid-community/react'
 
-export interface ICustomHeaderParams extends IHeaderParams {
+export interface MyCustomHeaderProps extends CustomHeaderProps {
     menuIcon: string;
 }
 
-export default (props: ICustomHeaderParams) => {
+export default (props: MyCustomHeaderProps) => {
     const [ascSort, setAscSort] = useState('inactive');
     const [descSort, setDescSort] = useState('inactive');
     const [noSort, setNoSort] = useState('inactive');

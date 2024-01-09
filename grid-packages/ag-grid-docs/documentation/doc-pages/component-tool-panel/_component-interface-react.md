@@ -1,8 +1,5 @@
 <framework-specific-section frameworks="react">
-|## Tool Panel Interface
-|
-|Any valid React component can be a tool panel component. 
+|To configure custom tool panels, first enable the grid option `reactiveCustomComponents`.
 |
 |When a tool panel component is instantiated then the following will be made available on `props`:
-|
 </framework-specific-section>

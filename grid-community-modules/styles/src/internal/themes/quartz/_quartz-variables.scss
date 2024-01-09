@@ -91,13 +91,13 @@
 
 
 @mixin -dark-vars {
-    --ag-background-color: color-mix(in srgb, #fff, #0b1d28 97%);
+    --ag-background-color: color-mix(in srgb, #fff, #182230 97%);
     --ag-foreground-color: #fff;
     --ag-border-color: rgba(255,255,255,0.16);
     --ag-secondary-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
-    --ag-header-background-color: color-mix(in srgb, #fff, #0b1d28 93%);
-    --ag-tooltip-background-color: color-mix(in srgb, #fff, #0b1d28 96%);
-    --ag-control-panel-background-color: color-mix(in srgb, #fff, #0b1d28 93%);
+    --ag-header-background-color: color-mix(in srgb, #fff, #182230 93%);
+    --ag-tooltip-background-color: color-mix(in srgb, #fff, #182230 96%);
+    --ag-control-panel-background-color: color-mix(in srgb, #fff, #182230 93%);
     --ag-input-disabled-background-color: #68686e12;
     --ag-card-shadow: 0 1px 20px 1px black;
     --ag-input-border-color: var(--ag-border-color);

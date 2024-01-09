@@ -44,7 +44,7 @@ import {
     suppressColumnMoveAnimation,
 } from './utils';
 import { WinningsFilter } from './WinningsFilter';
-import GlobalContextConsumer from 'components/GlobalContext';
+import { useGlobalContext } from 'components/GlobalContext';
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -1479,12 +1479,9 @@ const ExampleInner = ({darkMode}) => {
 
 const themesWithDarkVariant = ['ag-theme-quartz', 'ag-theme-alpine', 'ag-theme-balham']
 
-const Example = () => (
-    <GlobalContextConsumer>
-        {({ darkMode }) => (
-            <ExampleInner darkMode={darkMode} />
-        )}
-    </GlobalContextConsumer>
-);
+const Example = () => {
+    const { darkMode } = useGlobalContext();
+    return <ExampleInner darkMode={darkMode} />
+}
 
 export default Example;

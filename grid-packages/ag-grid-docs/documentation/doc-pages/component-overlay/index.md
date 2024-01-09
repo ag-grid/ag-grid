@@ -4,7 +4,6 @@ title: "Overlay Component"
  
 Overlay components allow you to add your own overlays to AG Grid. Use these when the provided overlays do not meet your requirements.
 
-
 There are two types of overlay components:
 
 - **Loading Overlay**: Overlay for when the grid is loading data.
@@ -18,17 +17,151 @@ The example below demonstrates how to provide custom overlay components to the g
 - **Custom No Rows Overlay Renderer** is supplied by name via `gridOptions.noRowsOverlayComponent`.
 - **Custom No Rows Overlay Renderer Parameters** are supplied using `gridOptions.noRowsOverlayComponentParams`.
 
-<grid-example title='Custom Overlay Components' name='custom-overlay-components' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
-  
-md-include:component-interface-javascript.md
-md-include:component-interface-angular.md
-md-include:component-interface-react.md
-md-include:component-interface-vue.md
- 
-<interface-documentation interfaceName='ILoadingOverlayParams' config='{"hideHeader":false, "headerLevel":3}' ></interface-documentation>
-<interface-documentation interfaceName='INoRowsOverlayParams' config='{"hideHeader":false, "headerLevel":3}' ></interface-documentation>
+<grid-example title='Custom Overlay Components' name='custom-overlay-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
+
+## Implementing a Loading Overlay Component
+
+<framework-specific-section frameworks="javascript,angular">
+|Implement this interface to provide a custom overlay when data is being loaded.
+</framework-specific-section>
+<framework-specific-section frameworks="vue">
+|Any valid Vue component can be a loading overlay component, however it is also possible to implement the following optional methods:
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
+|interface extends ILoadingOverlayAngularComp {
+|    // mandatory methods
+|
+|    // The agInit(params) method is called on the overlay once.
+|    agInit(params: ILoadingOverlayParams);
+|
+|    // optional methods
+|
+|    // Gets called when the `loadingOverlayComponentParams` grid option is updated
+|    refresh(params: ILoadingOverlayParams): void;
+|
+|}
+</snippet>
+</framework-specific-section>
+<framework-specific-section frameworks="javascript">
+<snippet transform={false} language="ts">
+|interface ILoadingOverlayComp {
+|    // mandatory methods
+|
+|    // Returns the DOM element for this overlay
+|    getGui(): HTMLElement;
+|
+|    // optional methods
+|
+|    // The init(params) method is called on the overlay once. See below for details on the parameters.
+|    init(params: ILoadingOverlayParams): void;
+|
+|    // Gets called when the `loadingOverlayComponentParams` grid option is updated
+|    refresh(params: ILoadingOverlayParams): void;
+|}
+</snippet>
+</framework-specific-section>
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="ts">
+|interface ILoadingOverlay {
+|    // Gets called when the `loadingOverlayComponentParams` grid option is updated
+|    refresh(params: ILoadingOverlayParams): void;
+|}
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+|The `agInit(params)` method takes a params object with the items listed below:
+</framework-specific-section>
+<framework-specific-section frameworks="javascript">
+|The interface for the overlay parameters is as follows:
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+|When a loading overlay component is instantiated within the grid, the following will be made available on  `props`:
+</framework-specific-section>
+<framework-specific-section frameworks="vue">
+|When a custom loading overlay is instantiated, the following will be made available on `this.params`:
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript,angular,vue">
+<interface-documentation interfaceName='ILoadingOverlayParams'></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomLoadingOverlayProps'></interface-documentation>
+</framework-specific-section>
+
+## Implementing a No Rows Overlay Component
+
+<framework-specific-section frameworks="javascript,angular">
+|Implement this interface to provide a custom overlay when no rows loaded.
+</framework-specific-section>
+<framework-specific-section frameworks="vue">
+|Any valid Vue component can be a no rows overlay component, however it is also possible to implement the following optional methods:
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} language="ts">
+|interface extends INowRowsOverlayAngularComp {
+|    // mandatory methods
+|
+|    // The agInit(params) method is called on the overlay once.
+|    agInit(params: INoRowsOverlayParams);
+|
+|    // optional methods
+|
+|    // Gets called when the `noRowsOverlayComponentParams` grid option is updated
+|    refresh(params: INoRowsOverlayParams): void;
+|}
+</snippet>
+</framework-specific-section>
+<framework-specific-section frameworks="javascript">
+<snippet transform={false} language="ts">
+|interface INoRowsOverlayComp {
+|    // mandatory methods
+|
+|    // Returns the DOM element for this overlay
+|    getGui(): HTMLElement;
+|
+|    // optional methods
+|
+|    // The init(params) method is called on the overlay once. See below for details on the parameters.
+|    init(params: INoRowsOverlayParams): void;
+|
+|    // Gets called when the `noRowsOverlayComponentParams` grid option is updated
+|    refresh(params: INoRowsOverlayParams): void;
+|}
+</snippet>
+</framework-specific-section>
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="ts">
+|interface INoRowsOverlay {
+|    // Gets called when the `noRowsOverlayComponentParams` grid option is updated
+|    refresh(params: INoRowsOverlayParams): void;
+|}
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+|The `agInit(params)` method takes a params object with the items listed below:
+</framework-specific-section>
+<framework-specific-section frameworks="javascript">
+|The interface for the overlay parameters is as follows:
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+|When a no rows overlay component is instantiated within the grid, the following will be made available on  `props`:
+</framework-specific-section>
+<framework-specific-section frameworks="vue">
+|When a custom no rows overlay is instantiated, the following will be made available on `this.params`:
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript,angular,vue">
+<interface-documentation interfaceName='INoRowsOverlayParams'></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomNoRowsOverlayProps'></interface-documentation>
+</framework-specific-section>
 
 ## Registering Overlay Components
 
-See the section [registering custom components](/components/#registering-custom-components) for details on registering and using custom overlays.
-
+See [Registering Custom Components](/components/#registering-custom-components) for details on registering and using custom overlays.

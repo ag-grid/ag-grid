@@ -21,7 +21,7 @@ const agGridAngularObject = new AgGridAngular(
     });
 
 const missingProperties = [];
-const gridSkippableProperties = ['suppressReactUi'];
+const gridSkippableProperties = ['reactiveCustomComponents'];
 ComponentUtil.ALL_PROPERTIES.forEach((property) => {
     if (!gridSkippableProperties.includes(property) && !agGridAngularObject.hasOwnProperty(property)) {
         missingProperties.push(`Grid property ${property} does not exist on AgGridAngular`)

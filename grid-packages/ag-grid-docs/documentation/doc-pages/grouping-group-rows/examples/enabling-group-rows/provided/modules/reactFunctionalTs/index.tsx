@@ -2,13 +2,13 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 
-import { ColDef, GridReadyEvent, ICellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -22,7 +22,7 @@ const GridExample = () => {
         {
             field: 'athlete',
             minWidth: 250,
-            cellRenderer: (params: ICellRendererParams) => {
+            cellRenderer: (params: CustomCellRendererProps) => {
                 return <span style={{ marginLeft: 60 }}>{params.value}</span>;
             },
         },

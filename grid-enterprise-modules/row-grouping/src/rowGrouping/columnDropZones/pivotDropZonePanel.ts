@@ -99,7 +99,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         // we never allow grouping of secondary columns
         if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
-        return column.isAllowPivot() && !column.isPivotActive();
+        return column.isAllowPivot();
     }
 
     protected updateColumns(columns: Column[]): void {

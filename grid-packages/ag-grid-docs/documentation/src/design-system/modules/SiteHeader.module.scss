@@ -1,5 +1,3 @@
-// CSS directly lifted from Grid repo
-
 @use '../core' as *;
 
 .header {
@@ -26,6 +24,10 @@
     align-items: center;
     width: 100%;
     min-height: var(--layout-site-header-height);
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        padding-bottom: $spacing-size-3;
+    }
 
     @media screen and (max-width: $breakpoint-site-header-small) {
         // Required for collapsible mobile menu
@@ -58,9 +60,16 @@
     }
 }
 
-.mobileNavButton {
+button.mobileNavButton {
     width: 100%;
     margin-bottom: $spacing-size-2;
+
+    :global(.icon) {
+        --icon-size: #{$spacing-size-6};
+
+        margin-left: $spacing-size-1;
+        margin-right: -$spacing-size-1;
+    }
 
     @media screen and (min-width: $breakpoint-docs-search-small) {
         width: auto;
@@ -69,6 +78,14 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         display: none;
+    }
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-white), transparent 94%);
+
+        &:hover {
+            background-color: var(--color-button-secondary-bg-hover);
+        }
     }
 }
 
@@ -84,6 +101,7 @@
     border: none;
     color: transparent;
     transition: background-color 0.4s ease-in-out;
+    margin-right: $spacing-size-2;
 
     &:hover {
         background-color: transparent;
@@ -169,17 +187,28 @@
 
 #mainNav {
     width: 100%;
+
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        position: relative;
+        min-width: calc(100% + var(--layout-horizontal-margins) * 2);
+        left: calc(var(--layout-horizontal-margins) * -1);
+    }
 }
 
 .mainNav {
     width: 100%;
     background-color: var(--color-bg-mobile-nav);
 
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        width: calc(100% + var(--layout-horizontal-margins) * 2);
+    }
+
     @media screen and (min-width: $breakpoint-site-header-small) {
         position: absolute;
         top: 0;
-        right: var(--layout-gap);
+        right: var(--layout-horizontal-margins);
         width: calc(100vw - 240px);
+        margin-right: -$spacing-size-4;
         background-color: unset;
     }
 
@@ -239,7 +268,7 @@
 
     display: block;
     position: relative;
-    padding: 19px 18px 16px;
+    padding: 19px var(--layout-horizontal-margins) 16px;
     font-size: 17px;
     font-weight: 500;
     letter-spacing: 0.01em;
@@ -248,6 +277,10 @@
         color $transition-default-timing,
         opacity $transition-default-timing;
     cursor: pointer;
+
+    @at-root button#{&} {
+        color: var(--color-white);
+    }
 
     &:hover {
         text-decoration: none;
@@ -287,14 +320,14 @@
 
 .buttonItem {
     .navLink {
-        padding: 19px 18px 16px;
+        padding: 19px var(--layout-horizontal-margins) 16px;
     }
 
     a::after {
         display: none;
     }
 
-    svg {
+    svg:global(.icon) {
         --icon-size: 24px;
 
         margin-right: 4px;

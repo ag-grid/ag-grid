@@ -7,14 +7,25 @@ Custom Tool Panel Components can be included into the grid's Side Bar. Implement
 
 The example below provides a 'Custom Stats' Tool Panel to demonstrates how to create and register a Custom Tool Panel Component with the grid and include it the Side Bar:
  
-<grid-example title='Custom Stats' name='custom-stats' type='generated' options='{ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter" ], "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Custom Stats' name='custom-stats' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter" ], "extras": ["fontawesome"] }'></grid-example>
+
+## Implementing a Tool Panel Component
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
  
+<framework-specific-section frameworks="javascript,angular,vue">
 <interface-documentation interfaceName='IToolPanelParams' ></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomToolPanelProps' ></interface-documentation>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom tool panel, however your tool panel will not update with prop changes, but will instead be destroyed/recreated.</note>
+</framework-specific-section>
 
 ## Registering Tool Panel Components
 

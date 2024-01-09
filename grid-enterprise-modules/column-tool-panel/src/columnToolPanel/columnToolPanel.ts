@@ -227,9 +227,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         _.clearElement(this.getGui());
     }
 
-    public refresh(): void {
+    public refresh(params: ToolPanelColumnCompParams): boolean {
         this.destroyChildren();
-        this.init(this.params);
+        this.init(params);
+        return true;
     }
 
     public getState(): ColumnToolPanelState {

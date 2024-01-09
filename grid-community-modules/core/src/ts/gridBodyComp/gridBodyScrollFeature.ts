@@ -46,6 +46,11 @@ export class GridBodyScrollFeature extends BeanStub {
     private scrollLeft = -1;
     private nextScrollTop = -1;
     private scrollTop = -1;
+    
+    // Used to provide approximate values of scrollTop and offsetHeight
+    // without forcing the browser to recalculate styles.
+    private lastOffsetHeight = -1;
+    private lastScrollTop = -1;
 
     private scrollTimer: number | undefined;
 
@@ -359,12 +364,27 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public getVScrollPosition(): VerticalScrollPosition {
-        const scrollTop = this.eBodyViewport.scrollTop
+        this.lastScrollTop = this.eBodyViewport.scrollTop;
+        this.lastOffsetHeight = this.eBodyViewport.offsetHeight;
         const result = {
-            top: scrollTop,
-            bottom: scrollTop + this.eBodyViewport.offsetHeight
+            top: this.lastScrollTop,
+            bottom: this.lastScrollTop + this.lastOffsetHeight
         };
         return result;
+    }
+
+    /** Get an approximate scroll position that returns the last real value read.
+     * This is useful for avoiding repeated DOM reads that force the browser to recalculate styles.
+     * This can have big performance improvements but may not be 100% accurate so only use if this is acceptable.
+     */
+    public getApproximateVScollPosition(): VerticalScrollPosition{
+        if(this.lastScrollTop >= 0 && this.lastOffsetHeight >= 0){
+            return {
+                top: this.scrollTop,
+                bottom: this.scrollTop + this.lastOffsetHeight
+            }
+        }
+        return this.getVScrollPosition();
     }
 
     public getHScrollPosition(): { left: number, right: number; } {

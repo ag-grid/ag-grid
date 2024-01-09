@@ -43,10 +43,7 @@ table#{$selector-exclude-grid} {
     border-bottom: 1px solid var(--color-border-primary);
 }
 
-thead#{$selector-exclude-grid},
-table:not(.no-zebra) tr:nth-child(even)#{$selector-exclude-grid} {
-    background-color: var(--color-bg-secondary);
-}
+
 
 tbody#{$selector-exclude-grid} {
     vertical-align: top;
@@ -70,4 +67,9 @@ table.small-header th {
 
 table.stack {
     @include stack-table();
+}
+
+thead > tr {
+    border-top: none;
+    color: var(--color-fg-primary);
 }

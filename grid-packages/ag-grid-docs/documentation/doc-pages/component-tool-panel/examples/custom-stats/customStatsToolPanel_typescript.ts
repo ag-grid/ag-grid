@@ -1,9 +1,13 @@
 import { IToolPanelComp, IToolPanelParams } from "@ag-grid-community/core";
 
+export interface CustomStatsToolPanelParams extends IToolPanelParams {
+    title: string;
+}
+
 export class CustomStatsToolPanel implements IToolPanelComp {
 
     eGui!: HTMLDivElement;
-    init(params: IToolPanelParams) {
+    init(params: CustomStatsToolPanelParams) {
         this.eGui = document.createElement('div');
         this.eGui.style.textAlign = "center";
 
@@ -21,7 +25,7 @@ export class CustomStatsToolPanel implements IToolPanelComp {
     refresh(): void {
     }
 
-    calculateStats(params: IToolPanelParams) {
+    calculateStats(params: CustomStatsToolPanelParams) {
         let numGold = 0, numSilver = 0, numBronze = 0;
         params.api.forEachNode(function (rowNode) {
             const data = rowNode.data;
@@ -32,7 +36,7 @@ export class CustomStatsToolPanel implements IToolPanelComp {
 
         return `
         <span>
-            <h2><i class="fa fa-calculator"></i> Custom Stats</h2>
+            <h2><i class="fa fa-calculator"></i> ${params.title}</h2>
             <dl style="font-size: large; padding: 30px 40px 10px 30px">
                 <dt style="padding-bottom: 15px">Total Medals: <b>${numGold + numSilver + numBronze}</b></dt>
                 <dt style="padding-bottom: 15px">Total Gold: <b>${numGold}</b></dt><dt style="padding-bottom: 15px">Total Silver: <b>${numSilver}</b></dt>

@@ -1,26 +1,48 @@
 <framework-specific-section frameworks="react">
-|## Custom Date Interface
+|To configure custom dates, first enable the grid option `reactiveCustomComponents`.
 |
-|The interface for a custom date component is as follows:
+|Custom date components are controlled components, which receive a date value as part of the props, and pass date value updates back to the grid via the `onDateChange` callback. Note that the date is applied immediately when `onDateChange` is called.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<interface-documentation interfaceName='IDateReactComp' config='{"asCode":true }' ></interface-documentation>
+<snippet transform={false} language="jsx">
+|export default ({ date, onDateChange }) => {
+|    ...
+|    return (
+|        &lt;input
+|            type="date"
+|            value={convertToString(date)}
+|            onChange={({ target: { value } }) => onDateChange(convertToDate(value))}
+|        />
+|    );
+|}
+</snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<note>
-|Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the
-|grid will call (for example, the `getDate` callback from an Date Component), then you'll need to expose them with
-|`forwardRef` & `useImperativeHandle`.
-|
-|Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
-</note>
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom dates, however this will involve declaring your React component imperatively, and is not recommend. See [Imperative Date Component](../component-date-imperative-react/).</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-|### Custom Date Parameters
+<h2 id="custom-date-parameters">Custom Date Parameters</h2>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|### Date Props
 |
-|When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
-|row values available to you via `props` - the interface for what is provided is documented below.
+|The following props are passed to the custom date components (`CustomDateProps` interface).
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomDateProps' config='{ "description": "" }'></interface-documentation>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|### Date Callbacks
+|
+|The following callbacks can be passed to the `useGridDate` hook (`CustomDateCallbacks` interface). All the callbacks are optional, and the hook only needs to be used if callbacks are provided.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomDateCallbacks' config='{ "description": "" }'></interface-documentation>
 </framework-specific-section>

@@ -1,7 +1,8 @@
 import React from 'react';
-import { ColGroupDef, ITooltipParams } from '@ag-grid-community/core'
+import { ColGroupDef } from '@ag-grid-community/core'
+import { CustomTooltipProps } from '@ag-grid-community/react'
 
-export default (props: ITooltipParams) => {
+export default (props: CustomTooltipProps) => {
     const isHeader = props.rowIndex === undefined;
     const isGroupedHeader = isHeader && !!(props.colDef as ColGroupDef).children;
     const valueToDisplay = props.value.value ? props.value.value : '- Missing -';

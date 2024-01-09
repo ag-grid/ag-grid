@@ -1,5 +1,4 @@
 import { ColDef, GridApi, createGrid, GridOptions, INumberFilterParams } from '@ag-grid-community/core';
-import { getData } from "./data";
 import { SliderFloatingFilter } from './sliderFloatingFilter_typescript';
 
 const filterParams: INumberFilterParams = {
@@ -8,9 +7,7 @@ const filterParams: INumberFilterParams = {
 };
 
 const columnDefs: ColDef[] = [
-  { field: 'country', filter: false },
-  { field: 'language', filter: false },
-  { field: 'name', filter: false },
+  { field: 'athlete', filter: false },
   {
     field: 'gold',
     filter: 'agNumberColumnFilter',
@@ -46,24 +43,27 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let gridApi: GridApi;
+let gridApi: GridApi<IOlympicData>;
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    editable: true,
+    flex: 1,
     minWidth: 100,
     filter: true,
     floatingFilter: true,
   },
   columnDefs: columnDefs,
-  rowData: getData(),
-  autoSizeStrategy: {
-    type: 'fitGridWidth',
-  },
+  rowData: null,
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+document.addEventListener('DOMContentLoaded', () => {
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
+
+  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then((data: IOlympicData[]) => {
+            gridApi!.setGridOption('rowData', data)
+        })
 })

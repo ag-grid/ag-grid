@@ -2656,7 +2656,7 @@ export class ColumnModel extends BeanStub {
         return this.gridColumnsMap[key];
     }
 
-    private getSecondaryColumn(key: ColKey): Column | null {
+    public getSecondaryColumn(key: ColKey): Column | null {
         if (!this.secondaryColumns) { return null; }
         return this.getColumn(key, this.secondaryColumns, this.secondaryColumnsMap);
     }
@@ -3314,7 +3314,7 @@ export class ColumnModel extends BeanStub {
         let sortOrderToRecover: Column[] | undefined;
 
         if (this.secondaryColumns && this.secondaryBalancedTree) {
-            const hasSameColumns = this.secondaryColumns.every((col) => {
+            const hasSameColumns = this.secondaryColumns.some((col) => {
                 return this.gridColumnsMap[col.getColId()] !== undefined;
             });
             this.gridBalancedTree = this.secondaryBalancedTree.slice();

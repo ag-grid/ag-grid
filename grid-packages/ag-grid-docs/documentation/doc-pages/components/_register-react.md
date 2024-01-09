@@ -1,4 +1,5 @@
 <framework-specific-section frameworks="react">
+|For all custom components, you should enable the grid option `reactiveCustomComponents`. This provides the simplest way to set up custom components when using Hooks. If you do not enable this option, then some of the custom components will need to be implemented in an imperative way (see the page for the relevant component for more details).
 |
 |There are two ways to register custom components:
 |
