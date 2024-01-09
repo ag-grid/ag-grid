@@ -8,3 +8,13 @@ export type InternalFramework =
     | 'angular'
     | 'vue'
     | 'vue3';
+
+export interface FooterItem {
+    title: string;
+    links: {
+        name: string;
+        url: string;
+        newTab?: boolean;
+        iconName: string;
+    }[];
+}

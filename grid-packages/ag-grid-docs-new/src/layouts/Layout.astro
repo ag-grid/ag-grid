@@ -6,6 +6,7 @@ import { getFavIconsData, getAppleTouchIconsData } from '@utils/favicons';
 import { getIsProduction, getIsStaging } from '@utils/env';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import Plausible from '@components/Plausible.astro';
+import { Footer } from '@components/footer/Footer';
 
 interface Props {
     title: string;
@@ -13,15 +14,19 @@ interface Props {
     showSearchBar?: boolean;
     showDocsNav?: boolean;
     hideHeader?: boolean;
+    hideFooter?: boolean;
 }
 
 const { data: metadata } = await getEntry('metadata', 'metadata');
+const { data: footerItems } = await getEntry('footer', 'data');
 
 const isProduction = getIsProduction();
 const isStaging = getIsStaging();
 const canonicalUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase);
 
-const { title, description = metadata.description, showSearchBar, showDocsNav, hideHeader } = Astro.props;
+const { title, description = metadata.description, showSearchBar, showDocsNav, hideHeader, hideFooter } = Astro.props;
+
+const path = Astro.url.pathname;
 const socialImage = urlWithBaseUrl('/images/ag-grid-social.png');
 ---
 
@@ -93,6 +98,7 @@ const socialImage = urlWithBaseUrl('/images/ag-grid-social.png');
             {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} />}
             <slot />
         </div>
+        {!hideFooter && <Footer path={path} footerItems={footerItems} />}
 
         <style lang="scss">
             @use '../design-system' as *;
