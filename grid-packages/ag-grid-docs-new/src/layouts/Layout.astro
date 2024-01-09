@@ -1,16 +1,28 @@
 ---
+import { getEntry } from 'astro:content';
 import '@design-system/design-system.scss';
 import SiteHeader from '@components/site-header/SiteHeader.astro';
+import { getFavIconsData, getAppleTouchIconsData } from '@utils/favicons';
+import { getIsProduction, getIsStaging } from '@utils/env';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import Plausible from '@components/Plausible.astro';
 
 interface Props {
     title: string;
-
+    description?: string;
     showSearchBar?: boolean;
     showDocsNav?: boolean;
     hideHeader?: boolean;
 }
 
-const { title, showSearchBar, showDocsNav, hideHeader } = Astro.props;
+const { data: metadata } = await getEntry('metadata', 'metadata');
+
+const isProduction = getIsProduction();
+const isStaging = getIsStaging();
+const canonicalUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase);
+
+const { title, description = metadata.description, showSearchBar, showDocsNav, hideHeader } = Astro.props;
+const socialImage = urlWithBaseUrl('/images/ag-grid-social.png');
 ---
 
 <!doctype html>
@@ -19,9 +31,49 @@ const { title, showSearchBar, showDocsNav, hideHeader } = Astro.props;
         <meta charset="UTF-8" />
         <meta name="description" content="Astro description" />
         <meta name="viewport" content="width=device-width" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        {
+            getFavIconsData().map(({ size, icon }: any) => (
+                <link rel="icon" type="image/png" sizes={`${size}x${size}`} href={icon} />
+            ))
+        }
+        {
+            getAppleTouchIconsData().map(({ size, icon }: any) => (
+                <link rel="apple-touch-icon" sizes={`${size}x${size}`} href={icon} />
+            ))
+        }
+        {!isProduction && <meta name="robots" content="noindex" />}
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
+        <link rel="canonical" href={canonicalUrl}>
+        <link rel="sitemap" type="application/xml" title="Sitemap" href={urlWithBaseUrl("/sitemap-index.xml")} />
+
+        <!-- Facebook Meta Tags -->
+        <meta property="og:url" content={canonicalUrl}>
+        <meta property="og:type" content="website">
+        <meta property="og:title" content={title}>
+        <meta property="og:description" content={description}>
+        <meta property="og:image" content={socialImage}>
+
+        <!-- Twitter Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta property="twitter:domain" content={canonicalUrl.host}>
+        <meta property="twitter:url" content={canonicalUrl}>
+        <meta name="twitter:title" content={title}>
+        <meta name="twitter:description" content={description}>
+        <meta name="twitter:image" content={socialImage}>
+
+        {isProduction && <Fragment>
+            <script is:inline define:vars={{
+                googleTagManagerId: metadata.googleTagManagerId
+            }}>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer',googleTagManagerId);</script>
+            <Plausible domain="ag-grid.com" />
+        </Fragment>}
+
+        {isStaging && <Plausible domain="testing.ag-grid.com" />}
     </head>
     <body>
         <script is:inline>
