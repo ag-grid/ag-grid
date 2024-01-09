@@ -1,4 +1,4 @@
-import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, ColDef, GridOptions, ITooltipParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   {
