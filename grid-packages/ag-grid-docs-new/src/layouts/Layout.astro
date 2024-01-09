@@ -1,11 +1,16 @@
 ---
 import '@design-system/design-system.scss';
+import SiteHeader from '@components/site-header/SiteHeader.astro';
 
 interface Props {
     title: string;
+
+    showSearchBar?: boolean;
+    showDocsNav?: boolean;
+    hideHeader?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, showSearchBar, showDocsNav, hideHeader } = Astro.props;
 ---
 
 <!doctype html>
@@ -19,7 +24,21 @@ const { title } = Astro.props;
         <title>{title}</title>
     </head>
     <body>
+        <script is:inline>
+            const htmlEl = document.querySelector('html');
+            const localDarkmode = localStorage['documentation:darkmode'];
+            const isOSDarkmode = (
+                window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+            ).toString();
+
+            htmlEl.classList.add('no-transitions');
+            htmlEl.dataset.darkMode = localDarkmode !== undefined ? localDarkmode : isOSDarkmode;
+            htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
+            htmlEl.classList.remove('no-transitions');
+        </script>
+
         <div class="mainContainer">
+            {!hideHeader && <SiteHeader showSearchBar={showSearchBar} showDocsNav={showDocsNav} />}
             <slot />
         </div>
 

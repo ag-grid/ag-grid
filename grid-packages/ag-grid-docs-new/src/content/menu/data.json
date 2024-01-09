@@ -1,0 +1,32 @@
+{
+    "header": {
+        "items": [
+            {
+                "title": "Demo",
+                "path": "/example"
+            },
+            {
+                "title": "Docs",
+                "path": "/documentation"
+            },
+            {
+                "title": "API",
+                "path": "/reference"
+            },
+            {
+                "title": "Blog",
+                "url": "https://blog.ag-grid.com/"
+            },
+            {
+                "title": "Pricing",
+                "path": "/license-pricing"
+            },
+            {
+                "title": "Github",
+                "url": "https://github.com/ag-grid/ag-charts",
+                "icon": "github",
+                "github": "true"
+            }
+        ]
+    }
+}

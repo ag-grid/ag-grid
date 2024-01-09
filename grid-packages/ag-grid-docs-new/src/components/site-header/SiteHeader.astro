@@ -1,0 +1,98 @@
+---
+// import { getIsDev } from '@utils/env';
+import { Icon } from '@components/icon/Icon';
+import { HeaderNav } from './HeaderNav';
+import { getEntry } from 'astro:content';
+import { FRAMEWORKS } from '@constants';
+import gridStyles from '@design-system/modules/SiteHeader.module.scss';
+import { SiteLogo } from './SiteLogo';
+// import Search from '../search/Search';
+// import { getFrameworkFromPath } from '../../features/docs/utils/urlPaths';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+// import { isDynamicFrameworkPath, replaceDynamicFrameworkPath } from '@utils/framework';
+import { DarkModeToggle } from './DarkModeToggle';
+
+const { pathname } = Astro.url;
+const { data: menuData } = await getEntry('menu', 'data');
+const topNavItems = menuData.header.items;
+// const framework = getFrameworkFromPath(pathname);
+// const isDev = getIsDev();
+// const apiPaths = menuData.api.items.flatMap(({ path }) => {
+//     const pathWithBaseUrl = urlWithBaseUrl(path);
+
+//     if (isDynamicFrameworkPath(pathWithBaseUrl)) {
+//         return FRAMEWORKS.map((framework) => ({
+//             title: 'API',
+//             path: replaceDynamicFrameworkPath({ dynamicFrameworkPath: pathWithBaseUrl, framework }),
+//         }));
+//     }
+
+//     return {
+//         title: 'API',
+//         path: urlWithBaseUrl(path),
+//     };
+// });
+const frameworkPaths = FRAMEWORKS.map((framework) => ({
+    title: 'Docs',
+    path: urlWithBaseUrl(framework),
+}));
+const allPaths = [
+    ...topNavItems,
+    // NOTE: Prioritise API paths over framework paths - for doc pages which are in
+    //  the API section
+    // ...apiPaths,
+    ...frameworkPaths,
+];
+
+export interface Props {
+    showSearchBar?: boolean;
+    showDocsNav?: boolean;
+}
+const { showDocsNav } = Astro.props;
+---
+
+<header class:list={[gridStyles.header, 'site-header']}>
+    <div class:list={[gridStyles.headerInner, 'layout-page-max-width']}>
+        <SiteLogo client:load />
+
+        {
+            showDocsNav && (
+                <button
+                    id="top-bar-docs-button"
+                    class:list={[gridStyles.mobileNavButton, 'button-secondary']}
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#side-nav"
+                    aria-controls="side-nav"
+                    aria-expanded="false"
+                    aria-label="Toggle docs page navigation">
+                    <span>Docs</span>
+                    <Icon name="collapseCategories" />
+                </button>
+            )
+        }
+
+        <!-- {showSearchBar && <Search client:load currentFramework={framework} isDev={isDev} />} -->
+
+        <HeaderNav currentPath={pathname} items={topNavItems} allPaths={allPaths} client:load>
+            <li class:list={[gridStyles.navItem, gridStyles.buttonItem, 'darkModeItem']}>
+                <DarkModeToggle client:only />
+            </li>
+        </HeaderNav>
+    </div>
+</header>
+
+<style lang="scss">
+    @use '../../design-system' as *;
+
+    .darkModeItem {
+        min-width: 48px;
+    }
+
+    // Required to stop mobile docs nav flash on page load
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        #top-bar-docs-button {
+            display: none;
+        }
+    }
+</style>
