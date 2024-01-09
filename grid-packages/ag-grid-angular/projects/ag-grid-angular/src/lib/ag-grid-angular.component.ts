@@ -218,21 +218,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     constructor(elementDef: ElementRef,
         private viewContainerRef: ViewContainerRef,
         private angularFrameworkOverrides: AngularFrameworkOverrides,
-        private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
-        private ngZone: NgZone
+        private frameworkComponentWrapper: AngularFrameworkComponentWrapper
     ) {
         this._nativeElement = elementDef.nativeElement;
     }
 
-    runOutsideAngular<T>(callback: () => T): T {
-        // Check if ngZone exists, as it won't be present when running zoneless. 
-        return this.ngZone ? this.ngZone.runOutsideAngular(callback) : callback();
-    }
 
     ngAfterViewInit(): void {
       // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
-      this.runOutsideAngular(() => {
-          this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.ngZone);
+      this.angularFrameworkOverrides.runOutsideAngular(() => {
+          this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.angularFrameworkOverrides);
           const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
 
           this.gridParams = {
@@ -271,7 +266,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     public ngOnChanges(changes: any): void {
          if (this._initialised) {
                // Run the changes outside of angular so any event handlers that are created do not trigger change detection
-             this.runOutsideAngular(() => {
+             this.angularFrameworkOverrides.runOutsideAngular(() => {
                  const gridOptions: GridOptions = {};
                  Object.entries(changes).forEach(([key, value]: [string, any]) => {
                      gridOptions[key as keyof GridOptions] = value.currentValue;
@@ -318,7 +313,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         if (emitter && this.isEmitterUsed(eventType)) {
 
             // Make sure we emit within the angular zone, so change detection works properly
-            const fireEmitter = () => this.ngZone.run(() => emitter.emit(event));
+            const fireEmitter = () => this.angularFrameworkOverrides.runInsideAngular(() => emitter.emit(event));
 
             if (eventType === 'gridReady') {
                 // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit then gridReady event
