@@ -52,6 +52,7 @@
     "vite-plugin-svgr": "^4.2.0"
   },
   "devDependencies": {
-    "prettier-plugin-astro": "^0.12.3"
+    "prettier-plugin-astro": "^0.12.3",
+    "vite-plugin-mkcert": "^1.17.2"
   }
 }
