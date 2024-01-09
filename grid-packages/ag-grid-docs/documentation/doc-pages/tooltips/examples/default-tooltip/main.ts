@@ -1,16 +1,10 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
-import { CustomTooltip } from "./customTooltip_typescript";
+
 const columnDefs: ColDef[] = [
-  {
-    field: 'athlete',
-    minWidth: 150,
-    tooltipField: 'athlete',
-    tooltipComponentParams: { type: 'success' },
-  },
+  { field: 'athlete', minWidth: 170, tooltipField: 'athlete' },
   { field: 'age' },
-  { field: 'country', minWidth: 130, tooltipField: 'country' },
+  { field: 'country', minWidth: 150, tooltipField: 'country' },
   { field: 'year' },
-  { field: 'date' },
   { field: 'sport' },
   { field: 'gold' },
   { field: 'silver' },
@@ -26,16 +20,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 100,
     filter: true,
-    tooltipComponent: CustomTooltip,
   },
-
-  tooltipShowDelay: 1000,
-  tooltipMouseTrack: true,
-
-  // set rowData to null or undefined to show loading panel by default
+  enableBrowserTooltips: true,
   rowData: null,
   columnDefs: columnDefs,
-
 }
 
 // setup the grid after the page has finished loading
