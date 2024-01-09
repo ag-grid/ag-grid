@@ -62,19 +62,16 @@ const gridOptions: GridOptions = {
         params.api.setColumnsVisible(columnsToShow, true);
         params.api.setColumnsVisible(columnsToHide, false);
 
-        const stockFilter: ISetFilter = params.api.getFilterInstance('stock')!;
-        const stocks = stockFilter.getFilterValues();
-
-        if (innerWidth < FILTER_ROWS_BREAKPOINT) {
-            stockFilter.setModel({
-                values: stocks.slice(0, 6),
+        params.api.getFilterInstance<ISetFilter>('stock', stockFilter => {
+            const stocks = stockFilter!.getFilterValues();
+            const values = innerWidth < FILTER_ROWS_BREAKPOINT ? stocks.slice(0, 6) : stocks;
+            
+            stockFilter!.setModel({
+                values,
+            }).then(() => {
+                params.api.onFilterChanged();
             });
-        } else {
-            stockFilter.setModel({
-                values: stocks,
-            });
-        }
-        params.api.onFilterChanged();
+        })!;
     },
 };
 

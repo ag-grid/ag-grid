@@ -83,35 +83,37 @@ const GridExample = () => {
     }, [])
 
     const setModel = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type])!;
-        instance.setModel({ values: MANGLED_COLOURS });
-        gridRef.current!.api.onFilterChanged();
+        gridRef.current!.api.setColumnFilterModel(FILTER_TYPES[type], { values: MANGLED_COLOURS }).then(() => {
+            gridRef.current!.api.onFilterChanged();
+        });
     }, [])
 
     const getModel = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type])!;
-        alert(JSON.stringify(instance.getModel(), null, 2));
+        alert(JSON.stringify(gridRef.current!.api.getColumnFilterModel(FILTER_TYPES[type]), null, 2));
     }, [alert])
 
     const setFilterValues = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type])!;
-        instance.setFilterValues(MANGLED_COLOURS);
-        instance.applyModel();
-        gridRef.current!.api.onFilterChanged();
+        gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type], instance => {
+            instance!.setFilterValues(MANGLED_COLOURS);
+            instance!.applyModel();
+            gridRef.current!.api.onFilterChanged();
+        });
     }, [])
 
     const getValues = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type])!;
-        alert(JSON.stringify(instance.getFilterValues(), null, 2));
+        gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type], instance => {
+            alert(JSON.stringify(instance!.getFilterValues(), null, 2));
+        });
     }, [alert])
 
     const reset = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type])!;
-        instance.resetFilterValues();
-        instance.setModel(null);
-        gridRef.current!.api.onFilterChanged();
+        gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type], instance => {
+            instance!.resetFilterValues();
+            instance!.setModel(null).then(() => {
+                gridRef.current!.api.onFilterChanged();
+            });
+        });
     }, [])
-
 
     return (
         <div style={containerStyle}>

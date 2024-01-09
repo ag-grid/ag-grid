@@ -33,7 +33,7 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
      * actions by waiting on the returned grid promise, e.g. 
      * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`
      */
-    setModel(model: SetFilterModel | null): void | AgPromise<void>;
+    setModel(model: SetFilterModel | null): AgPromise<void>;
 
     /**
      * @deprecated As of v29 use `getFilterValues` to get the values in the Set Filter

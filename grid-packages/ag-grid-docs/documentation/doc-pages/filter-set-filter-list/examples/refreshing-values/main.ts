@@ -70,10 +70,11 @@ function useList1() {
     valuesArray.push(value)
   })
 
-  var filter = gridApi!.getFilterInstance<ISetFilter>('array')!;
-  filter.refreshFilterValues()
+  gridApi!.getFilterInstance<ISetFilter>('array', filter => {
+    filter!.refreshFilterValues()
 
-  valuesCallbackList = list1
+    valuesCallbackList = list1
+  });
 }
 
 function useList2() {
@@ -83,10 +84,11 @@ function useList2() {
     valuesArray.push(value)
   })
 
-  var filter = gridApi!.getFilterInstance<ISetFilter>('array')!;
-  filter.refreshFilterValues()
-
-  valuesCallbackList = list2
+  gridApi!.getFilterInstance<ISetFilter>('array', filter => {
+    filter!.refreshFilterValues()
+  
+    valuesCallbackList = list2
+  })!;
 }
 
 // setup the grid after the page has finished loading

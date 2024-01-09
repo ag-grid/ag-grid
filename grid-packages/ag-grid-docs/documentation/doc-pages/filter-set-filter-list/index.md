@@ -225,8 +225,9 @@ It may be desirable to refresh the values at a later point, for example to refle
 <snippet>
 const gridOptions = {
     onFilterChanged: params => {
-        const setFilter = params.api.getFilterInstance('columnName');
-        setFilter.refreshFilterValues();
+        params.api.getFilterInstance('columnName', setFilter => {
+            setFilter.refreshFilterValues();
+        });
     }
 }
 </snippet>

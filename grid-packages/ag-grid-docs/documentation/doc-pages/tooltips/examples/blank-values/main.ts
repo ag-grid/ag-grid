@@ -1,14 +1,12 @@
 import {
   ColDef,
-  FirstDataRenderedEvent,
   GridApi,
   createGrid,
   GridOptions,
-  ITooltipParams,
+  ITooltipParams
 } from '@ag-grid-community/core';
-import { CustomTooltip } from "./customTooltip_typescript";
 
-const toolTipValueGetter = (params: ITooltipParams) => ({ value: params.value })
+const toolTipValueGetter = (params: ITooltipParams) => params.value == null || params.value === '' ? '- Missing -' : params.value;
 
 const columnDefs: ColDef[] = [
   {
@@ -21,7 +19,6 @@ const columnDefs: ColDef[] = [
     headerName: 'Athlete Col 2',
     field: 'athlete',
     minWidth: 150,
-    tooltipComponent: CustomTooltip,
     tooltipValueGetter: toolTipValueGetter,
   },
   { field: 'sport', width: 110 },
@@ -40,8 +37,6 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     filter: true,
   },
-
-  // set rowData to null or undefined to show loading panel by default
   rowData: null,
   columnDefs: columnDefs,
 }

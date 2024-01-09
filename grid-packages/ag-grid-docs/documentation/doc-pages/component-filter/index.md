@@ -85,7 +85,7 @@ There are two ways you can get fix this problem:
 ## Accessing the Component Instance
 
 <framework-specific-section frameworks="angular,vue,javascript">
-| AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
+| AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey, callback)` method.
 </framework-specific-section>
 <framework-specific-section frameworks="react">
 |AG Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. This returns a wrapper component that matches the provided grid filter components that implement `IFilter`. To get the React custom filter component, the helper function `getInstance` can be used with this. As React components are created asynchronously, it is necessary to use a callback for both methods.
@@ -111,8 +111,10 @@ There are two ways you can get fix this problem:
 |
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
-|     const angularFilterInstance = api.getFilterInstance&lt;PartialMatchFilterComponent>('name'); // assume filter on name column
-|     angularFilterInstance.myMethod();
+|     // assume filter on name column
+|     api.getFilterInstance&lt;PartialMatchFilterComponent>('name', angularFilterInstance => {
+|         angularFilterInstance.myMethod();
+|     });
 | }
 </snippet>
 </framework-specific-section>
@@ -162,8 +164,10 @@ There are two ways you can get fix this problem:
 |
 |     // later in your app, if you want to execute myMethod()...
 |     laterOnInYourApplicationSomewhere() {
-|         const filterInstance = api.getFilterInstance('name'); // assume filter on name column
-|         filterInstance.myMethod();
+|         // assume filter on name column
+|         api.getFilterInstance('name', filterInstance => {
+|             filterInstance.myMethod();
+|         });
 |     }
 </snippet>
 </framework-specific-section>

@@ -5,8 +5,8 @@
 <framework-specific-section frameworks="angular">
 <snippet transform={false} language="ts">
 |interface ITooltipAngularComp {
-|    /** The agInit(params) method is called on the tooltip component once.
-|        See below for details on the parameters. */
+|    // The agInit(params) method is called on the tooltip component once.
+|    // See below for details on the parameters.
 |    agInit(params: ITooltipParams): void;
 |}
 </snippet>
