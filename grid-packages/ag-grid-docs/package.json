@@ -119,6 +119,7 @@
     "@vue/compiler-sfc": "^3.2.26",
     "@vue/component-compiler-utils": "^2.6.0",
     "ag-charts-angular": "9.0.1-beta.20240110",
+    "ag-charts-enterprise": "9.0.1-beta.20240110",
     "ag-charts-community": "9.0.1-beta.20240110",
     "ag-charts-react": "9.0.1-beta.20240110",
     "ag-charts-vue": "9.0.1-beta.20240110",

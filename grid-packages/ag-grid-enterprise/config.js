@@ -63,9 +63,9 @@ function genConfig(name) {
             }),
             node({dedupe: ['ag-charts-community'], format: opts.nodeFormatOverride }),      // for utils package - defaulting to use index.js
             commonjs({
-                // namedExports: {
-                //     '../../grid-enterprise-modules/charts/node_modules/ag-charts-enterprise/dist/package/main.cjs.js' : Object.keys(agChartsCommunity)
-                // }
+                namedExports: {
+                    '../../grid-enterprise-modules/charts/node_modules/ag-charts-enterprise/dist/package/main.cjs.js' : Object.keys(agChartsCommunity)
+                }
             }),
             typescript({
                 tsconfig: "tsconfig.es6.json"

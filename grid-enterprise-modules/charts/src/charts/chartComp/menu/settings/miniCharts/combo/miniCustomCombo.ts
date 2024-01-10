@@ -1,5 +1,4 @@
-import { _Scene } from "ag-charts-community";
-// import { _Scene } from "ag-charts-enterprise";
+import { _Scene } from "ag-charts-enterprise";
 import { ChartType } from '@ag-grid-community/core';
 import { createColumnRects, CreateColumnRectsParams, createLinePaths } from '../miniChartHelpers';
 import { MiniChart } from '../miniChart';

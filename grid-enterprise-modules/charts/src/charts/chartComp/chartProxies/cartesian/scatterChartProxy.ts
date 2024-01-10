@@ -1,5 +1,4 @@
-import { AgBubbleSeriesOptions, AgCartesianAxisOptions, AgScatterSeriesOptions } from "ag-charts-community";
-// import { AgBubbleSeriesOptions, AgCartesianAxisOptions, AgScatterSeriesOptions } from "ag-charts-enterprise";
+import { AgBubbleSeriesOptions, AgCartesianAxisOptions, AgScatterSeriesOptions } from "ag-charts-enterprise";
 import { ChartProxyParams, FieldDefinition, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { ChartDataModel } from "../../model/chartDataModel";
