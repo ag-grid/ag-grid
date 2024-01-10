@@ -46,7 +46,9 @@
             background-color: var(--color-link);
             opacity: 0;
             transform: scaleX(0);
-            transition: transform 0.33s ease-in-out, opacity 0.33s ease-in-out;
+            transition:
+                transform 0.33s ease-in-out,
+                opacity 0.33s ease-in-out;
         }
 
         &:hover::before {

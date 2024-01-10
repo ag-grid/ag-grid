@@ -46,7 +46,7 @@ $toolbar-width: 1050px;
     right: 0;
     height: 100%;
     width: 70px;
-    background: linear-gradient(90deg, transparent 0%, var(--color-util-brand-100) 110%);
+    background: linear-gradient(90deg, transparent 0%, var(--color-bg-primary) 110%);
     pointer-events: none;
 
     @media (min-width: $toolbar-width) {
@@ -69,8 +69,11 @@ $toolbar-width: 1050px;
 }
 
 .toolbarNav {
+    position: sticky;
+    top: var(--header-nav-height);
     padding-top: $spacing-size-2;
     padding-bottom: $spacing-size-2;
+    z-index: 2;
 
     ul {
         display: flex;

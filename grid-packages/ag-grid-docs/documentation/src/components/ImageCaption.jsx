@@ -83,7 +83,7 @@ const ImageCaption = ({
             className={classnames(styles.imageCaption, {
                 [styles.centered]: centered,
                 [styles.constrained]: constrained,
-                [styles.filterDarkMode]: filterDarkMode
+                [styles.darkmodeFilter]: filterDarkMode,
             })}
             style={style}
         >

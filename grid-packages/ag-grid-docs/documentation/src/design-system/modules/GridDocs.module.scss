@@ -20,6 +20,10 @@
         padding-right: $spacing-size-3;
     }
 
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        padding-top: 0;
+    }
+
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         width: var(--layout-width-6-12);
         max-width: var(--layout-width-6-12);

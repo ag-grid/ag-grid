@@ -7,10 +7,6 @@
         width: var(--layout-width-9-12);
         padding-top: $spacing-size-10;
     }
-
-    @media screen and (min-width: $breakpoint-docs-nav-large) {
-        width: var(--layout-width-10-12);
-    }
 }
 
 .versions {

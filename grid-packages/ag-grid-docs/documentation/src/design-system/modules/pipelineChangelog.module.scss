@@ -9,10 +9,6 @@
         width: var(--layout-width-9-12);
     }
 
-    @media screen and (min-width: $breakpoint-docs-nav-large) {
-        width: var(--layout-width-10-12);
-    }
-
     :global(.ag-filter-icon) {
         display: none;
     }
