@@ -48,7 +48,7 @@ Complete our [Quick Start](/getting-started/) (or open the example below in Code
 
 1. __Row Data:__ The data to be displayed.
 2. __Column Definition:__ Defines & controls grid columns.
-3. __Container:__ A div that the grid and defines it's theme & dimensions.
+3. __Container:__ A div that contains the grid and defines it's theme & dimensions.
 4. __Grid Component:__ The `AgGridReact` component with __Row Data__ and __Column Definition__ props.
 
 <grid-example title='Basic Example' name='basic-example' type='mixed' options='{ "exampleHeight": 220 }'></grid-example>
@@ -105,16 +105,24 @@ The Grid API provides a way of interacting with the grid. To update the data wit
 |  .then((data: any) => gridApi.setGridOption('rowData', data))
 </snippet>
 
-Now that we're loading data from an external source, we can empty our `rowData` array which will allow the grid to display a loading spinner whilst the data is being fetched:
+Now that we're loading data from an external source, we can empty our `rowData` array (which will allow the grid to display a loading spinner whilst the data is being fetched) and update our `colDefs` to match the new dataset:
 
 <snippet transform={false} language="jsx">
 |const gridOptions = {
 |  rowData: [],
-|  // ...
+|  colDefs: [
+|    { field: "mission" },
+|    { field: "company" },
+|    { field: "location" },
+|    { field: "date" },
+|    { field: "price" },
+|    { field: "successful" },
+|    { field: "rocket" }
+|  ]
 |}
 </snippet>
 
-When we run our application, we should see a grid with ~1,400 rows:
+When we run our application, we should see a grid with ~1,400 rows of new data, and new column headers to match:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -135,21 +143,30 @@ As `rowData` is a reactive property, any updates to its state will be reflected 
 |useEffect(() => {
 |  fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
 |    .then(result => result.json()) // Convert to JSON
-|    .then(rowData => setRowData(rowData)) // Update state of `rowData`
+|    .then(rowData => setRowData(rowData)); // Update state of `rowData`
 |}, [])
 </snippet>
 
-Now that we're loading data from an external source, we can empty our `rowData` array which will allow the grid to display a loading spinner whilst the data is being fetched:
+Now that we're loading data from an external source, we can empty our `rowData` array (which will allow the grid to display a loading spinner whilst the data is being fetched) and update our `colDefs` to match the new dataset:
 
 <snippet transform={false} language="jsx">
 |const GridExample = () => {
 |  // Row Data: The data to be displayed.
 |  const [rowData, setRowData] = useState([]);
+|  const [colDefs, setColDefs] = useState([
+|    { field: "mission" },
+|    { field: "company" },
+|    { field: "location" },
+|    { field: "date" },
+|    { field: "price" },
+|    { field: "successful" },
+|    { field: "rocket" }
+|  ]);
 |  // ...
 |}
 </snippet>
 
-When we run our application, we should see a grid with ~1,400 rows:
+When we run our application, we should see a grid with ~1,400 rows of new data, and new column headers to match:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -192,17 +209,26 @@ And then executing a HTTP request when the onGridReady event is fired, subscribi
 |}
 </snippet>
 
-Finally, now that we're loading data from an external source, we can empty our `rowData` array which will allow the grid to display a loading spinner whilst the data is being fetched:
+Finally, now that we're loading data from an external source, we can empty our `rowData` array (which will allow the grid to display a loading spinner whilst the data is being fetched) and update our `colDefs` to match the new dataset:
 
 <snippet transform={false} language="jsx">
 |export class AppComponent {
 |  // Row Data: The data to be displayed.
 |  rowData: IRow[] = [];
+|  colDefs: ColDef[] = [
+|    { field: "mission" },
+|    { field: "company" },
+|    { field: "location" },
+|    { field: "date" },
+|    { field: "price" },
+|    { field: "successful" },
+|    { field: "rocket" }
+|  ];
 |  // ...
 |}
 </snippet>
 
-When we run our application, we should see a grid with ~1,400 rows:
+When we run our application, we should see a grid with ~1,400 rows of new data, and new column headers to match:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -230,19 +256,28 @@ As rowData is a managed property, any updates to its value will be reflected in 
 |};
 </snippet>
 
-And now that we're loading data from an external source, we can empty our `rowData` array which will allow the grid to display a loading spinner whilst the data is being fetched:
+Now that we're loading data from an external source, we can empty our `rowData` array (which will allow the grid to display a loading spinner whilst the data is being fetched) and update our `colDefs` to match the new dataset:
 
 <snippet transform={false} language="jsx">
 |const App = {
 |  setup() {
 |    const rowData = ref([]);
+|    const colDefs = ref([
+|      { field: "mission" },
+|      { field: "company" },
+|      { field: "location" },
+|      { field: "date" },
+|      { field: "price" },
+|      { field: "successful" },
+|      { field: "rocket" }
+|    ]);
 |    // ...
 |  }
 |  // ...
 |}
 </snippet>
 
-When we run our application, we should see a grid with ~1,400 rows:
+When we run our application, we should see a grid with ~1,400 rows of new data, and new column headers to match:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 

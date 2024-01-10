@@ -5,18 +5,15 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     // Data to be displayed
     rowData: [
-        { company: "RVSN USSR", country: "Kazakhstan", date: "1957-10-04", mission: "Sputnik-1", price: 9550000, successful: true },
-        { company: "RVSN USSR", country: "Kazakhstan", date: "1957-11-03", mission: "Sputnik-2", price: 8990000, successful: true },
-        { company: "US Navy", country: "USA", date: "1957-12-06", mission: "Vanguard TV3", price: 6860000, successful: false }
+        { make: "Toyota", model: "Celica", price: 35000 },
+        { make: "Ford", model: "Mondeo", price: 32000 },
+        { make: "Porsche", model: "Boxster", price: 72000 }
     ],
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
-        { field: "mission" },
-        { field: "country" },
-        { field: "successful" },
-        { field: "date" },
-        { field: "price" },
-        { field: "company" }
+        { field: "make" },
+        { field: "model" },
+        { field: "price" }
     ],
 }
 
