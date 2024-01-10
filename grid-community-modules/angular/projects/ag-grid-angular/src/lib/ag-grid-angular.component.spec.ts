@@ -3,15 +3,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AgGridAngular } from './ag-grid-angular.component';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GetRowIdParams, GridOptions, GridReadyEvent, Module } from '@ag-grid-community/core';
+import { GetRowIdParams, GridApi, GridOptions, GridReadyEvent, Module } from '@ag-grid-community/core';
 
 function updateCount(counts: Record<string, Record<string, number>>, key: string, isInAngularZone: boolean) {
     if (!counts[key]) {
         counts[key] = {};
     }
-    if(!counts[key][isInAngularZone.toString()]){
-        counts[key][isInAngularZone.toString()] = 0;
-    }else{
+    if (!counts[key][isInAngularZone.toString()]) {
+        counts[key][isInAngularZone.toString()] = 1;
+    } else {
         counts[key][isInAngularZone.toString()]++;
     }
 }
@@ -30,60 +30,31 @@ export class GridWrapperComponent {
 
     gridOptions: GridOptions = {
         getRowClass: (params) => {
-            updateCount(this.zoneStatus,'gridOptions -> callback',NgZone.isInAngularZone());
+            updateCount(this.zoneStatus, 'gridOptions -> callback', NgZone.isInAngularZone());
             return 'my-class';
         },
         onStateUpdated: () => {
-            updateCount(this.zoneStatus,'gridOptions -> event',NgZone.isInAngularZone());
+            updateCount(this.zoneStatus, 'gridOptions -> event', NgZone.isInAngularZone());
         },
     };
 
     zoneStatus: any = {};
- 
+
+    // Method will be provided by test case
+    setupListeners: (zone: NgZone, api: GridApi, zoneStatus: any) => void = () => {};
+
     @ViewChild(AgGridAngular) agGrid: AgGridAngular;
 
     constructor(private zone: NgZone) {}
 
     onGridReady(params: GridReadyEvent) {
-        updateCount(this.zoneStatus,'component -> event', NgZone.isInAngularZone());
+        updateCount(this.zoneStatus, 'component -> event', NgZone.isInAngularZone());
 
-        // For testing purposes, we are going to add listeners to the grid outside of angular to mimic
-        // these events being fired from the grid itself which is running outside of angular.
-        //this.zone.runOutsideAngular(() => {
-            const globalListener = (event: any) => {
-                updateCount(this.zoneStatus,'api -> globalListener', NgZone.isInAngularZone());
-            };
-
-            const eventListener = (event: any) => {
-                updateCount(this.zoneStatus,'api -> eventListener', NgZone.isInAngularZone());
-            };
-
-            params.api.addGlobalListener(globalListener);
-            params.api.addEventListener('newColumnsLoaded', eventListener);
-
-             params.api.getRowNode('Toyota')?.addEventListener('dataChanged', (event: any) => {
-                 updateCount(this.zoneStatus,'RowNode -> eventListener', NgZone.isInAngularZone());
-             });
-
-            params.api.getColumn('make')?.addEventListener('visibleChanged', (event: any) => {
-                updateCount(this.zoneStatus,'Column -> eventListener', NgZone.isInAngularZone());
-            });
-
-            params.api.getRowNode('Toyota')?.setData({ make: 'Toyota', model: 'Celica', price: 40000 });
-
-            params.api.applyColumnState({
-                state: [
-                    {
-                        colId: 'make',
-                        hide: true,
-                    },
-                ],
-            });
-      //  });
+        this.setupListeners(this.zone, params.api, this.zoneStatus);
     }
 
     getRowId = (params: GetRowIdParams) => {
-        updateCount(this.zoneStatus,'component -> callback', NgZone.isInAngularZone());
+        updateCount(this.zoneStatus, 'component -> callback', NgZone.isInAngularZone());
         return params.data.make;
     };
 }
@@ -111,39 +82,72 @@ describe('GridWrapperComponent', () => {
         expect(api).toBeDefined();
         expect(api.getDisplayedRowCount()).toEqual(1);
 
+        fixture.componentInstance.setupListeners = (zone: NgZone, api: GridApi, zoneStatus: any) => {
+            const globalListener = (event: any) => {
+                updateCount(zoneStatus, 'api -> globalListener', NgZone.isInAngularZone());
+            };
+
+            const eventListener = (event: any) => {
+                updateCount(zoneStatus, 'api -> eventListener', NgZone.isInAngularZone());
+            };
+
+            api.addGlobalListener(globalListener);
+            api.addEventListener('newColumnsLoaded', eventListener);
+
+            api.getRowNode('Toyota')?.addEventListener('dataChanged', (event: any) => {
+                updateCount(zoneStatus, 'RowNode -> eventListener', NgZone.isInAngularZone());
+            });
+
+            api.getColumn('make')?.addEventListener('visibleChanged', (event: any) => {
+                updateCount(zoneStatus, 'Column -> eventListener', NgZone.isInAngularZone());
+            });
+
+            api.getRowNode('Toyota')?.setData({ make: 'Toyota', model: 'Celica', price: 40000 });
+
+            api.applyColumnState({
+                state: [
+                    {
+                        colId: 'make',
+                        hide: true,
+                    },
+                ],
+            });
+        };
+
         setTimeout(() => {
             api.updateGridOptions({ columnDefs: [{ field: 'make' }, { field: 'model' }] });
             fixture.detectChanges();
 
             setTimeout(() => {
-                const results = Object.entries(component.zoneStatus).map(
-                  ([key, value]) => {
-                    const valueString = JSON.stringify(value);
-                    return `${key}: ${valueString}`;
-                  }
+                const results = Object.fromEntries(
+                    Object.entries(component.zoneStatus).map(([key, value]) => {
+                        const valueString = JSON.stringify(value);
+                        return [key, valueString];
+                    })
                 );
-                results.sort();
-                console.log('\n', results.join('\n'));
-                const expected: Record<string, boolean> = {
-                    'Column -> eventListener': true,
-                    'RowNode -> eventListener': true,
-                    'api -> eventListener': true,
-                    'api -> globalListener': true,
-                    'component -> callback': false,
-                    'component -> event': true,
-                    'gridOptions -> callback': false,
+                // results.sort();
+                // console.log('\n', results.join('\n'));
+                const expected: Record<string, string> = {
+                    'Column -> eventListener': '{"true":1}',
+                    'RowNode -> eventListener': '{"true":1}',
+                    'api -> eventListener': '{"true":1}',
+                    'api -> globalListener': '{"true":15}',
+                    'component -> callback': '{"false":1}',
+                    'component -> event': '{"true":1}',
+                    'gridOptions -> callback': '{"false":2}',
+                    'gridOptions -> event': '{"true":2}',
                 };
 
                 Object.keys(expected).forEach((key) => {
-                   // expect(`${key}: ${component.zoneStatus[key]}`).toBe(`${key}: ${expected[key]}`);
+                    expect(`${key}: ${results[key]}`).toBe(`${key}: ${expected[key]}`);
                 });
 
                 done();
-            }, 1000);
-        }, 1000);
+            }, 500);
+        }, 500);
     });
 
-    xit('should remove event listeners', (done) => {
+    it('should remove event listeners', (done) => {
         // Access AG Grid API and check if the row data is updated
         const api = fixture.componentInstance.agGrid.api;
         expect(api).toBeDefined();
@@ -195,5 +199,80 @@ describe('GridWrapperComponent', () => {
 
             done();
         }, 100);
+    });
+
+    it('should run in / out Angular Zone Setup Outside', (done) => {
+        // Access AG Grid API and check if the row data is updated
+        const api = fixture.componentInstance.agGrid.api;
+        expect(api).toBeDefined();
+        expect(api.getDisplayedRowCount()).toEqual(1);
+        
+
+        fixture.componentInstance.setupListeners = (zone: NgZone, api: GridApi, zoneStatus: any) => {
+            // For testing purposes, we are going to add listeners to the grid outside of angular to mimic
+            zone.runOutsideAngular(() => {
+                const globalListener = (event: any) => {
+                    updateCount(zoneStatus, 'api -> globalListener', NgZone.isInAngularZone());
+                };
+
+                const eventListener = (event: any) => {
+                    updateCount(zoneStatus, 'api -> eventListener', NgZone.isInAngularZone());
+                };
+
+                api.addGlobalListener(globalListener);
+                api.addEventListener('newColumnsLoaded', eventListener);
+
+                api.getRowNode('Toyota')?.addEventListener('dataChanged', (event: any) => {
+                    updateCount(zoneStatus, 'RowNode -> eventListener', NgZone.isInAngularZone());
+                });
+
+                api.getColumn('make')?.addEventListener('visibleChanged', (event: any) => {
+                    updateCount(zoneStatus, 'Column -> eventListener', NgZone.isInAngularZone());
+                });
+
+                api.getRowNode('Toyota')?.setData({ make: 'Toyota', model: 'Celica', price: 40000 });
+
+                api.applyColumnState({
+                    state: [
+                        {
+                            colId: 'make',
+                            hide: true,
+                        },
+                    ],
+                });
+            });
+        };
+
+        setTimeout(() => {
+            api.updateGridOptions({ columnDefs: [{ field: 'make' }, { field: 'model' }] });
+            fixture.detectChanges();
+
+            setTimeout(() => {
+                const results = Object.fromEntries(
+                    Object.entries(component.zoneStatus).map(([key, value]) => {
+                        const valueString = JSON.stringify(value);
+                        return [key, valueString];
+                    })
+                );
+                // results.sort();
+                // console.log('\n', results.join('\n'));
+                const expected: Record<string, string> = {
+                    'Column -> eventListener': '{"false":1}', // Will stay outside
+                    'RowNode -> eventListener': '{"false":1}', // Will stay outside
+                    'api -> eventListener': '{"false":1}', // Will stay outside
+                    'api -> globalListener': '{"false":15}', // Will stay outside
+                    'component -> callback': '{"false":1}',
+                    'component -> event': '{"true":1}',
+                    'gridOptions -> callback': '{"false":2}',
+                    'gridOptions -> event': '{"true":2}',
+                };
+
+                Object.keys(expected).forEach((key) => {
+                    expect(`${key}: ${results[key]}`).toBe(`${key}: ${expected[key]}`);
+                });
+
+                done();
+            }, 500);
+        }, 500);
     });
 });
