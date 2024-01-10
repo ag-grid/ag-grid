@@ -97,6 +97,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
             statusBarValueComponent.setValue(_.formatNumberTwoDecimalPlacesAndCommas(value!, thousandSeparator, decimalSeparator));
             statusBarValueComponent.setDisplayed(visible);
+        } else {
+            // might have previously been visible, so hide now
+            this.getAggregationValueComponent(aggFuncName)?.setDisplayed(false);
         }
     }
 
@@ -105,14 +108,18 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
         const { aggFuncs } = this.params;
         if (!aggFuncs || aggFuncs.includes(aggFuncName)) {
-            // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
-            const refComponentName = `${aggFuncName}AggregationComp`;
-            return (this as any)[refComponentName];
+            return this.getAggregationValueComponent(aggFuncName);
         }
 
         // either we can't find it (which would indicate a typo or similar user side), or the user has deliberately
         // not listed the component in aggFuncs
         return null;
+    }
+
+    private getAggregationValueComponent(aggFuncName: AggregationStatusPanelAggFunc): NameValueComp {
+        // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
+        const refComponentName = `${aggFuncName}AggregationComp`;
+        return (this as any)[refComponentName];
     }
 
     private onRangeSelectionChanged(): void {

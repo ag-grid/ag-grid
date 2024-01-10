@@ -38,11 +38,11 @@ export class StatusBar extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.processStatusPanels({});
+        this.processStatusPanels(new Map());
         this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
     }
 
-    private processStatusPanels(existingStatusPanelsToReuse: { [key: string]: IStatusPanelComp }) {
+    private processStatusPanels(existingStatusPanelsToReuse: Map<string, IStatusPanelComp>) {
         const statusPanels = this.gridOptionsService.get('statusBar')?.statusPanels;
         if (statusPanels) {
             const leftStatusPanelComponents = statusPanels
@@ -66,7 +66,7 @@ export class StatusBar extends Component {
         const validStatusBarPanelsProvided = Array.isArray(statusPanels) && statusPanels.length > 0;
         this.setDisplayed(validStatusBarPanelsProvided);
 
-        const existingStatusPanelsToReuse: { [key: string]: IStatusPanelComp } = {};
+        const existingStatusPanelsToReuse: Map<string, IStatusPanelComp> = new Map();
 
         if (validStatusBarPanelsProvided) {
             statusPanels.forEach(statusPanelConfig => {
@@ -76,7 +76,7 @@ export class StatusBar extends Component {
                     const newParams = this.gridOptionsService.addGridCommonParams(statusPanelConfig.statusPanelParams ?? {});
                     const hasRefreshed = existingStatusPanel.refresh(newParams);
                     if (hasRefreshed) {
-                        existingStatusPanelsToReuse[key] = existingStatusPanel;
+                        existingStatusPanelsToReuse.set(key, existingStatusPanel);
                         delete this.compDestroyFunctions[key];
                         _.removeFromParent(existingStatusPanel.getGui());
                     }
@@ -105,13 +105,17 @@ export class StatusBar extends Component {
         this.compDestroyFunctions = {};
     }
 
-    private createAndRenderComponents(statusBarComponents: StatusPanelDef[], ePanelComponent: HTMLElement, existingStatusPanelsToReuse: { [key: string]: IStatusPanelComp }) {
+    private createAndRenderComponents(
+        statusBarComponents: StatusPanelDef[],
+        ePanelComponent: HTMLElement,
+        existingStatusPanelsToReuse: Map<string, IStatusPanelComp>
+    ) {
         const componentDetails: { key: string; promise: AgPromise<IStatusPanelComp>; }[] = [];
 
         statusBarComponents.forEach(componentConfig => {
             // default to the component name if no key supplied
             const key = componentConfig.key || componentConfig.statusPanel
-            const existingStatusPanel = existingStatusPanelsToReuse[key];
+            const existingStatusPanel = existingStatusPanelsToReuse.get(key);
             let promise: AgPromise<IStatusPanelComp>;
             if (existingStatusPanel) {
                 promise = AgPromise.resolve(existingStatusPanel);
