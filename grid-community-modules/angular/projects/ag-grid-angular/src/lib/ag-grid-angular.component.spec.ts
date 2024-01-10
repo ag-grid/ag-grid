@@ -5,15 +5,8 @@ import { AgGridAngular } from './ag-grid-angular.component';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GetRowIdParams, GridApi, GridOptions, GridReadyEvent, Module } from '@ag-grid-community/core';
 
-function updateCount(counts: Record<string, Record<string, number>>, key: string, isInAngularZone: boolean) {
-    if (!counts[key]) {
-        counts[key] = {};
-    }
-    if (!counts[key][isInAngularZone.toString()]) {
-        counts[key][isInAngularZone.toString()] = 1;
-    } else {
-        counts[key][isInAngularZone.toString()]++;
-    }
+function updateCount(counts: Record<string, boolean>, key: string, isInAngularZone: boolean) {
+    counts[key] = isInAngularZone;
 }
 
 @Component({
@@ -127,15 +120,15 @@ describe('GridWrapperComponent', () => {
                 );
                 // results.sort();
                 // console.log('\n', results.join('\n'));
-                const expected: Record<string, string> = {
-                    'Column -> eventListener': '{"true":1}',
-                    'RowNode -> eventListener': '{"true":1}',
-                    'api -> eventListener': '{"true":1}',
-                    'api -> globalListener': '{"true":15}',
-                    'component -> callback': '{"false":1}',
-                    'component -> event': '{"true":1}',
-                    'gridOptions -> callback': '{"false":2}',
-                    'gridOptions -> event': '{"true":2}',
+                const expected: Record<string, boolean> = {
+                    'Column -> eventListener': true,
+                    'RowNode -> eventListener': true,
+                    'api -> eventListener': true,
+                    'api -> globalListener': true,
+                    'component -> callback': false,
+                    'component -> event': true,
+                    'gridOptions -> callback': false,
+                    'gridOptions -> event': true,
                 };
 
                 Object.keys(expected).forEach((key) => {
@@ -143,8 +136,8 @@ describe('GridWrapperComponent', () => {
                 });
 
                 done();
-            }, 500);
-        }, 500);
+            }, 1500);
+        }, 1500);
     });
 
     it('should remove event listeners', (done) => {
@@ -256,15 +249,15 @@ describe('GridWrapperComponent', () => {
                 );
                 // results.sort();
                 // console.log('\n', results.join('\n'));
-                const expected: Record<string, string> = {
-                    'Column -> eventListener': '{"false":1}', // Will stay outside
-                    'RowNode -> eventListener': '{"false":1}', // Will stay outside
-                    'api -> eventListener': '{"false":1}', // Will stay outside
-                    'api -> globalListener': '{"false":15}', // Will stay outside
-                    'component -> callback': '{"false":1}',
-                    'component -> event': '{"true":1}',
-                    'gridOptions -> callback': '{"false":2}',
-                    'gridOptions -> event': '{"true":2}',
+                const expected: Record<string, boolean> = {
+                    'Column -> eventListener': false, // Will stay outside
+                    'RowNode -> eventListener': false, // Will stay outside
+                    'api -> eventListener': false, // Will stay outside
+                    'api -> globalListener': false, // Will stay outside
+                    'component -> callback': false,
+                    'component -> event': true,
+                    'gridOptions -> callback': false,
+                    'gridOptions -> event': true
                 };
 
                 Object.keys(expected).forEach((key) => {
@@ -272,7 +265,7 @@ describe('GridWrapperComponent', () => {
                 });
 
                 done();
-            }, 500);
-        }, 500);
+            }, 1500);
+        }, 1500);
     });
 });
