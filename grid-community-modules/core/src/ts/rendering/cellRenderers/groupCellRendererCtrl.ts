@@ -200,20 +200,20 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private refreshAriaExpanded(): void {
-        const { node, eParentOfValue } = this.params;
+        const { node, eGridCell } = this.params;
 
         if (this.expandListener) {
             this.expandListener = this.expandListener();
         }
 
         if (!this.isExpandable()) {
-            removeAriaExpanded(eParentOfValue);
+            removeAriaExpanded(eGridCell);
             return;
         }
 
         const listener = () => {
             // for react, we don't use JSX, as setting attributes via jsx is slower
-            setAriaExpanded(eParentOfValue, !!node.expanded);
+            setAriaExpanded(eGridCell, !!node.expanded);
         };
 
         this.expandListener = this.addManagedListener(node, RowNode.EVENT_EXPANDED_CHANGED, listener) || null;
