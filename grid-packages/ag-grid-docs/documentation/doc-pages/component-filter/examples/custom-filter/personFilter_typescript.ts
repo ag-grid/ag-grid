@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
 
 export class PersonFilter implements IFilterComp {
     filterParams!: IFilterParams;
@@ -70,6 +70,13 @@ export class PersonFilter implements IFilterComp {
         const newValue = model == null ? null : model.value
         this.eFilterText.value = newValue;
         this.filterText = newValue;
+    }
+
+    afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        if (!params?.suppressFocus) {
+            // focus the input element for keyboard navigation
+            this.eFilterText.focus();
+        }
     }
 }
 

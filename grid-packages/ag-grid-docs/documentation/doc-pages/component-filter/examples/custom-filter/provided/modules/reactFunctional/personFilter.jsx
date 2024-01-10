@@ -1,7 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useGridFilter } from '@ag-grid-community/react';
 
 export default ({ model, onModelChange, getValue }) => {
+    const refInput = useRef(null);
+
     const doesFilterPass = useCallback((params) => {
         const { node } = params;        
         const filterText = model;
@@ -11,9 +13,19 @@ export default ({ model, onModelChange, getValue }) => {
             .every(filterWord => value.indexOf(filterWord) >= 0);
     }, [model]);
 
+    const afterGuiAttached = useCallback((params) => {
+        if (!params || !params.suppressFocus) {
+            // Focus the input element for keyboard navigation.
+            // Can't do this in an effect,
+            // as the component is not recreated when hidden and then shown again
+            refInput.current.focus();
+        }
+    }, []);
+
     // register filter handlers with the grid
     useGridFilter({
         doesFilterPass,
+        afterGuiAttached,
     });
 
     return (
@@ -21,6 +33,7 @@ export default ({ model, onModelChange, getValue }) => {
             <div>Custom Athlete Filter</div>
             <div>
                 <input
+                    ref={refInput}
                     type="text"
                     value={model || ''}
                     onChange={({ target: { value }}) => onModelChange(value === '' ? null : value)}
