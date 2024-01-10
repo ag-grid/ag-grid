@@ -59,7 +59,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     keepDetailRowsCount: true,
     detailRowHeight: true,
     detailRowAutoHeight: true,
-    alignedGrids: true,
     tabIndex: true,
     valueCache: true,
     valueCacheNeverExpires: true,
