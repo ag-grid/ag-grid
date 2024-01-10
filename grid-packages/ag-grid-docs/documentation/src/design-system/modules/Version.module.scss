@@ -9,7 +9,7 @@
     border: 1px solid var(--color-border-primary);
 
     #{$selector-darkmode} & {
-        background: var(--color-bg-secondary);
+        background: var(--color-bg-tertiary);
     }
 
     ul {
@@ -51,6 +51,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    text-decoration: none;
 }
 
 span.major-text {
@@ -67,5 +68,6 @@ span.major-text {
 
     #{$selector-darkmode} & {
         background: var(--color-gray-700);
+        color: var(--color-button-secondary-fg);
     }
 }

@@ -41,6 +41,9 @@
     @media screen and (max-width: $breakpoint-docs-nav-large) {
         border: none;
     }
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        padding-top: 0;
+    }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         width: var(--layout-width-9-12);
@@ -66,17 +69,11 @@
     }
 
     :global(a) {
-        text-decoration: underline;
-        text-underline-offset: 2px;
-        text-decoration-color: var(--color-brand-300);
     }
 
     :global(#{$selector-darkmode}) & {
         :global(a) {
             color: var(--color-brand-300);
-            text-decoration: underline;
-            text-underline-offset: 2px;
-            text-decoration-color: var(--color-brand-300);
         }
 
         :global(a):hover {
