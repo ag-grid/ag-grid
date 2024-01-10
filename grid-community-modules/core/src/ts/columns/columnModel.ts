@@ -3554,9 +3554,9 @@ export class ColumnModel extends BeanStub {
 
     private joinColumnsAriaOrder(): void {
         const allColumns = this.getAllGridColumns();
-        const pinnedLeft = []
-        const center = [];
-        const pinnedRight = [];
+        const pinnedLeft: Column[] = [];
+        const center: Column[] = [];
+        const pinnedRight: Column[] = [];
 
         for (const col of allColumns) {
             const pinned = col.getPinned();
