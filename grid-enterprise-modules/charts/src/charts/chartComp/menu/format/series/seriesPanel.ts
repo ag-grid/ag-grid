@@ -105,6 +105,12 @@ export class SeriesPanel extends Component {
 
         const chart = this.chartController.getChartProxy().getChart();
         chart.waitForUpdate().then(() => {
+            const componentWasRemoved = !this.isAlive();
+            if (componentWasRemoved) {
+                // It's possible that the component was unmounted during the async delay in updating the chart.
+                // If this is the case we want to bail out to avoid operating on stale UI components.
+                return;
+            }
             if (this.chartController.isComboChart()) {
                 this.updateSeriesType();
                 this.initSeriesSelect();
