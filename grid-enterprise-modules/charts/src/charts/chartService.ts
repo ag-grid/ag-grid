@@ -22,8 +22,7 @@ import {
     SeriesChartType,
     UpdateChartParams
 } from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION } from "ag-charts-community";
-// import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION } from "ag-charts-enterprise";
+import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION } from "ag-charts-enterprise";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 import { upgradeChartModel } from "./chartModelMigration";
 import { VERSION as GRID_VERSION } from "../version";

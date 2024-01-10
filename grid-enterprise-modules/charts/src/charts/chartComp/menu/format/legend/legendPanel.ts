@@ -9,8 +9,7 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import { AgChartLegendPosition } from "ag-charts-community";
-// import { AgChartLegendPosition } from "ag-charts-enterprise";
+import { AgChartLegendPosition } from "ag-charts-enterprise";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";

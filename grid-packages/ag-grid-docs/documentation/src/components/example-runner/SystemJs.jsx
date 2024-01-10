@@ -267,7 +267,7 @@ const SystemJs = ({ library, boilerplatePath, appLocation, startFile, options, f
         configuration.gridMap = {
             ...configuration.gridMap,
             "ag-charts-community": `${localPrefix}/ag-charts-community`,
-            // "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
+            "ag-charts-enterprise": `${localPrefix}/ag-charts-enterprise`,
             /* START OF GRID MODULES DEV - DO NOT DELETE */
             "@ag-grid-community/all-modules": `${localPrefix}/@ag-grid-community/all-modules`,
             "@ag-grid-community/client-side-row-model": `${localPrefix}/@ag-grid-community/client-side-row-model`,
