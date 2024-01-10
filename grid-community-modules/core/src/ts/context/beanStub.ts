@@ -107,18 +107,12 @@ export class BeanStub implements IEventEmitter {
 
         if (object instanceof HTMLElement) {
             addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
-        } else if (object instanceof Window) {
-            object.addEventListener(event, listener);
         } else {
             object.addEventListener(event, listener);
         }
 
         const destroyFunc: () => null = () => {
-            if (object instanceof HTMLElement || object instanceof Window) {
-                object.removeEventListener(event, listener);
-            } else {
-                object.removeEventListener(event, listener);
-            }
+            (object as any).removeEventListener(event, listener);
 
             this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
             return null;
