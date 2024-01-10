@@ -192,6 +192,9 @@ export class ColumnModel extends BeanStub {
     // all three lists above combined
     private displayedColumns: Column[] = [];
 
+    // list of all columns (displayed and hidden) in visible order including pinned
+    private ariaOrderColumns: Column[];
+
     // for fast lookup, to see if a column or group is still displayed
     private displayedColumnsAndGroupsMap: { [id: string]: IHeaderColumn } = {};
 
@@ -968,7 +971,7 @@ export class ColumnModel extends BeanStub {
             targetColumn = col;
         }
 
-        return this.getAllGridColumns().indexOf(targetColumn) + 1;
+        return this.ariaOrderColumns.indexOf(targetColumn) + 1;
     }
 
     private isColumnInHeaderViewport(col: Column): boolean {
@@ -3510,6 +3513,7 @@ export class ColumnModel extends BeanStub {
         this.displayedColumnsRight = [];
         this.displayedColumnsCenter = [];
         this.displayedColumns = [];
+        this.ariaOrderColumns = [];
         this.viewportColumns = [];
         this.headerViewportColumns = [];
         this.viewportColumnsHash = '';
@@ -3534,6 +3538,7 @@ export class ColumnModel extends BeanStub {
         this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeLeft, this.displayedColumnsLeft);
         this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeCentre, this.displayedColumnsCenter);
         this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeRight, this.displayedColumnsRight);
+        this.joinColumnsAriaOrder();
         this.joinDisplayedColumns();
         this.setLeftValues(source);
         this.displayedAutoHeightCols = this.displayedColumns.filter(col => col.isAutoHeight());
@@ -3545,6 +3550,26 @@ export class ColumnModel extends BeanStub {
 
     public wasAutoRowHeightEverActive(): boolean {
         return this.autoHeightActiveAtLeastOnce;
+    }
+
+    private joinColumnsAriaOrder(): void {
+        const allColumns = this.getAllGridColumns();
+        const pinnedLeft = []
+        const center = [];
+        const pinnedRight = [];
+
+        for (const col of allColumns) {
+            const pinned = col.getPinned();
+            if (!pinned) {
+                center.push(col);
+            } else if (pinned === true || pinned === 'left') {
+                pinnedLeft.push(col);
+            } else {
+                pinnedRight.push(col);
+            }
+        }
+
+        this.ariaOrderColumns = pinnedLeft.concat(center).concat(pinnedRight);
     }
 
     private joinDisplayedColumns(): void {
