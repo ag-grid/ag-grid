@@ -133,4 +133,8 @@
     border-bottom: 1px solid var(--color-border-secondary);
     border-left: 1px solid var(--color-border-secondary);
     padding: $spacing-size-4;
+
+    pre {
+        border-radius: var(--radius-none);
+    }
 }

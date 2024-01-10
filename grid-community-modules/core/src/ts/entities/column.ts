@@ -8,6 +8,8 @@ import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { IRowNode } from "../interfaces/iRowNode";
+import { IFrameworkOverrides } from "../main";
+import { FrameworkEventListenerService } from "../misc/frameworkEventListenerService";
 import { ColumnHoverService } from "../rendering/columnHoverService";
 import { exists, missing } from "../utils/generic";
 import { mergeDeep } from "../utils/object";
@@ -90,6 +92,9 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
     @Autowired('columnUtils') private readonly columnUtils: ColumnUtils;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
+    
+    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
+    private frameworkEventListenerService: FrameworkEventListenerService | null;
 
     private readonly colId: any;
     private colDef: ColDef<TValue>;
@@ -326,12 +331,20 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     /** Add an event listener to the column. */
-    public addEventListener(eventType: ColumnEventName, listener: Function): void {
+    public addEventListener(eventType: ColumnEventName, userListener: Function): void {
+        if(this.frameworkOverrides.shouldWrap && !this.frameworkEventListenerService) {
+            // Only construct if we need it, as it's an overhead for column construction
+            this.eventService.setFrameworkOverrides(this.frameworkOverrides);
+            this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);
+        }
+        const listener = this.frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
+
         this.eventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove event listener from the column. */
-    public removeEventListener(eventType: ColumnEventName, listener: Function): void {
+    public removeEventListener(eventType: ColumnEventName, userListener: Function): void {
+        const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
         this.eventService.removeEventListener(eventType, listener as AgEventListener);
     }
 

@@ -6,7 +6,7 @@
     --right-margin: #{$spacing-size-16};
 
     font-size: var(--text-fs-base);
-    width: var(--layout-width-3-12);
+    width: 100%;
 
     &[aria-hidden='true'] {
         border-bottom-color: transparent;
@@ -14,6 +14,7 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         flex-shrink: 0;
+        width: var(--layout-width-3-12);
         height: auto !important; // !important required to override <Collapsible> component styling
         border-bottom: none;
         overflow: visible !important; // !important required to override <Collapsible> component styling

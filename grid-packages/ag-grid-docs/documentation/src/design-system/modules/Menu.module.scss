@@ -87,7 +87,7 @@
     }
 }
 
-button:not([class^='ag-']).sectionHeader {
+button.sectionHeader {
     width: 100%;
     padding-top: $spacing-size-1;
     padding-bottom: $spacing-size-2;
@@ -102,6 +102,11 @@ button:not([class^='ag-']).sectionHeader {
 
     &:focus-visible {
         border-color: var(--color-button-primary-shadow-focus);
+    }
+
+    &:hover {
+        color: var(--color-fg-primary);
+        border: 2px solid transparent;
     }
 
     &:hover .sectionIcon {

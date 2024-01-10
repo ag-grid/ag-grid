@@ -23,6 +23,10 @@
         margin-bottom: -$spacing-size-2;
         border-bottom: none;
     }
+
+    :global(.docPage) & {
+        margin-bottom: $spacing-size-4;
+    }
 }
 
 .propertyDescription {
@@ -216,7 +220,7 @@
     }
     10%,
     50% {
-        background-color: var(--color-util-brand-100);
+        background-color: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 90%);
     }
 }
 

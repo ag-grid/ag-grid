@@ -25,10 +25,6 @@
     width: 100%;
     min-height: var(--layout-site-header-height);
 
-    @media screen and (max-width: $breakpoint-docs-nav-medium) {
-        padding-bottom: $spacing-size-3;
-    }
-
     @media screen and (max-width: $breakpoint-site-header-small) {
         // Required for collapsible mobile menu
         :global(#main-nav),
@@ -62,7 +58,7 @@
 
 button.mobileNavButton {
     width: 100%;
-    margin-bottom: $spacing-size-2;
+    margin-bottom: $spacing-size-4;
 
     :global(.icon) {
         --icon-size: #{$spacing-size-6};

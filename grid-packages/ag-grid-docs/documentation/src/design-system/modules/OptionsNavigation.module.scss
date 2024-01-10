@@ -7,8 +7,6 @@
 }
 
 .expandableSnippet {
-    --total-header-height: calc(var(--header-nav-height) * 2 + 4px);
-
     position: sticky;
     top: var(--total-header-height);
     display: flex;
@@ -16,10 +14,6 @@
     width: 100%;
     height: calc(100vh - var(--total-header-height));
     z-index: 3;
-
-    #{$selector-darkmode} & {
-        --total-header-height: calc(var(--header-nav-height) * 2 + 6px);
-    }
 
     @media screen and (min-width: $breakpoint-options-medium) {
         overflow-y: auto;
@@ -92,7 +86,7 @@
 
 .navContainer > code {
     #{$selector-darkmode} & {
-        background: var(--color-gray-900);
+        background: var(--color-bg-tertiary);
     }
 }
 
@@ -164,7 +158,7 @@
 
 .propertyName {
     position: relative;
-    color: var(--string-color);
+    color: var(--color-fg-primary);
     cursor: pointer;
 
     .punctuation {
