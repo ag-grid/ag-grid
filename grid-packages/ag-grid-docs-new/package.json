@@ -1,58 +1,58 @@
 {
-  "name": "ag-grid-docs",
-  "description": "Documentation for AG Grid",
-  "type": "module",
-  "version": "31.0.1",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ag-grid/ag-grid.git"
-  },
-  "keywords": [
-    "web-components",
-    "grid",
-    "data",
-    "table",
-    "angular",
-    "angular-component",
-    "react",
-    "react-component",
-    "reactjs",
-    "vue",
-    "vuejs"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ag-grid/ag-grid-docs/issues"
-  },
-  "private": true,
-  "homepage": "https://www.ag-grid.com/",
-  "scripts": {
-    "dev": "astro dev --port 4610 --host",
-    "start": "astro dev",
-    "build": "astro check && astro build",
-    "preview": "astro preview --port 4611",
-    "astro": "astro"
-  },
-  "dependencies": {
-    "@astrojs/check": "^0.3.4",
-    "@astrojs/react": "^3.0.9",
-    "@carbon/icons-react": "^11.33.0",
-    "@nanostores/persistent": "^0.9.1",
-    "@nanostores/react": "^0.7.1",
-    "@types/react": "^18.2.47",
-    "@types/react-dom": "^18.2.18",
-    "astro": "^3.6.4",
-    "classnames": "^2.5.1",
-    "nanostores": "^0.9.5",
-    "prismjs": "^1.29.0",
-    "react": "^18.2.0",
-    "react-animate-height": "^3.2.3",
-    "react-dom": "^18.2.0",
-    "typescript": "^5.3.3",
-    "vite-plugin-svgr": "^4.2.0"
-  },
-  "devDependencies": {
-    "prettier-plugin-astro": "^0.12.3",
-    "vite-plugin-mkcert": "^1.17.2"
-  }
+    "name": "ag-grid-docs-new",
+    "description": "Documentation for AG Grid",
+    "type": "module",
+    "version": "31.0.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ag-grid/ag-grid.git"
+    },
+    "keywords": [
+        "web-components",
+        "grid",
+        "data",
+        "table",
+        "angular",
+        "angular-component",
+        "react",
+        "react-component",
+        "reactjs",
+        "vue",
+        "vuejs"
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ag-grid/ag-grid-docs/issues"
+    },
+    "private": true,
+    "homepage": "https://www.ag-grid.com/",
+    "scripts": {
+        "dev": "astro dev --port 4610 --host",
+        "start": "astro dev",
+        "build": "echo 'TODO: new grid website build process' # astro check && astro build",
+        "preview": "astro preview --port 4611",
+        "astro": "astro"
+    },
+    "dependencies": {
+        "@astrojs/check": "^0.3.4",
+        "@astrojs/react": "^3.0.9",
+        "@carbon/icons-react": "^11.33.0",
+        "@nanostores/persistent": "^0.9.1",
+        "@nanostores/react": "^0.7.1",
+        "@types/react": "^18.2.47",
+        "@types/react-dom": "^18.2.18",
+        "astro": "^3.6.4",
+        "classnames": "^2.5.1",
+        "nanostores": "^0.9.5",
+        "prismjs": "^1.29.0",
+        "react": "^18.2.0",
+        "react-animate-height": "^3.2.3",
+        "react-dom": "^18.2.0",
+        "typescript": "^5.3.3",
+        "vite-plugin-svgr": "^4.2.0"
+    },
+    "devDependencies": {
+        "prettier-plugin-astro": "^0.12.3",
+        "vite-plugin-mkcert": "^1.17.2"
+    }
 }
