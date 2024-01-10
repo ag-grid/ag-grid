@@ -369,6 +369,14 @@ This is demonstrated in the following example, note the following:
 
 <grid-example title='Enabling Pivot Panel' name='pivot-panel' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
+## Handling Extreme Data
+
+The grid generates pivot result columns from the underlying data and the pivot columns, due to the flexibility of both of these inputs it can be difficult to handle extreme scenarios where thousands of columns can be generated. In this scenarios the browser can become overwhelmed with the amount of data to process.
+
+To circumvent this, you can provide a `pivotMaxGeneratedColumns`. When the grid reaches the point where it shall exceed this provided number of columns, it halts generation and does not display any pivot result columns at all. In this circumstance the grid will trigger a `pivotLimitExceeded` event, allowing your application to provide custom handling.
+
+<grid-example title='Extreme Pivot Handling' name='extreme-pivot' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
 ## Pivot API
 
 Below shows examples of using the pivot API directly. Use this is you want to build out your own toolPanel.

@@ -211,6 +211,7 @@ export const GRID_OPTION_DEFAULTS = {
     functionsPassive: false,
     groupLockGroupColumns: 0,
     serverSideEnableClientSideSort: false,
+    pivotMaxGeneratedColumns: -1,
 } as const;
 /**
  * Used simply to type check the default grid options.

@@ -3210,7 +3210,7 @@ export class ColumnModel extends BeanStub {
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
         if (!this.gridColumns) { return; }
 
-        const newColsPresent = colDefs && colDefs.length > 0;
+        const newColsPresent = colDefs;
 
         // if not cols passed, and we had no cols anyway, then do nothing
         if (!newColsPresent && missing(this.secondaryColumns)) { return; }
