@@ -282,7 +282,7 @@ export class SeriesPanel extends Component {
     }
 
     private initBins() {
-        const currentValue = (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins")).length;
+        const currentValue = (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins", true)).length;
 
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider
@@ -301,8 +301,8 @@ export class SeriesPanel extends Component {
         this.activePanels.push(widget);
     }
 
-    private getSeriesOption<T = string>(expression: string): T {
-        return this.chartOptionsService.getSeriesOption<T>(expression, this.seriesType);
+    private getSeriesOption<T = string>(expression: string, calculated?: boolean): T {
+        return this.chartOptionsService.getSeriesOption<T>(expression, this.seriesType, calculated);
     }
 
     private setSeriesOption<T = string>(expression: string, newValue: T): void {
