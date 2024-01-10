@@ -16,6 +16,12 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
         this.runOutsideAngular(listener);
     }
 
+    // Only setup wrapping when the call is coming from within Angular zone, i.e from a users application code.
+    // Used to distinguish between user code and AG Grid code setting up events against RowNodes and Columns
+    get shouldWrap() {
+        return this._ngZone && NgZone.isInAngularZone(); 
+    }
+
     /**
      * Make sure that any code that is executed outside of AG Grid is running within the Angular zone.
      * This means users can update templates and use binding without having to do anything extra.

@@ -150,8 +150,7 @@ export class GridOptionsService {
                 mergedParams.columnApi = this.columnApi;
                 mergedParams.context = this.context;
 
-                return  callback(mergedParams);
-               //return (this.frameworkOverrides as any).runOutsideAngular(() => callback(mergedParams));
+                return callback(mergedParams);
             };
             return wrapped;
         }
