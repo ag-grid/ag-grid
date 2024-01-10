@@ -48,8 +48,10 @@ export class AxisTicksPanel extends Component {
     private initAxisTicks() {
         this.axisTicksGroup
             .setTitle(this.chartTranslationService.translate("ticks"))
+            .setEnabled(this.chartOptionsService.getAxisProperty("tick.enabled"))
             .hideOpenCloseIcons(true)
-            .hideEnabledCheckbox(true);
+            .hideEnabledCheckbox(false)
+            .onEnableChange(newValue => this.chartOptionsService.setAxisProperty("tick.enabled", newValue));
 
         this.axisTicksColorPicker
             .setLabel(this.chartTranslationService.translate("color"))
