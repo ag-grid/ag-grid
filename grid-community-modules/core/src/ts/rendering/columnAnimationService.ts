@@ -88,7 +88,9 @@ export class ColumnAnimationService extends BeanStub {
 
         if (nowFuncs.length === 0 && waitFuncs.length === 0) { return; }
 
-        window.setTimeout(() => nowFuncs.forEach(func => func()), 0);
-        window.setTimeout(() => waitFuncs.forEach(func => func()), 300);
+        this.getFrameworkOverrides().wrapIncoming(() => {
+            window.setTimeout(() => nowFuncs.forEach(func => func()), 0);
+            window.setTimeout(() => waitFuncs.forEach(func => func()), 300);
+        });
     }
 }

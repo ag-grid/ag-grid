@@ -733,7 +733,7 @@ export class GridApi<TData = any> {
      * - `end` - Scrolls the column to the end of the viewport.
     */
     public ensureColumnVisible(key: string | Column, position: 'auto' | 'start' | 'middle' | 'end' = 'auto') {
-        this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position);
+        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position));
     }
 
     /**
@@ -742,7 +742,7 @@ export class GridApi<TData = any> {
      * This will have no effect before the firstDataRendered event has fired.
      */
     public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
-        this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position);
+        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position));
     }
 
     /**
@@ -754,7 +754,7 @@ export class GridApi<TData = any> {
         nodeSelector: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
         position: 'top' | 'bottom' | 'middle' | null = null
     ) {
-        this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position);
+        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position));
     }
 
     /**
@@ -869,7 +869,7 @@ export class GridApi<TData = any> {
      * or provide cell data types for every column.
      */
     public setFilterModel(model: FilterModel | null): void {
-        this.filterManager.setFilterModel(model);
+        this.frameworkOverrides.wrapIncoming(() => this.filterManager.setFilterModel(model));
     }
 
     /** Gets the current state of all the column filters. Used for saving filter state. */
