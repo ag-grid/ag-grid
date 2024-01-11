@@ -1079,7 +1079,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         if (!this.eventService) {
             this.eventService = new EventService();
         }
-        if(this.beans.frameworkOverrides.shouldWrap && !this.frameworkEventListenerService) {
+        if(this.beans.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
             this.eventService.setFrameworkOverrides(this.beans.frameworkOverrides);
             this.frameworkEventListenerService = new FrameworkEventListenerService(this.beans.frameworkOverrides);
         }

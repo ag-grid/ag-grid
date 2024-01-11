@@ -28,6 +28,9 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
         element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
     }
 
+    wrapIncoming: <T>(callback: () => T) => T = callback => callback();
+    wrapOutgoing: <T>(callback: () => T) => T = callback => callback();
+    get shouldWrapOutgoing() { return false;}
 
     frameworkComponent(name: string): any {
         return null;

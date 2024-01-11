@@ -409,23 +409,23 @@ export class GridApi<TData = any> {
 
     /** Performs change detection on all cells, refreshing cells where required. */
     public refreshCells(params: RefreshCellsParams<TData> = {}): void {
-        this.rowRenderer.refreshCells(params);
+        this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.refreshCells(params));
     }
 
     /** Flash rows, columns or individual cells. */
     public flashCells(params: FlashCellsParams<TData> = {}): void {
-        this.rowRenderer.flashCells(params);
+        this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.flashCells(params));
     }
 
     /** Remove row(s) from the DOM and recreate them again from scratch. */
     public redrawRows(params: RedrawRowsParams<TData> = {}): void {
         const rowNodes = params ? params.rowNodes : undefined;
-        this.rowRenderer.redrawRows(rowNodes);
+        this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.redrawRows(rowNodes));
     }
 
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
     public refreshHeader() {
-        this.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh());
+        this.frameworkOverrides.wrapIncoming(() => this.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh()));
     }
 
     /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
@@ -1175,123 +1175,100 @@ export class GridApi<TData = any> {
         return this.undoRedoService.getCurrentRedoStackSize();
     }
 
+    private assertChart<T>(methodName: string ,func: () => T): T | undefined {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.' + methodName, this.context.getGridId())) {
+            return this.frameworkOverrides.wrapIncoming(() => func());
+        }
+    }
+
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     public getChartModels(): ChartModel[] | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels', this.context.getGridId())) {
-            return this.chartService.getChartModels();
-        }
+        return this.assertChart('getChartModels', () => this.chartService.getChartModels());
     }
 
     /** Returns the `ChartRef` using the supplied `chartId`. */
     public getChartRef(chartId: string): ChartRef | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef', this.context.getGridId())) {
-            return this.chartService.getChartRef(chartId);
-        }
+        return this.assertChart('getChartRef', () => this.chartService.getChartRef(chartId));
     }
 
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL', this.context.getGridId())) {
-            return this.chartService.getChartImageDataURL(params);
-        }
+        return this.assertChart('getChartImageDataURL', () => this.chartService.getChartImageDataURL(params));
     }
 
     /** Starts a browser-based image download for the referenced chartId. */
     public downloadChart(params: ChartDownloadParams) {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart', this.context.getGridId())) {
-            return this.chartService.downloadChart(params);
-        }
+        return this.assertChart('downloadChart', () => this.chartService.downloadChart(params));
     }
 
     /** Open the Chart Tool Panel. */
     public openChartToolPanel(params: OpenChartToolPanelParams) {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel', this.context.getGridId())) {
-            return this.chartService.openChartToolPanel(params);
-        }
+        return this.assertChart('openChartToolPanel', () => this.chartService.openChartToolPanel(params));
     }
 
     /** Close the Chart Tool Panel. */
     public closeChartToolPanel(params: CloseChartToolPanelParams) {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel', this.context.getGridId())) {
-            return this.chartService.closeChartToolPanel(params.chartId);
-        }
+        return this.assertChart('closeChartToolPanel', () => this.chartService.closeChartToolPanel(params.chartId));
     }
 
     /** Used to programmatically create charts from a range. */
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart', this.context.getGridId())) {
-            return this.chartService.createRangeChart(params);
-        }
+        return this.assertChart('createRangeChart', () => this.chartService.createRangeChart(params));
     }
 
     /** Used to programmatically create pivot charts from a grid. */
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
-            return this.chartService.createPivotChart(params);
-        }
+        return this.assertChart('createPivotChart', () => this.chartService.createPivotChart(params));
     }
 
     /** Used to programmatically create cross filter charts from a range. */
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart', this.context.getGridId())) {
-            return this.chartService.createCrossFilterChart(params);
-        }
+        return this.assertChart('createCrossFilterChart', () => this.chartService.createCrossFilterChart(params));
     }
 
     /** Used to programmatically update a chart. */
     public updateChart(params: UpdateChartParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())) {
-            this.chartService.updateChart(params);
-        }
+        return this.assertChart('updateChart', () => this.chartService.updateChart(params));
     }
 
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart', this.context.getGridId())) {
-            return this.chartService.restoreChart(chartModel, chartContainer);
-        }
+        return this.assertChart('restoreChart', () => this.chartService.restoreChart(chartModel, chartContainer));
     }
 
+    private assertClipboard<T>(methodName: string, func: () => T): void {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api' + methodName, this.context.getGridId())) {
+            func();
+        }
+    }
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     public copyToClipboard(params?: IClipboardCopyParams) {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard', this.context.getGridId())) {
-            this.clipboardService.copyToClipboard(params);
-        }
+        this.assertClipboard('copyToClipboard', () => this.clipboardService.copyToClipboard(params));
     }
 
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
     public cutToClipboard(params?: IClipboardCopyParams) {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard', this.context.getGridId())) {
-            this.clipboardService.cutToClipboard(params, 'api');
-        }
+        this.assertClipboard('cutToClipboard', () => this.clipboardService.cutToClipboard(params));
     }
 
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard', this.context.getGridId())) {
-            this.clipboardService.copySelectedRowsToClipboard(params);
-        }
+        this.assertClipboard('copySelectedRowsToClipboard', () => this.clipboardService.copySelectedRowsToClipboard(params));
     }
 
     /** Copies the selected ranges to the clipboard. */
     public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard', this.context.getGridId())) {
-            this.clipboardService.copySelectedRangeToClipboard(params);
-        }
+        this.assertClipboard('copySelectedRangeToClipboard', () => this.clipboardService.copySelectedRangeToClipboard(params));
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     public copySelectedRangeDown(): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown', this.context.getGridId())) {
-            this.clipboardService.copyRangeDown();
-        }
+        this.assertClipboard('copySelectedRangeDown', () => this.clipboardService.copyRangeDown());
     }
 
     /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
     public pasteFromClipboard(): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
-            this.clipboardService.pasteFromClipboard();
-        }
+        this.assertClipboard('pasteFromClipboard', () => this.clipboardService.pasteFromClipboard());
     }
 
     /** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */
@@ -1470,11 +1447,8 @@ export class GridApi<TData = any> {
             this.logMissingRowModel('applyTransaction', 'clientSide');
             return;
         }
-
-        return this.clientSideRowModel.updateRowData(rowDataTransaction);
+        return this.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.updateRowData(rowDataTransaction));
     }
-
-
 
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
     public applyTransactionAsync(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void {
@@ -1482,7 +1456,7 @@ export class GridApi<TData = any> {
             this.logMissingRowModel('applyTransactionAsync', 'clientSide');
             return;
         }
-        this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
+        this.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback));
     }
 
     /** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */
@@ -1491,7 +1465,7 @@ export class GridApi<TData = any> {
             this.logMissingRowModel('flushAsyncTransactions', 'clientSide');
             return;
         }
-        this.clientSideRowModel.flushAsyncTransactions();
+        this.frameworkOverrides.wrapIncoming(() => this.clientSideRowModel.flushAsyncTransactions());
     }
 
     /**

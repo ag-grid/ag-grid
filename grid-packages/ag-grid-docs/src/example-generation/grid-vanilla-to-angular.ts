@@ -263,6 +263,9 @@ ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.l
 })
 
 export class AppComponent {
+    ngDoCheck(){
+        console.count('ngDoCheck')
+    }
 ${hasGridApi ? `    private gridApi!: GridApi${genericParams};\n` : ''}
     ${propertyVars.join('\n')}
     ${propertyAssignments.join(';\n')}

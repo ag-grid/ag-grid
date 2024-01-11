@@ -56,16 +56,18 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
         // complex set of setTimeout below creates the animation
-        window.setTimeout(() => {
-            if (refreshCountCopy !== this.refreshCount) { return; }
-            this.ePrevious!.classList.add('ag-value-slide-out-end');
-        }, 50);
+        this.getFrameworkOverrides().wrapIncoming(() => {
+            window.setTimeout(() => {
+                if (refreshCountCopy !== this.refreshCount) { return; }
+                this.ePrevious!.classList.add('ag-value-slide-out-end');
+            }, 50);
 
-        window.setTimeout(() => {
-            if (refreshCountCopy !== this.refreshCount) { return; }
-            this.getGui().removeChild(this.ePrevious!);
-            this.ePrevious = null;
-        }, 3000);
+            window.setTimeout(() => {
+                if (refreshCountCopy !== this.refreshCount) { return; }
+                this.getGui().removeChild(this.ePrevious!);
+                this.ePrevious = null;
+            }, 3000);
+        });
     }
 
     public refresh(params: any, isInitialRender: boolean = false): boolean {

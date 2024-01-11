@@ -7,18 +7,18 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
         super('angular');
     }
 
-    dispatchEvent(listener: () => void): void {
+    wrapIncoming<T>(callback: () => T): T {
         // Make all events run outside Angular as they often trigger the setup of event listeners
         // By having the event listeners outside Angular we can avoid triggering change detection
         // This also means that if a user calls an AG Grid API method from within their component
         // the internal side effects will not trigger change detection. Without this the events would
         // run inside Angular and trigger change detection as the source of the event was within the angular zone.
-        this.runOutsideAngular(listener);
+        return this.runOutsideAngular(callback);
     }
 
     // Only setup wrapping when the call is coming from within Angular zone, i.e from a users application code.
     // Used to distinguish between user code and AG Grid code setting up events against RowNodes and Columns
-    get shouldWrap() {
+    get shouldWrapOutgoing() {
         return this._ngZone && NgZone.isInAngularZone(); 
     }
 

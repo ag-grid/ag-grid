@@ -11,9 +11,9 @@ export class FrameworkEventListenerService {
 
     public wrap(userListener: AgEventListener): AgEventListener {
         let listener = userListener;
-        if (this.frameworkOverrides.shouldWrap) {
+        if (this.frameworkOverrides.shouldWrapOutgoing) {
             listener = (event: any) => {
-                this.frameworkOverrides.wrapOutgoing!(() => userListener(event));
+                this.frameworkOverrides.wrapOutgoing(() => userListener(event));
             };
             this.wrappedListeners.set(userListener, listener);
         }
@@ -23,9 +23,9 @@ export class FrameworkEventListenerService {
     public wrapGlobal(userListener: AgGlobalEventListener): AgGlobalEventListener {
         let listener = userListener;
 
-        if (this.frameworkOverrides.shouldWrap) {
+        if (this.frameworkOverrides.shouldWrapOutgoing) {
             listener = (eventType: string, event: any) => {
-                this.frameworkOverrides.wrapOutgoing!(() => userListener(eventType, event));
+                this.frameworkOverrides.wrapOutgoing(() => userListener(eventType, event));
             };
             this.wrappedGlobalListeners.set(userListener, listener);
         }
