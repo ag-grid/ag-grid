@@ -75,7 +75,7 @@
     opacity: 0;
     transform: translateY(10px) scale(0.95);
     transition: opacity 0.15s ease, transform 0.15s ease;
-    padding: 16px;
+    padding: $spacing-size-2;
     border-radius: var(--radius-md);
   }
   
@@ -96,6 +96,9 @@
 
   .itemsWrapper {
     display: flex;
+    padding: 8px;
+    border-radius: var(--radius-md);
+    transition: 0.5s all;
   }
 
 
@@ -114,4 +117,10 @@
     background: var(--color-util-brand-50);
     padding: 12px;
     border-radius: var(--radius-md);
+  }
+
+  .itemsWrapper:hover {
+    background: var(--color-util-brand-50);
+    cursor: pointer;
+    transition: 0.3s all ease-in-out;
   }

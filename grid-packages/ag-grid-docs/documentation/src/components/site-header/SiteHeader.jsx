@@ -14,7 +14,6 @@ import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 import Search from "../search/Search";
 import {getCurrentFramework} from '../../utils/local-storage';
-import {PromoBanner} from '../promo-banner/PromoBanner'; 
 import {Dropdown} from '../dropdown/Dropdown';
 
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
@@ -195,7 +194,6 @@ export const SiteHeader = ({ path, currentFramework }) => {
 
     return (
         <>
-            <PromoBanner />
             <header className={classnames(styles.header, 'site-header')}>
                 <div className={classnames(styles.headerInner, 'layout-page-max-width')}>
                 
