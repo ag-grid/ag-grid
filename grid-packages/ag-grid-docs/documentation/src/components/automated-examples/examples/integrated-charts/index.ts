@@ -42,6 +42,35 @@ function numberCellFormatter(params) {
         .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
+const COUNTRY_CODES = {
+    Ireland: "ie",
+    Luxembourg: "lu",
+    Belgium: "be",
+    Spain: "es",
+    "United Kingdom": "gb",
+    France: "fr",
+    Germany: "de",
+    Sweden: "se",
+    Italy: "it",
+    Greece: "gr",
+    Iceland: "is",
+    Portugal: "pt",
+    Malta: "mt",
+    Norway: "no",
+    Brazil: "br",
+    Argentina: "ar",
+    Colombia: "co",
+    Peru: "pe",
+    Venezuela: "ve",
+    Uruguay: "uy",
+    Japan: "jp",
+    China: "cn",
+    "South Korea": "kr",
+    Philippines: "ph",
+    Malaysia: "my",
+    Vietnam: "vn",
+};
+
 const columnDefs: ColDef[] = [
     {
         field: 'name',
@@ -60,8 +89,10 @@ const columnDefs: ColDef[] = [
                 return params.value;
             }
 
+            console.log(COUNTRY_CODES[params.value]);
+
             // put the value in bold
-            return `<div class='country'><span class='flag'>${params.data.flag}</span><span>${params.value}</span></div>`;
+            return `<div class='country'><span class='flag'><img border="0" width="24" height="16" alt="${params.value} flag"  src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[params.value]}.png"></span><span>${params.value}</span></div>`;
         },
     },
     { field: 'jan', type: ['measure', 'numericColumn'], enableRowGroup: true },
