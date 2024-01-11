@@ -14,7 +14,7 @@ Floating Filter Components allow you to add your own floating filter types to AG
 
 ## Example: Custom Floating Filter
 
-In the following example you can see how the Gold, Silver, Bronze and Total columns have a custom floating filter `NumberFloatingFilter`. This filter substitutes the standard floating filter for a input box that the user can change to adjust how many medals of each column to filter by based on a greater than filter.
+In the following example you can see how the Gold, Silver, Bronze and Total columns have a custom floating filter `NumberFloatingFilter`. This filter substitutes the standard floating filter for an input box that the user can change to adjust how many medals of each column to filter by based on a greater than filter.
 
 <grid-example title='Custom Floating Filter' name='custom-floating-filter' type='mixed' options='{ "includeNgFormsModule" : true}'></grid-example>
 
@@ -73,7 +73,7 @@ This example extends the previous example by also providing its own custom filte
 
 If you want to provide a custom filter but don't want to provide an equivalent custom floating filter, you can implement `getModelAsString()` and you will get a read-only floating filter for free.
 
-This example uses the previous custom filter but implementing `getModelAsString()`. Note how there are no custom floating filters and yet each column using `NumberFilter` (Gold, Silver, Bronze and Total) has a read-only floating filter that gets updated as you change the values from the main filter.
+This example uses the previous custom filter but implements `getModelAsString()`. Note how there are no custom floating filters and yet each column using `NumberFilter` (Gold, Silver, Bronze and Total) has a read-only floating filter that gets updated as you change the values from the main filter.
 
 <grid-example title='Custom Filter Only' name='custom-filter' type='mixed'></grid-example>
 

@@ -20,7 +20,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom dates, however this will involve declaring your React component imperatively, and is not recommend. See [Imperative Date Component](../component-date-imperative-react/).</note>
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom dates, however this will involve declaring your React component imperatively, and is not recommended. See [Imperative Date Component](../component-date-imperative-react/).</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">

@@ -24,7 +24,7 @@ md-include:component-interface-vue.md
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom tool panel, however your tool panel will not update with prop changes, but will instead be destroyed/recreated.</note>
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom tool panel. However your tool panel will not update with prop changes, but will instead be destroyed/recreated.</note>
 </framework-specific-section>
 
 ## Registering Tool Panel Components

@@ -1,16 +1,21 @@
 .custom-tooltip {
     width: 165px;
     height: 80px;
-    overflow: auto;
     color: var(--ag-foreground-color);
     background-color: #5577CC;
+    display: flex;
+    flex-direction: column;
 }
 
-.custom-tooltip p {
-    margin: 5px;
-    white-space: nowrap;
+.custom-tooltip > * {
+    margin: 4px;
 }
 
-.custom-tooltip p:first-of-type {
+.custom-tooltip > span:first-child {
     font-weight: bold;
+}
+
+.custom-tooltip-grouped > span:nth-child(2) {
+    padding-top: 4px;
+    border-top: 1px solid;
 }

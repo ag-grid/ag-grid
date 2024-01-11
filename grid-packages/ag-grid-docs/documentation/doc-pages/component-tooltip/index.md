@@ -44,6 +44,7 @@ The example below shows how to set a custom tooltip to a header and to a grouped
 
 - The column **Athlete Col 1** does not have a `tooltipComponent` so it will render the value set in its `headerTooltip` config.
 - The column **Athlete Col 2** uses `tooltipComponent` so the the value in `headerTooltip` is passed to the tooltipComponent `params` to be used.
+- The column group **Athletes** also uses `tooltipComponent`.
 - The `tooltipComponent` detects that it's being rendered by a header because the `params` object does not contain a `rowIndex` value.
 
 <grid-example title='Header Custom Tooltip' name='header-tooltip' type='generated'></grid-example>
