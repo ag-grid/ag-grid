@@ -13,6 +13,11 @@
     transition: background-color 0.3s, color 0.3s;
     font-weight: var(--text-semibold);
     font-size: 17px;
+
+    #{$selector-darkmode} & { 
+        background-color: var(--color-bg-primary);
+        border: none; 
+    }
   }
 
   .customTrigger:hover {
@@ -119,10 +124,33 @@
     background: var(--color-util-brand-50);
     padding: 12px;
     border-radius: var(--radius-md);
+    #{$selector-darkmode} & { 
+        background: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 90%)
+    }
   }
 
   .itemsWrapper:hover {
     background: var(--color-util-brand-50);
     cursor: pointer;
     transition: 0.3s all ease-in-out;
+    #{$selector-darkmode} & { 
+        background: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 90%)
+    }
+    
   }
+
+  .iconLight {
+
+    #{$selector-darkmode} & { 
+            display: none;      
+    }
+  }
+
+  .iconDark {
+    display: none;
+
+    #{$selector-darkmode} & { 
+        display: block;      
+}
+  }
+

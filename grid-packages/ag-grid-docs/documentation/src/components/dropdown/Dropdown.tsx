@@ -4,6 +4,10 @@ import styles from '@design-system/modules/ProductDropdown.module.scss';
 import GridLight from '../../images/inline-svgs/grid-light.svg';
 import ChartsLight from '../../images/inline-svgs/chart-light.svg';
 
+
+import GridDark from '../../images/inline-svgs/grid-dark.svg';
+import ChartsDark from '../../images/inline-svgs/chart-dark.svg';
+
 export const Dropdown = ({ items, children }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -14,9 +18,9 @@ export const Dropdown = ({ items, children }) => {
   const getIconComponent = (title) => {
     switch (title) {
       case 'AG Charts':
-        return <ChartsLight />;
+        return <><ChartsLight className={styles.iconLight} /><ChartsDark className={styles.iconDark} /></>;
       case 'AG Grid':
-        return <GridLight />;
+        return <><GridLight className={styles.iconLight} /> <GridDark className={styles.iconDark} /></>;
       default:
         return null; // Handle other cases or provide a default icon
     }
