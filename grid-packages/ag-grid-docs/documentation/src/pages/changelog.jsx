@@ -142,7 +142,7 @@ const Changelog = ({ location }) => {
         [setFixVersion]
     );
 
-    const defaultColDef = {
+    const defaultColDef = useMemo(() => ({
         cellClass: styles.fontClass,
         headerClass: styles.fontClass,
         autoHeaderHeight: true,
@@ -158,7 +158,7 @@ const Changelog = ({ location }) => {
             return false;
         },
         cellDataType: false,
-    };
+    }), []);
 
     const detailCellRendererParams = useCallback((params) => {
         function produceHTML(fieldName, fieldInfo) {
