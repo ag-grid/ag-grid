@@ -21,7 +21,7 @@ html[data-color-scheme='dark'] {
 }
 
 html[data-color-scheme='dark'] button:not(.ag-root-wrapper button, #myChart button, button[class*='ag-']) , .ag-fill-direction  {
-    border: 2px solid rgba(255,255,255, 0.2);
+    border: 1px solid rgba(255,255,255, 0.2);
 }
 
 .ag-theme-quartz-dark {
@@ -50,7 +50,7 @@ TODO - reinstate these in a way that doesn't clobber example's row colours
 html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']), .ag-fill-direction  {
     appearance: none;
     background-color: var(--background-100);
-    border: 2px solid rgba(0,0,0, 0.2);
+    border: 1px solid rgba(0,0,0, 0.2);
     border-radius: 6px;
     height: 36px;
     color: var(--default-text-color);
