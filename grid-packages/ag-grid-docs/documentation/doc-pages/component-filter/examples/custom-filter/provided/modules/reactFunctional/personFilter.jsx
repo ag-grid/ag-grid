@@ -1,6 +1,8 @@
 import React, { useCallback, useRef } from 'react';
 import { useGridFilter } from '@ag-grid-community/react';
 
+// START-EXAMPLE
+
 export default ({ model, onModelChange, getValue }) => {
     const refInput = useRef(null);
 

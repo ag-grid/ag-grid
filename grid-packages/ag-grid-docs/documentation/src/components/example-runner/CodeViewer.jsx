@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { doOnEnter } from 'components/key-handlers';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import isServerSideRendering from 'utils/is-server-side-rendering';
 import Code from '../Code';
 import { Icon } from '../Icon';
@@ -26,7 +26,10 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
     }, [exampleInfo]);
 
     const keys = files ? Object.keys(files).sort() : [];
-    const exampleFiles = keys.filter((key) => !files[key].isFramework);
+    const exampleFiles = useMemo(() => keys.filter((key) => {
+        if (files[key].isFramework) { return false; }
+        return !key.endsWith('.css') && !key.endsWith('.html') && key !== 'interfaces.ts';
+    }), [files]);
 
     return (
         <div className={classnames(styles.codeViewer, styles.codeViewerBorder, { [styles.hidden]: !isActive, [styles.hideFiles]: !showFiles })}>
@@ -54,8 +57,8 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
                     {activeFile}
                 </span>
             </div>
-            <div className={styles.inner}>
-                <div className={styles.files}>
+            <div className={styles.inner} style={{ flexDirection: 'column' }}>
+                {exampleFiles.length > 1 && (<div className={styles.files} style={{ flexDirection: 'row' }}>
                     <ul className="list-style-none">
                         {exampleFiles.map((path) => (
                             <FileItem
@@ -75,9 +78,7 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
                             />
                         ))}
                     </ul>
-
-                    <CodeOptions exampleInfo={exampleInfo} />
-                </div>
+                </div>)}
                 <div className={styles.code}>
                     {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
                     {files && activeFile && files[activeFile] && (
@@ -116,7 +117,7 @@ const updateFiles = (exampleInfo, setFiles, setActiveFile, didUnmount) => {
 };
 
 const FileItem = ({ path, isActive, onClick }) => (
-    <li>
+    <li style={{ display: 'inline-block' }}>
         <button
             className={classnames('button-style-none', styles.file, { [styles.isActive]: isActive })}
             title={path}
@@ -139,8 +140,12 @@ const ExtensionMap = {
 const FileView = ({ path, code }) => {
     const parts = path.split('.');
     const extension = parts[parts.length - 1];
+    const processedCode = useMemo(() => {
+        // search code for tags
+        return code.replace(/.*START-EXAMPLE(\n)*/s, "").replace(/\n\/\/ END-EXAMPLE.*/s, "");
+    }, [code]);
 
-    return <Code code={code} language={ExtensionMap[extension] || extension} lineNumbers={true} />;
+    return <Code code={processedCode} language={ExtensionMap[extension] || extension} lineNumbers={true} />;
 };
 
 export default CodeViewer;

@@ -16,6 +16,8 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
 
+// START-EXAMPLE
+
 const GridExample = () => {    
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
@@ -57,6 +59,8 @@ const GridExample = () => {
         </div>
     );
 }
+
+// END-EXAMPLE
 
 const root = createRoot(document.getElementById('root')!);
 root.render(<StrictMode><GridExample /></StrictMode>);

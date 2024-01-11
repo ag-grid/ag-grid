@@ -1,9 +1,9 @@
 @use '../core' as *;
 
 .outer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    // position: absolute;
+    // bottom: 0;
+    // left: 0;
     width: 100%;
     padding: $spacing-size-2;
     border-top: 1px solid var(--example-border-color);

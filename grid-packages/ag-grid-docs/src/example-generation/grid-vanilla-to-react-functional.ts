@@ -289,6 +289,8 @@ ${bindings.utils.map(convertFunctionToConstProperty).join('\n\n')}
 
 ${bindings.classes.join('\n')}
 
+// START-EXAMPLE
+
 const GridExample = () => {
     const gridRef = useRef();
     ${stateProperties.join('\n    ')}
@@ -304,6 +306,8 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
         );
 
 }
+
+// END-EXAMPLE
 
 const root = createRoot(document.getElementById('root'));
 root.render(<StrictMode><GridExample /></StrictMode>);

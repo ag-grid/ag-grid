@@ -6,19 +6,11 @@ Quick Filter is a piece of text given to the grid (typically the user will type 
 
 ## Setting the Quick Filter
 
-<grid-example title='Quick Filter' name='quick-filter' type='generated'></grid-example>
-
-<framework-specific-section frameworks="react">
-
-You can set the Quick Filter text via the `quickFilterText` grid option.
-
-<snippet>
+<grid-example title='Quick Filter' name='quick-filter' type='generated'>
 |const gridOptions = {
 |    quickFilterText: 'new filter text'
 |}
-</snippet>
-
-</framework-specific-section>
+</grid-example>
 
 <framework-specific-section frameworks="javascript,angular,vue">
 

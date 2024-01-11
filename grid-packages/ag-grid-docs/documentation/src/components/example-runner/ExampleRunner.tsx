@@ -13,6 +13,8 @@ import { getExampleInfo, getIndexHtmlUrl, openPlunker, openCodeSandbox } from '.
 import { getIndexHtml } from './index-html-helper';
 import { trackExampleRunnerEvent } from './track-example-runner-event';
 import { useExampleFileNodes } from './use-example-file-nodes';
+import CodeOptions from './CodeOptions';
+import { Snippet } from '../snippet/Snippet';
 
 /**
  * The example runner is used for displaying examples in the documentation, showing the example executing
@@ -426,7 +428,8 @@ const ExampleRunnerInner = ({
     exampleImportType,
     useVue3,
     useTypescript,
-    darkMode
+    darkMode,
+    children
 }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
@@ -525,53 +528,63 @@ const ExampleRunnerInner = ({
                                 }
 
                                 return (
-                                    <ExampleRunnerResult
-                                        resultFrameIsVisible={!showCode}
-                                        isOnScreen={isVisible}
-                                        exampleInfo={exampleInfo}
-                                        darkMode={darkMode}
-                                    />
+                                    <div style={{ height: exampleHeight }}>
+                                        <ExampleRunnerResult
+                                            resultFrameIsVisible={true}
+                                            isOnScreen={isVisible}
+                                            exampleInfo={exampleInfo}
+                                            darkMode={darkMode}
+                                        />
+                                    </div>
                                 );
                             }}
                         </VisibilitySensor>
-                        <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
                     </div>
 
-                    <footer className={styles.footer}>
-                        <button
-                            className={classnames(styles.previewCodeToggle, 'button-secondary')}
-                            onClick={(e) => {
-                                setShowCode(!showCode);
-                            }}
-                        >
-                            {showCode && (
-                                <span>
-                                    <Icon name="eye" /> Preview
-                                </span>
-                            )}
-                            {!showCode && (
-                                <span>
-                                    <Icon name="code" /> Code
-                                </span>
-                            )}
-                        </button>
+                    <footer className={styles.footer} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div>
+                            {showCode && (<CodeOptions exampleInfo={exampleInfo} />)}
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'row' }}>
+                            <button
+                                className={classnames(styles.previewCodeToggle, 'button-secondary')}
+                                onClick={(e) => {
+                                    setShowCode(!showCode);
+                                }}
+                            >
+                                {showCode && (
+                                    <span>
+                                        <Icon name="code" /> {children ? 'Collapse' : 'Hide'} Code
+                                    </span>
+                                )}
+                                {!showCode && (
+                                    <span>
+                                        <Icon name="code" /> {children ? 'Expand' : 'Show'} Code
+                                    </span>
+                                )}
+                            </button>
 
-                        <ul className={classnames('list-style-none', styles.externalLinks)}>
-                            <li>
-                                <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
-                            </li>
-                            {!exampleInfo.options.noCodeSandbox && (
+                            <ul className={classnames('list-style-none', styles.externalLinks)}>
                                 <li>
-                                    <OpenInCTA type="codesandbox" onClick={() => openCodeSandbox(exampleInfo)} />
+                                    <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
                                 </li>
-                            )}
-                            {!exampleInfo.options.noPlunker && (
-                                <li>
-                                    <OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />
-                                </li>
-                            )}
-                        </ul>
+                                {!exampleInfo.options.noCodeSandbox && (
+                                    <li>
+                                        <OpenInCTA type="codesandbox" onClick={() => openCodeSandbox(exampleInfo)} />
+                                    </li>
+                                )}
+                                {!exampleInfo.options.noPlunker && (
+                                    <li>    
+                                        <OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
                     </footer>
+                    {!showCode && children && (<Snippet children={children} framework={framework}></Snippet>)}
+                    <div style={{ display: showCode ? 'block' : 'none', height: '400px' }}>
+                        <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
+                    </div>
                 </div>
             )}
         </div>
