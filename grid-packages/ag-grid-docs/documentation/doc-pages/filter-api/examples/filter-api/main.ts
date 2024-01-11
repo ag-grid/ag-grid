@@ -20,19 +20,19 @@ const gridOptions: GridOptions<IOlympicData> = {
 let savedMiniFilterText: string | null = '';
 
 function getMiniFilterText() {
-  gridApi!.getFilterInstance<ISetFilter>('athlete', athleteFilter => {
+  gridApi!.getColumnFilterInstance<ISetFilter>('athlete').then(athleteFilter => {
     console.log(athleteFilter!.getMiniFilter());
   });
 }
 
 function saveMiniFilterText() {
-  gridApi!.getFilterInstance<ISetFilter>('athlete', athleteFilter => {
+  gridApi!.getColumnFilterInstance<ISetFilter>('athlete').then(athleteFilter => {
     savedMiniFilterText = athleteFilter!.getMiniFilter();
   });
 }
 
 function restoreMiniFilterText() {
-  gridApi!.getFilterInstance<ISetFilter>('athlete', athleteFilter => {
+  gridApi!.getColumnFilterInstance<ISetFilter>('athlete').then(athleteFilter => {
     athleteFilter!.setMiniFilter(savedMiniFilterText)
   });
 }

@@ -808,6 +808,15 @@ export class GridApi<TData = any> {
         return this.filterManager.getFilterInstance(key, callback);
     }
 
+    /**
+     * Returns the filter component instance for a column.     
+     * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
+     * This method is similar to `getFilterInstance`, but returns a `Promise` instead of using a callback.
+     */
+    public getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined> {
+        return this.filterManager.getColumnFilterInstance(key);
+    }
+
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     public destroyFilter(key: string | Column) {
         const column = this.columnModel.getPrimaryColumn(key);

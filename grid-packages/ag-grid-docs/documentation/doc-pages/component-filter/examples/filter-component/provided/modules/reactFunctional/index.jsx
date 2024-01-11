@@ -34,7 +34,7 @@ const GridExample = () => {
     } }, []);
 
     const onClicked = useCallback(() => {
-        gridRef.current.api.getFilterInstance('name', (instance) => {
+        gridRef.current.api.getColumnFilterInstance('name').then((instance) => {
             getInstance(instance, component => {
                 if (component) {
                     component.componentMethod('Hello World!');

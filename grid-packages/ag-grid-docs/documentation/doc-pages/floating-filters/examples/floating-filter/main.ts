@@ -106,7 +106,7 @@ function destroyCountryFilter() {
 }
 
 function endingStan() {
-  gridApi!.getFilterInstance<ISetFilter>('country', countryFilterComponent => {
+  gridApi!.getColumnFilterInstance<ISetFilter>('country').then(countryFilterComponent => {
     const countriesEndingWithStan = countryFilterComponent!
       .getFilterKeys()
       .filter(function (value: any) {

@@ -52,7 +52,7 @@ Applying the model is then typically followed by calling `gridApi.onFilterChange
 
 <snippet>
 |// Get a reference to the 'name' filter instance
-|api.getFilterInstance('name', filterInstance => {
+|api.getColumnFilterInstance('name').then(filterInstance => {
 |    // Apply the model to ensure any changes in the UI or via API methods are recognised
 |    filterInstance.applyModel();
 |

@@ -93,7 +93,7 @@ const GridExample = () => {
     }, [alert])
 
     const setFilterValues = useCallback((type: string) => {
-        gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type], instance => {
+        gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
             instance!.setFilterValues(MANGLED_COLOURS);
             instance!.applyModel();
             gridRef.current!.api.onFilterChanged();
@@ -101,13 +101,13 @@ const GridExample = () => {
     }, [])
 
     const getValues = useCallback((type: string) => {
-        gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type], instance => {
+        gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
             alert(JSON.stringify(instance!.getFilterValues(), null, 2));
         });
     }, [alert])
 
     const reset = useCallback((type: string) => {
-        gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type], instance => {
+        gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
             instance!.resetFilterValues();
             instance!.setModel(null).then(() => {
                 gridRef.current!.api.onFilterChanged();

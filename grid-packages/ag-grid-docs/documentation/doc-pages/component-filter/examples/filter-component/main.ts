@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
 }
 
 function onClicked() {
-    gridApi!.getFilterInstance<PartialMatchFilter>('name', function (instance) {
+    gridApi!.getColumnFilterInstance<PartialMatchFilter>('name').then(instance => {
         instance!.componentMethod('Hello World!');
     })
 }

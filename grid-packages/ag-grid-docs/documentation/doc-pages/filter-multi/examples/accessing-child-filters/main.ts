@@ -38,14 +38,14 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function getTextModel() {
-  gridApi!.getFilterInstance<IMultiFilter>('athlete', multiFilterInstance => {
+  gridApi!.getColumnFilterInstance<IMultiFilter>('athlete').then(multiFilterInstance => {
     const textFilter = multiFilterInstance!.getChildFilterInstance(0)!;
     console.log('Current Text Filter model: ', textFilter.getModel());
   });
 }
 
 function getSetMiniFilter() {
-  gridApi!.getFilterInstance<IMultiFilter>('athlete', multiFilterInstance => {
+  gridApi!.getColumnFilterInstance<IMultiFilter>('athlete').then(multiFilterInstance => {
     var setFilter = multiFilterInstance!.getChildFilterInstance(1) as ISetFilter;
     console.log('Current Set Filter search text: ', setFilter.getMiniFilter());
   });
