@@ -1,1 +1,0 @@
-// Provided React-only example
