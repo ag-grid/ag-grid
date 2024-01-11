@@ -26,8 +26,6 @@ export const Dropdown = ({ items, children }) => {
     }
   };
 
-  
-
   return (
     <div className={`${styles.customMenu} ${isOpen ? styles.open : ''}`}>
       <button
@@ -42,7 +40,7 @@ export const Dropdown = ({ items, children }) => {
           {items.map((item, index) => (
             <a
             key={index}
-            href={item.link} // Add the link property to each item
+            href={item.link}
             className={styles.itemsWrapper}
           >
             <div className={styles.placeholderIcon}>
