@@ -990,6 +990,14 @@ export class FilterManager extends BeanStub {
         return unwrapped as any;
     }
 
+    public getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined> {
+        return new Promise(resolve => {
+            this.getFilterInstance(key, filter => {
+                resolve(filter as any);
+            })
+        });
+    }
+
     private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {
         const column = this.columnModel.getPrimaryColumn(key);
 

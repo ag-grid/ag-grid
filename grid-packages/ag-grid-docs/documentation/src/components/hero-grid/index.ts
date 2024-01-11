@@ -62,7 +62,7 @@ const gridOptions: GridOptions = {
         params.api.setColumnsVisible(columnsToShow, true);
         params.api.setColumnsVisible(columnsToHide, false);
 
-        params.api.getFilterInstance<ISetFilter>('stock', stockFilter => {
+        params.api.getColumnFilterInstance<ISetFilter>('stock').then(stockFilter => {
             const stocks = stockFilter!.getFilterValues();
             const values = innerWidth < FILTER_ROWS_BREAKPOINT ? stocks.slice(0, 6) : stocks;
             

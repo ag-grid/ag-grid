@@ -70,7 +70,7 @@ function useList1() {
     valuesArray.push(value)
   })
 
-  gridApi!.getFilterInstance<ISetFilter>('array', filter => {
+  gridApi!.getColumnFilterInstance<ISetFilter>('array').then(filter => {
     filter!.refreshFilterValues()
 
     valuesCallbackList = list1
@@ -84,7 +84,7 @@ function useList2() {
     valuesArray.push(value)
   })
 
-  gridApi!.getFilterInstance<ISetFilter>('array', filter => {
+  gridApi!.getColumnFilterInstance<ISetFilter>('array').then(filter => {
     filter!.refreshFilterValues()
   
     valuesCallbackList = list2
