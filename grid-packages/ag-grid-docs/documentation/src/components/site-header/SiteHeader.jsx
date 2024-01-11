@@ -16,6 +16,8 @@ import Search from "../search/Search";
 import {getCurrentFramework} from '../../utils/local-storage';
 import {PromoBanner} from '../promo-banner/PromoBanner'; 
 
+import {Dropdown} from '../dropdown/Dropdown';
+
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
 const links = [
@@ -175,27 +177,54 @@ const HeaderNav = ({ path, currentFramework }) => {
 };
 
 export const SiteHeader = ({ path, currentFramework }) => {
-    const [isLogoHover, setIsLogoHover] = useState(false);
-    return (
-        <><PromoBanner /><header className={classnames(styles.header, 'site-header')}>
-            <div className={classnames(styles.headerInner, 'layout-page-max-width')}>
-                <a
-                    href="/"
-                    aria-label="Home"
-                    className={styles.headerLogo}
-                    onMouseEnter={() => {
-                        setIsLogoHover(true);
-                    } }
-                    onMouseLeave={() => {
-                        setIsLogoHover(false);
-                    } }
-                >
-                    <LogoType />
-                    <LogoMark bounce={isLogoHover} />
-                </a>
 
-                <HeaderNav path={path} currentFramework={currentFramework} />
-            </div>
-        </header></>
+    const [isLogoHover, setIsLogoHover] = useState(false);
+
+    const dropdownItems = [
+        {
+          title: 'Charts',
+          description: 'Best JavaScript Charts in the World',
+          icon: 'Icon', // Replace with the actual icon component or element
+        },
+        {
+          title: 'AG Grid',
+          description: 'Best JavaScript Grid in the World',
+          icon: 'Icon', // Replace with the actual icon component or element
+        },
+      ];
+    
+
+    return (
+        <>
+            <PromoBanner />
+            <header className={classnames(styles.header, 'site-header')}>
+                <div className={classnames(styles.headerInner, 'layout-page-max-width')}>
+                
+                <div className={classnames(styles.headerContainer, )}>
+                    <a
+                        href="/"
+                        aria-label="Home"
+                        className={styles.headerLogo}
+                        onMouseEnter={() => {
+                            setIsLogoHover(true);
+                        }}
+                        onMouseLeave={() => {
+                            setIsLogoHover(false);
+                        }}
+                    >
+                        <LogoType />
+                        <LogoMark bounce={isLogoHover} />
+                        
+                    </a>
+                    <Dropdown items={dropdownItems} />
+                    </div>
+                   
+                  
+                    <HeaderNav path={path} currentFramework={currentFramework} />
+           
+                </div>
+    
+            </header>
+        </>
     );
 };
