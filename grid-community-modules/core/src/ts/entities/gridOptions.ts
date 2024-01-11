@@ -667,7 +667,6 @@ export interface GridOptions<TData = any> {
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
      * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
-     * @initial
      */
     alignedGrids?: AlignedGrid[] | (() => AlignedGrid[]);
     /**

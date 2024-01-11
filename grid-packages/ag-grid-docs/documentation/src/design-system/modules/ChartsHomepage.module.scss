@@ -12,10 +12,15 @@
 .heroInner {
     display: flex;
     flex-direction: column;
-    gap: 0 $spacing-size-8;
+    gap: 0 $spacing-size-16;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        gap: 0 $spacing-size-64;
+    }
 
     @media screen and (min-width: $breakpoint-hero-large) {
         flex-direction: row;
+        gap: 0 $spacing-size-64;
     }
 }
 

@@ -251,7 +251,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/component-status-bar/ /angular-data-grid/component-status-bar/
     Redirect 301 /documentation/angular/component-tool-panel/ /angular-data-grid/component-tool-panel/
     Redirect 301 /documentation/angular/component-tooltip/ /angular-data-grid/component-tooltip/
-    Redirect 301 /documentation/angular/component-types/ /angular-data-grid/component-types/
+    Redirect 301 /documentation/angular/component-types/ /angular-data-grid/components/
     Redirect 301 /documentation/angular/components/ /angular-data-grid/components/
     Redirect 301 /documentation/angular/context-menu/ /angular-data-grid/context-menu/
     Redirect 301 /documentation/angular/context/ /angular-data-grid/context/
@@ -450,7 +450,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/javascript/component-status-bar/ /javascript-data-grid/component-status-bar/
     Redirect 301 /documentation/javascript/component-tool-panel/ /javascript-data-grid/component-tool-panel/
     Redirect 301 /documentation/javascript/component-tooltip/ /javascript-data-grid/component-tooltip/
-    Redirect 301 /documentation/javascript/component-types/ /javascript-data-grid/component-types/
+    Redirect 301 /documentation/javascript/component-types/ /javascript-data-grid/components/
     Redirect 301 /documentation/javascript/components/ /javascript-data-grid/components/
     Redirect 301 /documentation/javascript/context-menu/ /javascript-data-grid/context-menu/
     Redirect 301 /documentation/javascript/context/ /javascript-data-grid/context/
@@ -640,7 +640,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/react/component-styling/ /react-data-grid/
     Redirect 301 /documentation/react/component-tool-panel/ /react-data-grid/component-tool-panel/
     Redirect 301 /documentation/react/component-tooltip/ /react-data-grid/component-tooltip/
-    Redirect 301 /documentation/react/component-types/ /react-data-grid/component-types/
+    Redirect 301 /documentation/react/component-types/ /react-data-grid/components/
     Redirect 301 /documentation/react/components/ /react-data-grid/components/
     Redirect 301 /documentation/react/context-menu/ /react-data-grid/context-menu/
     Redirect 301 /documentation/react/context/ /react-data-grid/context/
@@ -833,7 +833,7 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/component-status-bar/ /vue-data-grid/component-status-bar/
     Redirect 301 /documentation/vue/component-tool-panel/ /vue-data-grid/component-tool-panel/
     Redirect 301 /documentation/vue/component-tooltip/ /vue-data-grid/component-tooltip/
-    Redirect 301 /documentation/vue/component-types/ /vue-data-grid/component-types/
+    Redirect 301 /documentation/vue/component-types/ /vue-data-grid/components/
     Redirect 301 /documentation/vue/components/ /vue-data-grid/components/
     Redirect 301 /documentation/vue/context-menu/ /vue-data-grid/context-menu/
     Redirect 301 /documentation/vue/context/ /vue-data-grid/context/
@@ -1021,7 +1021,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid-column-state/ /javascript-data-grid/column-state/
     Redirect 301 /javascript-grid-column-updating-definitions/ /javascript-data-grid/column-updating-definitions/
     Redirect 301 /javascript-grid-column/ /javascript-data-grid/column-object/
-    Redirect 301 /javascript-grid-component-types/ /javascript-data-grid/component-types/
+    Redirect 301 /javascript-grid-component-types/ /javascript-data-grid/components/
     Redirect 301 /javascript-grid-components/ /javascript-data-grid/components/
     Redirect 301 /javascript-grid-context-menu/ /javascript-data-grid/context-menu/
     Redirect 301 /javascript-grid-context/ /javascript-data-grid/context/
@@ -1212,7 +1212,7 @@ AddType text/javascript ts jsx
     Redirect 301 /javascript-grid/component-status-bar/ /javascript-data-grid/component-status-bar/
     Redirect 301 /javascript-grid/component-tool-panel/ /javascript-data-grid/component-tool-panel/
     Redirect 301 /javascript-grid/component-tooltip/ /javascript-data-grid/component-tooltip/
-    Redirect 301 /javascript-grid/component-types/ /javascript-data-grid/component-types/
+    Redirect 301 /javascript-grid/component-types/ /javascript-data-grid/components/
     Redirect 301 /javascript-grid/components/ /javascript-data-grid/components/
     Redirect 301 /javascript-grid/context/ /javascript-data-grid/context/
     Redirect 301 /javascript-grid/context-menu/ /javascript-data-grid/context-menu/
@@ -1409,7 +1409,7 @@ AddType text/javascript ts jsx
     Redirect 301 /angular-grid/component-status-bar/ /angular-data-grid/component-status-bar/
     Redirect 301 /angular-grid/component-tool-panel/ /angular-data-grid/component-tool-panel/
     Redirect 301 /angular-grid/component-tooltip/ /angular-data-grid/component-tooltip/
-    Redirect 301 /angular-grid/component-types/ /angular-data-grid/component-types/
+    Redirect 301 /angular-grid/component-types/ /angular-data-grid/components/
     Redirect 301 /angular-grid/components/ /angular-data-grid/components/
     Redirect 301 /angular-grid/context/ /angular-data-grid/context/
     Redirect 301 /angular-grid/context-menu/ /angular-data-grid/context-menu/
@@ -1608,7 +1608,7 @@ AddType text/javascript ts jsx
     Redirect 301 /react-grid/component-styling/ /react-data-grid/
     Redirect 301 /react-grid/component-tool-panel/ /react-data-grid/component-tool-panel/
     Redirect 301 /react-grid/component-tooltip/ /react-data-grid/component-tooltip/
-    Redirect 301 /react-grid/component-types/ /react-data-grid/component-types/
+    Redirect 301 /react-grid/component-types/ /react-data-grid/components/
     Redirect 301 /react-grid/components/ /react-data-grid/components/
     Redirect 301 /react-grid/context/ /react-data-grid/context/
     Redirect 301 /react-grid/context-menu/ /react-data-grid/context-menu/
@@ -1811,7 +1811,7 @@ AddType text/javascript ts jsx
     Redirect 301 /vue-grid/component-status-bar/ /vue-data-grid/component-status-bar/
     Redirect 301 /vue-grid/component-tool-panel/ /vue-data-grid/component-tool-panel/
     Redirect 301 /vue-grid/component-tooltip/ /vue-data-grid/component-tooltip/
-    Redirect 301 /vue-grid/component-types/ /vue-data-grid/component-types/
+    Redirect 301 /vue-grid/component-types/ /vue-data-grid/components/
     Redirect 301 /vue-grid/components/ /vue-data-grid/components/
     Redirect 301 /vue-grid/context/ /vue-data-grid/context/
     Redirect 301 /vue-grid/context-menu/ /vue-data-grid/context-menu/
