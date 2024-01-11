@@ -16,7 +16,7 @@
 
     #{$selector-darkmode} & { 
         background-color: var(--color-bg-primary);
-        border: none; 
+        border: 1px solid var(--color-bg-primary);
     }
   }
 
