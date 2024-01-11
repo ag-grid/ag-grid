@@ -179,6 +179,11 @@ const AboutPage = () => {
                                 <h3>James<br />Swinton-Bland</h3>
                                 <p>Developer Relations Lead</p>
                             </div>
+                            <div>
+                                <img src="../images/team/abi.jpg" alt="Abi Glazier, Developer relations" />
+                                <h3>Abi Glazier</h3>
+                                <p>Developer Relations</p>
+                            </div>
                         </article>
                     </section>
 
