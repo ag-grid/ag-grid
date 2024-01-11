@@ -34,9 +34,9 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
             <button className={classNames(styles.showHideButton, isEmptyContent ? 'button-tertiary' : '')} onClick={!isEmptyContent ? collapsibleHandler : undefined} {...buttonDisabledProps}>
                 <div>
                     {title && !isEmptyContent && title}
-                    {!hideExpander && (
+                    {!isEmptyContent && (
                         <span className={classNames(styles.collapseIndicator, showNotes ? styles.isOpen : undefined)}>
-                            <Icon name="chevronRight" />
+                            <Icon name={showNotes ? 'chevronDown' : 'chevronRight'} />
                         </span>
                     )}
                 </div>
