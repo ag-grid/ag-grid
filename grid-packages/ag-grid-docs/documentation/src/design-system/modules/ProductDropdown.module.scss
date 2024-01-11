@@ -12,6 +12,11 @@
     align-items: center;
     justify-content: space-between;
     transition: background-color 0.3s, color 0.3s;
+    font-weight: var(--text-regular);
+  }
+
+  .customTrigger:hover {
+   background: none;
   }
   
   .customTrigger.open {
@@ -25,11 +30,12 @@
   .arrow {
     display: inline-block;
     border: solid #fff;
-    border-width: 0 2px 2px 0;
+    border-width: 0 1.5px 1.5px 0;
     padding: 3px;
     transform: rotate(45deg);
     transition: transform 0.3s;
-    margin-left: 8px;
+    margin-left: 12px;
+    margin-top: 2px;
   }
   
   @keyframes fadeInUp {
@@ -45,7 +51,7 @@
   
   .customMenu {
     position: relative;
-    width: 350px;
+    width: 400px;
   }
   
   @keyframes fadeInUp {
@@ -79,6 +85,33 @@
     transform: translateY(0) scale(1);
   }
   
-  .placeholderTitle {
+  .productTitle {
     font-weight: var(--text-semibold)
+  }
+  .productDescription {
+    color: var(--color-text-tertiary);
+    opacity: 0.7;
+    font-size: var(--text-fs-sm)
+  }
+
+  .itemsWrapper {
+    display: flex;
+  }
+
+
+  .itemsWrapper:first-child {
+    display: flex;
+    margin-bottom: $spacing-size-3
+  }
+
+  .productsWrapper {
+    display: flex;
+    flex-direction: column;
+    padding-left: $spacing-size-3;
+  }
+
+  .placeholderIcon {
+    background: var(--color-util-brand-50);
+    padding: 12px;
+    border-radius: var(--radius-md);
   }

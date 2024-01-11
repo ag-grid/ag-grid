@@ -15,7 +15,6 @@ import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 import Search from "../search/Search";
 import {getCurrentFramework} from '../../utils/local-storage';
 import {PromoBanner} from '../promo-banner/PromoBanner'; 
-
 import {Dropdown} from '../dropdown/Dropdown';
 
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
@@ -182,14 +181,14 @@ export const SiteHeader = ({ path, currentFramework }) => {
 
     const dropdownItems = [
         {
-          title: 'Charts',
+          title: 'AG Charts',
           description: 'Best JavaScript Charts in the World',
-          icon: 'Icon', // Replace with the actual icon component or element
+          icon: 'icon', // Replace with the actual icon component or element
         },
         {
           title: 'AG Grid',
           description: 'Best JavaScript Grid in the World',
-          icon: 'Icon', // Replace with the actual icon component or element
+          icon: 'icon', // Replace with the actual icon component or element
         },
       ];
     
@@ -218,12 +217,8 @@ export const SiteHeader = ({ path, currentFramework }) => {
                     </a>
                     <Dropdown items={dropdownItems} />
                     </div>
-                   
-                  
                     <HeaderNav path={path} currentFramework={currentFramework} />
-           
                 </div>
-    
             </header>
         </>
     );

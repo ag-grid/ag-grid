@@ -1,12 +1,28 @@
 import React, { useState } from 'react';
 import styles from '@design-system/modules/ProductDropdown.module.scss';
 
+import GridLight from '../../images/inline-svgs/grid-light.svg';
+import ChartsLight from '../../images/inline-svgs/chart-light.svg';
+
 export const Dropdown = ({ items, children }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleMenuToggle = () => {
     setIsOpen(!isOpen);
   };
+
+  const getIconComponent = (title) => {
+    switch (title) {
+      case 'AG Charts':
+        return <ChartsLight />;
+      case 'AG Grid':
+        return <GridLight />;
+      default:
+        return null; // Handle other cases or provide a default icon
+    }
+  };
+
+  
 
   return (
     <div className={`${styles.customMenu} ${isOpen ? styles.open : ''}`}>
@@ -21,9 +37,13 @@ export const Dropdown = ({ items, children }) => {
         <div className={styles.customContent}>
           {items.map((item, index) => (
             <div className={styles.itemsWrapper} key={index}>
-              <div className={styles.placeholderIcon}>{item.icon}</div>
-              <div className={styles.placeholderTitle}>{item.title}</div>
-              <div className={styles.placeholderDescription}>{item.description}</div>
+              <div className={styles.placeholderIcon}>
+                {getIconComponent(item.title)}
+              </div>
+              <div className={styles.productsWrapper}>
+              <div className={styles.productTitle}>{item.title}</div>
+              <div className={styles.productDescription}>{item.description}</div>
+              </div>
             </div>
           ))}
           {children}
