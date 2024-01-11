@@ -24,7 +24,7 @@
     }
 
     &:hover :global(.play_button) {
-        background-color: var(--link-hover-color);
+        background-color: var(--color-link-hover);
         transform: translate(-50%, -50%) scale(1.1);
     }
 
@@ -44,7 +44,5 @@
     background-image: url('../../images/gif-play-icon.svg');
     color: #fff;
     transform: translate(-50%, -50%) scale(1);
-    transition:
-        transform 0.25s,
-        background-color 0.25s;
+    transition: transform 0.25s, background-color 0.25s;
 }

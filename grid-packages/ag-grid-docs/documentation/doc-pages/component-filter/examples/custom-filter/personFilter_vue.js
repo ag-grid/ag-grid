@@ -3,7 +3,7 @@ export default {
       <div class="person-filter">
         <div>Custom Athlete Filter</div>
         <div>
-            <input type="text" v-model="filterText" v-on:keyup="updateFilter($event)" placeholder="Full name search..."/>
+            <input type="text" ref="eFilterText" v-model="filterText" v-on:keyup="updateFilter($event)" placeholder="Full name search..."/>
         </div>
         <div>This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>
       </div>
@@ -47,6 +47,13 @@ export default {
 
         setModel(model) {
             this.filterText = model == null ? null : model.value;
+        },
+
+        afterGuiAttached(params) {
+            if (!params || !params.suppressFocus) {
+                // focus the input element for keyboard navigation
+                this.$refs.eFilterText.focus();
+            }
         }
     }
 };

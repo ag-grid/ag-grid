@@ -30,6 +30,8 @@ pre.code code {
 }
 
 pre.code {
+    --color-code-background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
+
     --comment-color: #5d6376;
     --tag-color: #984f4e;
     --string-color: #0e4491;
@@ -47,6 +49,7 @@ pre.code {
     margin: 0 0 $spacing-size-4;
     padding: 0;
     border: 1px solid color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
+    background-color: var(--color-code-background);
     overflow: visible;
     overflow-y: auto;
 
@@ -71,12 +74,12 @@ pre.code {
 
 pre.code > code {
     position: relative;
-    display: block;
+    display: inline-block;
     min-width: 100%;
     margin-bottom: -6px;
     padding: $vertical-padding $spacing-size-4;
     font-size: 15px;
-    background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
+    background-color: var(--color-code-background);
     background-size: 3em 3em;
     background-origin: content-box;
     background-attachment: local;

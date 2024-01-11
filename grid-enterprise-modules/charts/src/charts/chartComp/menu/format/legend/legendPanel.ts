@@ -108,7 +108,7 @@ export class LegendPanel extends Component {
 
     private initLegendItems() {
         const initSlider = (expression: string, labelKey: string, input: AgSlider, defaultMaxValue: number) => {
-            const currentValue = this.chartOptionsService.getChartOption<number>(`legend.${expression}`);
+            const currentValue = this.chartOptionsService.getChartOption<number | undefined>(`legend.${expression}`) ?? 0;
             input.setLabel(this.chartTranslationService.translate(labelKey))
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)

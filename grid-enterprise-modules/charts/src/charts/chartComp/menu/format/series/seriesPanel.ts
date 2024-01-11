@@ -105,6 +105,12 @@ export class SeriesPanel extends Component {
 
         const chart = this.chartController.getChartProxy().getChart();
         chart.waitForUpdate().then(() => {
+            const componentWasRemoved = !this.isAlive();
+            if (componentWasRemoved) {
+                // It's possible that the component was unmounted during the async delay in updating the chart.
+                // If this is the case we want to bail out to avoid operating on stale UI components.
+                return;
+            }
             if (this.chartController.isComboChart()) {
                 this.updateSeriesType();
                 this.initSeriesSelect();
@@ -282,7 +288,7 @@ export class SeriesPanel extends Component {
     }
 
     private initBins() {
-        const currentValue = (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins")).length;
+        const currentValue = (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins", true)).length;
 
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider
@@ -301,8 +307,8 @@ export class SeriesPanel extends Component {
         this.activePanels.push(widget);
     }
 
-    private getSeriesOption<T = string>(expression: string): T {
-        return this.chartOptionsService.getSeriesOption<T>(expression, this.seriesType);
+    private getSeriesOption<T = string>(expression: string, calculated?: boolean): T {
+        return this.chartOptionsService.getSeriesOption<T>(expression, this.seriesType, calculated);
     }
 
     private setSeriesOption<T = string>(expression: string, newValue: T): void {
