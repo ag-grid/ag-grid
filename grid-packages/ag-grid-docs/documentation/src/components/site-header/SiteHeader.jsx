@@ -182,12 +182,14 @@ export const SiteHeader = ({ path, currentFramework }) => {
         {
           title: 'AG Charts',
           description: 'Best JavaScript Charts in the World',
-          icon: 'icon', // Replace with the actual icon component or element
+          icon: 'icon',
+          link: 'https://charts.ag-grid.com',
         },
         {
           title: 'AG Grid',
           description: 'Best JavaScript Grid in the World',
-          icon: 'icon', // Replace with the actual icon component or element
+          icon: 'icon', 
+          link: 'https://ag-grid.com',
         },
       ];
     
@@ -196,7 +198,6 @@ export const SiteHeader = ({ path, currentFramework }) => {
         <>
             <header className={classnames(styles.header, 'site-header')}>
                 <div className={classnames(styles.headerInner, 'layout-page-max-width')}>
-                
                 <div className={classnames(styles.headerContainer, )}>
                     <a
                         href="/"

@@ -36,15 +36,19 @@ export const Dropdown = ({ items, children }) => {
       {isOpen && (
         <div className={styles.customContent}>
           {items.map((item, index) => (
-            <div className={styles.itemsWrapper} key={index}>
-              <div className={styles.placeholderIcon}>
-                {getIconComponent(item.title)}
-              </div>
-              <div className={styles.productsWrapper}>
+            <a
+            key={index}
+            href={item.link} // Add the link property to each item
+            className={styles.itemsWrapper}
+          >
+            <div className={styles.placeholderIcon}>
+              {getIconComponent(item.title)}
+            </div>
+            <div className={styles.productsWrapper}>
               <div className={styles.productTitle}>{item.title}</div>
               <div className={styles.productDescription}>{item.description}</div>
-              </div>
             </div>
+          </a>
           ))}
           {children}
         </div>
