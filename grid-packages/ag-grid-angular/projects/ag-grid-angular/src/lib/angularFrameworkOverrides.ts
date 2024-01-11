@@ -7,14 +7,12 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
         super('angular');
     }
 
-    wrapIncoming<T>(callback: () => T): T {
-        // Make all events run outside Angular as they often trigger the setup of event listeners
-        // By having the event listeners outside Angular we can avoid triggering change detection
-        // This also means that if a user calls an AG Grid API method from within their component
-        // the internal side effects will not trigger change detection. Without this the events would
-        // run inside Angular and trigger change detection as the source of the event was within the angular zone.
-        return this.runOutsideAngular(callback);
-    }
+    // Make all events run outside Angular as they often trigger the setup of event listeners
+    // By having the event listeners outside Angular we can avoid triggering change detection
+    // This also means that if a user calls an AG Grid API method from within their component
+    // the internal side effects will not trigger change detection. Without this the events would
+    // run inside Angular and trigger change detection as the source of the event was within the angular zone.
+    wrapIncoming: <T>(callback: () => T) => T  = (callback) => this.runOutsideAngular(callback);
 
     // Only setup wrapping when the call is coming from within Angular zone, i.e from a users application code.
     // Used to distinguish between user code and AG Grid code setting up events against RowNodes and Columns
@@ -26,9 +24,7 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
      * Make sure that any code that is executed outside of AG Grid is running within the Angular zone.
      * This means users can update templates and use binding without having to do anything extra.
      */
-    wrapOutgoing<T>( callback: () => T): T {
-        return this.runInsideAngular(callback);
-    }
+    wrapOutgoing: <T>( callback: () => T) => T = (callback) => this.runInsideAngular(callback);
 
     isFrameworkComponent(comp: any): boolean {
         if (!comp) { return false; }
