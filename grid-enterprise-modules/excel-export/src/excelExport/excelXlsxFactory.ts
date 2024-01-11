@@ -24,7 +24,7 @@ import { ImageIdMap, ExcelCalculatedImage } from './assets/excelInterfaces';
 import { ExcelGridSerializingParams } from './excelSerializingSession';
 
 /**
- * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
+ * See https://www.ecma-international.org/wp-content/uploads/Office-Open-XML-White-Paper.pdf
  */
 export class ExcelXlsxFactory {
 
