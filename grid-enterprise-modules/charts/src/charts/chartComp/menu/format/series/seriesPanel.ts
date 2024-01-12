@@ -44,8 +44,8 @@ export class SeriesPanel extends Component {
     private seriesType: ChartSeriesType;
 
     private widgetFuncs: {[name: string]: () => void}= {
-        'lineWidth': () => this.initLineWidth(),
-        'strokeWidth': () => this.initStrokeWidth(),
+        'lineWidth': () => this.initStrokeWidth('lineWidth'),
+        'strokeWidth': () => this.initStrokeWidth('strokeWidth'),
         'lineDash': () => this.initLineDash(),
         'lineOpacity': () => this.initLineOpacity(),
         'fillOpacity': () => this.initFillOpacity(),
@@ -154,32 +154,18 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesTooltipsToggle);
     }
 
-    private initStrokeWidth(): void {
-        const currentValue = this.getSeriesOption<number>("strokeWidth");
+    private initStrokeWidth(label: 'strokeWidth' | 'lineWidth'): void {
+        const currentValue = this.getSeriesOption<number | undefined>("strokeWidth") ?? 0;
 
         const seriesStrokeWidthSlider = this.createBean(new AgSlider());
         seriesStrokeWidthSlider
-            .setLabel(this.translate("strokeWidth"))
+            .setLabel(this.translate(label))
             .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
             .onValueChange(newValue => this.setSeriesOption("strokeWidth", newValue));
 
         this.addWidget(seriesStrokeWidthSlider);
-    }
-
-    private initLineWidth() {
-        const currentValue = this.getSeriesOption<number>("strokeWidth");
-
-        const seriesLineWidthSlider = this.createBean(new AgSlider());
-        seriesLineWidthSlider
-            .setLabel(this.translate('lineWidth'))
-            .setMaxValue(getMaxValue(currentValue, 10))
-            .setTextFieldWidth(45)
-            .setValue(`${currentValue}`)
-            .onValueChange(newValue => this.setSeriesOption("strokeWidth", newValue));
-
-        this.addWidget(seriesLineWidthSlider);
     }
 
     private initLineDash(): void {
@@ -198,7 +184,7 @@ export class SeriesPanel extends Component {
     }
 
     private initLineOpacity(): void {
-        const currentValue = this.getSeriesOption<number>("strokeOpacity");
+        const currentValue = this.getSeriesOption<number | undefined>("strokeOpacity") ?? 0;
 
         const seriesLineOpacitySlider = this.createBean(new AgSlider());
         seriesLineOpacitySlider
@@ -213,7 +199,7 @@ export class SeriesPanel extends Component {
     }
 
     private initFillOpacity(): void {
-        const currentValue = this.getSeriesOption<number>("fillOpacity");
+        const currentValue = this.getSeriesOption<number | undefined>("fillOpacity") ?? 0;
 
         const seriesFillOpacitySlider = this.createBean(new AgSlider());
         seriesFillOpacitySlider
@@ -321,7 +307,7 @@ export class SeriesPanel extends Component {
         }
         const ct = this.chartController.getSeriesChartTypes()[0].chartType;
 
-        if (ct === 'columnLineCombo') { 
+        if (ct === 'columnLineCombo') {
             return 'column';
         }
 
