@@ -37,10 +37,10 @@ export const onRenderBody = ({setPostBodyComponents}) => {
             crossOrigin="anonymous"/>,
 
         // This initialises the smooth scrolling when clicking hash links
-        // Gets scroll offset from the `--scroll-offset` CSS custom property set for :root
+        // Gets scroll offset from the `--layout-scroll-offset` CSS custom property set for :root
         <script key="initialise-smooth-scroll" dangerouslySetInnerHTML={{
             __html: `
-            var scrollOffsetCustomProp = () => {return window.getComputedStyle(document.body).getPropertyValue('--scroll-offset')};
+            var scrollOffsetCustomProp = () => {return window.getComputedStyle(document.body).getPropertyValue('--layout-scroll-offset')};
 
             var scroll = new SmoothScroll(
                 'a[href*="#"]',
@@ -48,7 +48,7 @@ export const onRenderBody = ({setPostBodyComponents}) => {
                     speed: 200,
                     speedAsDuration: true,
                     offset: function() { 
-                        return scrollOffsetCustomProp() ? Number(scrollOffsetCustomProp().replace('px', '')) : 40; 
+                        return scrollOffsetCustomProp() ? Number(scrollOffsetCustomProp().replace('px', '')) : 80; 
                     }
                 });`
         }}/>,

@@ -96,10 +96,13 @@
 }
 
 .rightColumn {
-    display: flex;
-    flex-direction: column;
     width: 60%;
     padding: $spacing-size-2 0 $spacing-size-2 $spacing-size-4;
+
+    &:not(td) {
+        display: flex;
+        flex-direction: column;
+    }
 
     @container (max-width: #{$breakpoint-table-small}) {
         width: 100%;
@@ -265,5 +268,5 @@
 }
 
 .expandedContent > td {
-    padding: $spacing-size-4 $spacing-size-3;
+    padding: 0 0 $spacing-size-4;
 }
