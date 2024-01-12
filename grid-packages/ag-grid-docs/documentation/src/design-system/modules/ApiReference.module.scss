@@ -49,6 +49,19 @@
         height: 1px; // needed for divs to fit table cell heights correctly
     }
 
+    tbody {
+        @container (max-width: #{$breakpoint-table-small}) {
+            display: block;
+        }
+    }
+
+    tr {
+        @container (max-width: #{$breakpoint-table-small}) {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
     pre:global(.code) {
         margin-top: $spacing-size-4;
         margin-bottom: $spacing-size-2;
