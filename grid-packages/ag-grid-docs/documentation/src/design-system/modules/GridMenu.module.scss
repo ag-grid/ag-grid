@@ -1,6 +1,8 @@
 @use '../core' as *;
 
 .menu {
+    padding-top: $spacing-size-8;
+
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         --right-margin: #{$spacing-size-16};
 
