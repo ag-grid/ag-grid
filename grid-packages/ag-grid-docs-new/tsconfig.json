@@ -19,6 +19,7 @@
             "@constants": ["src/constants.ts"],
             "ag-charts-community": ["../ag-charts-community/src/main.ts"],
             "ag-charts-enterprise": ["../ag-charts-enterprise/src/main.ts"]
-        }
+        },
+        "types": ["vitest/globals"]
     }
 }

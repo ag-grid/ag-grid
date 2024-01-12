@@ -31,6 +31,7 @@
         "start": "astro dev",
         "build": "echo 'TODO: new grid website build process' # astro check && astro build",
         "preview": "astro preview --port 4611",
+        "test": "vitest --config ./vitest.config.mjs",
         "astro": "astro"
     },
     "dependencies": {
@@ -53,6 +54,7 @@
     },
     "devDependencies": {
         "prettier-plugin-astro": "^0.12.3",
-        "vite-plugin-mkcert": "^1.17.2"
+        "vite-plugin-mkcert": "^1.17.2",
+        "vitest": "^1.1.3"
     }
 }

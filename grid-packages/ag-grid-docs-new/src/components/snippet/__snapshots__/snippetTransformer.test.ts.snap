@@ -2,12 +2,12 @@
 
 exports[`Snippet Component > given a mix of grid options > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
-    [defaultColDef]=\\"defaultColDef\\"
-    [rowHeight]=\\"rowHeight\\"
-    [rowDragManaged]=\\"rowDragManaged\\"
-    [rowSelection]=\\"rowSelection\\"
-    [postSort]=\\"postSort\\"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [rowHeight]="rowHeight"
+    [rowDragManaged]="rowDragManaged"
+    [rowSelection]="rowSelection"
+    [postSort]="postSort"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -44,12 +44,12 @@ this.postSort = rowNodes => {
 
 exports[`Snippet Component > given a mix of grid options > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
-    [defaultColDef]=\\"defaultColDef\\"
-    [rowHeight]=\\"rowHeight\\"
-    [rowDragManaged]=\\"rowDragManaged\\"
-    [rowSelection]=\\"rowSelection\\"
-    [postSort]=\\"postSort\\"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [rowHeight]="rowHeight"
+    [rowDragManaged]="rowDragManaged"
+    [rowSelection]="rowSelection"
+    [postSort]="postSort"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -480,12 +480,12 @@ const postSort = rowNodes => {
 
 exports[`Snippet Component > given a mix of grid options > it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
-    :defaultColDef=\\"defaultColDef\\"
-    :rowHeight=\\"rowHeight\\"
-    :rowDragManaged=\\"rowDragManaged\\"
-    :rowSelection=\\"rowSelection\\"
-    :postSort=\\"postSort\\"
+    :columnDefs="columnDefs"
+    :defaultColDef="defaultColDef"
+    :rowHeight="rowHeight"
+    :rowDragManaged="rowDragManaged"
+    :rowSelection="rowSelection"
+    :postSort="postSort"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -522,12 +522,12 @@ this.postSort = rowNodes => {
 
 exports[`Snippet Component > given a mix of grid options > it should create 'vue' snippets with space between properties 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
-    :defaultColDef=\\"defaultColDef\\"
-    :rowHeight=\\"rowHeight\\"
-    :rowDragManaged=\\"rowDragManaged\\"
-    :rowSelection=\\"rowSelection\\"
-    :postSort=\\"postSort\\"
+    :columnDefs="columnDefs"
+    :defaultColDef="defaultColDef"
+    :rowHeight="rowHeight"
+    :rowDragManaged="rowDragManaged"
+    :rowSelection="rowSelection"
+    :postSort="postSort"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -814,7 +814,7 @@ const rowNode = this.gridApi.getRowNode('55');"
 
 exports[`Snippet Component > given col defs with arrow function properties > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
+    [columnDefs]="columnDefs"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -829,7 +829,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given col defs with arrow function properties > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
+    [columnDefs]="columnDefs"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -960,7 +960,7 @@ exports[`Snippet Component > given col defs with arrow function properties > it 
 
 exports[`Snippet Component > given col defs with arrow function properties > it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
+    :columnDefs="columnDefs"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -975,7 +975,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given col defs with arrow function properties > it should create 'vue' snippets with space between properties 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
+    :columnDefs="columnDefs"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -1010,7 +1010,7 @@ exports[`Snippet Component > given col defs with arrow function properties > it 
 
 exports[`Snippet Component > given column definitions with functions > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
+    [columnDefs]="columnDefs"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -1033,7 +1033,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given column definitions with functions > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
+    [columnDefs]="columnDefs"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -1252,7 +1252,7 @@ exports[`Snippet Component > given column definitions with functions > it should
 
 exports[`Snippet Component > given column definitions with functions > it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
+    :columnDefs="columnDefs"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -1275,7 +1275,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given column definitions with functions > it should create 'vue' snippets with space between properties 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
+    :columnDefs="columnDefs"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -1334,7 +1334,7 @@ exports[`Snippet Component > given column definitions with functions > it should
 
 exports[`Snippet Component > given column definitions with group columns > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
+    [columnDefs]="columnDefs"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -1359,7 +1359,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given column definitions with group columns > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
+    [columnDefs]="columnDefs"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -1600,7 +1600,7 @@ const columnDefs = [
 
 exports[`Snippet Component > given column definitions with group columns > it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
+    :columnDefs="columnDefs"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -1625,7 +1625,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given column definitions with group columns > it should create 'vue' snippets with space between properties 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
+    :columnDefs="columnDefs"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -1690,7 +1690,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given complex column definition with array property > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
+    [columnDefs]="columnDefs"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -1707,7 +1707,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given complex column definition with array property > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
+    [columnDefs]="columnDefs"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -1860,7 +1860,7 @@ exports[`Snippet Component > given complex column definition with array property
 
 exports[`Snippet Component > given complex column definition with array property > it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
+    :columnDefs="columnDefs"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -1877,7 +1877,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given complex column definition with array property > it should create 'vue' snippets with space between properties 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
+    :columnDefs="columnDefs"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -2030,7 +2030,7 @@ const myValueFormatter = params => {
 
 exports[`Snippet Component > given simple column definitions > it should create 'angular' snippets 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
+    [columnDefs]="columnDefs"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -2044,7 +2044,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given simple column definitions > it should create 'angular' snippets with space between properties 1`] = `
 "<ag-grid-angular
-    [columnDefs]=\\"columnDefs\\"
+    [columnDefs]="columnDefs"
     /* other grid options ... */>
 </ag-grid-angular>
 
@@ -2164,7 +2164,7 @@ const columnDefs = [
 
 exports[`Snippet Component > given simple column definitions > it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
+    :columnDefs="columnDefs"
     /* other grid options ... */>
 </ag-grid-vue>
 
@@ -2178,7 +2178,7 @@ this.columnDefs = [
 
 exports[`Snippet Component > given simple column definitions > it should create 'vue' snippets with space between properties 1`] = `
 "<ag-grid-vue
-    :columnDefs=\\"columnDefs\\"
+    :columnDefs="columnDefs"
     /* other grid options ... */>
 </ag-grid-vue>
 
