@@ -23,7 +23,7 @@ export class ChartOptionsService extends BeanStub {
     public setChartOption<T = string>(expression: string, value: T, isSilent?: boolean): void {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('cartesian');
+            chartSeriesTypes.push('common');
         }
 
         let chartOptions = {};
