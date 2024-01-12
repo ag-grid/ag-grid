@@ -20,6 +20,8 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
     vue: 'Vue',
 };
 
+export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
+
 /**
  * Site base URL
  *
@@ -42,3 +44,8 @@ export const SITE_URL = import.meta.env?.SITE_URL || import.meta.env?.PUBLIC_SIT
 
 export const STAGING_SITE_URL = 'https://grid-staging.ag-grid.com';
 export const PRODUCTION_SITE_URL = 'https://ag-grid.com';
+
+/**
+ * Number of URL segments in `SITE_BASE_URL`
+ */
+export const SITE_BASE_URL_SEGMENTS = SITE_BASE_URL?.split('/').filter(Boolean).length || 0;
