@@ -26,15 +26,16 @@ const App = {
   },
   setup() {
     const rowData = ref([
-      { make: "Toyota", model: "Celica", price: 35000 },
-      { make: "Ford", model: "Mondeo", price: 32000 },
-      { make: "Porsche", model: "Boxster", price: 72000 }
+      { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+      { make: "Ford", model: "F-Series", price: 33850, electric: false },
+      { make: "Toyota", model: "Corolla", price: 29600, electric: false },
     ]);
 
     const colDefs = ref([
       { field: "make" },
       { field: "model" },
-      { field: "price" }
+      { field: "price" },
+      { field: "electric" }
     ]);
 
     return {

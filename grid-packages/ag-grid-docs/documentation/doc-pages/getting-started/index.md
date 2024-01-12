@@ -101,15 +101,16 @@ In the `gridOptions` object, add the following properties:
 |const gridOptions = {
 |  // Row Data: The data to be displayed.
 |  rowData: [
-|    { make: "Toyota", model: "Celica", price: 35000 },
-|    { make: "Ford", model: "Mondeo", price: 32000 },
-|    { make: "Porsche", model: "Boxster", price: 72000 }
+|    { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+|    { make: "Ford", model: "F-Series", price: 33850, electric: false },
+|    { make: "Toyota", model: "Corolla", price: 29600, electric: false },
 |  ],
 |  // Column Definitions: Defines & controls grid columns.
 |  columnDefs: [
 |    { field: "make" },
 |    { field: "model" },
-|    { field: "price" }
+|    { field: "price" },
+|    { field: "electric" }
 |  ]
 |};
 </snippet>
@@ -157,16 +158,17 @@ Next, add the `rowData` and `colDefs` arrays to your component to define the dat
 |const GridExample = () => {
 |  // Row Data: The data to be displayed.
 |  const [rowData, setRowData] = useState([
-|    { make: "Toyota", model: "Celica", price: 35000 },
-|    { make: "Ford", model: "Mondeo", price: 32000 },
-|    { make: "Porsche", model: "Boxster", price: 72000 }
+|    { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+|    { make: "Ford", model: "F-Series", price: 33850, electric: false },
+|    { make: "Toyota", model: "Corolla", price: 29600, electric: false },
 |  ]);
 |  
 |  // Column Definitions: Defines & controls grid columns.
 |  const [colDefs, setColDefs] = useState([
 |    { field: "make" },
 |    { field: "model" },
-|    { field: "price" }
+|    { field: "price" },
+|    { field: "electric" }
 |  ]);
 |
 |  // ...
@@ -240,16 +242,17 @@ Next, add the `rowData` and `colDefs` arrays to your component to define the dat
 |export class AppComponent {
 |  // Row Data: The data to be displayed.
 |  rowData = [
-|    { make: "Toyota", model: "Celica", price: 35000 },
-|    { make: "Ford", model: "Mondeo", price: 32000 },
-|    { make: "Porsche", model: "Boxster", price: 72000 }
+|    { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+|    { make: "Ford", model: "F-Series", price: 33850, electric: false },
+|    { make: "Toyota", model: "Corolla", price: 29600, electric: false },
 |  ];
 |
 |  // Column Definitions: Defines & controls grid columns.
 |  colDefs: ColDef[] = [
 |    { field: "make" },
 |    { field: "model" },
-|    { field: "price" }
+|    { field: "price" },
+|    { field: "electric" }
 |  ];
 |}
 </snippet>
@@ -332,16 +335,17 @@ Next, add the `rowData` and `colDefs` arrays to your component to define the dat
 |setup() {
 |  // Row Data: The data to be displayed.
 |  const rowData = ref([
-|    { make: "Toyota", model: "Celica", price: 35000 },
-|    { make: "Ford", model: "Mondeo", price: 32000 },
-|    { make: "Porsche", model: "Boxster", price: 72000 }
+|    { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+|    { make: "Ford", model: "F-Series", price: 33850, electric: false },
+|    { make: "Toyota", model: "Corolla", price: 29600, electric: false },
 |  ]);
 |
 |  // Column Definitions: Defines & controls grid columns.
 |  const colDefs = ref([
 |    { field: "make" },
 |    { field: "model" },
-|    { field: "price" }
+|    { field: "price" },
+|    { field: "electric" }
 |  ]);
 |
 |  return {

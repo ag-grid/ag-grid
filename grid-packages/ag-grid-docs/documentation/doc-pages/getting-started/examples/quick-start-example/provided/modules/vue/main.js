@@ -25,15 +25,16 @@ const App = {
     return {
       // Row Data: The data to be displayed.
       rowData: [
-        { make: "Toyota", model: "Celica", price: 35000 },
-        { make: "Ford", model: "Mondeo", price: 32000 },
-        { make: "Porsche", model: "Boxster", price: 72000 }
+        { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+        { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+        { make: "Ford", model: "F-Series", price: 33850, electric: false },
       ],
       // Column Definitions: Defines & controls grid columns.
       columnDefs: [
         { field: "make" },
         { field: "model" },
-        { field: "price" }
+        { field: "price" },
+        { field: "electric" }
       ],
       themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
     };
