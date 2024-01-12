@@ -97,7 +97,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     private frameworkEventListenerService: FrameworkEventListenerService | null;
 
     private readonly colId: any;
-    private colDef: ColDef<TValue>;
+    private colDef: ColDef<any, TValue>;
 
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
@@ -107,7 +107,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     // when the user provides an updated list of columns - so we can check if we have a column already
     // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
     // This is used in ColumnFactory
-    private userProvidedColDef: ColDef<TValue> | null;
+    private userProvidedColDef: ColDef<any, TValue> | null;
 
     private actualWidth: any;
 
@@ -148,7 +148,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     private parent: ColumnGroup;
     private originalParent: ProvidedColumnGroup | null;
 
-    constructor(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null, colId: string, primary: boolean) {
+    constructor(colDef: ColDef<any, TValue>, userProvidedColDef: ColDef<any, TValue> | null, colId: string, primary: boolean) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.colId = colId;
@@ -214,7 +214,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     // gets called when user provides an alternative colDef, eg
-    public setColDef(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null, source: ColumnEventType = 'api'): void {
+    public setColDef(colDef: ColDef<any, TValue>, userProvidedColDef: ColDef<any, TValue> | null, source: ColumnEventType = 'api'): void {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
@@ -228,7 +228,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      * This may not be correct, as items can be superseded by default column options.
      * However it's useful for comparison, eg to know which application column definition matches that column.
      */
-    public getUserProvidedColDef(): ColDef<TValue> | null {
+    public getUserProvidedColDef(): ColDef<any, TValue> | null {
         return this.userProvidedColDef;
     }
 
@@ -634,7 +634,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      * (e.g. `defaultColDef` grid option, or column types.
      *
      * Equivalent: `getDefinition` */
-    public getColDef(): ColDef<TValue> {
+    public getColDef(): ColDef<any, TValue> {
         return this.colDef;
     }
 
@@ -663,7 +663,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return this.colId;
     }
 
-    public getDefinition(): AbstractColDef<TValue> {
+    public getDefinition(): AbstractColDef<any, TValue> {
         return this.colDef;
     }
 

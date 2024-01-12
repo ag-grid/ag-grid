@@ -189,5 +189,5 @@ algolia-*.json
 package-lock.json
 
 .examplesHash
-
+.nx
 ###### Remove once Nx fix the deep nested .gitignore
