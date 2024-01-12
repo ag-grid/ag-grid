@@ -7,7 +7,7 @@
     --layout-horizontal-margins: #{$spacing-size-6};
     --layout-copy-max-width: 1020px;
     --layout-site-header-height: 64px;
-    --layout-scroll-offset: calc(var(--layout-site-header-height) + 13px);
+    --layout-scroll-offset: 80px;
 
     @media screen and (min-width: $breakpoint-horizontal-margins-large) {
         --layout-horizontal-margins: #{$spacing-size-5};
