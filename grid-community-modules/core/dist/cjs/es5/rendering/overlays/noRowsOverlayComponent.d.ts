@@ -1,0 +1,19 @@
+// Type definitions for @ag-grid-community/core v31.0.0
+// Project: https://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { AgGridCommon } from "../../interfaces/iCommon";
+import { IComponent } from "../../interfaces/iComponent";
+import { Component } from "../../widgets/component";
+export interface INoRowsOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+}
+export interface INoRowsOverlay<TData = any, TContext = any> {
+    refresh?(params: INoRowsOverlayParams<TData, TContext>): void;
+}
+export interface INoRowsOverlayComp<TData = any, TContext = any> extends IComponent<INoRowsOverlayParams<TData, TContext>>, INoRowsOverlay<TData, TContext> {
+}
+export declare class NoRowsOverlayComponent extends Component implements INoRowsOverlayComp {
+    private static DEFAULT_NO_ROWS_TEMPLATE;
+    constructor();
+    destroy(): void;
+    init(params: INoRowsOverlayParams): void;
+}
