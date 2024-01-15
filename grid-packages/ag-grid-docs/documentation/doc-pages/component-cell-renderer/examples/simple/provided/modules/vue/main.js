@@ -46,10 +46,11 @@ const VueExample = {
                     cellRenderer: "medalCellRenderer",
                 },
                 {
-                    field: "total",
+                    field: 'total',
                     minWidth: 190,
-                    cellRenderer: "totalValueRenderer",
-                },
+                    valueGetter: (params) => params.data.gold + params.data.silver + params.data.bronze,
+                    cellRenderer: 'totalValueRenderer',
+                  },
             ],
             gridApi: null,
             defaultColDef: {
