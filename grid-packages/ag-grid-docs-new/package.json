@@ -53,6 +53,7 @@
         "vite-plugin-svgr": "^4.2.0"
     },
     "devDependencies": {
+        "@trivago/prettier-plugin-sort-imports": "^4.3.0",
         "prettier-plugin-astro": "^0.12.3",
         "vite-plugin-mkcert": "^1.17.2",
         "vitest": "^1.1.3"
