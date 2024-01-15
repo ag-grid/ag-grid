@@ -28,6 +28,8 @@ The example below uses a Cell Renderer to render a hash (`#`) symbol for each me
 
 <grid-example title='Simple Cell Renderer' name='simple' type='mixed' options='{ "exampleHeight": 460 }'></grid-example>
 
+## Implementing a Cell Renderer Component
+
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
 md-include:component-interface-react.md
