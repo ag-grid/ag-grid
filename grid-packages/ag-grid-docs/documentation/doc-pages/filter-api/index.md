@@ -131,7 +131,6 @@ The example below shows how you can interact with an individual filter instance,
 - `Get Mini Filter Text` will print the text from the Set Filter's Mini Filter to the console.
 - `Save Mini Filter Text` will save the Mini Filter text.
 - `Restore Mini Filter Text` will restore the Mini Filter text from the saved state.
-- `Reset Filter` will reset the filter.
 
 (Note: the example uses the Enterprise-only [Set Filter](/filter-set/)).
 
