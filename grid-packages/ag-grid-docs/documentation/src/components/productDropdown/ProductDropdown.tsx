@@ -7,7 +7,7 @@ import ChartsLight from '../../images/inline-svgs/chart-light.svg';
 import GridDark from '../../images/inline-svgs/grid-dark.svg';
 import ChartsDark from '../../images/inline-svgs/chart-dark.svg';
 
-export const Dropdown = ({ items, children }) => {
+export const ProductDropdown = ({ items, children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 

@@ -14,7 +14,7 @@ import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 import Search from "../search/Search";
 import {getCurrentFramework} from '../../utils/local-storage';
-import {Dropdown} from '../dropdown/Dropdown';
+import { ProductDropdown } from '../productDropdown/ProductDropdown';
 
 
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
@@ -223,7 +223,7 @@ export const SiteHeader = ({ path, currentFramework }) => {
                             <LogoType />
                             <LogoMark bounce={isLogoHover} />
                         </a>
-                        <Dropdown items={dropdownItems} />
+                        <ProductDropdown items={dropdownItems} />
                     </div>
                     <HeaderNav path={path} currentFramework={currentFramework} />
                 </div>
