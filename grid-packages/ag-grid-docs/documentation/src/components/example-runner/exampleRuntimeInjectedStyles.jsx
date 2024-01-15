@@ -84,8 +84,22 @@ html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart sel
     transition: background-color .25s ease-in-out;
 }
 
+html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']) {
+    appearance: none;
+    background-color: #fff;
+    border: 1px solid rgb(0,0,0,0.1);
+    border-radius: 4px;
+    height: 36px;
+    min-width: 36px;
+    transition: background-color .25s ease-in-out;
+}
+
 html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']):hover {
     background-color: #2a343e;
+}
+
+html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']):hover {
+    background-color: rgba(0,0,0, 0.1);
 }
 
 html[data-color-scheme='dark'] input:not(.ag-root-wrapper input):not(.ag-chart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']):not(.flatpickr-calendar input) {
