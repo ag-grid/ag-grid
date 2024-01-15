@@ -54,6 +54,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   columnDefs: columnDefs,
   rowData: null,
+  alwaysShowVerticalScroll: true,
 }
 
 // setup the grid after the page has finished loading
