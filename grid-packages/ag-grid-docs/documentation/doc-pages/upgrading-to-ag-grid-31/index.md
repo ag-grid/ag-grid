@@ -148,7 +148,7 @@ Column API is now deprecated. Column API methods are now available in [Grid API]
 
 * `setGetRowId` is now deprecated because `getRowId` can no longer be updated (listed as a breaking change above).
 
-* The Grid API methods listed below have been deprecated. Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead as described in [Updating Grid Options](/grid-interface/#updating-grid-options/).
+* The Grid API methods listed below have been deprecated. Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead as described in [Updating Grid Options](/grid-interface/#updating-grid-options).
 
     * `setPivotMode`
     * `setPinnedTopRowData`

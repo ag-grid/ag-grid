@@ -124,7 +124,7 @@ export type ToolPanelClass<TData = any, TValue = any> = string | string[] | ((pa
 type StringOrNumKeys<TObj> = keyof TObj & (string | number);
 type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = 
     TValue extends object
-        ? `${Prefix}.${ TDepth['length'] extends 7 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
+        ? `${Prefix}.${ TDepth['length'] extends 5 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
         : never;
 
 // This type wrapper is needed for correct handling of union types in ColDefField

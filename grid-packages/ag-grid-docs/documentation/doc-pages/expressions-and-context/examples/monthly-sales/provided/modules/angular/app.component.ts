@@ -54,6 +54,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, Set
     <ag-grid-angular
       style="width: 100%; height: 100%;"
       [columnDefs]="columnDefs"
+      suppressMovableColumns
       [context]="context"
       [defaultColDef]="defaultColDef"
       [autoGroupColumnDef]="autoGroupColumnDef"

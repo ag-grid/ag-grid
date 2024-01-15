@@ -8,7 +8,7 @@ import { RowNode } from '../entities/rowNode';
 import { stopPropagationForAgGrid } from '../utils/event';
 import { CheckboxSelectionCallback } from '../entities/colDef';
 import { GroupCheckboxSelectionCallback } from './cellRenderers/groupCellRendererCtrl';
-import { getAriaCheckboxStateName, setAriaLive } from '../utils/aria';
+import { getAriaCheckboxStateName, setAriaLive, setAriaRelevant } from '../utils/aria';
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -33,7 +33,9 @@ export class CheckboxSelectionComponent extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.eCheckbox.setPassive(true);
-        setAriaLive(this.eCheckbox.getInputElement(), 'polite');
+        const el = this.eCheckbox.getInputElement();
+        setAriaLive(el, 'polite');
+        setAriaRelevant(el, 'text')
     }
 
     public getCheckboxId(): string {

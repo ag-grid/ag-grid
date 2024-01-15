@@ -21,7 +21,7 @@ html[data-color-scheme='dark'] {
 }
 
 html[data-color-scheme='dark'] button:not(.ag-root-wrapper button, #myChart button, button[class*='ag-']) , .ag-fill-direction  {
-    border: 2px solid rgba(255,255,255, 0.2);
+    border: 1px solid rgba(255,255,255, 0.2);
 }
 
 .ag-theme-quartz-dark {
@@ -50,7 +50,7 @@ TODO - reinstate these in a way that doesn't clobber example's row colours
 html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']), .ag-fill-direction  {
     appearance: none;
     background-color: var(--background-100);
-    border: 2px solid rgba(0,0,0, 0.2);
+    border: 1px solid rgba(0,0,0, 0.2);
     border-radius: 6px;
     height: 36px;
     color: var(--default-text-color);
@@ -88,7 +88,7 @@ html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart sel
     background-color: #2a343e;
 }
 
-html[data-color-scheme='dark'] input:not(.ag-root-wrapper input):not(.ag-chart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']) {
+html[data-color-scheme='dark'] input:not(.ag-root-wrapper input):not(.ag-chart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']):not(.flatpickr-calendar input) {
     appearance: none;
     background-color: #202A34;
     border: 1px solid rgb(255,255,255,0.1);
@@ -97,7 +97,7 @@ html[data-color-scheme='dark'] input:not(.ag-root-wrapper input):not(.ag-chart i
     min-width: 36px;
 }
 
-html[data-color-scheme='light'] input:not(.ag-root-wrapper input):not(.ag-chart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']) {
+html[data-color-scheme='light'] input:not(.ag-root-wrapper input):not(.ag-chart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']):not(.flatpickr-calendar input) {
     appearance: none;
     background-color: #fff;
     border: 1px solid rgb(0,0,0,0.1);

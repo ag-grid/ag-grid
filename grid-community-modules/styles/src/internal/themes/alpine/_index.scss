@@ -176,6 +176,11 @@
         }
     }
 
+    .ag-column-select-column-readonly.ag-icon-grip,
+    .ag-column-select-column-readonly .ag-icon-grip {
+        opacity: 0.35;
+    }
+
     .ag-header-cell-menu-button,
     .ag-side-button-button,
     .ag-tab,

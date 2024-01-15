@@ -78,7 +78,7 @@ function selectNothing() {
 }
 
 function setCountriesToFranceAustralia() {
-    gridApi!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country', instance => {
+    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string, code: string }>>('country').then(instance => {
         instance!.setFilterValues([
             {
                 name: 'France',
@@ -95,7 +95,7 @@ function setCountriesToFranceAustralia() {
 }
 
 function setCountriesToAll() {
-    gridApi!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country', instance => {
+    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string, code: string }>>('country').then(instance => {
         instance!.resetFilterValues()
         instance!.applyModel()
         gridApi!.onFilterChanged()

@@ -19,7 +19,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom cell editors, however this will involve declaring your React component imperatively, and is not recommend. See [Imperative Cell Editor Component](../component-cell-editor-imperative-react/).</note>
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom cell editors, however this will involve declaring your React component imperatively, and is not recommended. See [Imperative Cell Editor Component](../component-cell-editor-imperative-react/).</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">

@@ -86,10 +86,6 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public dispatchEventAsync(event: AgEvent): void {
-        window.setTimeout(() => this.dispatchEvent(event), 0);
-    }
-
     public dispatchEvent<T extends AgEvent>(event: T): void {
         if (this.localEventService) {
             this.localEventService.dispatchEvent(event);

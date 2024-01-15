@@ -10,8 +10,8 @@ of a category or numeric axis.
 
 ## Time vs Category Axis
 
-A [Time Axis](/charts-axes-types/#time) is used to plot continuous date / time values, whereas a
-[Category Axis](/charts-axes-types/#category) is used to plot discrete values or categories.
+A [Time Axis](https://charts.ag-grid.com/react/axes-types/#time) is used to plot continuous date / time values, whereas a
+[Category Axis](https://charts.ag-grid.com/react/axes-types/#category) is used to plot discrete values or categories.
 
 The example below highlights the differences between time and category axes. Notice that the time axis contains all
 days for the range of values provided, whereas the category axis only shows axis labels for the discrete values
@@ -21,7 +21,7 @@ provide.
 
 ## Time Axis Configuration
 
-Columns that contain date object values will be automatically plotted using a [Time Axis](/charts-axes-types/#time)
+Columns that contain date object values will be automatically plotted using a [Time Axis](https://charts.ag-grid.com/react/axes-types/#time)
 unless it has been explicitly changed through the `chartDataType` column definition property.
 
 Numeric timestamps in the Javascript format are also allowed, but the column should be explicitly configured to use a time axis

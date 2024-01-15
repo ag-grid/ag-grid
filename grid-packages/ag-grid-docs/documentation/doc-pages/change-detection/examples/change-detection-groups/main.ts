@@ -25,6 +25,7 @@ const gridOptions: GridOptions = {
   },
   columnTypes: {
     valueColumn: {
+      minWidth: 90,
       editable: true,
       aggFunc: 'sum',
       valueParser: 'Number(newValue)',

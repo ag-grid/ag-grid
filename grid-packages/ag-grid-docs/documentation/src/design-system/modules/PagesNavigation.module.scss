@@ -78,9 +78,7 @@ button .menuIcon {
     bottom: 0.15em;
     margin-right: $spacing-size-1;
     opacity: 0.6666;
-    transition:
-        fill $transition-default-timing,
-        opacity $transition-default-timing;
+    transition: fill $transition-default-timing, opacity $transition-default-timing;
 }
 
 .activeMenuItem .menuIcon {
@@ -94,9 +92,7 @@ a :global(.icon).menuIcon {
     margin-bottom: $spacing-size-1;
     margin-right: $spacing-size-1;
     opacity: 0.75;
-    transition:
-        fill $transition-default-timing,
-        opacity $transition-default-timing;
+    transition: fill $transition-default-timing, opacity $transition-default-timing;
 
     #{$selector-darkmode} & {
         fill: var(--color-fg-secondary);
@@ -114,14 +110,13 @@ a :global(.icon).menuIcon {
     color: var(--color-logo-orange);
     border-radius: 24px;
     border: 1px solid var(--color-logo-orange);
-    transition:
-        background-color $transition-default-timing,
-        color $transition-default-timing;
+    transition: background-color $transition-default-timing, color $transition-default-timing;
     -webkit-font-smoothing: auto;
 
     &:hover,
     &:focus {
         background-color: color-mix(in srgb, var(--color-logo-orange) 5%, var(--color-bg-primary));
+        color: var(--color-logo-orange);
     }
 
     #{$selector-darkmode} & {

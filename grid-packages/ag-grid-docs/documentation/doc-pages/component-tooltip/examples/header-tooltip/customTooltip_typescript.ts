@@ -10,13 +10,14 @@ export class CustomTooltip implements ITooltipComp {
         let valueToDisplay: string;
 
         eGui.classList.add('custom-tooltip');
-
+        
         if (isHeader) {
-            str = '<p>Group Name: ' + params.value + '</p>';
+            eGui.classList.add('custom-tooltip-grouped');
+
+            str = '<span>Group Name: ' + params.value + '</span>';
             if (isGroupedHeader) {
-                str += '<hr>';
                 (params.colDef as ColGroupDef).children.forEach(function (header, idx) {
-                    str += '<p>Child ' + (idx + 1) + ' - ' + header.headerName + '</p>';
+                    str += '<span>Child ' + (idx + 1) + ' - ' + header.headerName + '</span>';
                 });
             }
             eGui.innerHTML = str;
@@ -24,8 +25,8 @@ export class CustomTooltip implements ITooltipComp {
             valueToDisplay = params.value.value ? params.value.value : '- Missing -';
 
             eGui.innerHTML =
-                '<p>Athlete\'s name:</p>' +
-                '<p><span class"name">' + valueToDisplay + '</span></p>';
+                '<span>Athlete\'s name:</span>' +
+                '<span class"name">' + valueToDisplay + '</span>';
         }
     }
 

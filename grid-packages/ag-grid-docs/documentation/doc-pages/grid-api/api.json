@@ -406,7 +406,8 @@
         },
         "isColumnFilterPresent": {},
         "isAnyFilterPresent": {},
-        "getFilterInstance": {
+        "getFilterInstance": {},
+        "getColumnFilterInstance": {
             "more": {
                 "name": "Accessing Individual Filter Component Instances",
                 "url": "/filter-api/#accessing-individual-filter-component-instances"

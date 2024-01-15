@@ -58,11 +58,8 @@ $z-index-splash-contents: 10;
     }
 
     :global(.flag) {
-        font-size: 1.75rem;
-
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            font-size: 1.25rem;
-        }
+        margin-right: 2px;
+        margin-top: -4px;
     }
 
     :global(.ag-chart-menu-close) {

@@ -299,13 +299,9 @@ export class GridOptionsService {
             const eventHandlerName = ComponentUtil.getCallbackForEvent(eventName);
             const eventHandler = (this.gridOptions as any)[eventHandlerName];
             if (typeof eventHandler === 'function') {
-                if(this.frameworkOverrides.wrapOutgoing) {
-                    this.frameworkOverrides.wrapOutgoing(() => {
-                        eventHandler(event);
-                    })
-                }else{
+                this.frameworkOverrides.wrapOutgoing(() => {
                     eventHandler(event);
-                }
+                })
             }
         }
     };

@@ -88,7 +88,13 @@
         "meta": {
             "displayName": "Columns: Tooltips"
         },
-        "tooltipField": {},
+        "tooltipField": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ColDefField"
+                ]
+            }
+        },
         "tooltipValueGetter": {
             "more": {
                 "name": "Tooltip Component",
@@ -162,7 +168,7 @@
         "headerCheckboxSelectionCurrentPageOnly": {
             "more": {
                 "name": "Select Everything on the Current Page",
-                "url": "/row-selection/#example-select-only-the-current-page"
+                "url": "/row-selection/#select-only-the-current-page"
             }
         }
     },
@@ -263,7 +269,7 @@
         "cellRendererParams": {
             "more": {
                 "name": "Cell Renderer Params",
-                "url": "/component-cell-renderer/#reference-ICellRendererParams"
+                "url": "/component-cell-renderer/#complementing-cell-renderer-params"
             }
         },
         "cellRendererSelector": {

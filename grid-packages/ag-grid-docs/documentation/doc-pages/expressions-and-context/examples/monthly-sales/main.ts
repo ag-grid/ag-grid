@@ -121,6 +121,7 @@ const context ={
 };
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
+  suppressMovableColumns: true,
   defaultColDef: {
     flex: 1,
     minWidth: 120,

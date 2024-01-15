@@ -9,7 +9,7 @@ This section describes how the Set Filter can be controlled programmatically usi
 
 Get and set the state of the Set Filter by getting and setting the model on the filter instance.
 
-<snippet>
+<snippet transform="false">
 |// get filter model
 |const model = api.getColumnFilterModel('country');
 | 
@@ -26,11 +26,11 @@ The filter model contains an array of string values where each item in the array
 
 ## Set Filter API
 
-The Set Filter instance can be retrieved via the `getFilterInstance` API method.
+The Set Filter instance can be retrieved via the `getColumnFilterInstance` API method.
 
 <snippet>
 |// get filter instance
-|api.getFilterInstance('country', countryFilterComponent => {
+|api.getColumnFilterInstance('country').then(countryFilterComponent => {
 |    // use set filter instance
 |});
 </snippet>

@@ -23,7 +23,7 @@ export class ChartOptionsService extends BeanStub {
     public setChartOption<T = string>(expression: string, value: T, isSilent?: boolean): void {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('cartesian');
+            chartSeriesTypes.push('common');
         }
 
         let chartOptions = {};
@@ -83,7 +83,7 @@ export class ChartOptionsService extends BeanStub {
         // rather than the properties object. This is due to us needing to reach inside the chart itself to retrieve
         // the value, and will likely be cleaned up in a future release
         const series = this.getChart().series.find((s: any) => ChartOptionsService.isMatchingSeries(seriesType, s));
-        return _.get(series, calculated ? expression : `properties.${{expression}}`, undefined) as T;
+        return _.get(series, calculated ? expression : `properties.${expression}`, undefined) as T;
     }
 
     public setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {

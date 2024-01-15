@@ -7,7 +7,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
-import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
+import { ColDef, GridReadyEvent, ValueGetterParams } from '@ag-grid-community/core';
 import MedalCellRenderer from './medalCellRenderer';
 import { IOlympicData } from './interfaces'
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -28,7 +28,7 @@ const GridExample = () => {
         { field: 'gold', width: 100, cellRenderer: MedalCellRenderer },
         { field: 'silver', width: 100, cellRenderer: MedalCellRenderer },
         { field: 'bronze', width: 100, cellRenderer: MedalCellRenderer },
-        { field: 'total', width: 100 },
+        { field: 'total', editable: false, valueGetter: (params: ValueGetterParams) => params.data.gold + params.data.silver + params.data.bronze, width: 100 }
     ]);
     const defaultColDef = useMemo<ColDef>(() => {
         return {

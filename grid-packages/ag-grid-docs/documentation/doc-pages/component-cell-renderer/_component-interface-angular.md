@@ -1,6 +1,4 @@
 <framework-specific-section frameworks="angular">
-|## Cell Renderer Component
-|
 |The interface for the cell renderer component is as follows:
 </framework-specific-section>
 

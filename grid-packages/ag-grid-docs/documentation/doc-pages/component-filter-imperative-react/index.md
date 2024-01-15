@@ -159,7 +159,7 @@ The method `doesFilterPass(params)` takes the following as a parameter:
 
 ## Accessing the React Component Instance
 
-AG Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. React components are created asynchronously, so it is necessary to use a callback rather than relying on the return value of this method. 
+AG Grid allows you to get a reference to the filter instances via `api.getColumnFilterInstance(colKey)`.
 
 <snippet transform={false} language="ts">
 |// let's assume a React component as follows
@@ -181,7 +181,7 @@ AG Grid allows you to get a reference to the filter instances via `api.getFilter
 |// later in your app, if you want to execute myMethod()...
 |laterOnInYourApplicationSomewhere() {
 |    // get reference to the AG Grid Filter component on name column
-|    api.getFilterInstance('name', filterInstance => {
+|    api.getColumnFilterInstance('name').then(filterInstance => {
 |        filterInstance.myMethod();
 |    });
 |}

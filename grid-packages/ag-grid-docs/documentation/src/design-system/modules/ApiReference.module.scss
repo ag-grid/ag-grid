@@ -49,6 +49,19 @@
         height: 1px; // needed for divs to fit table cell heights correctly
     }
 
+    tbody {
+        @container (max-width: #{$breakpoint-table-small}) {
+            display: block;
+        }
+    }
+
+    tr {
+        @container (max-width: #{$breakpoint-table-small}) {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
     pre:global(.code) {
         margin-top: $spacing-size-4;
         margin-bottom: $spacing-size-2;
@@ -96,10 +109,13 @@
 }
 
 .rightColumn {
-    display: flex;
-    flex-direction: column;
     width: 60%;
     padding: $spacing-size-2 0 $spacing-size-2 $spacing-size-4;
+
+    &:not(td) {
+        display: flex;
+        flex-direction: column;
+    }
 
     @container (max-width: #{$breakpoint-table-small}) {
         width: 100%;
@@ -166,9 +182,13 @@
     font-size: var(--text-fs-sm);
     font-family: var(--text-monospace-font-family);
     color: var(--color-fg-code);
+}
 
-    #{$selector-darkmode} & {
-        font-weight: 600;
+a.metaValue {
+    color: var(--color-link);
+
+    &:hover {
+        color: var(--color-link-hover);
     }
 }
 
@@ -265,5 +285,5 @@
 }
 
 .expandedContent > td {
-    padding: $spacing-size-4 $spacing-size-3;
+    padding: 0 0 $spacing-size-4;
 }

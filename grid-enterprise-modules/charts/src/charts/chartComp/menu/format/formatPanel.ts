@@ -136,6 +136,7 @@ export class FormatPanel extends Component {
             _.removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
+        this.panels = [];
     }
 
     protected destroy(): void {

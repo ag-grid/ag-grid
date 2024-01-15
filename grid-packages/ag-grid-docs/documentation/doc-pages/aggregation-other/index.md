@@ -36,7 +36,7 @@ The following example demonstrates overriding the default agg function. Note the
 
 <note>
 Note that unlike `aggFunc` you can't pass a custom aggregation function directly to `defaultAggFunc`,
-as demonstrated in the previous example, it must be registered first. See [Registering Custom Functions](../aggregation-custom-functions#registering-custom-functions) for how to do this.
+as demonstrated in the previous example, it must be registered first. See [Registering Custom Functions](../aggregation-custom-functions/#registering-custom-functions) for how to do this.
 </note>
 
 ## Restricting Aggregation Functions
@@ -80,7 +80,7 @@ When aggregating, the column headers will include the aggregation function for t
 
 ## Empty Aggregation Calls
 
-When providing either [Custom Aggregation Functions](/aggregation-custom-functions#custom-aggregation-functions) or [Custom Full Row Aggregation](/aggregation-custom-functions#custom-full-row-aggregation) then you will see strange calls to these functions where empty lists are provided.
+When providing either [Custom Aggregation Functions](/aggregation-custom-functions/#custom-aggregation-functions) or [Custom Full Row Aggregation](/aggregation-custom-functions/#custom-full-row-aggregation) then you will see strange calls to these functions where empty lists are provided.
 
 The empty aggregation calls happen in the following two scenarios:
 

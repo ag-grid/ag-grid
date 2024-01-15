@@ -35,6 +35,7 @@ const VueExample = {
                 style="width: 100%; height: 100%;"
                 :class="themeClass"
                 :columnDefs="columnDefs"
+                :suppressMovableColumns="true"
                 @grid-ready="onGridReady"
                 :context="context"
                 :defaultColDef="defaultColDef"

@@ -41,7 +41,7 @@ An example floating filter component looks like this:
 |});
 </snippet>
 
-In the following example you can see how the Gold, Silver, Bronze and Total columns have a custom floating filter `NumberFloatingFilter`. This filter substitutes the standard floating filter for a input box that the user can change to adjust how many medals of each column to filter by based on a greater than filter.
+In the following example you can see how the Gold, Silver, Bronze and Total columns have a custom floating filter `NumberFloatingFilter`. This filter substitutes the standard floating filter for an input box that the user can change to adjust how many medals of each column to filter by based on a greater than filter.
 
 <grid-example title='Custom Floating Filter' name='custom-floating-filter' type='mixed'></grid-example>
 

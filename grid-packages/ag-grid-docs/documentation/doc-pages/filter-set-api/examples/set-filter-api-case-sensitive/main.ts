@@ -73,7 +73,7 @@ function getModel(type: string) {
 }
 
 function setFilterValues(type: string) {
-  gridApi!.getFilterInstance<ISetFilter>(FILTER_TYPES[type], instance => {
+  gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
     instance!.setFilterValues(MANGLED_COLOURS)
     instance!.applyModel()
     gridApi!.onFilterChanged()
@@ -81,13 +81,13 @@ function setFilterValues(type: string) {
 }
 
 function getValues(type: string) {
-  gridApi!.getFilterInstance<ISetFilter>(FILTER_TYPES[type], instance => {
+  gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
     alert(JSON.stringify(instance!.getFilterValues(), null, 2))
   });
 }
 
 function reset(type: string) {
-  gridApi!.getFilterInstance<ISetFilter>(FILTER_TYPES[type], instance => {
+  gridApi!.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
     instance!.resetFilterValues();
     instance!.setModel(null).then(() => {
       gridApi!.onFilterChanged();
