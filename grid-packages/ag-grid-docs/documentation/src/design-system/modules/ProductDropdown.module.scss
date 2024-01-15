@@ -7,8 +7,11 @@
 display: none;
     }
 }
+
 .customTrigger {
-    padding: 10px;
+    padding: 12px;
+    padding-top: $spacing-size-1;
+    padding-bottom: $spacing-size-1;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -16,22 +19,30 @@ display: none;
     transition: background-color 0.3s, color 0.3s;
     font-weight: var(--text-semibold);
     font-size: 17px;
+    border: none;
 
     #{$selector-darkmode} & {
         background-color: var(--color-bg-primary);
-        border: 1px solid var(--color-bg-primary);
+        border-radius: var(--radius-3xl);
+        border: none;
     }
 }
 
 .customTrigger:hover {
-    background: none;
+            background: rgba(255,255,255, 0.1);
+            border: none;
+            border-radius: var(--radius-3xl);
 }
 
 .customTrigger.open .arrow {
     margin-top: 4px;
     transform: rotate(225deg);
+    
 }
-
+.customTrigger.open {
+background: rgba(255,255,255, 0.1);
+    border: none;
+}
 .arrow {
     display: inline-block;
     border: solid #fff;
