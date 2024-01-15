@@ -524,6 +524,8 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
             this.positionableFeature = this.destroyBean(this.positionableFeature);
         }
 
+        this.appliedModel = null;
+
         super.destroy();
     }
 
