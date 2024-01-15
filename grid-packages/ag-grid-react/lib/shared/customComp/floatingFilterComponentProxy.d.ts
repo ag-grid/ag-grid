@@ -1,4 +1,4 @@
-// ag-grid-react v31.0.0
+// ag-grid-react v31.0.2
 import { IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
 import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./interfaces";
 export declare function updateFloatingFilterParent(params: IFloatingFilterParams, model: any): void;

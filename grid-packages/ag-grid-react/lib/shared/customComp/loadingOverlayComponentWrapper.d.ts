@@ -1,4 +1,4 @@
-// ag-grid-react v31.0.0
+// ag-grid-react v31.0.2
 import { ILoadingOverlay, ILoadingOverlayParams } from "ag-grid-community";
 import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomLoadingOverlayProps } from "./interfaces";

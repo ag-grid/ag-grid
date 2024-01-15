@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.0.0
+// @ag-grid-community/react v31.0.2
 import { ICellEditor, IFilter, IStatusPanel, IToolPanel } from "@ag-grid-community/core";
 /**
  * Function to retrieve the React component from an instance returned by the grid.

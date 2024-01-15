@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.0.0
+// @ag-grid-community/react v31.0.2
 /// <reference types="react" />
 declare type CustomContextParams<M> = {
     setMethods: (methods: M) => void;

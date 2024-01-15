@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.0.0
+// @ag-grid-community/react v31.0.2
 import customWrapperComp from "../../reactUi/customComp/customWrapperComp.mjs";
 import { ReactComponent } from "../reactComponent.mjs";
 export function addOptionalMethods(optionalMethodNames, providedMethods, component) {

@@ -1,4 +1,4 @@
-// ag-grid-react v31.0.0
+// ag-grid-react v31.0.2
 import { CellCtrl, UserCompDetails } from 'ag-grid-community';
 import React from 'react';
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';

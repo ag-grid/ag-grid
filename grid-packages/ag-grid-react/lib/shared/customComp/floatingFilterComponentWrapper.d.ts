@@ -1,4 +1,4 @@
-// ag-grid-react v31.0.0
+// ag-grid-react v31.0.2
 import { IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
 import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./interfaces";

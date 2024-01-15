@@ -1,4 +1,4 @@
-// ag-grid-react v31.0.0
+// ag-grid-react v31.0.2
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useEffectOnce = void 0;
