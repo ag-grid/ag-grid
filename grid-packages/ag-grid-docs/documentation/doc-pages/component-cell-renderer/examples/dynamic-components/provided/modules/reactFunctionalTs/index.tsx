@@ -38,7 +38,7 @@ const CurrencyRenderer = (props: CustomCellRendererProps) => {
     const value = useMemo(() => props.value, [props.value]);
 
     const formatValueToCurrency = (currency: string, value: any) => {
-        return `${currency}${value.toFixed(2)}`;
+        return `${currency} ${value.toFixed(2)}`;
     };
 
     return <span>{formatValueToCurrency('EUR', value)}</span>;
@@ -96,7 +96,7 @@ const GridExample = () => {
             width: 150
         },
         {
-            headerName: "Currency (Pipe)",
+            headerName: "Currency",
             field: "currency",
             cellRenderer: CurrencyRenderer,
             colId: "currency",

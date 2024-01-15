@@ -190,12 +190,12 @@ export class AppComponent {
                 this.eBinIcon.nativeElement.style.transform = 'scale(1.5)';
             },
             onDragLeave: () => {
-                this.eBin.nativeElement.style.color = 'black';
+                this.eBin.nativeElement.style = "";
                 this.eBinIcon.nativeElement.style.transform = 'scale(1)';
             },
             onDragStop: (params) => {
                 this.binDrop(params.node.data);
-                this.eBin.nativeElement.style.color = 'black';
+                this.eBin.nativeElement.style = "";
                 this.eBinIcon.nativeElement.style.transform = 'scale(1)';
             }
         };

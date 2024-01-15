@@ -182,9 +182,13 @@
     font-size: var(--text-fs-sm);
     font-family: var(--text-monospace-font-family);
     color: var(--color-fg-code);
+}
 
-    #{$selector-darkmode} & {
-        font-weight: 600;
+a.metaValue {
+    color: var(--color-link);
+
+    &:hover {
+        color: var(--color-link-hover);
     }
 }
 

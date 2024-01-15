@@ -26,7 +26,7 @@ const GridExample = () => {
         { field: 'gold', width: 100, cellRenderer: MedalCellRenderer },
         { field: 'silver', width: 100, cellRenderer: MedalCellRenderer },
         { field: 'bronze', width: 100, cellRenderer: MedalCellRenderer },
-        { field: 'total', width: 100 },
+        { field: 'total', editable: false, valueGetter: (params) => params.data.gold + params.data.silver + params.data.bronze, width: 100 }
     ]);
     const defaultColDef = useMemo(() => {
         return {

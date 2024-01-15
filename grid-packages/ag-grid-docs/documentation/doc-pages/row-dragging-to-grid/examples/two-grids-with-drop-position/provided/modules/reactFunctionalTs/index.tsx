@@ -122,12 +122,12 @@ const GridExample = () => {
                 eBinIcon.current!.style.transform = 'scale(1.5)';
             },
             onDragLeave: () => {
-                eBin.current!.style.color = 'black';
+                eBin.current!.style.color = "";
                 eBinIcon.current!.style.transform = 'scale(1)';
             },
             onDragStop: (params) => {
                 binDrop(params.node.data);
-                eBin.current!.style.color = 'black';
+                eBin.current!.style.color = "";
                 eBinIcon.current!.style.transform = 'scale(1)';
             }
         };

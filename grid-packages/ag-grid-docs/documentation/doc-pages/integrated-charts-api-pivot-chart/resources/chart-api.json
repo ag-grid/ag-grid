@@ -35,7 +35,7 @@
             "description": "Allows specific chart options in the current theme to be overridden.",
             "more": {
                 "name": "Overriding Existing Themes",
-                "url": "/integrated-charts-customisation/#overriding-existing-themes"
+                "url": "/integrated-charts-customisation/#overriding-themes"
             }
         },
         "unlinkChart": {

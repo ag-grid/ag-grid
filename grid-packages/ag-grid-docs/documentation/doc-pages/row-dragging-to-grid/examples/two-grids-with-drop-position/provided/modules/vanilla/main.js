@@ -140,12 +140,12 @@ function addBinZone(params) {
                 icon.style.transform = 'scale(1.5)';
             },
             onDragLeave: () => {
-                eBin.style.color = 'black';
+                eBin.style = "";
                 icon.style.transform = 'scale(1)';
             },
             onDragStop: (params) => {
                 binDrop(params.node.data);
-                eBin.style.color = 'black';
+                eBin.style = "";
                 icon.style.transform = 'scale(1)';
             }
         };

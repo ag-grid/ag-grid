@@ -217,6 +217,7 @@ const GridExample = () => {
                         ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
+                        suppressMovableColumns={true}
                         context={context.current}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}

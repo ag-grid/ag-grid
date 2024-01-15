@@ -23,7 +23,7 @@ Row selection can be enabled in the grid by setting the `rowSelection` property 
 ## Checkbox Selection
 
 Checkboxes can be enabled on any column by setting `checkboxSelection: true` in the column defs. To enable a checkbox on a group column,
-see the snippet on the [Row Selection](/row-selection/#example-groups--checkbox-selection-with-unselectable-leaf-nodes) page.
+see the snippet on the [Row Selection](/row-selection/#groups--checkbox-selection-with-unselectable-leaf-nodes) page.
 
 The following example demonstrates checkbox selection with the SSRM. Note the following;
 

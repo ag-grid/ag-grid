@@ -11,6 +11,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'total',
     minWidth: 190,
+    editable: false,
     valueGetter: (params: ValueGetterParams) => params.data.gold + params.data.silver + params.data.bronze,
     cellRenderer: TotalValueRenderer,
   },
