@@ -162,7 +162,7 @@
         "headerCheckboxSelectionCurrentPageOnly": {
             "more": {
                 "name": "Select Everything on the Current Page",
-                "url": "/row-selection/#example-select-only-the-current-page"
+                "url": "/row-selection/#select-only-the-current-page"
             }
         }
     },
