@@ -59,7 +59,7 @@ const GridExample = () => {
     }, []);
 
     return (
-        <div className={'example-wrapper ' + /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+        <div className={'example-wrapper ' + /** DARK MODE START **/(document.documentElement.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
             <div className="inner-col">
                 <AgGridReact
                     defaultColDef={defaultColDef}
