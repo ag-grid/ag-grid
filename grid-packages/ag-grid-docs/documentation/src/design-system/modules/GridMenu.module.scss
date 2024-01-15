@@ -17,6 +17,5 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         width: calc(var(--layout-width-3-12) - var(--right-margin));
-        margin-right: var(--right-margin);
     }
 }

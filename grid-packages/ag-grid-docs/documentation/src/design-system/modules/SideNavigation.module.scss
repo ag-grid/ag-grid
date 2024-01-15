@@ -7,6 +7,7 @@
 
     display: none;
     width: calc(var(--layout-width-3-12) - var(--left-margin));
+    margin-left: $spacing-size-8;
     padding-top: $spacing-size-8 + 2px; // Tweak top docs page vertical alignment (+ 2px)
     padding-bottom: $spacing-size-16;
     line-height: var(--text-lh-sm);
@@ -42,7 +43,6 @@
     display: inline-flex;
     position: relative;
     flex-direction: column;
-    margin-left: auto;
     padding-left: 0;
     list-style: none;
     z-index: -2;

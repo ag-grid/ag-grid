@@ -10,7 +10,7 @@ const Privacy = () => {
                 description="We take your privacy very seriously at AG Grid. This page outlines our privacy policy which we have updated in light of GDPR."
             />
             <div className={styles.policyPage}>
-                <div className="layout-copy-max-width">
+                <div className="layout-max-width-small">
                     <h1>AG Grid Privacy Policy</h1>
                     <hr />
 

@@ -3,7 +3,7 @@ import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/cor
 function changeSize(value: string) {
   const sizes = ['large', 'normal', 'compact'];
 
-  const el = document.querySelector<HTMLElement>('.ag-theme-quartz')!;
+  const el = document.querySelector<HTMLElement>('[class*="ag-theme-quartz"]')!;
 
   sizes.forEach(size => el.classList.toggle(size, size === value));
 }

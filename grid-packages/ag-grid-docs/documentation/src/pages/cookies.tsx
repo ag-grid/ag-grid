@@ -11,7 +11,7 @@ const Cookies = () => {
                 description="This page outlines our policy in relation to the cookies that we collect on our website."
             />
             <div className={styles.policyPage}>
-                <div className="layout-copy-max-width">
+                <div className="layout-max-width-small">
                     <h1>Cookie Policy</h1>
                     <hr />
 

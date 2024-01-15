@@ -7,6 +7,11 @@
             "displayName": "Columns"
         },
         "field": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ColDefField"
+                ]
+            },
             "more": {
                 "name": "Accessing Row Data Values",
                 "url": "/column-definitions/#accessing-row-data-values"

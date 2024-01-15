@@ -10,7 +10,7 @@ const AboutPage = () => {
                 description="AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This is the story of AG Grid and explains our mission, where we came from and who we are."
             />
             <div className={styles.aboutPage}>
-                <div className="layout-page-max-width">
+                <div className="layout-max-width-small">
                     <section>
                         <h1>About AG Grid</h1>
                     </section>

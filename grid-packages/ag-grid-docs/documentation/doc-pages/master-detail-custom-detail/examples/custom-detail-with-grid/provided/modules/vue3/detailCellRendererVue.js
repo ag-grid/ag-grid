@@ -27,7 +27,7 @@ export default {
             gridOptions: null,
             colDefs: null,
             rowData: null,
-            themeClass: 'full-width-grid ' + /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            themeClass: 'full-width-grid ' + /** DARK MODE START **/(document.documentElement.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/,
         };
     },
     beforeMount() {
