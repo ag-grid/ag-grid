@@ -405,4 +405,4 @@ When you run your application, you should see a basic grid with three rows. To s
 ## Next Steps
 
 - Read our [Introductory Tutorial](/deep-dive/).
-- Watch our <a href="https://www.youtube.com/watch?v=&list=PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW" target="_blank">Video Tutorials</a>.
+- Watch our [Video Tutorials](/videos/).

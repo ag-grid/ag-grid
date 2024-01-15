@@ -812,7 +812,7 @@
             "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
-                "url": "/component-overlay/#simple-loading-overlay-component"
+                "url": "/component-overlay/#implementing-a-loading-overlay-component"
             }
         },
         "loadingOverlayComponentParams": {
@@ -832,7 +832,7 @@
             "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
-                "url": "/component-overlay/#simple-no-rows-overlay-component"
+                "url": "/component-overlay/#implementing-a-no-rows-overlay-component"
             }
         },
         "noRowsOverlayComponentParams": {
@@ -1646,7 +1646,7 @@
         "rowMultiSelectWithClick": {
             "more": {
                 "name": "Multi Select Single Click",
-                "url": "/row-selection/#example-multi-select-with-click"
+                "url": "/row-selection/#multi-select-with-click"
             }
         },
         "isRowSelectable": {
@@ -1876,32 +1876,32 @@
         "enableBrowserTooltips": {
             "more": {
                 "name": "Default Browser Tooltip",
-                "url": "/component-tooltip/#default-browser-tooltip"
+                "url": "/tooltips/#default-browser-tooltip"
             }
         },
         "tooltipShowDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",
-                "url": "/component-tooltip/#tooltip-show-and-hide-delay"
+                "url": "/tooltips/#tooltip-show-and-hide-delay"
             }
         },
         "tooltipHideDelay": {
             "more": {
                 "name": "Tooltip Show and Hide Delay",
-                "url": "/component-tooltip/#tooltip-show-and-hide-delay"
+                "url": "/tooltips/#tooltip-show-and-hide-delay"
             }
         },
         "tooltipMouseTrack": {
             "more": {
                 "name": "Mouse Tracking",
-                "url": "/component-tooltip/#mouse-tracking"
+                "url": "/tooltips/#mouse-tracking"
             }
         },
         "tooltipTrigger": {},
         "tooltipInteraction": {
             "more": {
                 "name": "Interactive Tooltips",
-                "url": "/component-tooltip/#interactive-tooltips"
+                "url": "/tooltips/#interactive-tooltips"
             }
         }
     }

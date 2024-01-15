@@ -8,13 +8,13 @@ Tooltips can be displayed when you hover over the grid's column headers and cell
 
 To enable tooltips on columns, set `tooltipField` or `tooltipValueGetter` on the [Column Definition](/column-definitions/).
 
-<interface-documentation interfaceName='ColDef' names='["tooltipField", "tooltipValueGetter"]' config='{"description":""}'></interface-documentation>
+<interface-documentation interfaceName='ColDef' names='["tooltipField", "tooltipValueGetter"]' config='{"description":"", "suppressTypes": ["ColDefField"]}'></interface-documentation>
 
 ## Default Browser Tooltip
 
 If you don't want to use the grid's tooltip component, you can use the `enableBrowserTooltips` config to use the browser's default tooltip. The grid will simply set an element's title attribute to display the tooltip.
 
-The example below demonstrates how to use the default browser tooltips.
+The example below demonstrates how to use the default browser tooltips (shown on the `Athlete` and `Country` columns).
 
 <grid-example title='Default Browser Tooltip' name='default-tooltip' type='generated' options='{ "modules": true }'></grid-example>
 

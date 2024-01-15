@@ -1036,7 +1036,9 @@ export class FilterManager extends BeanStub {
     private processFilterModelUpdateQueue(): void {
         this.filterModelUpdateQueue.forEach(({ model, source }) => this.setFilterModel(model, source));
         this.filterModelUpdateQueue = [];
-        this.columnFilterModelUpdateQueue.forEach(({ key, model, resolve }) => this.setColumnFilterModel(key, model).then(() => resolve()));
+        this.columnFilterModelUpdateQueue.forEach(({ key, model, resolve }) => {
+            this.setColumnFilterModel(key, model).then(() => resolve());
+        });
         this.columnFilterModelUpdateQueue = [];
         this.advancedFilterModelUpdateQueue.forEach(model => this.setAdvancedFilterModel(model));
         this.advancedFilterModelUpdateQueue = [];
@@ -1064,7 +1066,9 @@ export class FilterManager extends BeanStub {
         const column = this.columnModel.getPrimaryColumn(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, 'NO_UI') : null;
         const convertPromise = <T>(promise: AgPromise<T>): Promise<T> => {
-            return new Promise(resolve => promise.then(result => resolve(result!)));
+            return new Promise(resolve => {
+                promise.then(result => resolve(result!));
+            });
         };
         return filterWrapper ? convertPromise(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, model)) : Promise.resolve();
         

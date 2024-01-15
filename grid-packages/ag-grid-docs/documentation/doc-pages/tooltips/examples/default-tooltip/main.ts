@@ -1,9 +1,19 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', minWidth: 170, tooltipField: 'athlete' },
+  {
+    field: 'athlete',
+    minWidth: 170,
+    tooltipField: 'athlete',
+    headerTooltip: 'Athlete Column',
+  },
   { field: 'age' },
-  { field: 'country', minWidth: 150, tooltipField: 'country' },
+  {
+    field: 'country',
+    minWidth: 150,
+    tooltipField: 'country',
+    headerTooltip: 'Country Column',
+  },
   { field: 'year' },
   { field: 'sport' },
   { field: 'gold' },
