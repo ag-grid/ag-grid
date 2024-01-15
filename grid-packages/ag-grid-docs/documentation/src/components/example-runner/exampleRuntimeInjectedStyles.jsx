@@ -74,24 +74,29 @@ html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-'])
     background-color: rgba(0,0,0, 0.1);
 }
 
+html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']),
 html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']) {
     appearance: none;
-    background-color: #202A34;
-    border: 1px solid rgb(255,255,255,0.1);
-    border-radius: 4px;
     height: 36px;
     min-width: 36px;
+    padding: 6px 36px 6px 12px;
+    border-radius: 4px;
+    background-repeat: no-repeat;
+    background-position: center right 4px;
     transition: background-color .25s ease-in-out;
+    cursor: pointer;
+}
+
+html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']) {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
+    background-color: #202A34;
+    border: 1px solid rgb(255,255,255,0.1);
 }
 
 html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']) {
-    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23182230" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
     background-color: #fff;
     border: 1px solid rgb(0,0,0,0.1);
-    border-radius: 4px;
-    height: 36px;
-    min-width: 36px;
-    transition: background-color .25s ease-in-out;
 }
 
 html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']):hover {
