@@ -45,7 +45,7 @@ The example below demonstrates configuring date range filtering in the Date Filt
 - The `minValidDate` parameter is set to `2008-01-08` using a string.
 - The `maxValidDate` is dynamically set to tomorrow's date using JavaScript's Date object.
 - Together, `minValidDate` and `maxValidDate` restrict the selectable date range.
-- Any manually entered or selected dates outside the valid range will invalid.
+- Any manually entered or selected dates outside the valid range will be invalid.
 
 <grid-example title='Setting Date Range For Filter' name='range-for-date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
 
