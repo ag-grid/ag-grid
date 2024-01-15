@@ -20,6 +20,7 @@ display: none;
     font-weight: var(--text-semibold);
     font-size: 17px;
     border: none;
+    border-radius: var(--radius-3xl);
 
     #{$selector-darkmode} & {
         background-color: var(--color-bg-primary);
