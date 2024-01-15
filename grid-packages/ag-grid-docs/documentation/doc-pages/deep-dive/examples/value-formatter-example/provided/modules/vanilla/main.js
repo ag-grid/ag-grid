@@ -23,8 +23,7 @@ const gridOptions = {
   ],
   // Configurations applied to all columns
   defaultColDef: {
-    filter: true,
-    editable: true
+    filter: true
   },
   // Grid Options
   pagination: true
