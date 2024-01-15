@@ -4,7 +4,7 @@ import { YearFilter } from './yearFilter_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 150, filter: PersonFilter },
-  { field: 'year', filter: YearFilter },
+  { field: 'year', minWidth: 130, filter: YearFilter },
   { field: 'country', minWidth: 150 },
   { field: 'sport' },
   { field: 'gold' },
