@@ -4,6 +4,15 @@
     display: contents;
 }
 
+%enterprise-icon {
+    display: inline-block;
+    background-image: url('../../images/enterprise.svg');
+    text-indent: -10000px;
+    background-position-y: center;
+    background-repeat: no-repeat;
+    content: 'e';
+}
+
 .doc-page {
     flex: 1 1 0px;
     min-width: 0px;
@@ -68,6 +77,13 @@
 
     :global(.alert) {
         margin-bottom: $spacing-size-4;
+    }
+
+    enterprise-icon::after {
+        @extend %enterprise-icon;
+
+        width: 1rem;
+        margin-left: 0.25rem;
     }
 
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
