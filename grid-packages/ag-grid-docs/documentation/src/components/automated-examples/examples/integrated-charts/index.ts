@@ -89,8 +89,6 @@ const columnDefs: ColDef[] = [
                 return params.value;
             }
 
-            console.log(COUNTRY_CODES[params.value]);
-
             // put the value in bold
             return `<div class='country'><span class='flag'><img border="0" width="24" height="16" alt="${params.value} flag"  src="https://flags.fmcdn.net/data/flags/mini/${COUNTRY_CODES[params.value]}.png"></span><span>${params.value}</span></div>`;
         },
