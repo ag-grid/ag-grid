@@ -16,7 +16,7 @@ You can look up the rows by index. This is dependent on anything that changes th
 
 The example below demonstrates the following:
 
-- **Get Displayed Row 0:** Returns back the first row in the grid. This is not impacted by what page you are one, eg if you navigate to the second page, this method will still return the first row on the first page. If you sort, the first row will be changed.
+- **Get Displayed Row 0:** Returns back the first row in the grid. This is not impacted by what page you are on, eg if you navigate to the second page, this method will still return the first row on the first page. If you sort, the first row will be changed.
 
 - **Get Displayed Row Count:** Returns back the total number of rows across all pages. If you filter, this number will change accordingly.
 
@@ -28,7 +28,7 @@ The example below demonstrates the following:
 
 ## Displayed Rows & Grouping
 
-When grouping, displayed rows are those rows that are currently visible with regards the the open / closed state of the parent rows.
+When grouping, displayed rows are those rows that are currently visible as per the open / closed state of their parent group rows.
 
 In the example below `getDisplayedRowCount()` will return back 7. This is composed of 5 top level 'Language' rows and two second level 'Country' rows. Each of the 7 displayed rows will have a row index from 0 to 6. All rows not displayed (as they are contained within closed groups) are not displayed and do not have a row index.
 
