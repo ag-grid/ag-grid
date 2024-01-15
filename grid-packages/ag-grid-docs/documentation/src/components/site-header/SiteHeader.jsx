@@ -16,6 +16,7 @@ import Search from "../search/Search";
 import {getCurrentFramework} from '../../utils/local-storage';
 import {Dropdown} from '../dropdown/Dropdown';
 
+
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
 const links = [
@@ -56,19 +57,18 @@ const links = [
 const IS_SSR = typeof window === 'undefined';
 
 const isLinkSelected = (name, path) => {
-    const link = links.find(l => l.name === name);
+    const link = links.find((l) => l.name === name);
     if (!link) return false;
 
     if (!link.docsLink) {
         return link.url.startsWith('http') ? path === link.url : path.startsWith(link.url);
     }
 
-    const checkItemsRecursive = items => items.some(item =>
-        item.url && path.endsWith(item.url) || (item.items && checkItemsRecursive(item.items))
-    );
+    const checkItemsRecursive = (items) =>
+        items.some((item) => (item.url && path.endsWith(item.url)) || (item.items && checkItemsRecursive(item.items)));
 
-    const menuToCheck = link.docsLink ? (name === "API" ? apiMenuData : menuData) : [];
-    const whatsNewLink = name === "Docs" ? menuToCheck.find(item => item.title === "What's New") : null;
+    const menuToCheck = link.docsLink ? (name === 'API' ? apiMenuData : menuData) : [];
+    const whatsNewLink = name === 'Docs' ? menuToCheck.find((item) => item.title === "What's New") : null;
 
     return checkItemsRecursive(menuToCheck) || (whatsNewLink && path.endsWith(whatsNewLink.url));
 };
@@ -128,30 +128,37 @@ const HeaderNav = ({ path, currentFramework }) => {
 
     return (
         <>
-            { isDocsUrl ? <>
-                <button
-                    id="mobile-docs-nav-button"
-                    className={classnames(styles.mobileNavButton, 'button-secondary')}
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#side-nav"
-                    aria-controls="side-nav"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                >
-                    <span>Docs</span>
-                    <Icon name="collapseCategories" />
-                </button>
-                
-                <Search currentFramework={currentFramework} /> 
-            </> : null }
+            {isDocsUrl ? (
+                <>
+                    <button
+                        id="mobile-docs-nav-button"
+                        className={classnames(styles.mobileNavButton, 'button-secondary')}
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#side-nav"
+                        aria-controls="side-nav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span>Docs</span>
+                        <Icon name="collapseCategories" />
+                    </button>
+
+                    <Search currentFramework={currentFramework} />
+                </>
+            ) : null}
 
             {IS_SSR && (
                 <>
                     <HeaderExpandButton isOpen={false} />
                     <nav id="main-nav" className={styles.mainNav}>
                         <ul className={classnames(styles.navItemList, 'list-style-none')}>
-                            <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} currentFramework={currentFramework} />
+                            <HeaderLinks
+                                path={path}
+                                isOpen={isOpen}
+                                toggleIsOpen={toggleIsOpen}
+                                currentFramework={currentFramework}
+                            />
                             <DarkModeToggle />
                         </ul>
                     </nav>
@@ -163,7 +170,12 @@ const HeaderNav = ({ path, currentFramework }) => {
                     <Collapsible id={styles.mainNav} isDisabled={isDesktop} isOpen={isOpen}>
                         <nav id={isDesktop ? 'main-nav' : undefined} className={styles.mainNav}>
                             <ul className={classnames(styles.navItemList, 'list-style-none')}>
-                                <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} currentFramework={currentFramework} />
+                                <HeaderLinks
+                                    path={path}
+                                    isOpen={isOpen}
+                                    toggleIsOpen={toggleIsOpen}
+                                    currentFramework={currentFramework}
+                                />
                                 <DarkModeToggle />
                             </ul>
                         </nav>
@@ -175,46 +187,43 @@ const HeaderNav = ({ path, currentFramework }) => {
 };
 
 export const SiteHeader = ({ path, currentFramework }) => {
-
     const [isLogoHover, setIsLogoHover] = useState(false);
 
     const dropdownItems = [
         {
-          title: 'AG Charts',
-          description: 'Best JavaScript Charts in the World',
-          icon: 'icon',
-          link: 'https://charts.ag-grid.com',
+            title: 'AG Charts',
+            description: 'Best JavaScript Charts in the World',
+            icon: 'icon',
+            link: 'https://charts.ag-grid.com',
         },
         {
-          title: 'AG Grid',
-          description: 'Best JavaScript Grid in the World',
-          icon: 'icon', 
-          link: 'https://ag-grid.com',
+            title: 'AG Grid',
+            description: 'Best JavaScript Grid in the World',
+            icon: 'icon',
+            link: 'https://ag-grid.com',
         },
-      ];
-    
+    ];
 
     return (
         <>
             <header className={classnames(styles.header, 'site-header')}>
                 <div className={classnames(styles.headerInner, 'layout-page-max-width')}>
-                <div className={classnames(styles.headerContainer, )}>
-                    <a
-                        href="/"
-                        aria-label="Home"
-                        className={styles.headerLogo}
-                        onMouseEnter={() => {
-                            setIsLogoHover(true);
-                        }}
-                        onMouseLeave={() => {
-                            setIsLogoHover(false);
-                        }}
-                    >
-                        <LogoType />
-                        <LogoMark bounce={isLogoHover} />
-                        
-                    </a>
-                    <Dropdown items={dropdownItems} />
+                    <div className={classnames(styles.headerContainer)}>
+                        <a
+                            href="/"
+                            aria-label="Home"
+                            className={styles.headerLogo}
+                            onMouseEnter={() => {
+                                setIsLogoHover(true);
+                            }}
+                            onMouseLeave={() => {
+                                setIsLogoHover(false);
+                            }}
+                        >
+                            <LogoType />
+                            <LogoMark bounce={isLogoHover} />
+                        </a>
+                        <Dropdown items={dropdownItems} />
                     </div>
                     <HeaderNav path={path} currentFramework={currentFramework} />
                 </div>
