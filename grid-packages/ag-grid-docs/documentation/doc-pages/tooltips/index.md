@@ -8,7 +8,7 @@ Tooltips can be displayed when you hover over the grid's column headers and cell
 
 To enable tooltips on columns, set `tooltipField` or `tooltipValueGetter` on the [Column Definition](/column-definitions/).
 
-<interface-documentation interfaceName='ColDef' names='["tooltipField", "tooltipValueGetter"]' config='{"description":""}'></interface-documentation>
+<interface-documentation interfaceName='ColDef' names='["tooltipField", "tooltipValueGetter"]' config='{"description":"", "suppressTypes": ["ColDefField"]}'></interface-documentation>
 
 ## Default Browser Tooltip
 
