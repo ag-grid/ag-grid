@@ -13,14 +13,13 @@
     color: var(--color-logo-orange);
     border-radius: 24px;
     border: 1px solid var(--color-logo-orange);
-    transition:
-        background-color $transition-default-timing,
-        color $transition-default-timing;
+    transition: background-color $transition-default-timing, color $transition-default-timing;
     -webkit-font-smoothing: auto;
 
     &:hover,
     &:focus {
         background-color: color-mix(in srgb, var(--color-logo-orange) 5%, var(--color-bg-primary));
+        color: var(--color-logo-orange);
     }
 
     #{$selector-darkmode} & {
@@ -94,9 +93,7 @@ button.sectionHeader {
     font-weight: var(--text-semibold);
     border: 2px solid transparent;
     outline: none;
-    transition:
-        color $transition-default-timing,
-        border-color $transition-default-timing;
+    transition: color $transition-default-timing, border-color $transition-default-timing;
     border-radius: var(--radius-sm);
 
     &:focus-visible {
@@ -135,9 +132,7 @@ button.sectionHeader {
             fill: var(--color-fg-primary);
         }
 
-        transition:
-            transform 0.33s ease-in-out,
-            fill $transition-default-timing;
+        transition: transform 0.33s ease-in-out, fill $transition-default-timing;
 
         &.active {
             transform: rotate(90deg);
@@ -200,10 +195,7 @@ button.sectionHeader {
     color: var(--color-fg-secondary);
     border-left: 1px solid transparent;
     outline: none;
-    transition:
-        color 0.33s ease-in-out,
-        border-color 0.33s ease-in-out,
-        background-color 0.33s ease-in-out;
+    transition: color 0.33s ease-in-out, border-color 0.33s ease-in-out, background-color 0.33s ease-in-out;
     line-height: var(--text-lh-sm);
 
     #{$selector-darkmode} & {
