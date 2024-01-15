@@ -4,7 +4,7 @@ import { AgCartesianAxisType, AgCharts, AgChartOptions } from "ag-charts-communi
 import { ChartController } from "../chartController";
 import { AgChartActual } from "../utils/integration";
 import { deepMerge } from "../utils/object";
-import { ChartSeriesType, getSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
+import { ChartSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
 type SupportedSeries = AgChartActual['series'][number];
@@ -116,18 +116,24 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private getUpdateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T): AgChartOptions {
-        const seriesType = getSeriesType(this.getChartType());
+        const chartSeriesTypes = this.chartController.getChartSeriesTypes();
+        if (this.chartController.isComboChart()) {
+            chartSeriesTypes.push('common');
+        }
+
         const validAxisTypes: AgCartesianAxisType[] = ['number', 'category', 'time', 'grouped-category'];
 
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};
         }
 
-        return this.createChartOptions<T>({
-            seriesType,
-            expression: `axes.${chartAxis.type}.${expression}`,
-            value
-        });
+        return chartSeriesTypes
+            .map((seriesType) => this.createChartOptions<T>({
+                seriesType,
+                expression: `axes.${chartAxis.type}.${expression}`,
+                value,
+            }))
+            .reduce((combinedOptions, options) => deepMerge(combinedOptions, options));
     }
 
     public getChartType(): ChartType {

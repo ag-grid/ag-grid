@@ -25,7 +25,7 @@ import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-c
         </div>`
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
-    public themeClass: string = "full-width-grid " + /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
+    public themeClass: string = 'full-width-grid ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/;
     params!: ICellRendererParams;
     masterGridApi!: GridApi;
     rowId!: string;
