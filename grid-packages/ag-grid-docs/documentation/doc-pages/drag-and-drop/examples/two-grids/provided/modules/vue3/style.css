@@ -40,15 +40,15 @@
     border: 1px solid #999;
 }
 
-.red-row {
+.ag-row.red-row {
     background-color: #CC222244;
 }
 
-.green-row {
+.ag-row.green-row {
     background-color: #33CC3344;
 }
 
-.blue-row {
+.ag-row.blue-row {
     background-color: #2244CC44;
 }
 
