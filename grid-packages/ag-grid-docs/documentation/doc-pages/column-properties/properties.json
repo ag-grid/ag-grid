@@ -269,7 +269,7 @@
         "cellRendererParams": {
             "more": {
                 "name": "Cell Renderer Params",
-                "url": "/component-cell-renderer/#reference-ICellRendererParams"
+                "url": "/component-cell-renderer/#complementing-cell-renderer-params"
             }
         },
         "cellRendererSelector": {
