@@ -69,7 +69,7 @@ const Default = () => {
                 description={`AG Grid is a feature rich datagrid designed for the major JavaScript Frameworks. Version ${agGridVersion} is out now. Easily integrate into your application to deliver filtering, grouping, aggregation, pivoting and much more with the performance that your users expect. Our Community version is free and open source, or take a 2 month trial of AG Grid Enterprise.`}
             />
             <div className={styles.homepageHero}>
-                <section className={classNames(styles.heroInner, 'layout-page-max-width')}>
+                <section className={classNames(styles.heroInner, 'layout-max-width-small')}>
                     <section className={styles.heroHeadings}>
                         <h1 className="text-xl">
                             The&nbsp;Best&nbsp;JavaScript Grid&nbsp;in&nbsp;the&nbsp;World
@@ -95,7 +95,7 @@ const Default = () => {
             </div>
 
             <div className={styles.homepageFrameworks}>
-                <div className={classNames(styles.frameworksInner, 'layout-page-max-width')}>
+                <div className={classNames(styles.frameworksInner, 'layout-max-width-small')}>
                     <span className={classNames(styles.frameworksLabel, 'text-secondary')}>Get&nbsp;started</span>
 
                     <FrameworkSelector data={frameworksData} isFullWidth />
@@ -103,13 +103,13 @@ const Default = () => {
             </div>
 
             <div className={styles.homepageQuotes}>
-                <div className="layout-page-max-width">
+                <div className="layout-max-width-small">
                     <Quotes data={quotesData} />
                 </div>
             </div>
 
             <div className={styles.homepageCustomers}>
-                <div className={classNames(styles.customersInner, 'layout-page-max-width')}>
+                <div className={classNames(styles.customersInner, 'layout-max-width-small')}>
                     <p className="text-lg text-secondary">
                         Trusted by developers at nine out of ten Fortune 500 companies
                     </p>
@@ -128,7 +128,7 @@ const Default = () => {
             </div>
 
             <div className={styles.homepageCharts}>
-                <div className={classNames(styles.chartsInner, "layout-page-max-width")}>
+                <div className={classNames(styles.chartsInner, "layout-max-width-small")}>
                     <div className={styles.chartsCopy}>
                         <ChartsLogo className={styles.chartsLogo}/>
                         <p className="text-lg">Check out the all new <a href="https://charts.ag-grid.com"><b>AG Charts</b></a>. Experience the power of <b>AG Grid</b> <a href="/javascript-data-grid/integrated-charts/">Integrated Charts</a> in a standalone library.</p>
@@ -141,7 +141,7 @@ const Default = () => {
             </div>                
 
             <section className={styles.automatedRowGroupingOuter}>
-                <div className={classNames('layout-page-max-width', styles.homepageExample)}>
+                <div className={classNames('layout-max-width-small', styles.homepageExample)}>
                     <div className={styles.automatedRowGrouping}>
                         {!IS_SSR && (
                             <React.Suspense fallback={<></>}>
@@ -160,7 +160,7 @@ const Default = () => {
             </section>
 
             <section className={styles.automatedIntegratedChartsOuter}>
-                <div className={classNames('layout-page-max-width', styles.homepageExample)}>
+                <div className={classNames('layout-max-width-small', styles.homepageExample)}>
                     <div className={styles.automatedIntegratedCharts}>
                         {!IS_SSR && (
                             <React.Suspense fallback={<></>}>
@@ -177,7 +177,7 @@ const Default = () => {
             </section>
 
             <div className={styles.homepageSponsorship}>
-                <section className={classNames(styles.sponsorshipInner, 'layout-page-max-width')}>
+                <section className={classNames(styles.sponsorshipInner, 'layout-max-width-small')}>
                     <div>
                         <h2>Supporting Open&nbsp;Source</h2>
                         <h3 className="thin-text">We are proud to sponsor the tools we use and love.</h3>
