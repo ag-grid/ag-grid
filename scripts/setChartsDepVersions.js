@@ -27,22 +27,29 @@ function updateDependency(fileContents, property, chartsVersion) {
 
 
 const packageRootDirectories = JSON.parse(fs.readFileSync('lerna.json', 'utf-8')).packages;
+
+const processPackageFile = packageJsonFilename => {
+    if (fs.existsSync(packageJsonFilename)) {
+        const packageJson = JSON.parse(fs.readFileSync(packageJsonFilename, 'utf-8'));
+
+        let updated = updateDependency(packageJson, 'dependencies', chartsVersion);
+        updated |= updateDependency(packageJson, 'devDependencies', chartsVersion);
+        updated |= updateDependency(packageJson, 'peerDependencies', chartsVersion);
+
+        if (updated) {
+            fs.writeFileSync(packageJsonFilename, JSON.stringify(packageJson, null, 2), 'utf-8');
+        }
+    }
+}
+
 for (const lernaPackage of packageRootDirectories) {
     const packageRootDirectory = lernaPackage.replace('/*', '');
     fs.readdirSync(packageRootDirectory)
         .forEach(packageDirectory => {
                 const packageJsonFilename = `./${packageRootDirectory}/${packageDirectory}/package.json`;
-                if (fs.existsSync(packageJsonFilename)) {
-                    const packageJson = JSON.parse(fs.readFileSync(packageJsonFilename, 'utf-8'));
-
-                    let updated = updateDependency(packageJson, 'dependencies', chartsVersion);
-                    updated |= updateDependency(packageJson, 'devDependencies', chartsVersion);
-                    updated |= updateDependency(packageJson, 'peerDependencies', chartsVersion);
-
-                    if (updated) {
-                        fs.writeFileSync(packageJsonFilename, JSON.stringify(packageJson, null, 2), 'utf-8');
-                    }
-                }
+                processPackageFile(packageJsonFilename);
             }
         )
 }
+
+processPackageFile('./grid-packages/ag-grid-docs/documentation/package.json');
