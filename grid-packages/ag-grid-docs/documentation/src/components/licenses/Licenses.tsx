@@ -111,7 +111,7 @@ const License = (props: LicenseData) => {
 
                 <div className={styles.licenseActions}>
                     <a
-                        className="button"
+                        className="button-secondary"
                         href={buyLink}
                         target="_blank"
                         onClick={() => {
