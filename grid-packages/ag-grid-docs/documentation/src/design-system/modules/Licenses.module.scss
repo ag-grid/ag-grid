@@ -33,7 +33,7 @@
 .licenseMeta {
     display: flex;
     flex-direction: column;
-    margin-bottom: $spacing-size-2;
+    margin-bottom: $spacing-size-8;
     color: var(--color-text-tertiary);
 
     :global(.icon) {
@@ -83,6 +83,11 @@ p.name {
     margin-bottom: $spacing-size-4;
 }
 
+.price p:first-child {
+    color: var(--color-text-tertiary);
+    font-size: var(--text-fs-md);
+}
+
 .standardPrice {
     display: inline-block;
     position: relative;
@@ -103,9 +108,11 @@ p.name {
 
 .priceFullDollars,
 .standardPrice {
-    font-size: 46px;
+    font-size: 44px;
     line-height: var(--text-lh-ultra-tight);
     letter-spacing: -0.05em;
+    padding-top: $spacing-size-1;
+    padding-bottom: $spacing-size-2;
 
     &::before {
         content: '$';
@@ -114,13 +121,19 @@ p.name {
 
 .priceFullDollars {
     font-weight: var(--text-bold);
+    height: $spacing-size-16;
+
+    :global(#grid) & {
+        position: relative;
+        top: 4px;
+    }
 }
 
 .licenseBenefits {
     display: flex;
     flex-direction: column;
 
-    li {
+    ul li:where(:not(:last-child)) {
         margin-bottom: $spacing-size-1;
     }
 
@@ -129,7 +142,7 @@ p.name {
         margin-top: $spacing-size-1;
     }
 
-    svg {
+    ul svg {
         position: relative;
         top: -2px;
         width: 20px;
@@ -161,13 +174,17 @@ p.name {
 }
 
 .learnMoreLink {
-    &:hover::after {
-        transform: translateY(0.125em);
+    svg {
+        --icon-size: 16px;
+        --color-icon: var(--color-link);
+
+        transform: translateX(2px);
+        transition: transform $transition-default-timing;
     }
 
-    &::after {
-        content: '→';
-        padding-left: 0.25em;
-        transition: transform $transition-default-timing;
+    &:hover svg {
+        --color-icon: var(--color-link-hover);
+
+        transform: translateX(5px);
     }
 }
