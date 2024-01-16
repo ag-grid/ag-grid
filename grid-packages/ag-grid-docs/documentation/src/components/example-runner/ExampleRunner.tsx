@@ -515,7 +515,7 @@ const ExampleRunnerInner = ({
                     <div
                         className={styles.content}
                         role="tabpanel"
-                        aria-labelledby={`${showCode ? 'Preview' : 'Code'} tab`}
+                        aria-labelledby={`${!showCode ? 'Preview' : 'Code'} tab`}
                         style={{ height: exampleHeight, width: '100%' }}
                     >
                         <VisibilitySensor partialVisibility={true}>
