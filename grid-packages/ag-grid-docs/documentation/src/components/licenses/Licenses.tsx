@@ -94,6 +94,8 @@ const License = (props: LicenseData) => {
 
                     <a className={classnames(styles.learnMoreLink, 'text-sm')} href={learnMoreLink}>
                         Learn more
+
+                        <Icon name="arrowRight" />
                     </a>
                 </div>
 
