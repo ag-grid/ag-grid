@@ -5,6 +5,7 @@ type StringOrNumKeys<TObj> = keyof TObj & (string | number);
 type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = 
     TValue extends object
         ? TValue extends Date | undefined | null ? never // Don't recurse into Date internals
+        : TValue extends any[] | undefined | null ? never // Don't recurse into Date internals
         : `${Prefix}.${ TDepth['length'] extends 5 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
         : never;
 
@@ -23,16 +24,16 @@ export interface ColDef<TData = any, TValue = any> {
 }
 
 bench('IRowData', () => {
-    return { field: 'b.d' } as ColDef<IRowData>;
+    return { field: 'c' } as ColDef<IRowData>;
 })
-.types([2101, 'instantiations']);
+.types([1004, 'instantiations']);
 
 bench('IRowData2', () => {
     return { field: 'a' } as ColDef<IRowData2>;
 })
-.types([888, 'instantiations']);
+.types([907, 'instantiations']);
 
 bench('ITem[]', () => {
-    return [{ field: 'A' }, {field: 'A.B'}] as ColDef<IItem>[];
+    return { field: 'A' } as ColDef<IItem>;
 })
-.types([10998, 'instantiations']);
+.types([9955, 'instantiations']);
