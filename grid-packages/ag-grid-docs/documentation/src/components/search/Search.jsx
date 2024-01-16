@@ -7,6 +7,7 @@ import SearchBox from './SearchBox';
 import SearchResult from './SearchResult';
 import useClickOutside from './use-click-outside';
 
+
 /**
  * The website uses Algolia to power its search functionality. This component builds on components provided by Algolia
  * to render the search box and results.
@@ -67,11 +68,11 @@ const SearchComponents = connectSearchBox(({ indices, query, refine }) => {
     useClickOutside(rootRef, () => setFocus(false));
 
     return (
-        <div className={styles.searchForm} ref={rootRef}>
-            <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} delay={250} resultsOpen={showResults} />
+        <><div className={styles.searchForm} ref={rootRef}>
+                <SearchBox onFocus={() => setFocus(true)} hasFocus={hasFocus} delay={250} resultsOpen={showResults} />
 
-            <SearchResult show={showResults} indices={indices} onResultClicked={onResultClicked} />
-        </div>
+                <SearchResult show={showResults} indices={indices} onResultClicked={onResultClicked} />
+            </div></>
     );
 });
 

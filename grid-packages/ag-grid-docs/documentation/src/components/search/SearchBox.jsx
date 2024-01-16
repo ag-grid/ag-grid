@@ -1,8 +1,9 @@
 import classnames from 'classnames';
 import React, { useState } from 'react';
-import { connectSearchBox } from 'react-instantsearch-dom';
 import { Icon } from '../Icon';
-import styles from '@design-system/modules/SearchBox.module.scss';
+import { DocSearch } from '@docsearch/react';
+import '@design-system/modules/SearchModal.scss';
+
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -26,18 +27,12 @@ const SearchBox = ({ delay, refine, currentRefinement, className, onFocus, resul
     const searchPlaceholder = !IS_SSR && window.innerWidth < 620 ? 'Search...' : 'Search documentation...';
 
     return (
-        <form className={classnames(className, styles.searchBox)}>
-            <input
-                type="search"
-                placeholder={searchPlaceholder}
-                aria-label="Search"
-                onChange={onChangeDebounced}
-                onFocus={onFocus}
-                className={resultsOpen ? styles.resultsOpen : ''}
-            />
+        <><DocSearch
+                appId="R2IYF7ETH7"
+                apiKey="599cec31baffa4868cae4e79f180729b"
+                indexName="docsearch" /></>
 
-            <Icon name="search" />
-        </form>
+
     );
 };
-export default connectSearchBox(SearchBox);
+export default SearchBox;
