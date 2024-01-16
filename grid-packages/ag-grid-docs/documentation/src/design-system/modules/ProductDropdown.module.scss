@@ -3,8 +3,9 @@
 .customMenu {
     position: relative;
     padding-right: $spacing-size-2;
+
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
-display: none;
+        display: none;
     }
 }
 
@@ -30,18 +31,17 @@ display: none;
 }
 
 .customTrigger:hover {
-            background: rgba(255,255,255, 0.1);
-            border: none;
-            border-radius: var(--radius-3xl);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: var(--radius-3xl);
 }
 
 .customTrigger.open .arrow {
     margin-top: 4px;
     transform: rotate(225deg);
-    
 }
 .customTrigger.open {
-background: rgba(255,255,255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     border: none;
 }
 .arrow {

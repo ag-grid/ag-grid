@@ -107,15 +107,17 @@
     }
 
     &.groupWhiskers::before {
-        top: -7px;
+        top: -4px;
         bottom: -14px;
-        width: 2px;
+        width: 1px;
+        transform: translateX(5px);
     }
 
     &.groupWhiskers::after {
         bottom: -14px;
-        height: 2px;
+        height: 1px;
         width: 8px;
+        transform: translateX(5px);
     }
 }
 
@@ -179,7 +181,7 @@
         top: 8.5px;
         right: calc(100% + 10px);
         width: var(--nav-options-indent);
-        height: 2px;
+        height: 1px;
         background-color: var(--color-util-gray-300);
 
         #{$selector-darkmode} & {

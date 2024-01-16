@@ -162,14 +162,6 @@ body ul.metaList {
     background-color: none;
 }
 
-a.metaValue {
-    color: var(--color-link);
-
-    &:hover {
-        color: var(--color-link-hover);
-    }
-}
-
 .search {
     width: 100%;
     display: flex;
