@@ -1,4 +1,4 @@
-[submodule "grid-packages/ag-grid-angular-cli-example"]
+[submodule "grid-examples/ag-grid-angular-cli-example"]
 	path = grid-examples/ag-grid-angular-cli-example
 	url = https://github.com/ag-grid/ag-grid-angular-cli-example.git
     branch = latest

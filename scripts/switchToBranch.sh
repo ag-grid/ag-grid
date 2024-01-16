@@ -13,8 +13,4 @@ git checkout $1
 git submodule foreach git checkout $1
 git submodule foreach git pull origin
 
-git reset charts-examples/ag-charts-angular-example
-git reset charts-examples/ag-charts-enterprise-example
-git reset charts-examples/ag-charts-react-example
-git reset charts-examples/ag-charts-vue3-example
-git reset charts-examples/ag-charts-vue-example
+
