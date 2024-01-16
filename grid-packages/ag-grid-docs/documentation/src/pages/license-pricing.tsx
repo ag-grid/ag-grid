@@ -33,7 +33,7 @@ export const LicensePricing = () => {
     });
 
     return (
-        <div className={classnames('layout-page-max-width', styles.container)}>
+        <div className={classnames('layout-max-width-small', styles.container)}>
             <div className={styles.topSection}>
                 <div className={styles.intro}>
                     <h1>AG Grid Licences</h1>
