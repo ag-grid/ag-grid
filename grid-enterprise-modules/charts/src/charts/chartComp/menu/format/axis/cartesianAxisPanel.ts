@@ -18,7 +18,7 @@ import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 import { AgColorPicker } from "../../../../../widgets/agColorPicker";
 import { AgAngleSelect } from "../../../../../widgets/agAngleSelect";
 
-export class AxisPanel extends Component {
+export class CartesianAxisPanel extends Component {
 
     public static TEMPLATE = /* html */
         `<div>
@@ -58,7 +58,7 @@ export class AxisPanel extends Component {
             cssIdentifier: 'charts-format-top-level',
             direction: 'vertical'
         };
-        this.setTemplate(AxisPanel.TEMPLATE, {axisGroup: groupParams});
+        this.setTemplate(CartesianAxisPanel.TEMPLATE, {axisGroup: groupParams});
 
         this.initAxis();
         this.initAxisTicks();

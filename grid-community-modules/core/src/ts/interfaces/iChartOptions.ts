@@ -6,6 +6,7 @@ export interface ChartGroupsDef {
     scatterGroup?: ('scatter' | 'bubble')[],
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[],
     histogramGroup?: ('histogram')[],
+    polarGroup?: ('radarLine')[],
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
 }
 
@@ -38,6 +39,9 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     ],
     histogramGroup: [
         'histogram'
+    ],
+    polarGroup: [
+        'radarLine'
     ],
     combinationGroup: [
         'columnLineCombo',
@@ -105,6 +109,7 @@ export type ChartType =
     | 'stackedArea'
     | 'normalizedArea'
     | 'histogram'
+    | 'radarLine'
     | 'columnLineCombo'
     | 'areaColumnCombo'
     | 'customCombo';
