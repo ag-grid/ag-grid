@@ -529,7 +529,7 @@ export class LazyCache extends BeanStub {
         
         this.nodeDisplayIndexMap.delete(lazyNode.node.rowIndex!);
         
-        if (lazyNode.node.hasChildren() && this.nodesToRefresh.size > 0) {
+        if (this.nodesToRefresh.size > 0) {
             // while refreshing, we retain the group nodes so they can be moved
             // without losing state
             this.removedNodeCache.set(lazyNode.node.id!, lazyNode.node);
