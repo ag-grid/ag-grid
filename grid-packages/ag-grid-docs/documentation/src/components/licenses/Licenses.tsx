@@ -77,7 +77,7 @@ const License = (props: LicenseData) => {
 
     return (
         <>
-            <div className={classnames(styles.top, 'top')}>
+            <div className={classnames(styles.top, 'top')} id={id}>
                 <div className={styles.licenseMeta}>
                     <Logo className={styles.logo}/>
                     <p className="text-sm"><Icon name="enterprise" /> {subHeading}</p>

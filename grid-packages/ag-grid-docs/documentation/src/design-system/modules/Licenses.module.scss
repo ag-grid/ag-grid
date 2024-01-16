@@ -121,14 +121,20 @@ p.name {
 
 .priceFullDollars {
     font-weight: var(--text-bold);
+    min-height: 68px;
+
+    :global(#grid) & {
+        position: relative;
+        top: 4px;
+    }
 }
 
 .licenseBenefits {
     display: flex;
     flex-direction: column;
 
-    li {
-        margin-bottom: $spacing-size-3;
+    ul li:where(:not(:last-child)) {
+        margin-bottom: $spacing-size-1;
     }
 
     a {

@@ -153,7 +153,7 @@
     font-size: var(--text-fs-2xl);
 
     span {
-        margin-left: -$spacing-size-2;
+        margin-left: -$spacing-size-3;
         margin-right: -$spacing-size-2;
         color: #00366d;
 
@@ -166,10 +166,7 @@
 .productLogos svg {
     height: 54px;
     width: fit-content;
-
-    &:first-child {
-        margin-left: -10px;
-    }
+    margin-left: -10px;
 
     #{$selector-darkmode} & {
         :global(#LogoType) * {
