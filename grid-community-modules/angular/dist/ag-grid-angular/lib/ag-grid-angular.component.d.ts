@@ -496,7 +496,7 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
          */
     overlayLoadingTemplate: string | undefined;
     /** Provide a custom loading overlay component.
-         * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
+         * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-loading-overlay-component) for framework specific implementation details.
          * @initial
          */
     loadingOverlayComponent: any;
@@ -512,7 +512,7 @@ export declare class AgGridAngular<TData = any, TColDef extends ColDef<TData> = 
          */
     overlayNoRowsTemplate: string | undefined;
     /** Provide a custom no rows overlay component.
-         * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
+         * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-no-rows-overlay-component) for framework specific implementation details.
          * @initial
          */
     noRowsOverlayComponent: any;

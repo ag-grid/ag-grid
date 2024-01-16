@@ -356,6 +356,7 @@ export class ProvidedFilter extends Component {
         if (this.positionableFeature) {
             this.positionableFeature = this.destroyBean(this.positionableFeature);
         }
+        this.appliedModel = null;
         super.destroy();
     }
     translate(key) {

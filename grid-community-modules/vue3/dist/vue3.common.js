@@ -166,7 +166,7 @@ module.exports = require("vue");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return toRawType; });
 /* unused harmony export toTypeString */
 /**
-* @vue/shared v3.4.13
+* @vue/shared v3.4.14
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
@@ -970,7 +970,7 @@ var shared_esm_bundler = __webpack_require__("9ff4");
 
 // CONCATENATED MODULE: ./node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js
 /**
-* @vue/reactivity v3.4.13
+* @vue/reactivity v3.4.14
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
@@ -1252,7 +1252,7 @@ function triggerEffects(dep, dirtyLevel, debuggerEventExtraInfo) {
     if (dep.get(effect2) !== effect2._trackId) {
       continue;
     }
-    if (effect2._dirtyLevel < dirtyLevel) {
+    if (effect2._dirtyLevel < dirtyLevel && !(effect2._runnings && !effect2.allowRecurse)) {
       const lastDirtyLevel = effect2._dirtyLevel;
       effect2._dirtyLevel = dirtyLevel;
       if (lastDirtyLevel === 0) {
@@ -13680,6 +13680,7 @@ class providedFilter_ProvidedFilter extends component_Component {
         if (this.positionableFeature) {
             this.positionableFeature = this.destroyBean(this.positionableFeature);
         }
+        this.appliedModel = null;
         super.destroy();
     }
     translate(key) {
@@ -25309,7 +25310,9 @@ let filterManager_FilterManager = class FilterManager extends beanStub_BeanStub 
     processFilterModelUpdateQueue() {
         this.filterModelUpdateQueue.forEach(({ model, source }) => this.setFilterModel(model, source));
         this.filterModelUpdateQueue = [];
-        this.columnFilterModelUpdateQueue.forEach(({ key, model, resolve }) => this.setColumnFilterModel(key, model).then(() => resolve()));
+        this.columnFilterModelUpdateQueue.forEach(({ key, model, resolve }) => {
+            this.setColumnFilterModel(key, model).then(() => resolve());
+        });
         this.columnFilterModelUpdateQueue = [];
         this.advancedFilterModelUpdateQueue.forEach(model => this.setAdvancedFilterModel(model));
         this.advancedFilterModelUpdateQueue = [];
@@ -25334,7 +25337,9 @@ let filterManager_FilterManager = class FilterManager extends beanStub_BeanStub 
         const column = this.columnModel.getPrimaryColumn(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, 'NO_UI') : null;
         const convertPromise = (promise) => {
-            return new Promise(resolve => promise.then(result => resolve(result)));
+            return new Promise(resolve => {
+                promise.then(result => resolve(result));
+            });
         };
         return filterWrapper ? convertPromise(this.setModelOnFilterWrapper(filterWrapper.filterPromise, model)) : Promise.resolve();
     }

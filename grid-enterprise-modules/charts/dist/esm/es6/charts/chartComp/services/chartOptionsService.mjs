@@ -1,7 +1,7 @@
 import { _, BeanStub, Events } from "@ag-grid-community/core";
 import { AgCharts } from "ag-charts-community";
 import { deepMerge } from "../utils/object.mjs";
-import { getSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper.mjs";
+import { VALID_SERIES_TYPES } from "../utils/seriesTypeMapper.mjs";
 export class ChartOptionsService extends BeanStub {
     constructor(chartController) {
         super();
@@ -13,7 +13,7 @@ export class ChartOptionsService extends BeanStub {
     setChartOption(expression, value, isSilent) {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('cartesian');
+            chartSeriesTypes.push('common');
         }
         let chartOptions = {};
         // we need to update chart options on each series type for combo charts
@@ -94,16 +94,21 @@ export class ChartOptionsService extends BeanStub {
         return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
     }
     getUpdateAxisOptions(chartAxis, expression, value) {
-        const seriesType = getSeriesType(this.getChartType());
+        const chartSeriesTypes = this.chartController.getChartSeriesTypes();
+        if (this.chartController.isComboChart()) {
+            chartSeriesTypes.push('common');
+        }
         const validAxisTypes = ['number', 'category', 'time', 'grouped-category'];
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};
         }
-        return this.createChartOptions({
+        return chartSeriesTypes
+            .map((seriesType) => this.createChartOptions({
             seriesType,
             expression: `axes.${chartAxis.type}.${expression}`,
-            value
-        });
+            value,
+        }))
+            .reduce((combinedOptions, options) => deepMerge(combinedOptions, options));
     }
     getChartType() {
         return this.chartController.getChartType();

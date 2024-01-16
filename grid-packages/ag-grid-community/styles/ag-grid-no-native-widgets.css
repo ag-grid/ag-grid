@@ -6392,10 +6392,10 @@ input[class^=ag-][type=button]:focus, button[class^=ag-]:focus {
 }
 
 .ag-ltr .ag-set-filter-add-group-indent {
-  margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
+  margin-left: calc(var(--ag-icon-size) + var(--ag-widget-container-horizontal-padding));
 }
 .ag-rtl .ag-set-filter-add-group-indent {
-  margin-right: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
+  margin-right: calc(var(--ag-icon-size) + var(--ag-widget-container-horizontal-padding));
 }
 
 .ag-ltr .ag-set-filter-group-icons {

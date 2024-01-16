@@ -907,7 +907,7 @@ var FilterManager = /** @class */ (function (_super) {
         this.filterModelUpdateQueue = [];
         this.columnFilterModelUpdateQueue.forEach(function (_a) {
             var key = _a.key, model = _a.model, resolve = _a.resolve;
-            return _this.setColumnFilterModel(key, model).then(function () { return resolve(); });
+            _this.setColumnFilterModel(key, model).then(function () { return resolve(); });
         });
         this.columnFilterModelUpdateQueue = [];
         this.advancedFilterModelUpdateQueue.forEach(function (model) { return _this.setAdvancedFilterModel(model); });
@@ -933,7 +933,9 @@ var FilterManager = /** @class */ (function (_super) {
         var column = this.columnModel.getPrimaryColumn(key);
         var filterWrapper = column ? this.getOrCreateFilterWrapper(column, 'NO_UI') : null;
         var convertPromise = function (promise) {
-            return new Promise(function (resolve) { return promise.then(function (result) { return resolve(result); }); });
+            return new Promise(function (resolve) {
+                promise.then(function (result) { return resolve(result); });
+            });
         };
         return filterWrapper ? convertPromise(this.setModelOnFilterWrapper(filterWrapper.filterPromise, model)) : Promise.resolve();
     };

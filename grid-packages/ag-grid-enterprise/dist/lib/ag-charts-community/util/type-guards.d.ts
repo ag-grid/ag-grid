@@ -1,0 +1,13 @@
+export declare function isDefined<T>(val: T | undefined | null): val is T;
+export declare function isArray<T>(value: T | T[]): value is T[];
+export declare function isBoolean(value: unknown): value is boolean;
+export declare function isDate(value: unknown): value is Date;
+export declare function isValidDate(value: unknown): value is Date;
+export declare function isFunction(value: unknown): value is Function;
+export declare function isObject(value: unknown): value is object;
+export declare function isObjectLike(value: unknown): value is object | unknown[];
+export declare function isPlainObject(value: unknown): value is object;
+export declare function isString(value: unknown): value is string;
+export declare function isNumber(value: unknown): value is number;
+export declare function isFiniteNumber(value: unknown): value is number;
+export declare function isHtmlElement(value: unknown): value is HTMLElement;

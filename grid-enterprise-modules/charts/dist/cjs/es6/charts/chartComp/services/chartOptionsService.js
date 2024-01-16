@@ -16,7 +16,7 @@ class ChartOptionsService extends core_1.BeanStub {
     setChartOption(expression, value, isSilent) {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('cartesian');
+            chartSeriesTypes.push('common');
         }
         let chartOptions = {};
         // we need to update chart options on each series type for combo charts
@@ -97,16 +97,21 @@ class ChartOptionsService extends core_1.BeanStub {
         return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
     }
     getUpdateAxisOptions(chartAxis, expression, value) {
-        const seriesType = (0, seriesTypeMapper_1.getSeriesType)(this.getChartType());
+        const chartSeriesTypes = this.chartController.getChartSeriesTypes();
+        if (this.chartController.isComboChart()) {
+            chartSeriesTypes.push('common');
+        }
         const validAxisTypes = ['number', 'category', 'time', 'grouped-category'];
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};
         }
-        return this.createChartOptions({
+        return chartSeriesTypes
+            .map((seriesType) => this.createChartOptions({
             seriesType,
             expression: `axes.${chartAxis.type}.${expression}`,
-            value
-        });
+            value,
+        }))
+            .reduce((combinedOptions, options) => (0, object_1.deepMerge)(combinedOptions, options));
     }
     getChartType() {
         return this.chartController.getChartType();

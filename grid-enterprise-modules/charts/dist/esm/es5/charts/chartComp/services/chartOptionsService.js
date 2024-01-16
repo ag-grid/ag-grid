@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 import { _, BeanStub, Events } from "@ag-grid-community/core";
 import { AgCharts } from "ag-charts-community";
 import { deepMerge } from "../utils/object";
-import { getSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
+import { VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 var ChartOptionsService = /** @class */ (function (_super) {
     __extends(ChartOptionsService, _super);
     function ChartOptionsService(chartController) {
@@ -31,7 +31,7 @@ var ChartOptionsService = /** @class */ (function (_super) {
         var _this = this;
         var chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('cartesian');
+            chartSeriesTypes.push('common');
         }
         var chartOptions = {};
         // we need to update chart options on each series type for combo charts
@@ -113,16 +113,22 @@ var ChartOptionsService = /** @class */ (function (_super) {
         return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
     };
     ChartOptionsService.prototype.getUpdateAxisOptions = function (chartAxis, expression, value) {
-        var seriesType = getSeriesType(this.getChartType());
+        var _this = this;
+        var chartSeriesTypes = this.chartController.getChartSeriesTypes();
+        if (this.chartController.isComboChart()) {
+            chartSeriesTypes.push('common');
+        }
         var validAxisTypes = ['number', 'category', 'time', 'grouped-category'];
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};
         }
-        return this.createChartOptions({
+        return chartSeriesTypes
+            .map(function (seriesType) { return _this.createChartOptions({
             seriesType: seriesType,
             expression: "axes.".concat(chartAxis.type, ".").concat(expression),
-            value: value
-        });
+            value: value,
+        }); })
+            .reduce(function (combinedOptions, options) { return deepMerge(combinedOptions, options); });
     };
     ChartOptionsService.prototype.getChartType = function () {
         return this.chartController.getChartType();

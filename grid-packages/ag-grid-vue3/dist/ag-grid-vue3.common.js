@@ -173,7 +173,7 @@ module.exports = require("agGrid");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return toRawType; });
 /* unused harmony export toTypeString */
 /**
-* @vue/shared v3.4.13
+* @vue/shared v3.4.14
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
@@ -721,7 +721,7 @@ var shared_esm_bundler = __webpack_require__("9ff4");
 
 // CONCATENATED MODULE: ./node_modules/@vue/reactivity/dist/reactivity.esm-bundler.js
 /**
-* @vue/reactivity v3.4.13
+* @vue/reactivity v3.4.14
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
@@ -1003,7 +1003,7 @@ function triggerEffects(dep, dirtyLevel, debuggerEventExtraInfo) {
     if (dep.get(effect2) !== effect2._trackId) {
       continue;
     }
-    if (effect2._dirtyLevel < dirtyLevel) {
+    if (effect2._dirtyLevel < dirtyLevel && !(effect2._runnings && !effect2.allowRecurse)) {
       const lastDirtyLevel = effect2._dirtyLevel;
       effect2._dirtyLevel = dirtyLevel;
       if (lastDirtyLevel === 0) {

@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/range-selection - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.0
+          * @ag-grid-enterprise/range-selection - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.2
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -1727,7 +1727,7 @@ var SelectionHandleFactory = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '31.0.0';
+var VERSION = '31.0.2';
 
 var RangeSelectionModule = {
     version: VERSION,

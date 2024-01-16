@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/filter-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.0
+          * @ag-grid-enterprise/filter-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.2
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -11359,6 +11359,7 @@ class ProvidedFilter extends Component {
         if (this.positionableFeature) {
             this.positionableFeature = this.destroyBean(this.positionableFeature);
         }
+        this.appliedModel = null;
         super.destroy();
     }
     translate(key) {
@@ -22605,7 +22606,9 @@ let FilterManager = class FilterManager extends BeanStub {
     processFilterModelUpdateQueue() {
         this.filterModelUpdateQueue.forEach(({ model, source }) => this.setFilterModel(model, source));
         this.filterModelUpdateQueue = [];
-        this.columnFilterModelUpdateQueue.forEach(({ key, model, resolve }) => this.setColumnFilterModel(key, model).then(() => resolve()));
+        this.columnFilterModelUpdateQueue.forEach(({ key, model, resolve }) => {
+            this.setColumnFilterModel(key, model).then(() => resolve());
+        });
         this.columnFilterModelUpdateQueue = [];
         this.advancedFilterModelUpdateQueue.forEach(model => this.setAdvancedFilterModel(model));
         this.advancedFilterModelUpdateQueue = [];
@@ -22630,7 +22633,9 @@ let FilterManager = class FilterManager extends BeanStub {
         const column = this.columnModel.getPrimaryColumn(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, 'NO_UI') : null;
         const convertPromise = (promise) => {
-            return new Promise(resolve => promise.then(result => resolve(result)));
+            return new Promise(resolve => {
+                promise.then(result => resolve(result));
+            });
         };
         return filterWrapper ? convertPromise(this.setModelOnFilterWrapper(filterWrapper.filterPromise, model)) : Promise.resolve();
     }
@@ -49030,7 +49035,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.0.0
+ * @version v31.0.2
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -49564,7 +49569,7 @@ __decorate$c([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '31.0.0';
+const VERSION$2 = '31.0.2';
 
 const EnterpriseCoreModule = {
     version: VERSION$2,
@@ -51458,7 +51463,7 @@ ToolPanelColDefService = __decorate$1([
 ], ToolPanelColDefService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.0.0';
+const VERSION$1 = '31.0.2';
 
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -51493,7 +51498,7 @@ const SideBarModule = {
 };
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.0.0';
+const VERSION = '31.0.2';
 
 const FiltersToolPanelModule = {
     version: VERSION,

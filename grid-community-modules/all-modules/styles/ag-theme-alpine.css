@@ -319,6 +319,12 @@
 .ag-theme-alpine .ag-column-drop-cell-button:hover, .ag-theme-alpine-dark .ag-column-drop-cell-button:hover, .ag-theme-alpine-auto-dark .ag-column-drop-cell-button:hover {
   opacity: 0.75;
 }
+.ag-theme-alpine .ag-column-select-column-readonly.ag-icon-grip,
+.ag-theme-alpine .ag-column-select-column-readonly .ag-icon-grip, .ag-theme-alpine-dark .ag-column-select-column-readonly.ag-icon-grip,
+.ag-theme-alpine-dark .ag-column-select-column-readonly .ag-icon-grip, .ag-theme-alpine-auto-dark .ag-column-select-column-readonly.ag-icon-grip,
+.ag-theme-alpine-auto-dark .ag-column-select-column-readonly .ag-icon-grip {
+  opacity: 0.35;
+}
 .ag-theme-alpine .ag-header-cell-menu-button:hover,
 .ag-theme-alpine .ag-side-button-button:hover,
 .ag-theme-alpine .ag-tab:hover,

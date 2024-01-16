@@ -46,10 +46,10 @@ export class PaddingPanel extends Component {
         initInput('left', this.paddingLeftSlider);
     }
     updateTopPadding(chartOptions) {
-        var _a, _b;
         // keep 'top' padding in sync with chart as toggling chart title on / off change the 'top' padding
-        const seriesType = this.chartController.getChartSeriesTypes()[0];
-        const topPadding = (_b = (_a = chartOptions[seriesType]) === null || _a === void 0 ? void 0 : _a.padding) === null || _b === void 0 ? void 0 : _b.top;
+        const topPadding = [...this.chartController.getChartSeriesTypes(), 'common']
+            .map((seriesType) => { var _a, _b; return (_b = (_a = chartOptions[seriesType]) === null || _a === void 0 ? void 0 : _a.padding) === null || _b === void 0 ? void 0 : _b.top; })
+            .find((value) => value != null);
         if (topPadding != null) {
             this.paddingTopSlider.setValue(topPadding);
         }

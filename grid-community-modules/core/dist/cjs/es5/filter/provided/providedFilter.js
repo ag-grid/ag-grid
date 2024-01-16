@@ -378,6 +378,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         if (this.positionableFeature) {
             this.positionableFeature = this.destroyBean(this.positionableFeature);
         }
+        this.appliedModel = null;
         _super.prototype.destroy.call(this);
     };
     ProvidedFilter.prototype.translate = function (key) {

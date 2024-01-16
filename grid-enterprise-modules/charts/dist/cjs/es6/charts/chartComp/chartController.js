@@ -289,7 +289,7 @@ class ChartController extends core_1.BeanStub {
         return this.getSeriesChartTypes().filter(s => selectedColIds.includes(s.colId));
     }
     getChartSeriesTypes() {
-        const supportedComboSeriesTypes = ['line', 'column', 'area'];
+        const supportedComboSeriesTypes = ['line', 'bar', 'area'];
         return this.isComboChart() ? supportedComboSeriesTypes : [(0, seriesTypeMapper_1.getSeriesType)(this.getChartType())];
     }
     getCellRanges() {

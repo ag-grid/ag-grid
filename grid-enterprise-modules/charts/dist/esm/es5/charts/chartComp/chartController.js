@@ -317,7 +317,7 @@ var ChartController = /** @class */ (function (_super) {
         return this.getSeriesChartTypes().filter(function (s) { return selectedColIds.includes(s.colId); });
     };
     ChartController.prototype.getChartSeriesTypes = function () {
-        var supportedComboSeriesTypes = ['line', 'column', 'area'];
+        var supportedComboSeriesTypes = ['line', 'bar', 'area'];
         return this.isComboChart() ? supportedComboSeriesTypes : [getSeriesType(this.getChartType())];
     };
     ChartController.prototype.getCellRanges = function () {

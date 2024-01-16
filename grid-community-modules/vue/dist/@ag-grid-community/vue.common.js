@@ -12889,6 +12889,7 @@ class providedFilter_ProvidedFilter extends component_Component {
         if (this.positionableFeature) {
             this.positionableFeature = this.destroyBean(this.positionableFeature);
         }
+        this.appliedModel = null;
         super.destroy();
     }
     translate(key) {
@@ -24518,7 +24519,9 @@ let filterManager_FilterManager = class FilterManager extends beanStub_BeanStub 
     processFilterModelUpdateQueue() {
         this.filterModelUpdateQueue.forEach(({ model, source }) => this.setFilterModel(model, source));
         this.filterModelUpdateQueue = [];
-        this.columnFilterModelUpdateQueue.forEach(({ key, model, resolve }) => this.setColumnFilterModel(key, model).then(() => resolve()));
+        this.columnFilterModelUpdateQueue.forEach(({ key, model, resolve }) => {
+            this.setColumnFilterModel(key, model).then(() => resolve());
+        });
         this.columnFilterModelUpdateQueue = [];
         this.advancedFilterModelUpdateQueue.forEach(model => this.setAdvancedFilterModel(model));
         this.advancedFilterModelUpdateQueue = [];
@@ -24543,7 +24546,9 @@ let filterManager_FilterManager = class FilterManager extends beanStub_BeanStub 
         const column = this.columnModel.getPrimaryColumn(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column, 'NO_UI') : null;
         const convertPromise = (promise) => {
-            return new Promise(resolve => promise.then(result => resolve(result)));
+            return new Promise(resolve => {
+                promise.then(result => resolve(result));
+            });
         };
         return filterWrapper ? convertPromise(this.setModelOnFilterWrapper(filterWrapper.filterPromise, model)) : Promise.resolve();
     }
