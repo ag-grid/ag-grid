@@ -121,7 +121,7 @@ p.name {
 
 .priceFullDollars {
     font-weight: var(--text-bold);
-    min-height: 68px;
+    height: $spacing-size-16;
 
     :global(#grid) & {
         position: relative;
