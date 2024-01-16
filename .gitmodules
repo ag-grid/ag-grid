@@ -10,18 +10,6 @@
 	path = grid-examples/ag-grid-vue-example
 	url = https://github.com/ag-grid/ag-grid-vue-example.git
     branch = latest
-[submodule "charts-examples/ag-charts-react-example"]
-	path = charts-examples/ag-charts-react-example
-	url = https://github.com/ag-grid/ag-charts-react-example.git
-	branch = latest
-[submodule "charts-examples/ag-charts-vue-example"]
-	path = charts-examples/ag-charts-vue-example
-	url = https://github.com/ag-grid/ag-charts-vue-example.git
-	branch = latest
-[submodule "charts-community-modules/ag-charts-angular-example"]
-	path = charts-examples/ag-charts-angular-example
-	url = https://github.com/ag-grid/ag-charts-angular-example.git
-	branch = latest
 [submodule "grid-examples/ag-grid-vue3-package-example"]
 	path = grid-examples/ag-grid-vue3-package-example
 	url = https://github.com/ag-grid/ag-grid-vue3-package-example.git
@@ -29,10 +17,6 @@
 [submodule "grid-examples/ag-grid-vue3-example"]
 	path = grid-examples/ag-grid-vue3-example
 	url = https://github.com/ag-grid/ag-grid-vue3-example.git
-	branch = latest
-[submodule "charts-examples/ag-charts-vue3-example"]
-	path = charts-examples/ag-charts-vue3-example
-	url = https://github.com/ag-grid/ag-charts-vue3-example.git
 	branch = latest
 [submodule "grid-examples/ag-grid-vue-package-example"]
 	path = grid-examples/ag-grid-vue-package-example
@@ -52,6 +36,3 @@
 [submodule "grid-examples/ag-grid-solid-package-example"]
 	path = grid-examples/ag-grid-solid-package-example
 	url = https://github.com/ag-grid/ag-grid-solid-package-example.git
-[submodule "charts-examples/ag-charts-enterprise-example"]
-	path = charts-examples/ag-charts-enterprise-example
-	url = https://github.com/ag-grid/ag-charts-enterprise-example.git
