@@ -53,6 +53,7 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         width: var(--layout-width-7-12);
+        max-width: var(--layout-width-7-12);
         padding-right: 0;
     }
 

@@ -1,21 +1,16 @@
 @use '../core' as *;
 
 .link {
-    --link-border-color: var(--color-util-brand-100);
-
     position: relative;
     display: flex;
     flex-direction: column;
     border-radius: var(--radius-sm);
-    border: 1px solid var(--link-border-color);
+    border: 1px solid var(--color-border-secondary);
     overflow: hidden;
-
     transition: border-color 0.5s ease-in-out;
 
     &:hover {
-        --link-border-color: var(--color-border-primary);
-
-        opacity: 1;
+        border-color: var(--color-link);
     }
 
     .image {
@@ -29,13 +24,12 @@
         padding: $spacing-size-2 $spacing-size-4;
         font-size: 12px;
         line-height: var(--text-lh-tight);
-        border-top: 1px solid var(--link-border-color);
-
+        border-top: 1px solid var(--color-border-secondary);
         transition: border-color 0.5s ease-in-out;
     }
 
     #{$selector-darkmode} & {
-        --link-border-color: color-mix(in srgb, var(--color-bg-primary), white 10%);
+        background-color: #192232; // Dark themes background color
     }
 }
 

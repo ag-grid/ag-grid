@@ -18,7 +18,7 @@ import { TextSizes } from './TextSizes';
 export const StyleGuide: FunctionComponent = () => {
     return (
         <>
-            <div className={classnames(styles.styleGuide, 'layout-page-max-width')}>
+            <div className={classnames(styles.styleGuide, 'layout-max-width-small')}>
                 <h1>STYLE GUIDE</h1>
                 <Layout />
                 <Spacing />

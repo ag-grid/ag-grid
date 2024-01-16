@@ -434,3 +434,16 @@
         display: inline-block;
     }
 }
+
+.chartsPricingOuter,
+.chartsPricingOuter iframe {
+    min-height: calc(8000px - 100vw * 3.5);
+
+    @media screen and (min-width: 1020px) {
+        min-height: calc(8000px - 100vw * 3.2);
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        min-height: 3200px;
+    }
+}

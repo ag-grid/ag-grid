@@ -231,16 +231,33 @@ a.metaValue {
 
 .highlightAnimate {
     animation: highlight-animation 3000ms ease-out;
+
+    #{$selector-darkmode} & {
+        animation: highlight-animation-dark 3000ms ease-out;
+    }
 }
 
 @keyframes highlight-animation {
     0%,
     100% {
-        background-color: inherit;
+        background-color: transparent;
     }
+
     10%,
     50% {
-        background-color: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 90%);
+        background-color: var(--color-util-brand-100);
+    }
+}
+
+@keyframes highlight-animation-dark {
+    0%,
+    100% {
+        background-color: transparent;
+    }
+
+    10%,
+    50% {
+        background-color: rgba(255, 255, 255, 0.075);
     }
 }
 
