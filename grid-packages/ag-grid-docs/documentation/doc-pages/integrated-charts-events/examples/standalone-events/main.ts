@@ -1,5 +1,5 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions} from '@ag-grid-community/core';
-import {AgChartLegendClickEvent, AgSeriesNodeClickParams} from 'ag-charts-community';
+import {AgChartLegendClickEvent, AgNodeClickEvent} from 'ag-charts-community';
 
 let gridApi: GridApi;
 
@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
       },
       // @ts-ignore charts typing
       listeners: {
-        seriesNodeClick: (e: AgSeriesNodeClickParams<any>) => console.log('seriesNodeClick', e)
+        seriesNodeClick: (e: AgNodeClickEvent) => console.log('seriesNodeClick', e)
       },
     },
   },
