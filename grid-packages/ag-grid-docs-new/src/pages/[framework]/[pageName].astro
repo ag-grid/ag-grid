@@ -7,10 +7,10 @@ import { getFrameworkDisplayText } from '@utils/framework';
 import type { Framework, MenuSection } from '@ag-grid-types';
 import { getDocsPages } from '@features/docs/utils/pageData';
 import { SideNavigation } from '@features/pages-navigation/components/SideNavigation';
-import { addTabsToHeadings } from '@utils/markdoc/addTabsToHeadings';
 import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
 import { DOCS_TAB_ITEM_ID_PREFIX } from '@constants';
 import { getFilteredMenuSections } from '@features/pages-navigation/utils/getFilteredMenuSections';
+import { getHeadings } from '@utils/markdoc/getHeadings';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -23,14 +23,13 @@ const pageName = Astro.params.pageName as Framework;
 const path = Astro.url.pathname;
 const { title, enterprise, hideSideMenu, hidePageMenu } = page.data;
 
-const { Content, headings } = await page.render();
-const extendedHeadings = [{ slug: 'top', depth: 1, text: title }].concat(
-    addTabsToHeadings({
-        headings,
-        markdocContent: page.body,
-        getTabItemSlug: (id) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`,
-    })
-);
+const { Content } = await page.render();
+const headings = getHeadings({
+    title,
+    markdocContent: page.body,
+    framework: currentFramework,
+    getTabItemSlug: (id) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`,
+});
 
 const menuEntry = await getEntry('menu', 'data');
 const menuSections = menuEntry.data.main.sections;
@@ -46,7 +45,8 @@ const description = page.data.description || getFirstParagraphText(page.body);
     title={`${getFrameworkDisplayText(currentFramework)} Grid: ${title} | AG Grid`}
     description={description}
     showSearchBar={true}
-    showDocsNav={true}>
+    showDocsNav={true}
+>
     <div class:list={[hidePageMenu && 'noLeftMenu', 'contentViewport', 'layout-grid']}>
         {
             !hidePageMenu && (
@@ -58,7 +58,6 @@ const description = page.data.description || getFirstParagraphText(page.body);
                 />
             )
         }
-
         <div
             id="doc-content"
             class:list={[
@@ -66,7 +65,8 @@ const description = page.data.description || getFirstParagraphText(page.body);
                 {
                     noSideMenu: hideSideMenu,
                 },
-            ]}>
+            ]}
+        >
             <Header client:load title={title} framework={currentFramework} isEnterprise={enterprise} path={path} />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}
@@ -75,7 +75,7 @@ const description = page.data.description || getFirstParagraphText(page.body);
             </div>
         </div>
 
-        {!hideSideMenu && <SideNavigation client:load headings={extendedHeadings} />}
+        {!hideSideMenu && <SideNavigation client:load headings={headings} />}
     </div>
 </Layout>
 
