@@ -69,6 +69,25 @@
             border-left: none;
         }
     }
+
+    .seriesTypesNav .enterpriseIcon svg {
+        transform: translate(-0.05em, 0.275em);
+    }
+}
+
+.enterpriseIcon {
+    --icon-size: 1.15em;
+    --color-icon: var(--color-enterprise-icon);
+
+    position: relative;
+    margin-left: 4px;
+    color: transparent;
+
+    svg {
+        position: absolute;
+        left: 0;
+        transform: translate(-0.05em, 0.075em);
+    }
 }
 
 button .menuIcon {
