@@ -37,6 +37,7 @@
     "dependencies": {
         "@astrojs/check": "^0.3.4",
         "@astrojs/markdoc": "^0.8.2",
+        "@astrojs/prism": "^3.0.0",
         "@astrojs/react": "^3.0.9",
         "@carbon/icons-react": "^11.33.0",
         "@nanostores/persistent": "^0.9.1",
