@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
       },
       // @ts-ignore charts typing
       listeners: {
-        seriesNodeClick: (e: AgNodeClickEvent) => console.log('seriesNodeClick', e)
+        seriesNodeClick: (e: AgNodeClickEvent<any>) => console.log('seriesNodeClick', e)
       },
     },
   },
