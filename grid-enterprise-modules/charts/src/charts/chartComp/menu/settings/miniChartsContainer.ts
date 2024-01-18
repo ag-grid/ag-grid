@@ -21,6 +21,7 @@ import {
     MiniDoughnut,
     MiniHistogram,
     MiniLine,
+    MiniNightingale,
     MiniNormalizedArea,
     MiniNormalizedBar,
     MiniNormalizedColumn,
@@ -66,6 +67,7 @@ const miniChartMapping = {
     polarGroup: {
         radarLine: MiniRadarLine,
         radarArea: MiniRadarArea,
+        nightingale: MiniNightingale,
     },
     combinationGroup: {
         columnLineCombo: MiniColumnLineCombo,

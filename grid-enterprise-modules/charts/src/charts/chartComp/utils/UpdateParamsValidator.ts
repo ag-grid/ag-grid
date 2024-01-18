@@ -51,6 +51,7 @@ export class UpdateParamsValidator {
         'histogram',
         'radarLine',
         'radarArea',
+        'nightingale',
         'columnLineCombo',
         'areaColumnCombo',
         'customCombo'

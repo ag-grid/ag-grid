@@ -267,7 +267,7 @@ export type RangeMenuOptionName =
     'rangeXYChart' | 'rangeScatter' | 'rangeBubble' |
     'rangeAreaChart' | 'rangeArea' | 'rangeStackedArea' | 'rangeNormalizedArea' |
     'rangeHistogramChart' |
-    'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 
+    'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' |
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
@@ -340,6 +340,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                         [
                             getMenuItem('radarLine', 'Radar Line&lrm;', 'radarLine', 'rangeRadarLine'),
                             getMenuItem('radarArea', 'Radar Area&lrm;', 'radarArea', 'rangeRadarArea'),
+                            getMenuItem('nightingale', 'Nightingale&lrm;', 'nightingale', 'rangeNightingale'),
                         ],
                     _key: 'rangePolarChart'
                 },
@@ -398,6 +399,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 _key: 'rangePolarChart',
                 radarLine: 'rangeRadarLine',
                 radarArea: 'rangeRadarArea',
+                nightingale: 'rangeNightingale',
             },
             combinationGroup: {
                 _key: 'rangeCombinationChart',

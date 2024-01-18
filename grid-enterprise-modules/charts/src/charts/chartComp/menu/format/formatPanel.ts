@@ -132,6 +132,7 @@ export class FormatPanel extends Component {
             'cartesian': ['axis', 'navigator'],
             'radar-line': ['axis'],
             'radar-area': ['axis'],
+            'nightingale': ['axis'],
         };
         return extendedGroupPanels[seriesType]?.includes(group) ?? false;
     }
