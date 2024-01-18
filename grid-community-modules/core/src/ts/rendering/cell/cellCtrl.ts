@@ -999,6 +999,10 @@ export class CellCtrl extends BeanStub {
         if (!cellFocused && !fullRowEdit && this.editing) {
             this.stopRowOrCellEdit();
         }
+
+        if (cellFocused) {
+            this.rowCtrl.announceDescription();
+        }
     }
 
     private createCellPosition(): void {
