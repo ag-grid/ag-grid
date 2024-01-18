@@ -21,6 +21,7 @@ export * from "./area/miniNormalizedArea";
 export * from "./histogram/miniHistogram";
 
 export * from './polar/miniRadarLine';
+export * from './polar/miniRadarArea';
 
 export * from "./combo/miniColumnLineCombo";
 export * from "./combo/miniAreaColumnCombo";

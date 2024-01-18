@@ -39,6 +39,7 @@ import {CrossFilteringContext} from "../chartService";
 import {ChartOptionsService} from "./services/chartOptionsService";
 import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
 import { RadarLineChartProxy } from './chartProxies/polar/radarLineChartProxy';
+import { RadarAreaChartProxy } from './chartProxies/polar/radarAreaChartProxy';
 
 export interface GridChartParams {
     chartId: string;
@@ -249,6 +250,8 @@ export class GridChartComp extends Component {
                 return new HistogramChartProxy(chartProxyParams);
             case 'radarLine':
                 return new RadarLineChartProxy(chartProxyParams);
+            case 'radarArea':
+                return new RadarAreaChartProxy(chartProxyParams);
             case 'columnLineCombo':
             case 'areaColumnCombo':
             case 'customCombo':

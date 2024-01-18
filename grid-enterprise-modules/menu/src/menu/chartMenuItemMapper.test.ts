@@ -128,7 +128,7 @@ describe('isValidChartType', () => {
             },
             {
                 name: "polarChart",
-                subMenu: [{ name: "radarLine" }]
+                subMenu: [{ name: "radarLine" }, { name: "radarArea" }]
             },
             {
                 name: "combinationChart",
