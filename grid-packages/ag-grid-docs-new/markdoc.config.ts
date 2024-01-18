@@ -1,11 +1,8 @@
-import { component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
-
-import prism from './plugins/prism';
+import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
 
 // import { DOCS_TAB_ITEM_ID_PREFIX } from './src/constants';
 
 export default defineMarkdocConfig({
-    extends: [prism()],
     nodes: {
         heading: {
             ...nodes.heading, // Preserve default anchor link generation
@@ -14,6 +11,18 @@ export default defineMarkdocConfig({
         link: {
             ...nodes.link,
             render: component('./src/components/Link.astro'),
+        },
+        fence: {
+            attributes: {
+                ...Markdoc.nodes.fence.attributes!,
+                transform: Boolean,
+                language: String,
+                lineNumbers: Boolean,
+                suppressFrameworkContext: Boolean,
+                spaceBetweenProperties: Boolean,
+                inlineReactProperties: Boolean,
+            } as any,
+            render: component('./src/components/snippet/Snippet.astro'),
         },
     },
     functions: {

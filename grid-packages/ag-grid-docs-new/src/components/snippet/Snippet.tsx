@@ -1,5 +1,7 @@
-import Code from '../Code';
-import { transform } from './snippetTransformer';
+import type { Framework } from '@ag-grid-types';
+
+import Code, { type Language } from '../Code';
+import * as snippetTransformer from './snippetTransformer';
 
 const languages = {
     react: 'jsx',
@@ -8,37 +10,48 @@ const languages = {
     vue: 'ts',
 };
 
+interface Props {
+    framework: Framework;
+    content: string;
+    transform?: boolean;
+    language?: Language;
+    lineNumbers?: boolean;
+    suppressFrameworkContext?: boolean;
+    spaceBetweenProperties?: boolean;
+    inlineReactProperties?: boolean;
+    children?: any;
+}
+
 /**
  * This takes a code snippet written in JavaScript and transforms it into an idiomatic code snippet for the selected
  * framework.
  */
-export const Snippet = (props) => {
-    const transformCode = props.transform === undefined ? true : props.transform === 'true';
-    const snippetToTransform = props.children.toString();
-
-    // snippets with spaces need to be prefixed with '|' as markdown doesn't allow spaces
-    const formattedSnippet = snippetToTransform.replace(/^\|/gm, '').trim();
+export const Snippet = (props: Props) => {
+    const {
+        framework,
+        content,
+        transform = true,
+        language,
+        lineNumbers,
+        suppressFrameworkContext,
+        spaceBetweenProperties,
+        inlineReactProperties,
+    } = props;
 
     // create FW specific snippet
-    const snippet = transformCode
-        ? transform(formattedSnippet, props.framework, extractOptions(props))
-        : formattedSnippet;
+    const snippet = transform
+        ? snippetTransformer.transform(content, framework, {
+              suppressFrameworkContext,
+              spaceBetweenProperties,
+              inlineReactProperties,
+          })
+        : content;
 
     return (
         <Code
             code={snippet}
-            language={props.language ? props.language : languages[props.framework]}
-            lineNumbers={props.lineNumbers}
+            language={language ? language : (languages[framework] as Language)}
+            lineNumbers={lineNumbers}
         />
     );
-};
-
-const extractOptions = (props) => {
-    const asBoolean = (prop) => ['true', '{true}', ''].includes(prop && prop.toLowerCase());
-
-    return {
-        suppressFrameworkContext: asBoolean(props['suppressframeworkcontext']),
-        spaceBetweenProperties: asBoolean(props['spacebetweenproperties']),
-        inlineReactProperties: asBoolean(props['inlinereactproperties']),
-    };
 };

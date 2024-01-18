@@ -24,7 +24,7 @@ const GrammarMap = {
     scss: Prism.languages.scss,
 };
 
-type Language = keyof typeof GrammarMap;
+export type Language = keyof typeof GrammarMap;
 
 /**
  * This uses Prism to highlight a provided code snippet.
