@@ -19,7 +19,11 @@ export type ChartSeriesType =
     'nightingale' |
     'common';
 
-type PolarChartSeriesType = Extract<ChartSeriesType, 'radar-line'>;
+type PolarChartSeriesType = Extract<ChartSeriesType,
+    'radar-line' |
+    'radar-area' |
+    'nightingale'
+>;
 
 export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'area',
