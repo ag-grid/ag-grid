@@ -28,7 +28,6 @@ export class AriaAnnouncementService extends BeanStub {
         this.descriptionContainer!.textContent = '';
         setTimeout(() => {
             this.descriptionContainer!.textContent = value;
-            console.log(value);
         }, 5);
     }
 
