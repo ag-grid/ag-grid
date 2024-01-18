@@ -418,6 +418,12 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
     mimeType?: string;
     /** Use to export an image for the gridCell in question. */
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
+    /**
+     * By default, no compression is performed on the exported Excel file.
+     * Set this property to `true` to compress the exported Excel file to reduce file size.
+     * @default false
+     */
+    compressOutput?: boolean;
 }
 
 export interface ExcelExportMultipleSheetParams {
@@ -446,6 +452,12 @@ export interface ExcelExportMultipleSheetParams {
      * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
      */
     mimeType?: string;
+    /**
+     * By default, no compression is performed on the exported Excel file.
+     * Set this property to `true` to compress the exported Excel file to reduce file size.
+     * @default false
+     */
+    compressOutput?: boolean;
 }
 
 export interface ExcelHeaderFooterConfig {
@@ -477,10 +489,10 @@ export interface ExcelHeaderFooterContent {
 
 export interface IExcelCreator {
     exportDataAsExcel(params?: ExcelExportParams): void;
-    getDataAsExcel(params?: ExcelExportParams): Blob | string | undefined;
+    getDataAsExcel(params?: ExcelExportParams): Promise<Blob | string | undefined>;
     getSheetDataForExcel(params?: ExcelExportParams): string;
 
-    getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined;
+    getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Promise<Blob | undefined>;
     exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
 
     /** private methods */

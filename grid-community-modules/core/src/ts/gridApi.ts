@@ -285,7 +285,10 @@ export class GridApi<TData = any> {
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     public getDataAsCsv(params?: CsvExportParams): string | undefined {
         if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
-            return this.csvCreator.getDataAsCsv(params);
+            const result = this.csvCreator.getDataAsCsv(params);
+            if (typeof result === 'string') {
+                return result;
+            }
         }
     }
 
@@ -306,7 +309,7 @@ export class GridApi<TData = any> {
     }
 
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
-    public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
+    public async getDataAsExcel(params?: ExcelExportParams): Promise<string | Blob | undefined> {
         if (this.assertNotExcelMultiSheet('getDataAsExcel', params)) {
             return this.excelCreator.getDataAsExcel(params);
         }
@@ -328,9 +331,11 @@ export class GridApi<TData = any> {
     }
 
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
-    public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
+    public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> {
         if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
             return this.excelCreator.getMultipleSheetsAsExcel(params);
+        } else {
+            return Promise.resolve(undefined);
         }
     }
 
