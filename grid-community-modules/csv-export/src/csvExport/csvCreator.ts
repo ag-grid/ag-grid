@@ -39,7 +39,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         return Object.assign({}, baseParams, params);
     }
 
-    public export(userParams?: CsvExportParams): string {
+    public async export(userParams?: CsvExportParams): Promise<string> {
         if (this.isExportSuppressed()) {
             console.warn(`AG Grid: Export cancelled. Export is not allowed as per your configuration.`);
             return '';
@@ -55,11 +55,11 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         return data;
     }
 
-    public exportDataAsCsv(params?: CsvExportParams): string {
+    public async exportDataAsCsv(params?: CsvExportParams): Promise<string> {
         return this.export(params);
     }
 
-    public getDataAsCsv(params?: CsvExportParams, skipDefaultParams = false): string {
+    public getDataAsCsv(params?: CsvExportParams, skipDefaultParams = false): Promise<string> | string {
         const mergedParams = skipDefaultParams
             ? Object.assign({}, params)
             : this.getMergedParams(params);

@@ -757,13 +757,14 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         if (!this.rangeService || this.rangeService.isEmpty()) { return; }
 
         const allRangesMerge = this.rangeService.areAllRangesAbleToMerge();
-        const { data, cellsToFlash } = allRangesMerge ? this.buildDataFromMergedRanges(params) : this.buildDataFromRanges(params);
-
-        this.copyDataToClipboard(data);
-        this.dispatchFlashCells(cellsToFlash);
+        const promise = allRangesMerge ? this.buildDataFromMergedRanges(params) : this.buildDataFromRanges(params);
+        promise.then(({ data, cellsToFlash }) => {
+            this.copyDataToClipboard(data);
+            this.dispatchFlashCells(cellsToFlash);
+        })
     }
 
-    private buildDataFromMergedRanges(params: IClipboardCopyParams): DataForCellRangesType {
+    private async buildDataFromMergedRanges(params: IClipboardCopyParams): Promise<DataForCellRangesType> {
         const columnsSet: Set<Column> = new Set();
         const ranges = this.rangeService.getCellRanges();
         const rowPositionsMap: Map<string, boolean> = new Map();
@@ -793,7 +794,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             return posA - posB;
         });
 
-        const data = this.buildExportParams({
+        const data = await this.buildExportParams({
             columns: exportedColumns,
             rowPositions: allRowPositions,
             includeHeaders: params.includeHeaders,
@@ -803,21 +804,20 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         return { data, cellsToFlash: allCellsToFlash };
     }
 
-    private buildDataFromRanges(params: IClipboardCopyParams): DataForCellRangesType {
+    private async buildDataFromRanges(params: IClipboardCopyParams): Promise<DataForCellRangesType> {
         const ranges = this.rangeService.getCellRanges();
-        const data: string[] = [];
         const allCellsToFlash: CellsToFlashType = {};
 
-        ranges.forEach(range => {
+        const data: string[] = await Promise.all(ranges.map(async range => {
             const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(range);
             Object.assign(allCellsToFlash, cellsToFlash);
-            data.push(this.buildExportParams({
+            return await this.buildExportParams({
                 columns: range.columns,
-                rowPositions: rowPositions,
+                rowPositions,
                 includeHeaders: params.includeHeaders,
                 includeGroupHeaders: params.includeGroupHeaders,
-            }));
-        });
+            });
+        }));
 
         return { data: data.join('\n'), cellsToFlash: allCellsToFlash };
     }
@@ -869,29 +869,45 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         const currentRow: RowPosition = { rowPinned: focusedCell.rowPinned, rowIndex: focusedCell.rowIndex };
         const column = focusedCell.column;
 
-        const data = this.buildExportParams({
+        const processParams = (data: string) => {
+            this.copyDataToClipboard(data);
+            this.dispatchFlashCells({ [cellId]: true });
+        };
+
+        const result = this.buildExportParams({
             columns: [column],
             rowPositions: [currentRow],
             includeHeaders: params.includeHeaders,
             includeGroupHeaders: params.includeGroupHeaders
         });
 
-        this.copyDataToClipboard(data);
-        this.dispatchFlashCells({ [cellId]: true });
+        if (result instanceof Promise) {
+            result.then(processParams);
+        } else {
+            processParams(result);
+        }
     }
 
     public copySelectedRowsToClipboard(params: IClipboardCopyRowsParams = {}): void {
         const { columnKeys, includeHeaders, includeGroupHeaders } = params;
 
-        const data = this.buildExportParams({
+        const processParams = (data: string) => {
+            this.copyDataToClipboard(data);
+            const rowNodes = this.selectionService.getSelectedNodes() || [];
+            this.dispatchFlashCells(this.getCellsToFlashFromRowNodes(rowNodes));
+        }
+
+        const result = this.buildExportParams({
             columns: columnKeys,
             includeHeaders,
             includeGroupHeaders
         });
 
-        this.copyDataToClipboard(data);
-        const rowNodes = this.selectionService.getSelectedNodes() || [];
-        this.dispatchFlashCells(this.getCellsToFlashFromRowNodes(rowNodes));
+        if (result instanceof Promise) {
+            result.then(processParams);
+        } else {
+            processParams(result);
+        }
     }
 
     private buildExportParams(params: {
@@ -899,7 +915,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         rowPositions?: RowPosition[]
         includeHeaders?: boolean,
         includeGroupHeaders?: boolean
-    }): string {
+    }): Promise<string> | string {
         const { columns, rowPositions, includeHeaders = false, includeGroupHeaders = false } = params;
 
         const exportParams: CsvExportParams = {

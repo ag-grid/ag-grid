@@ -23,7 +23,7 @@ import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { BaseCreator, Downloader, GridSerializer, RowType, ZipContainer } from "@ag-grid-community/csv-export";
 import { ExcelGridSerializingParams, ExcelSerializingSession, StyleLinkerInterface } from './excelSerializingSession';
 
-export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
+export const getMultipleSheetsAsExcel = async (params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> => {
     const { data, fontSize = 11, author = 'AG Grid' } = params;
 
     const hasImages = ExcelXlsxFactory.images.size > 0;
@@ -50,7 +50,7 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
         ExcelXlsxFactory.images.forEach(value => {
             const firstImage = value[0].image[0];
             const ext = firstImage.imageType;
-            ZipContainer.addFile(`xl/media/image${++imgCounter}.${ext}`, firstImage.base64, true);
+            ZipContainer.addFile(`xl/media/image${++imgCounter}.${ext}`, firstImage.base64, false, true);
         });
     }
 
@@ -63,7 +63,7 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
     const sheetLen = data.length;
     let imageRelationCounter = 0;
     data.forEach((value, idx) => {
-        ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value);
+        ZipContainer.addFile(`xl/worksheets/sheet${idx + 1}.xml`, value, true);
         if (hasImages && ExcelXlsxFactory.worksheetImages.get(idx)) {
             createImageRelationsForSheet(idx, imageRelationCounter++);
         }
@@ -81,13 +81,14 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
     ExcelXlsxFactory.resetFactory();
 
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    const compressOutput = params.compressOutput || false;
 
-    return ZipContainer.getContent(mimeType);
+    return ZipContainer.getContent(mimeType, compressOutput);
 };
 
-export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
+export const exportMultipleSheetsAsExcel = async (params: ExcelExportMultipleSheetParams) => {
     const { fileName = 'export.xlsx' } = params;
-    const contents =  getMultipleSheetsAsExcel(params);
+    const contents =  await getMultipleSheetsAsExcel(params);
     if (contents) {
         Downloader.download(fileName, contents);
     }
@@ -129,7 +130,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
         return Object.assign({}, baseParams, params);
     }
 
-    public export(userParams?: ExcelExportParams): string {
+    public async export(userParams?: ExcelExportParams): Promise<string> {
         if (this.isExportSuppressed()) {
             console.warn(`AG Grid: Export cancelled. Export is not allowed as per your configuration.`);
             return '';
@@ -142,10 +143,11 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType
+            mimeType: mergedParams.mimeType,
+            compressOutput: mergedParams.compressOutput,
         };
 
-        const packageFile = this.packageFile(exportParams);
+        const packageFile = await this.packageFile(exportParams);
 
         if (packageFile) {
             Downloader.download(this.getFileName(mergedParams.fileName), packageFile);
@@ -154,11 +156,11 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
         return data;
     }
 
-    public exportDataAsExcel(params?: ExcelExportParams): string {
+    public exportDataAsExcel(params?: ExcelExportParams): Promise<string> {
         return this.export(params);
     }
 
-    public getDataAsExcel(params?: ExcelExportParams): Blob | string | undefined {
+    public async getDataAsExcel(params?: ExcelExportParams): Promise<Blob | string | undefined> {
         const mergedParams = this.getMergedParams(params);
         const data = this.getData(mergedParams);
 
@@ -187,7 +189,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
         return data;
     }
 
-    public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
+    public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> {
         return getMultipleSheetsAsExcel(params);
     }
 
@@ -286,7 +288,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
         return this.gridOptionsService.get('suppressExcelExport');
     }
 
-    private packageFile(params: ExcelExportMultipleSheetParams): Blob | undefined {
+    private packageFile(params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> {
         return getMultipleSheetsAsExcel(params);
     }
 }
