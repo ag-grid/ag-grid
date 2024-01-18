@@ -131,6 +131,7 @@ export class FormatPanel extends Component {
             'histogram': ['axis', 'navigator'],
             'cartesian': ['axis', 'navigator'],
             'radar-line': ['axis'],
+            'radar-area': ['axis'],
         };
         return extendedGroupPanels[seriesType]?.includes(group) ?? false;
     }

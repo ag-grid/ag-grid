@@ -230,6 +230,7 @@ const AG_GRID_LOCALE_EN = {
 
     polarChart: 'Polar',
     radarLine: 'Radar Line',
+    radarArea: 'Radar Area',
 
     combinationChart: 'Combination',
     columnLineCombo: 'Column & Line',
@@ -344,6 +345,7 @@ const AG_GRID_LOCALE_EN = {
     bubbleTooltip: 'Bubble',
     histogramTooltip: 'Histogram',
     radarLineTooltip: 'Radar Line',
+    radarAreaTooltip: 'Radar Area',
     columnLineComboTooltip: 'Column & Line',
     areaColumnComboTooltip: 'Area & Column',
     customComboTooltip: 'Custom Combination',

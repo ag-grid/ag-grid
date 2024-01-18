@@ -25,6 +25,7 @@ import {
     MiniNormalizedBar,
     MiniNormalizedColumn,
     MiniPie,
+    MiniRadarArea,
     MiniRadarLine,
     MiniScatter,
     MiniStackedArea,
@@ -64,6 +65,7 @@ const miniChartMapping = {
     },
     polarGroup: {
         radarLine: MiniRadarLine,
+        radarArea: MiniRadarArea,
     },
     combinationGroup: {
         columnLineCombo: MiniColumnLineCombo,

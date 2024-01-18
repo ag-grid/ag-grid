@@ -15,6 +15,7 @@ export type ChartSeriesType =
     'treemap' |
     'bubble' |
     'radar-line' |
+    'radar-area' |
     'common';
 
 type PolarChartSeriesType = Extract<ChartSeriesType, 'radar-line'>;
@@ -29,6 +30,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'scatter',
     'bubble',
     'radar-line',
+    'radar-area',
 ];
 
 const horizontalChartTypes = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
@@ -67,6 +69,8 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
             return 'histogram';
         case 'radarLine':
             return 'radar-line';
+        case 'radarArea':
+            return 'radar-area';
         case 'pie':
         case 'doughnut':
             return 'pie';
@@ -78,6 +82,7 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
 export function isPolarChartSeriesType(seriesType: ChartSeriesType): seriesType is PolarChartSeriesType {
     switch (seriesType) {
         case 'radar-line':
+        case 'radar-area':
             return true;
         default:
             return false;
