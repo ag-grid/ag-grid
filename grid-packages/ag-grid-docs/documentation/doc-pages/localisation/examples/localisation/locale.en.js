@@ -228,6 +228,9 @@ const AG_GRID_LOCALE_EN = {
     histogramChart: 'Histogram',
     histogramFrequency: "Frequency",
 
+    polarChart: 'Polar',
+    radarLine: 'Radar Line',
+
     combinationChart: 'Combination',
     columnLineCombo: 'Column & Line',
     AreaColumnCombo: 'Area & Column',

@@ -127,6 +127,10 @@ describe('isValidChartType', () => {
                 name: "histogramChart",
             },
             {
+                name: "polarChart",
+                subMenu: [{ name: "radarLine" }]
+            },
+            {
                 name: "combinationChart",
                 subMenu: [{ name: "columnLineCombo" }, { name: "AreaColumnCombo" }]
             }

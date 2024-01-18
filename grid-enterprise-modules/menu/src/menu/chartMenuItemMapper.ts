@@ -338,7 +338,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     name: localeTextFunc('polarChart', 'Polar'),
                     subMenu:
                         [
-                            getMenuItem('radarLineChart', 'Radar Line&lrm;', 'radarLine', 'rangeRadarLine'),
+                            getMenuItem('radarLine', 'Radar Line&lrm;', 'radarLine', 'rangeRadarLine'),
                         ],
                     _key: 'rangePolarChart'
                 },
