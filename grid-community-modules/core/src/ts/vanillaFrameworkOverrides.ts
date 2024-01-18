@@ -31,6 +31,7 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     wrapIncoming: <T>(callback: () => T) => T = callback => callback();
     wrapOutgoing: <T>(callback: () => T) => T = callback => callback();
     get shouldWrapOutgoing() { return false;}
+    onCellsRendered: () => void = () => {};
 
     frameworkComponent(name: string): any {
         return null;

@@ -32,6 +32,12 @@ export interface IFrameworkOverrides {
      */
     shouldWrapOutgoing?: boolean;
 
+    /**
+     * Called when a row has completed updating its cells. Gives the framework to run specific logic at this point.
+     * Angular uses this to call detectChanges() across all cells in the row at once instead of each cell individually.
+     */
+    onCellsRendered: () => void;
+
     /*
     * vue components are specified in the "components" part of the vue component - as such we need a way to deteremine if a given component is
     * within that context - this method provides this

@@ -107,6 +107,7 @@ export class RowComp extends Component {
 
         this.destroyCells(cellCompsToRemove as CellComp[]);
         this.ensureDomOrder(cellCtrls);
+        this.beans.frameworkOverrides.onCellsRendered();
     }
 
     private ensureDomOrder(cellCtrls: CellCtrl[]): void {

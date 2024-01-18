@@ -1,12 +1,11 @@
 import {
-    AfterViewInit,
     Component,
     ElementRef,
     EventEmitter,
     Input,
-    NgZone,
     OnChanges,
     OnDestroy,
+    OnInit,
     Output,
     ViewContainerRef,
     ViewEncapsulation
@@ -195,7 +194,7 @@ import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWra
     // tell angular we don't want view encapsulation, we don't want a shadow root
     encapsulation: ViewEncapsulation.None
 })
-export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<any>> implements AfterViewInit, OnChanges, OnDestroy {
+export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<any>> implements OnInit, OnChanges, OnDestroy {
     // not intended for user to interact with. so putting _ in so if user gets reference
     // to this object, they kind'a know it's not part of the agreed interface
     private _nativeElement: any;
@@ -223,8 +222,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         this._nativeElement = elementDef.nativeElement;
     }
 
-
-    ngAfterViewInit(): void {
+    ngOnInit(): void {
       // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
       this.angularFrameworkOverrides.runOutsideAngular(() => {
           this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.angularFrameworkOverrides);

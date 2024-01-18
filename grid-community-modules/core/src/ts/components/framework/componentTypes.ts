@@ -1,6 +1,10 @@
-export interface ComponentType {
-    propertyName: string;
-    cellRenderer: boolean;
+export type ComponentType = {
+    propertyName: 'dateComponent' | 'headerComponent' | 'headerGroupComponent' | 'cellEditor' | 'loadingOverlayComponent' | 'noRowsOverlayComponent' | 'tooltipComponent' | 'filter' | 'floatingFilterComponent' | 'toolPanel' | 'statusPanel';
+    cellRenderer: false;
+} |
+{
+    propertyName: 'cellRenderer' | 'innerRenderer' | 'fullWidthCellRenderer' | 'loadingCellRenderer' | 'groupRowRenderer' | 'detailCellRenderer';
+    cellRenderer: true;
 }
 
 export const DateComponent: ComponentType = {
