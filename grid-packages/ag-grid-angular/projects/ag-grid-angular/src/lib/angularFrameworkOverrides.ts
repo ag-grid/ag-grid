@@ -40,4 +40,15 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     runOutsideAngular<T>( callback: () => T): T {
         return this._ngZone ? this._ngZone.runOutsideAngular(callback) : callback();
     }
+
+    private hosts: any[] = [];
+    addDetectChanges(host: any){
+        this.hosts.push(host);
+    }
+    onCellsRendered = () => {
+        for(let i = 0; i < this.hosts.length; i++){
+            this.hosts[i].detectChanges();
+        }
+        this.hosts = [];
+    }
 }

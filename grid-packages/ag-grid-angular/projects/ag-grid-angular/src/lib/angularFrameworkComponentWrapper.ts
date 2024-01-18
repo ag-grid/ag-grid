@@ -1,7 +1,7 @@
-import {ComponentRef, Injectable, NgZone, ViewContainerRef} from "@angular/core";
-import {BaseComponentWrapper, FrameworkComponentWrapper, GridApi, WrappableInterface} from 'ag-grid-community';
-import {AgFrameworkComponent} from "./interfaces";
+import { BaseComponentWrapper, ComponentType, FrameworkComponentWrapper, WrappableInterface } from 'ag-grid-community';
+import { ComponentRef, Injectable, ViewContainerRef } from "@angular/core";
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
+import { AgFrameworkComponent } from "./interfaces";
 
 @Injectable()
 export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
@@ -13,17 +13,24 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapp
         this.angularFrameworkOverrides = angularFrameworkOverrides;
     }
 
-    createWrapper(OriginalConstructor: { new(): any }, compType: any): WrappableInterface {
+    createWrapper(OriginalConstructor: { new(): any }, compType: ComponentType): WrappableInterface {
         let angularFrameworkOverrides = this.angularFrameworkOverrides;
         let that = this;
         class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrappableInterface {
             init(params: any): void {
-                angularFrameworkOverrides.runInsideAngular(() => super.init(params));
-                this._componentRef.changeDetectorRef.detectChanges();
+
+                if(compType.propertyName == 'cellRenderer'){
+                    // Batch changes for cell renderers
+                    super.init(params);
+                    angularFrameworkOverrides.addDetectChanges(this._componentRef.changeDetectorRef);
+                }else{
+                    angularFrameworkOverrides.runInsideAngular(() => super.init(params));
+                    //this._componentRef.changeDetectorRef.detectChanges();
+                }
             }
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
-                return angularFrameworkOverrides.runInsideAngular(() => that.createComponent(OriginalConstructor));
+                return that.createComponent(OriginalConstructor);
             }
 
             hasMethod(name: string): boolean {
@@ -52,18 +59,16 @@ abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
     protected _params: P;
     protected _eGui: HTMLElement;
     protected _componentRef: ComponentRef<T>;
-    protected _agAwareComponent: T;
     protected _frameworkComponentInstance: any;  // the users component - for accessing methods they create
 
     protected init(params: P): void {
         this._params = params;
 
         this._componentRef = this.createComponent();
-        this._agAwareComponent = this._componentRef.instance;
         this._frameworkComponentInstance = this._componentRef.instance;
         this._eGui = this._componentRef.location.nativeElement;
 
-        this._agAwareComponent.agInit(this._params);
+        this._frameworkComponentInstance.agInit(this._params);
     }
 
     public getGui(): HTMLElement {

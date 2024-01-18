@@ -40,4 +40,24 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     runOutsideAngular<T>( callback: () => T): T {
         return this._ngZone ? this._ngZone.runOutsideAngular(callback) : callback();
     }
+
+    private autoFlushCallback: any = null;
+    private hosts: any[] = [];
+    scheduleDetectChanges(host: any) {
+        this.hosts.push(host);
+        if (!this.autoFlushCallback) {
+            // To cover cases where onCellsRendered is not called, for example when
+            this.autoFlushCallback = setImmediate(() => {
+                this.autoFlushCallback = null;
+                this.onCellsRendered();
+           });
+        }
+    }
+
+    onCellsRendered = () => {
+        for (let i = 0; i < this.hosts.length; i++) {
+            this.hosts[i].detectChanges();
+        }
+        this.hosts = [];
+    };
 }
