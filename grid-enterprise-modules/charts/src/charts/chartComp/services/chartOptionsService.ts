@@ -1,5 +1,5 @@
 import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon } from "@ag-grid-community/core";
-import { AgCartesianAxisType, AgCharts, AgChartOptions } from "ag-charts-community";
+import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType } from "ag-charts-community";
 
 import { ChartController } from "../chartController";
 import { AgChartActual } from "../utils/integration";
@@ -49,7 +49,7 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getAxisProperty<T = string>(expression: string): T {
-        return _.get(this.getChart().axes?.[0], expression, undefined) as T;
+        return _.get(this.getChart().axes?.[0], expression, undefined);
     }
 
     public setAxisProperty<T = string>(expression: string, value: T) {
@@ -59,6 +59,22 @@ export class ChartOptionsService extends BeanStub {
         chart.axes?.forEach((axis: any) => {
             chartOptions = deepMerge(chartOptions, this.getUpdateAxisOptions<T>(axis, expression, value));
         });
+
+        this.updateChart(chartOptions);
+        this.raiseChartOptionsChangedEvent();
+    }
+    
+    public getSecondaryAxisProperty<T = string>(expression: string): T {
+        return _.get(this.getChart().axes?.[1], expression, undefined) as T;
+    }
+
+    public setSecondaryAxisProperty<T = string>(expression: string, value: T) {
+        // update axis options
+        const chart = this.getChart();
+        const [, axis] = chart.axes ?? [];
+        if (!axis) return;
+
+        const chartOptions = this.getUpdateAxisOptions<T>(axis, expression, value);
 
         this.updateChart(chartOptions);
         this.raiseChartOptionsChangedEvent();
@@ -121,7 +137,7 @@ export class ChartOptionsService extends BeanStub {
             chartSeriesTypes.push('common');
         }
 
-        const validAxisTypes: AgCartesianAxisType[] = ['number', 'category', 'time', 'grouped-category'];
+        const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'radius-number'];
 
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};

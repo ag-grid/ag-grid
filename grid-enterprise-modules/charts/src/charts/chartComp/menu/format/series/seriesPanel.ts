@@ -62,6 +62,7 @@ export class SeriesPanel extends Component {
         'column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'scatter': ['tooltips', 'markers', 'labels'],
         'bubble': ['tooltips', 'markers', 'labels'],
         'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
@@ -327,6 +328,7 @@ export class SeriesPanel extends Component {
                 ['line', {value: 'line', text: this.translate('line', 'Line')}],
                 ['scatter', {value: 'scatter', text: this.translate('scatter', 'Scatter')}],
                 ['histogram', {value: 'histogram', text: this.translate('histogram', 'Histogram')}],
+                ['radar-line', {value: 'radar-line', text: this.translate('radar-line', 'Radar Line')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
             ]);
         }

@@ -9,12 +9,13 @@ import {
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
-import { AxisPanel } from "./axis/axisPanel";
+import { CartesianAxisPanel } from "./axis/cartesianAxisPanel";
+import { PolarAxisPanel } from "./axis/polarAxisPanel";
 import { NavigatorPanel } from "./navigator/navigatorPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { SeriesPanel } from "./series/seriesPanel";
-import { ChartSeriesType, getSeriesType } from "../../utils/seriesTypeMapper";
+import { ChartSeriesType, getSeriesType, isPolarChartSeriesType } from "../../utils/seriesTypeMapper";
 
 export interface FormatPanelOptions {
     chartController: ChartController,
@@ -86,19 +87,16 @@ export class FormatPanel extends Component {
 
             if (group === 'chart') {
                 this.addComponent(new ChartPanel(opts));
-
             } else if (group === 'legend') {
                 this.addComponent(new LegendPanel(opts));
-
             } else if (group === 'axis') {
-                this.addComponent(new AxisPanel(opts));
-
+                // Polar charts have different axis options from cartesian charts, so choose the appropriate panel
+                const panel = isPolarChartSeriesType(seriesType) ? new PolarAxisPanel(opts) : new CartesianAxisPanel(opts);
+                this.addComponent(panel);
             } else if (group === 'series') {
                 this.addComponent(new SeriesPanel(opts));
-
             } else if (group === 'navigator') {
                 this.addComponent(new NavigatorPanel(opts));
-
             } else {
                 console.warn(`AG Grid: invalid charts format panel group name supplied: '${groupDef.type}'`);
             }
@@ -113,15 +111,28 @@ export class FormatPanel extends Component {
         return userProvidedFormatPanelDef ? userProvidedFormatPanelDef : DefaultFormatPanelDef;
     }
 
-    private isGroupPanelShownInSeries = (group: ChartFormatPanelGroup, seriesType: ChartSeriesType) => {
+    private isGroupPanelShownInSeries = (group: ChartFormatPanelGroup, seriesType: ChartSeriesType): boolean => {
+        // Determine whether the given panel group is shown depending on the active series type
+
+        // These panel groups are always shown regardless of series type
         const commonGroupPanels = ['chart', 'legend', 'series'];
         if (commonGroupPanels.includes(group)) {
             return true;
         }
 
-        const cartesianOnlyGroupPanels = ['axis', 'navigator'];
-        const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'bubble', 'histogram', 'cartesian'];
-        return !!(cartesianOnlyGroupPanels.includes(group) && cartesianSeries.includes(seriesType));
+        // These panel groups depend on the selected series type
+        const extendedGroupPanels: { [T in ChartSeriesType]?: Array<ChartFormatPanelGroup> } = {
+            'bar': ['axis', 'navigator'],
+            'column': ['axis', 'navigator'],
+            'line': ['axis', 'navigator'],
+            'area': ['axis', 'navigator'],
+            'scatter': ['axis', 'navigator'],
+            'bubble': ['axis', 'navigator'],
+            'histogram': ['axis', 'navigator'],
+            'cartesian': ['axis', 'navigator'],
+            'radar-line': ['axis'],
+        };
+        return extendedGroupPanels[seriesType]?.includes(group) ?? false;
     }
 
     private addComponent(component: Component): void {

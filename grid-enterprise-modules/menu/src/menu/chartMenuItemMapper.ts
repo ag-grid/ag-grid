@@ -61,6 +61,10 @@ export class ChartMenuItemMapper extends BeanStub {
         Object.entries(chartGroupsDef).forEach(([group, chartTypes]: [keyof ChartGroupsDef, ChartType[]]) => {
 
             const chartConfigGroup = configLookup[group];
+
+            // Skip any context panels that are not enabled for the current chart type
+            if (chartConfigGroup === null) return;
+
             if (chartConfigGroup == undefined) {
                 _.warnOnce(`invalid chartGroupsDef config '${group}'`);
                 return undefined;
@@ -105,7 +109,7 @@ interface MenuItemBuilder<MenuItemKeys extends string> {
 type ChartDefToMenuItems<MenuItemKeys extends string> = {
     [K in keyof ChartGroupsDef]-?: ChartGroupsDef[K] extends ((infer P)[] | undefined) ?
     [P] extends [ChartType] ?
-    { [T in P]-?: MenuItemKeys } & { _key: MenuItemKeys }
+    ({ [T in P]-?: MenuItemKeys } & { _key: MenuItemKeys }) | null
     : never
     : never
 }
@@ -246,7 +250,9 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
                 columnLineCombo: 'pivotColumnLineCombo',
                 areaColumnCombo: 'pivotAreaColumnCombo',
                 customCombo: '' as any // Not currently supported but needs a value to separate from a missing value
-            }
+            },
+            // Polar charts do not support pivot mode
+            polarGroup: null,
         }
     }
 
@@ -261,6 +267,7 @@ export type RangeMenuOptionName =
     'rangeXYChart' | 'rangeScatter' | 'rangeBubble' |
     'rangeAreaChart' | 'rangeArea' | 'rangeStackedArea' | 'rangeNormalizedArea' |
     'rangeHistogramChart' |
+    'rangePolarChart' | 'rangeRadarLine' | 
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
@@ -328,6 +335,14 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 },
                 getMenuItem('histogramChart', 'Histogram&lrm;', 'histogram', 'rangeHistogramChart'),
                 {
+                    name: localeTextFunc('polarChart', 'Polar'),
+                    subMenu:
+                        [
+                            getMenuItem('radarLineChart', 'Radar Line&lrm;', 'radarLine', 'rangeRadarLine'),
+                        ],
+                    _key: 'rangePolarChart'
+                },
+                {
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
                         getMenuItem('columnLineCombo', 'Column & Line&lrm;', 'columnLineCombo', 'rangeColumnLineCombo'),
@@ -377,6 +392,10 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
             histogramGroup: {
                 _key: 'rangeHistogramChart',
                 histogram: 'rangeHistogramChart',
+            },
+            polarGroup: {
+                _key: 'rangePolarChart',
+                radarLine: 'rangeRadarLine',
             },
             combinationGroup: {
                 _key: 'rangeCombinationChart',

@@ -49,6 +49,7 @@ export class UpdateParamsValidator {
         'stackedArea',
         'normalizedArea',
         'histogram',
+        'radarLine',
         'columnLineCombo',
         'areaColumnCombo',
         'customCombo'
