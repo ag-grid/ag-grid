@@ -83,7 +83,17 @@ export class PolarAxisPanel extends Component {
             .setValue(`${currentValue}`)
             .onValueChange((newValue) => this.chartOptionsService.setAxisProperty('line.width', newValue));
 
-        this.initAxisShape();
+        const hasConfigurableAxisShape = (() => {
+            switch (this.chartController.getChartType()) {
+                case 'radarLine':
+                case 'radarArea':
+                    return true;
+                case 'nightingale':
+                default:
+                    return false;
+            }
+        })();
+        if (hasConfigurableAxisShape) this.initAxisShape();
     }
 
     private initAxisShape() {

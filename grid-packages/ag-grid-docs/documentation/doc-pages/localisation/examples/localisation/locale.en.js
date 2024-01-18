@@ -231,6 +231,7 @@ const AG_GRID_LOCALE_EN = {
     polarChart: 'Polar',
     radarLine: 'Radar Line',
     radarArea: 'Radar Area',
+    nightingale: 'Nightingale',
 
     combinationChart: 'Combination',
     columnLineCombo: 'Column & Line',
