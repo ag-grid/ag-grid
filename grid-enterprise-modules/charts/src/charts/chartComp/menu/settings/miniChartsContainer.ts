@@ -14,6 +14,7 @@ import {
     MiniArea,
     MiniAreaColumnCombo,
     MiniBar,
+    MiniBoxPlot,
     MiniBubble,
     MiniColumn,
     MiniColumnLineCombo,
@@ -68,6 +69,9 @@ const miniChartMapping = {
         radarLine: MiniRadarLine,
         radarArea: MiniRadarArea,
         nightingale: MiniNightingale,
+    },
+    statisticalGroup: {
+        boxPlot: MiniBoxPlot,
     },
     combinationGroup: {
         columnLineCombo: MiniColumnLineCombo,

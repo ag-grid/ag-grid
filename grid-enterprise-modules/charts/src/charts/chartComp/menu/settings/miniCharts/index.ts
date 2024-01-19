@@ -24,6 +24,8 @@ export * from './polar/miniRadarLine';
 export * from './polar/miniRadarArea';
 export * from './polar/miniNightingale';
 
+export * from './statistical/miniBoxPlot';
+
 export * from "./combo/miniColumnLineCombo";
 export * from "./combo/miniAreaColumnCombo";
 export * from "./combo/miniCustomCombo";

@@ -115,6 +115,7 @@ export class ChartTranslationService extends BeanStub {
         radarLineTooltip: 'Radar Line',
         radarAreaTooltip: 'Radar Area',
         nightingaleTooltip: 'Nightingale',
+        boxPlotTooltip: 'Box Plot',
         columnLineComboTooltip: 'Column & Line',
         areaColumnComboTooltip: 'Area & Column',
         customComboTooltip: 'Custom Combination',
