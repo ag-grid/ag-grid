@@ -150,6 +150,7 @@ import { AlignedGrid } from "../interfaces/iAlignedGrid";
 import { GridState } from "../interfaces/gridState";
 import { SizeColumnsToContentStrategy, SizeColumnsToFitProvidedWidthStrategy, SizeColumnsToFitGridStrategy } from "../interfaces/autoSizeStrategy";
 import { Column } from "./column";
+import { MenuItemDef } from "../interfaces/menuItem";
 
 export interface GridOptions<TData = any> {
 
@@ -2248,38 +2249,7 @@ export interface GetContextMenuItems<TData = any> {
 export interface GetChartToolbarItems {
     (params: GetChartToolbarItemsParams): ChartMenuOptions[];
 }
-export interface MenuItemLeafDef {
-    /**
-     * Name of the menu item */
-    name: string;
-    /**
-     * It the item should be enabled / disabled */
-    disabled?: boolean;
-    /**
-     * Shortcut (just display text, saying the shortcut here does nothing) */
-    shortcut?: string;
-    /**
-     * Function that gets executed when item is chosen */
-    action?: () => void;
-    /**
-     * Set to true to provide a check beside the option */
-    checked?: boolean;
-    /**
-     * The icon to display, either a DOM element or HTML string */
-    icon?: Element | string;
-    /**
-     * CSS classes to apply to the menu item */
-    cssClasses?: string[];
-    /**
-     * Tooltip for the menu item */
-    tooltip?: string;
-}
 
-export interface MenuItemDef extends MenuItemLeafDef {
-    /**
-     * If this item is a sub menu, contains a list of menu item definitions */
-    subMenu?: (MenuItemDef | string)[];
-}
 export interface GetMainMenuItems {
     (params: GetMainMenuItemsParams): (string | MenuItemDef)[];
 }

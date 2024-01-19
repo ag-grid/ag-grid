@@ -92,7 +92,11 @@ export class ComponentMetadataProvider extends BeanStub {
             tooltipComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
-            }
+            },
+            menuItem: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['setActive', 'select', 'setExpanded']
+            },
         };
     }
 

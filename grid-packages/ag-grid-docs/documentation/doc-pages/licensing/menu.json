@@ -1632,6 +1632,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Menu Item Component",
+            "url": "/component-menu-item/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "Higher Order Components",
             "url": "/framework-hoc/",
             "showInCollapsed": true,

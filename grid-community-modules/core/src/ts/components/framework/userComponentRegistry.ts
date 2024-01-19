@@ -32,6 +32,7 @@ import { DateCellEditor } from "../../rendering/cellEditors/dateCellEditor";
 import { DateStringCellEditor } from "../../rendering/cellEditors/dateStringCellEditor";
 import { CheckboxCellRenderer } from "../../rendering/cellRenderers/checkboxCellRenderer";
 import { CheckboxCellEditor } from "../../rendering/cellEditors/checkboxCellEditor";
+import { AgMenuItemRenderer } from "../../widgets/agMenuItemRenderer";
 
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
@@ -81,7 +82,10 @@ export class UserComponentRegistry extends BeanStub {
         agNoRowsOverlay: NoRowsOverlayComponent,
 
         // tooltips
-        agTooltipComponent: TooltipComponent
+        agTooltipComponent: TooltipComponent,
+
+        // menu item
+        agMenuItem: AgMenuItemRenderer
     };
 
     /** Used to provide useful error messages if a user is trying to use an enterprise component without loading the module. */
