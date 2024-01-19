@@ -253,6 +253,8 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
             },
             // Polar charts do not support pivot mode
             polarGroup: null,
+            // Statistical charts do not currently support pivot mode
+            statisticalGroup: null,
         }
     }
 
@@ -268,6 +270,7 @@ export type RangeMenuOptionName =
     'rangeAreaChart' | 'rangeArea' | 'rangeStackedArea' | 'rangeNormalizedArea' |
     'rangeHistogramChart' |
     'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' |
+    'rangeStatisticalChart' | 'rangeBoxPlot' |
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
@@ -345,6 +348,14 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     _key: 'rangePolarChart'
                 },
                 {
+                    name: localeTextFunc('statistical', 'Statistical'),
+                    subMenu:
+                        [
+                            getMenuItem('boxPlot', 'Box Plot&lrm;', 'boxPlot', 'rangeBoxPlot'),
+                        ],
+                    _key: 'rangeStatisticalChart'
+                },
+                {
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
                         getMenuItem('columnLineCombo', 'Column & Line&lrm;', 'columnLineCombo', 'rangeColumnLineCombo'),
@@ -400,6 +411,10 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 radarLine: 'rangeRadarLine',
                 radarArea: 'rangeRadarArea',
                 nightingale: 'rangeNightingale',
+            },
+            statisticalGroup: {
+                _key: 'rangeStatisticalChart',
+                boxPlot: 'rangeBoxPlot',
             },
             combinationGroup: {
                 _key: 'rangeCombinationChart',

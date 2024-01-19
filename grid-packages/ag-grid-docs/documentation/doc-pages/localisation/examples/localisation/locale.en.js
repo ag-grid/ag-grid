@@ -233,6 +233,9 @@ const AG_GRID_LOCALE_EN = {
     radarArea: 'Radar Area',
     nightingale: 'Nightingale',
 
+    statisticalChart: 'Statistical',
+    boxPlot: 'Box Plot',
+
     combinationChart: 'Combination',
     columnLineCombo: 'Column & Line',
     AreaColumnCombo: 'Area & Column',
