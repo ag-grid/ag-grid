@@ -90,6 +90,24 @@ These overrides are specific to the [AG Charts Pie Series](https://charts.ag-gri
 
 <grid-example title='Pie Overrides' name='pie-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
+### Radar Line Overrides
+
+These overrides are specific to the [AG Charts Radar Line Series](https://charts.ag-grid.com/react/radar-line-series/). For full list of overrides see [Radar Line Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-radar-line).
+
+<grid-example title='Radar Line Overrides' name='radar-line-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
+### Radar Area Overrides
+
+These overrides are specific to the [AG Charts Radar Area Series](https://charts.ag-grid.com/react/radar-area-series/). For full list of overrides see [Radar Area Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-radar-area).
+
+<grid-example title='Radar Area Overrides' name='radar-area-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
+### Nightingale Overrides
+
+These overrides are specific to the [AG Charts Nightingale Series](https://charts.ag-grid.com/react/nightingale-series/). For full list of overrides see [Nightingale Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-nightingale).
+
+<grid-example title='Nightingale Overrides' name='nightingale-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
 ## Custom Chart Themes
 
 Custom [AG Charts Themes](https://charts.ag-grid.com/react/themes/) can also be supplied to the grid via the `customChartThemes` grid option.
