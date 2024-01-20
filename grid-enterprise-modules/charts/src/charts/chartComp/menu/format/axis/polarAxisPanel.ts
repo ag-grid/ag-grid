@@ -57,6 +57,7 @@ export class PolarAxisPanel extends Component {
 
         this.initAxis();
         this.initAxisLabels();
+        this.initRadiusAxis();
 
         const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach((func) => func());
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
@@ -153,17 +154,39 @@ export class PolarAxisPanel extends Component {
         };
 
         const labelPanelComp = this.createBean(new FontPanel(params));
-        this.axisGroup.addItem(labelPanelComp);
-        this.activePanels.push(labelPanelComp);
 
-        // Prepend additional widgets to the label panel
+        // Append additional widgets to the panel
         // (these will have their lifecycle managed by the FontPanel component)
         const labelOrientationComp = this.createOrientationWidget();
-        const labelRotationComp = this.createRotationWidget('labelRotation', 'xAxis');
-        const radiusAxisPosition = this.createRadiusAxisPositionWidget();
         labelPanelComp.addItemToPanel(labelOrientationComp);
-        labelPanelComp.addItemToPanel(labelRotationComp);
-        labelPanelComp.addItemToPanel(radiusAxisPosition);
+
+        // Add the panel to the DOM and register it as active
+        this.axisGroup.addItem(labelPanelComp);
+        this.activePanels.push(labelPanelComp);
+    }
+
+    private initRadiusAxis() {
+        const params: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true,
+            enabled: true,
+            suppressEnabledCheckbox: true,
+        };
+        const labelPanelComp = this.createBean(new AgGroupComponent(params))
+            .setTitle(this.translate('radiusAxis'))
+            .hideEnabledCheckbox(true)
+            .hideOpenCloseIcons(true);
+
+        // Append additional widgets to the panel
+        const radiusAxisPosition = this.createRadiusAxisPositionWidget();
+        const labelRotationComp = this.createRotationWidget('labelRotation', 'yAxis');
+        labelPanelComp.addItem(radiusAxisPosition);
+        labelPanelComp.addItem(labelRotationComp);
+
+        // Add the panel to the DOM and register it as active
+        this.axisGroup.addItem(labelPanelComp);
+        this.activePanels.push(labelPanelComp);
     }
 
     private createOrientationWidget(): AgSelect {

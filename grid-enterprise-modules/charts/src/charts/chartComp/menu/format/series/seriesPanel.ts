@@ -330,8 +330,8 @@ export class SeriesPanel extends Component {
                 ['line', {value: 'line', text: this.translate('line', 'Line')}],
                 ['scatter', {value: 'scatter', text: this.translate('scatter', 'Scatter')}],
                 ['histogram', {value: 'histogram', text: this.translate('histogram', 'Histogram')}],
-                ['radar-line', {value: 'radar-line', text: this.translate('radar-line', 'Radar Line')}],
-                ['radar-area', {value: 'radar-area', text: this.translate('radar-area', 'Radar Area')}],
+                ['radar-line', {value: 'radar-line', text: this.translate('radarLine', 'Radar Line')}],
+                ['radar-area', {value: 'radar-area', text: this.translate('radarArea', 'Radar Area')}],
                 ['nightingale', {value: 'nightingale', text: this.translate('nightingale', 'Nightingale')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
             ]);
