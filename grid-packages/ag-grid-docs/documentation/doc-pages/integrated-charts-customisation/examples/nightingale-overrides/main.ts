@@ -21,11 +21,9 @@ const gridOptions: GridOptions = {
     'nightingale': {
       axes: {
         'angle-category': {
-          type: 'angle-category',
           shape: 'circle'
         },
         'radius-number': {
-          type: 'radius-number',
           positionAngle: 72,
           label: {
             rotation: -72
@@ -33,7 +31,7 @@ const gridOptions: GridOptions = {
         }
       },
       series: {
-        // fillOpacity: 0.7, FIXME
+        fillOpacity: 0.7,
         strokeWidth: 2,
         strokeOpacity: 0.7
       },
@@ -44,6 +42,8 @@ const gridOptions: GridOptions = {
   },
   onFirstDataRendered,
 };
+
+
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({
