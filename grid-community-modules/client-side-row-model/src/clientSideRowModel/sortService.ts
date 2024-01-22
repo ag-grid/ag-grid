@@ -49,10 +49,13 @@ export class SortService extends BeanStub {
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
 
+            const childrenUnbalanced = rowNode.areChildrenUnbalanced();
+            const childrenPreSort = rowNode.childrenAfterAggFilter;
+
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
-            let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
+            let skipSortingGroups = groupMaintainOrder && !childrenUnbalanced && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
                 const nextGroup = this.columnModel.getRowGroupColumns()?.[rowNode.level + 1];
                 // if the sort is null, then sort was explicitly removed, so remove sort from this group.
@@ -74,6 +77,16 @@ export class SortService extends BeanStub {
                 rowNode.childrenAfterSort = this.doDeltaSort(rowNode, allDirtyNodes, changedPath!, sortOptions);
             } else {
                 rowNode.childrenAfterSort = this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
+            }
+
+            // maintain groups position relative to unbalanced children for groupMaintainOrder situations
+            if (childrenUnbalanced && groupMaintainOrder) {
+                const nonGroupRowsInOrder = rowNode.childrenAfterSort.filter(row => !row.group);
+                const rowGroupsInOrder = childrenPreSort?.filter(row => row.group) ?? [];
+                const groupsFirstInitially = rowNode.childrenAfterAggFilter![0]?.group
+                rowNode.childrenAfterSort = (groupsFirstInitially)
+                    ? [...rowGroupsInOrder, ...nonGroupRowsInOrder]
+                    : [...nonGroupRowsInOrder, ...rowGroupsInOrder];
             }
 
             if (rowNode.sibling) {
