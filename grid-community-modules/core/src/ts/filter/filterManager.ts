@@ -912,7 +912,8 @@ export class FilterManager extends BeanStub {
                 doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filter, node),
                 ...newFilterParams,
             }) : true;
-            if (!shouldRefreshFilter) {
+            // framework wrapper always implements optional methods, but returns null if no underlying method
+            if (shouldRefreshFilter === false) {
                 this.destroyFilter(column, 'columnChanged');
             }
         });

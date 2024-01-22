@@ -21,11 +21,13 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
     private params: any;
     protected instanceCreated: AgPromise<boolean>;
     private resolveInstanceCreated?: (value: boolean) => void;
+    private suppressFallbackMethods: boolean;
 
-    constructor(reactComponent: any, portalManager: PortalManager, componentType: ComponentType) {
+    constructor(reactComponent: any, portalManager: PortalManager, componentType: ComponentType, suppressFallbackMethods?: boolean) {
         this.reactComponent = reactComponent;
         this.portalManager = portalManager;
         this.componentType = componentType;
+        this.suppressFallbackMethods = !!suppressFallbackMethods;
 
         this.statelessComponent = this.isStateless(this.reactComponent);
 
@@ -234,12 +236,13 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
 
     protected fallbackMethod(name: string, params: any): any {
         const method = (this as any)[`${name}Component`];
-        if (!!method) {
+        if (!this.suppressFallbackMethods && !!method) {
             return method.bind(this)(params);
         }
     }
 
     protected fallbackMethodAvailable(name: string): boolean {
+        if (this.suppressFallbackMethods) { return false; }
         const method = (this as any)[`${name}Component`];
         return !!method;
     }
