@@ -12,7 +12,7 @@ export class MiniNightingale extends MiniChartWithPolarAxes {
         [2, 3, 4, 5, 2, 5, 4, 2],
     ];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], tooltipName = 'radarLineTooltip') {
+    constructor(container: HTMLElement, fills: string[], strokes: string[], tooltipName = 'nightingaleTooltip') {
         super(container, tooltipName);
 
         this.showRadiusAxisLine = false;

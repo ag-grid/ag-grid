@@ -16,7 +16,7 @@ export class MiniRadarArea extends MiniChartWithPolarAxes {
         container: HTMLElement,
         fills: string[],
         strokes: string[],
-        tooltipName = 'radarLineTooltip'
+        tooltipName = 'radarAreaTooltip'
     ) {
         super(container, tooltipName);
 
