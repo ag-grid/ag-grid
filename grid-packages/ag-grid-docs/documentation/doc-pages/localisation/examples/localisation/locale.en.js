@@ -348,6 +348,7 @@ const AG_GRID_LOCALE_EN = {
     histogramTooltip: 'Histogram',
     radarLineTooltip: 'Radar Line',
     radarAreaTooltip: 'Radar Area',
+    nightingaleTooltip: 'Nightingale',
     columnLineComboTooltip: 'Column & Line',
     areaColumnComboTooltip: 'Area & Column',
     customComboTooltip: 'Custom Combination',
