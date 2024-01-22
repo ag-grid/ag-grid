@@ -260,7 +260,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
           // this ties these together so that gridReady will always fire after agGridAngular's ngAfterViewInit
           // the actual containing component's ngAfterViewInit will fire just after agGridAngular's
           this._fullyReady.resolveNow(null, (resolve) => resolve);
-       });
+       }, 'ag-grid-angular');
      }
 
     public ngOnChanges(changes: any): void {

@@ -3,8 +3,11 @@ import {VanillaFrameworkOverrides} from "@ag-grid-community/core";
 
 @Injectable()
 export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
-    constructor(private _ngZone: NgZone) {
+    // Flag used to control Zone behaviour when running tests as many test features rely on Zone.
+    private isRunningWithinTestZone: boolean = false;
+    constructor(private _ngZone: NgZone ) {
         super('angular');
+        this.isRunningWithinTestZone = (window as any)?.AG_GRID_UNDER_TEST ?? !!((window as any)?.Zone?.AsyncTestZoneSpec);
     }
 
     // Make all events run outside Angular as they often trigger the setup of event listeners
@@ -37,7 +40,24 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
         // Check for _ngZone existence as it is not present when Zoneless
         return this._ngZone ? this._ngZone.run(callback) : callback();
     }
-    runOutsideAngular<T>( callback: () => T): T {
-        return this._ngZone ? this._ngZone.runOutsideAngular(callback) : callback();
+    runOutsideAngular<T>(callback: () => T, source: 'ag-grid-angular' | undefined = undefined): T {
+        if(!this.isRunningWithinTestZone){
+            return this._ngZone ? this._ngZone.runOutsideAngular(callback) : callback();
+        }
+
+        // Special handling when running inside the test zone.
+        if (this._ngZone) {
+            if (source == 'ag-grid-angular') {
+                // We still need to run the setup code outside of Angular otherwise tests will fail as they never go stable.
+                // Have not found the root cause that prevents the tests from going stable when the setup code is run inside Angular.
+                const res = this._ngZone.runOutsideAngular(callback);
+                // Add a setTimeout to ensure that there is something for fixture.whenStable to wait for.
+                setTimeout(() => {}, 0);
+                return res;
+            }
+            // If the source is not ag-grid-angular and we are running inside the test zone we just let the grid run inside the test zone.
+            // This means all the normal operations should control when the fixture is stable without any other speacial handling.
+        }
+        return callback();
     }
 }
