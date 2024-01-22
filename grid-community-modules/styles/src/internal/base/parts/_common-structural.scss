@@ -12,6 +12,19 @@
         display: block;
     }
 
+    // ARIA
+    .ag-aria-description-container {
+        z-index: 9999;
+        border: 0px;
+        clip: rect(1px, 1px, 1px, 1px);
+        height: 1px;
+        width: 1px;
+        position: absolute;
+        overflow: hidden;
+        padding: 0px;
+        white-space: nowrap;
+    }
+
     .ag-hidden {
         display: none !important;
     }

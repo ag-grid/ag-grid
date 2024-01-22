@@ -45,6 +45,7 @@ import { LocaleService } from "../localeService";
 import { Environment } from "../environment";
 import { ValueParserService } from "../valueService/valueParserService";
 import { SyncService } from "../syncService";
+import { AriaAnnouncementService } from "./ariaAnnouncementService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -100,6 +101,7 @@ export class Beans {
     @Autowired('localeService') public localeService: LocaleService;
     @Autowired('valueParserService') public valueParserService: ValueParserService;
     @Autowired('syncService') public syncService: SyncService;
+    @Autowired('ariaAnnouncementService') public ariaAnnouncementService: AriaAnnouncementService;
 
     public clientSideRowModel: IClientSideRowModel;
     public serverSideRowModel: IServerSideRowModel;

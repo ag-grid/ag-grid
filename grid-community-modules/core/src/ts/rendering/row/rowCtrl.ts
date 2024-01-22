@@ -739,14 +739,12 @@ export class RowCtrl extends BeanStub {
     }
 
     private addListenersForCellComps(): void {
-
         this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onRowIndexChanged());
         });
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, event => {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellChanged(event));
         });
-
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
@@ -1009,13 +1007,7 @@ export class RowCtrl extends BeanStub {
             // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
             // so return if it's a group row
             (groupSelectsChildren && this.rowNode.group) ||
-            // this is needed so we don't unselect other rows when we click this row, eg if this row is not selectable,
-            // and we click it, the selection should not change (ie any currently selected row should stay selected)
-            !this.rowNode.selectable ||
-            // we also don't allow selection of pinned rows
-            this.rowNode.rowPinned ||
-            // if no selection method enabled, do nothing
-            !this.gridOptionsService.isRowSelection() ||
+            this.isRowSelectionBlocked() ||
             // if click selection suppressed, do nothing
             this.gridOptionsService.get('suppressRowClickSelection')
         ) {
@@ -1041,6 +1033,10 @@ export class RowCtrl extends BeanStub {
             const clearSelection = multiSelectOnClick ? false : !isMultiKey;
             this.rowNode.setSelectedParams({ newValue: true, clearSelection: clearSelection, rangeSelect: isShiftKey, event: mouseEvent, source });
         }
+    }
+
+    public isRowSelectionBlocked(): boolean {
+        return !this.rowNode.selectable || !!this.rowNode.rowPinned || !this.gridOptionsService.isRowSelection();
     }
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
@@ -1309,18 +1305,18 @@ export class RowCtrl extends BeanStub {
         const selected = !!this.rowNode.isSelected();
         this.forEachGui(gui, gui => {
             gui.rowComp.addOrRemoveCssClass('ag-row-selected', selected);
-            setAriaSelected(gui.element, selected ? true : undefined);
-
-            const ariaLabel = this.createAriaLabel();
-            setAriaLabel(gui.element, ariaLabel == null ? '' : ariaLabel);
+            setAriaSelected(gui.element, selected);
+            if (gui === this.centerGui || gui === this.fullWidthGui) {
+                this.announceDescription();
+            }
         });
     }
 
-    private createAriaLabel(): string | undefined {
+    public announceDescription(): void {
+        if (this.isRowSelectionBlocked()) { return; }
+
         const selected = this.rowNode.isSelected()!;
-        if (selected && this.gridOptionsService.get('suppressRowDeselection')) {
-            return undefined;
-        }
+        if (selected && this.beans.gridOptionsService.get('suppressRowDeselection')) { return; }
 
         const translate = this.beans.localeService.getLocaleTextFunc();
         const label = translate(
@@ -1328,7 +1324,7 @@ export class RowCtrl extends BeanStub {
             `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`
         );
 
-        return label;
+        this.beans.ariaAnnouncementService.announceValue(label);
     }
 
     public isUseAnimationFrameForCreate(): boolean {

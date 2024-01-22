@@ -60,10 +60,10 @@
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js'
             },
-            // 'ag-charts-enterprise': {
-            //     main: './dist/package/main.cjs.js',
-            //     defaultExtension: 'js'
-            // },
+            'ag-charts-enterprise': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js'
+            },
         },
         meta: {
             '*.js': {

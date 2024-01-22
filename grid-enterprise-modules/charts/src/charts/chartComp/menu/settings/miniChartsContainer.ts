@@ -21,10 +21,13 @@ import {
     MiniDoughnut,
     MiniHistogram,
     MiniLine,
+    MiniNightingale,
     MiniNormalizedArea,
     MiniNormalizedBar,
     MiniNormalizedColumn,
     MiniPie,
+    MiniRadarArea,
+    MiniRadarLine,
     MiniScatter,
     MiniStackedArea,
     MiniStackedBar,
@@ -60,6 +63,11 @@ const miniChartMapping = {
     },
     histogramGroup: {
         histogram: MiniHistogram
+    },
+    polarGroup: {
+        radarLine: MiniRadarLine,
+        radarArea: MiniRadarArea,
+        nightingale: MiniNightingale,
     },
     combinationGroup: {
         columnLineCombo: MiniColumnLineCombo,

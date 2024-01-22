@@ -43,8 +43,10 @@ export class ColumnAnimationService extends BeanStub {
 
     public finish(): void {
         if (!this.active) { return; }
+        this.executeLaterVMTurn(() => {
+            this.active = false;
+        });
         this.flush();
-        this.active = false;
     }
 
     public executeNextVMTurn(func: Function): void {
@@ -79,7 +81,6 @@ export class ColumnAnimationService extends BeanStub {
     }
 
     public flush(): void {
-
         const nowFuncs = this.executeNextFuncs;
         this.executeNextFuncs = [];
 
@@ -90,7 +91,7 @@ export class ColumnAnimationService extends BeanStub {
 
         this.getFrameworkOverrides().wrapIncoming(() => {
             window.setTimeout(() => nowFuncs.forEach(func => func()), 0);
-            window.setTimeout(() => waitFuncs.forEach(func => func()), 300);
+            window.setTimeout(() => waitFuncs.forEach(func => func()), 200);
         });
     }
 }

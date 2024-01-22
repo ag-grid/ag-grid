@@ -8,7 +8,6 @@ import { KeyCode } from '../constants/keyCode';
 import { PostConstruct, Autowired } from '../context/context';
 import { FocusService } from '../focusService';
 import { TabGuardComp } from '../widgets/tabGuardComp';
-import { formatNumberTwoDecimalPlacesAndCommas } from '../utils/number';
 
 export class TabbedLayout extends TabGuardComp {
 

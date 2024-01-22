@@ -111,11 +111,11 @@ function binDrop(data) {
         remove: [data]
     };
 
-    [leftGridOptions, rightGridOptions].forEach(function (option) {
-        var rowsInGrid = !!option.api.getRowNode(data.id);
+    [leftApi, rightApi].forEach(function (gridApi) {
+        var rowsInGrid = !!gridApi.getRowNode(data.id);
 
         if (rowsInGrid) {
-            option.api.applyTransaction(transaction);
+            gridApi.applyTransaction(transaction);
         }
     });
 }

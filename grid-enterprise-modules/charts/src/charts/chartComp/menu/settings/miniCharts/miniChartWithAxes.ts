@@ -1,7 +1,6 @@
 import { PostConstruct } from "@ag-grid-community/core";
 import { MiniChart } from "./miniChart";
-import { _Scene } from "ag-charts-community";
-// import { _Scene } from "ag-charts-enterprise";
+import { _Scene } from "ag-charts-enterprise";
 
 export abstract class MiniChartWithAxes extends MiniChart {
 

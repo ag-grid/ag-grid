@@ -2520,9 +2520,13 @@ export class ColumnModel extends BeanStub {
 
         // flex
         const flex = getValue('flex').value1;
+        // if flex is null or a value, set into the col
         if (flex !== undefined) {
             column.setFlex(flex);
-        } else {
+        }
+        
+        // if flex is null or undefined, fall back to setting width
+        if (flex == null) {
             // if no flex, then use width if it's there
             const width = getValue('width').value1;
             if (width != null) {

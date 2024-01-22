@@ -223,11 +223,11 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         type: linkType,
         rename: 'ag-charts-community'
     });
-    // lnk('./node_modules/ag-charts-enterprise/', '_dev/', {
-    //     force: true,
-    //     type: linkType,
-    //     rename: 'ag-charts-enterprise'
-    // });
+    lnk('./node_modules/ag-charts-enterprise/', '_dev/', {
+        force: true,
+        type: linkType,
+        rename: 'ag-charts-enterprise'
+    });
     lnk('./node_modules/ag-charts-react/', '_dev/', {
         force: true,
         type: linkType,
@@ -702,7 +702,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
     servePackage(app, '@ag-grid-community/vue3');
     servePackage(app, '@ag-grid-community/react');
     servePackage(app, 'ag-charts-community');
-    // servePackage(app, 'ag-charts-enterprise');
+    servePackage(app, 'ag-charts-enterprise');
     servePackage(app, 'ag-charts-react');
     servePackage(app, 'ag-charts-angular');
     servePackage(app, 'ag-charts-vue');
