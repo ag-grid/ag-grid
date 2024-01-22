@@ -4,7 +4,7 @@ import { ChartType } from '@ag-grid-community/core';
 import { accumulateData } from '../miniChartHelpers';
 
 export class MiniNightingale extends MiniChartWithPolarAxes {
-    static chartType: ChartType = 'radar-line';
+    static chartType: ChartType = 'nightingale';
     private readonly series: _Scene.Group[];
 
     private data = [

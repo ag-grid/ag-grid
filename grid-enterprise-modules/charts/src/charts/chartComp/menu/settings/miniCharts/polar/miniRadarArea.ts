@@ -4,7 +4,7 @@ import { ChartType } from '@ag-grid-community/core';
 import { createPolarLinePaths } from '../miniChartHelpers';
 
 export class MiniRadarArea extends MiniChartWithPolarAxes {
-    static chartType: ChartType = 'radar-area';
+    static chartType: ChartType = 'radarArea';
     private readonly areas: _Scene.Path[];
 
     private data = [
