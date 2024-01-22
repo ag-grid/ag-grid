@@ -27,13 +27,13 @@ The following example demonstrates a custom menu item component in both the colu
 |    // optional methods
 |
 |    // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
-|    setActive?(active: boolean): void;
+|    setActive(active: boolean): void;
 |
 |    // If the item has a sub menu, called when the sub menu is opened/closed.
-|    setExpanded?(expanded: boolean): void;
+|    setExpanded(expanded: boolean): void;
 |
 |    // Called when the item is selected, e.g. clicked or Enter is pressed.
-|    select?(): void;
+|    select(): void;
 |}
 </snippet>
 </framework-specific-section>
@@ -51,13 +51,13 @@ The following example demonstrates a custom menu item component in both the colu
 |    init(params: IMenuItemParams): void;
 |
 |    // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
-|    setActive?(active: boolean): void;
+|    setActive(active: boolean): void;
 |
 |    // If the item has a sub menu, called when the sub menu is opened/closed.
-|    setExpanded?(expanded: boolean): void;
+|    setExpanded(expanded: boolean): void;
 |
 |    // Called when the item is selected, e.g. clicked or Enter is pressed.
-|    select?(): void;
+|    select(): void;
 |}
 </snippet>
 </framework-specific-section>
@@ -67,13 +67,13 @@ The following example demonstrates a custom menu item component in both the colu
 |    // optional methods
 |
 |    // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
-|    setActive?(active: boolean): void;
+|    setActive(active: boolean): void;
 |
 |    // If the item has a sub menu, called when the sub menu is opened/closed.
-|    setExpanded?(expanded: boolean): void;
+|    setExpanded(expanded: boolean): void;
 |
 |    // Called when the item is selected, e.g. clicked or Enter is pressed.
-|    select?(): void;
+|    select(): void;
 |}
 </snippet>
 </framework-specific-section>
