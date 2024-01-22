@@ -122,3 +122,30 @@ export function createPolarLinePaths(
 
     return lines;
 }
+
+export function accumulateData(data: number[][]): { processedData: number[][]; min: number; max: number } {
+    let [min, max] = [Infinity, -Infinity];
+    const processedData = data.reduce((acc, curr, currIndex) => {
+        const previous = currIndex > 0 ? acc[currIndex - 1] : undefined;
+        acc[currIndex] ??= [];
+        const current = acc[currIndex];
+        curr.forEach((datum, datumIndex) => {
+            if (previous) {
+                datum += previous[datumIndex];
+            }
+
+            current[datumIndex] = datum;
+
+            if (current[datumIndex] < min) {
+                min = current[datumIndex];
+            }
+
+            if (current[datumIndex] > max) {
+                max = current[datumIndex];
+            }
+        });
+        return acc;
+    }, [] as number[][]);
+
+    return { processedData, min, max };
+}
