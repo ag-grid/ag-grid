@@ -131,6 +131,10 @@ describe('isValidChartType', () => {
                 subMenu: [{ name: "radarLine" }, { name: "radarArea" }, { name: 'nightingale' }]
             },
             {
+                name: "statisticalChart",
+                subMenu: [{ name: "boxPlot" }]
+            },
+            {
                 name: "combinationChart",
                 subMenu: [{ name: "columnLineCombo" }, { name: "AreaColumnCombo" }]
             }
