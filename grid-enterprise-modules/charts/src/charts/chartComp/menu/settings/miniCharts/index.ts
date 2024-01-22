@@ -9,6 +9,10 @@ export * from "./bar/miniNormalizedBar";
 export * from "./pie/miniPie";
 export * from "./pie/miniDoughnut";
 
+export * from "./polar/miniRadarLine"
+export * from "./polar/miniRadarArea"
+export * from "./polar/miniNightingale"
+
 export * from "./line/miniLine";
 
 export * from "./scatter/miniScatter";
