@@ -77,13 +77,14 @@ export function createLinePaths(root: _Scene.Group, data: number[][], size: numb
     return lines;
 }
 
-export function createPolarLinePaths(
+export function createPolarPaths(
     root: _Scene.Group,
     data: number[][],
     size: number,
     radius: number,
     innerRadius: number,
-): _Scene.Path[] {
+    markerSize: number = 0
+): { paths: _Scene.Path[]; markers: _Scene.Circle[] } {
     const angleScale = new _Scene.LinearScale();
     angleScale.domain = [0, 7];
     angleScale.range = [-Math.PI, Math.PI].map((angle) => angle + Math.PI / 2);
@@ -92,11 +93,14 @@ export function createPolarLinePaths(
     radiusScale.domain = [0, 10];
     radiusScale.range = [radius, innerRadius];
 
-    const lines: _Scene.Path[] = data.map((series) => {
-        const line = new _Scene.Path();
-        line.strokeWidth = 2;
-        line.lineCap = 'round';
-        line.fill = undefined;
+    const markers: _Scene.Circle[] = [];
+
+    const paths: _Scene.Path[] = data.map((series) => {
+        const path = new _Scene.Path();
+        path.strokeWidth = 1;
+        path.lineCap = 'round';
+        path.fill = undefined;
+        path.fillOpacity = 0.8;
         series.forEach((datum: number, i: number) => {
             const angle = angleScale.convert(i);
             const r = radius + innerRadius - radiusScale.convert(datum);
@@ -104,23 +108,31 @@ export function createPolarLinePaths(
             const x = r * Math.cos(angle);
             const y = r * Math.sin(angle);
 
-            line.path[i > 0 ? 'lineTo' : 'moveTo'](x, y);
+            path.path[i > 0 ? 'lineTo' : 'moveTo'](x, y);
+
+            if (markerSize > 0) {
+                const marker = new _Scene.Circle();
+                marker.x = x;
+                marker.y = y;
+                marker.size = markerSize;
+                markers.push(marker);
+            }
         });
 
-        line.path.closePath();
-        return line;
+        path.path.closePath();
+        return path;
     });
 
-    const linesGroup = new _Scene.Group();
+    const group = new _Scene.Group();
 
     const center = size / 2;
-    linesGroup.translationX = center;
-    linesGroup.translationY = center;
+    group.translationX = center;
+    group.translationY = center;
 
-    linesGroup.append(lines);
-    root.append(linesGroup);
+    group.append([...paths, ...markers]);
+    root.append(group);
 
-    return lines;
+    return { paths, markers };
 }
 
 export function accumulateData(data: number[][]): { processedData: number[][]; min: number; max: number } {

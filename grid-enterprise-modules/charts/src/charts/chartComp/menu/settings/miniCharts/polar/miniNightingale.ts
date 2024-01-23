@@ -8,8 +8,9 @@ export class MiniNightingale extends MiniChartWithPolarAxes {
     private readonly series: _Scene.Group[];
 
     private data = [
-        [6, 4, 5, 3, 10, 1, 12, 7],
-        [2, 3, 4, 5, 2, 5, 4, 2],
+        [6, 10, 9, 8, 7, 8],
+        [4, 6, 5, 4, 5, 5],
+        [3, 5, 4, 3, 4, 7],
     ];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[], tooltipName = 'nightingaleTooltip') {
@@ -20,7 +21,7 @@ export class MiniNightingale extends MiniChartWithPolarAxes {
         const radius = (this.size - this.padding * 2) / 2;
 
         const angleScale = new _Scene.BandScale();
-        angleScale.domain = [0, 1, 2, 3, 4];
+        angleScale.domain = this.data[0].map((_, index) => index);
         angleScale.range = [-Math.PI, Math.PI];
         angleScale.paddingInner = 0;
         angleScale.paddingOuter = 0;

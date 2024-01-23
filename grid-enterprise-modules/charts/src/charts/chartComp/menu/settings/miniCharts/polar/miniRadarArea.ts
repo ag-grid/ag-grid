@@ -1,15 +1,16 @@
 import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 import { _Scene } from 'ag-charts-community';
 import { ChartType } from '@ag-grid-community/core';
-import { createPolarLinePaths } from '../miniChartHelpers';
+import { createPolarPaths } from '../miniChartHelpers';
 
 export class MiniRadarArea extends MiniChartWithPolarAxes {
     static chartType: ChartType = 'radarArea';
     private readonly areas: _Scene.Path[];
 
     private data = [
-        [8, 7, 8, 4, 6, 1, 7, 8],
-        [6, 8, 3, 7, 6, 7, 4, 6],
+        [8, 10, 5, 7, 4, 1, 5, 8],
+        [1, 1, 2, 7, 7, 8, 10, 1],
+        [4, 5, 9, 9, 4, 2, 3, 4]
     ];
 
     constructor(
@@ -20,10 +21,12 @@ export class MiniRadarArea extends MiniChartWithPolarAxes {
     ) {
         super(container, tooltipName);
 
+        this.showRadiusAxisLine = false;
+
         const radius = (this.size - this.padding * 2) / 2;
         const innerRadius = radius - this.size * 0.3;
 
-        this.areas = createPolarLinePaths(this.root, this.data, this.size, radius, innerRadius);
+        this.areas = createPolarPaths(this.root, this.data, this.size, radius, innerRadius).paths;
 
         this.updateColors(fills, strokes);
     }
