@@ -69,6 +69,7 @@ export class SeriesPanel extends Component {
         'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
         'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'scatter': ['tooltips', 'markers', 'labels'],
         'bubble': ['tooltips', 'markers', 'labels'],
@@ -348,6 +349,7 @@ export class SeriesPanel extends Component {
                 ['radar-line', {value: 'radar-line', text: this.translate('radarLine', 'Radar Line')}],
                 ['radar-area', {value: 'radar-area', text: this.translate('radarArea', 'Radar Area')}],
                 ['nightingale', {value: 'nightingale', text: this.translate('nightingale', 'Nightingale')}],
+                ['range-bar', {value: 'range-bar', text: this.translate('rangeBar', 'Range Bar')}],
                 ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
             ]);

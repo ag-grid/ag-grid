@@ -132,7 +132,7 @@ describe('isValidChartType', () => {
             },
             {
                 name: "statisticalChart",
-                subMenu: [{ name: "boxPlot" }]
+                subMenu: [{ name: "rangeBar" }, { name: "boxPlot" }]
             },
             {
                 name: "combinationChart",

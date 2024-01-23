@@ -33,6 +33,7 @@ import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
 import {NightingaleChartProxy} from "./chartProxies/polar/nightingaleChartProxy";
 import {PieChartProxy} from "./chartProxies/pie/pieChartProxy";
 import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
+import {RangeBarChartProxy} from "./chartProxies/statistical/rangeBarChartProxy";
 import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
 import {BoxPlotChartProxy} from "./chartProxies/statistical/boxPlotChartProxy";
 import {ChartTranslationService} from "./services/chartTranslationService";
@@ -256,6 +257,8 @@ export class GridChartComp extends Component {
                 return new RadarAreaChartProxy(chartProxyParams);
             case 'nightingale':
                 return new NightingaleChartProxy(chartProxyParams);
+            case 'rangeBar':
+                return new RangeBarChartProxy(chartProxyParams);
             case 'boxPlot':
                 return new BoxPlotChartProxy(chartProxyParams);
             case 'columnLineCombo':
