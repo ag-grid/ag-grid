@@ -21,6 +21,8 @@ import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
 import { CalloutPanel } from "./calloutPanel";
+import { CapsPanel } from "./capsPanel";
+import { WhiskersPanel } from "./whiskersPanel";
 
 export class SeriesPanel extends Component {
 
@@ -54,6 +56,8 @@ export class SeriesPanel extends Component {
         'shadow': () => this.initShadow(),
         'tooltips': () => this.initTooltips(),
         'bins': () => this.initBins(),
+        'whiskers': () => this.initWhiskers(),
+        'caps': () => this.initCaps(),
     };
 
     private seriesWidgetMappings: {[name: string]: string[]} = {
@@ -65,7 +69,7 @@ export class SeriesPanel extends Component {
         'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
         'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
+        'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'scatter': ['tooltips', 'markers', 'labels'],
         'bubble': ['tooltips', 'markers', 'labels'],
         'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
@@ -292,6 +296,16 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesBinCountSlider);
     }
 
+    private initWhiskers() {
+        const whiskersPanelComp = this.createBean(new WhiskersPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(whiskersPanelComp);
+    }
+
+    private initCaps() {
+        const capsPanelComp = this.createBean(new CapsPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(capsPanelComp);
+    }
+
     private addWidget(widget: Component): void {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
@@ -334,7 +348,7 @@ export class SeriesPanel extends Component {
                 ['radar-line', {value: 'radar-line', text: this.translate('radarLine', 'Radar Line')}],
                 ['radar-area', {value: 'radar-area', text: this.translate('radarArea', 'Radar Area')}],
                 ['nightingale', {value: 'nightingale', text: this.translate('nightingale', 'Nightingale')}],
-                ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Nightingale')}],
+                ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
             ]);
         }
