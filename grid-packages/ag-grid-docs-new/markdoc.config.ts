@@ -29,8 +29,7 @@ export default defineMarkdocConfig({
         isFramework: {
             transform(parameters, context) {
                 const pageFramework = context.variables?.framework;
-                const [framework] = Object.values(parameters);
-                return framework === pageFramework;
+                return Object.values(parameters).includes(pageFramework);
             },
         },
         isNotJavascriptFramework: {
