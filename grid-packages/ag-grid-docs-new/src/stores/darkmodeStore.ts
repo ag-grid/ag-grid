@@ -34,7 +34,10 @@ const updateHtml = (darkmode: boolean | undefined) => {
 };
 
 $darkmode.listen(updateHtml);
-updateHtml($darkmode.get() ?? window?.matchMedia('(prefers-color-scheme: dark)')?.matches);
+
+if (globalThis.window) {
+    updateHtml($darkmode.get() ?? window?.matchMedia('(prefers-color-scheme: dark)')?.matches);
+}
 
 export const setDarkmode = (darkmode: boolean) => {
     $darkmode.set(darkmode);
