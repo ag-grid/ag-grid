@@ -118,11 +118,3 @@ export const getExampleFileUrl = ({
         fileName
     );
 };
-
-/**
- * Get image url on docs page
- */
-export const getImageUrl = ({ pageName, imageName }: { pageName: string; imageName: string }) => {
-    // Go up a directory to account for the framework path in the url
-    return pathJoin(SITE_BASE_URL, 'docs', pageName, imageName);
-};
