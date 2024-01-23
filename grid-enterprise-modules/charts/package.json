@@ -50,8 +50,8 @@
     "@ag-grid-community/core": "~31.0.2",
     "@ag-grid-enterprise/core": "~31.0.2",
     "@ag-grid-enterprise/range-selection": "~31.0.2",
-    "ag-charts-community": "9.0.2-beta.20240123",
-    "ag-charts-enterprise": "9.0.2-beta.20240123"
+    "ag-charts-community": "9.0.2-beta.20240123.1425",
+    "ag-charts-enterprise": "9.0.2-beta.20240123.1425"
   },
   "devDependencies": {
     "@babel/types": "7.12.7",
