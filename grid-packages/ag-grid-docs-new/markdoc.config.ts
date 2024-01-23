@@ -49,9 +49,9 @@ export default defineMarkdocConfig({
         //             href: { type: String, required: true },
         //         },
         //     },
-        //     enterpriseIcon: {
-        //         render: component('./src/components/icon/EnterpriseIcon.astro'),
-        //     },
+        enterpriseIcon: {
+            render: component('./src/components/icon/EnterpriseIcon.astro'),
+        },
         //     chartExampleRunner: {
         //         render: component('./src/features/docs/components/DocsExampleRunner.astro'),
         //         attributes: {
