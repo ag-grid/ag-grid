@@ -118,5 +118,13 @@ export default defineMarkdocConfig({
         //             label: { type: String },
         //         },
         //     },
+        videoSection: {
+            render: component('./src/components/video-section/VideoSection.astro'),
+            attributes: {
+                id: { type: String },
+                title: { type: String },
+                showHeader: { type: Boolean },
+            },
+        },
     },
 });
