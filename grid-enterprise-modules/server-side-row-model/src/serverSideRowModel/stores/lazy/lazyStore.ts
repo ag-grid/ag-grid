@@ -515,9 +515,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     refreshAfterSort(params: StoreRefreshAfterParams) {
         const serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
-            const oldCount = this.cache.getRowCount();
-            this.destroyBean(this.cache);
-            this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
+            const allRowsLoaded = this.cache.isStoreFullyLoaded();
+            const isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+            if (allRowsLoaded && isClientSideSortingEnabled) {
+                // client side sorting
+                this.cache.clientSideSortRows();
+            } else {
+                const oldCount = this.cache.getRowCount();
+                this.destroyBean(this.cache);
+                this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
+            }
+
             this.fireStoreUpdatedEvent();
             return;
         }

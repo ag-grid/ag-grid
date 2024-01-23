@@ -1271,6 +1271,11 @@ export interface GridOptions<TData = any> {
      */
     serverSideSortAllLevels?: boolean;
     /**
+     * When enabled, sorts fully loaded groups in the browser instead of requesting from the server.
+     * @default false
+     */
+    serverSideEnableClientSideSort?: boolean;
+    /**
      * When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
      * @default false
      * @initial

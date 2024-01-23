@@ -5,6 +5,8 @@ import { LazyStore } from "./lazyStore";
 import { LazyBlockLoader } from "./lazyBlockLoader";
 import { MultiIndexMap } from "./multiIndexMap";
 import { ServerSideRowModel } from "src/serverSideRowModel/serverSideRowModel";
+import { RowNodeSorter } from "@ag-grid-community/core";
+import { SortController } from "@ag-grid-community/core";
 
 interface LazyStoreNode {
     id: string;
@@ -18,6 +20,8 @@ export class LazyCache extends BeanStub {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
+    @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
+    @Autowired('sortController') private sortController: SortController;
 
     /**
      * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
@@ -818,6 +822,16 @@ export class LazyCache extends BeanStub {
         this.store.fireRefreshFinishedEvent();
     }
 
+    /**
+     * @returns true if all rows are loaded
+     */
+    public isStoreFullyLoaded() {
+        // check the numberOfRows attribute rather than func, as func is displayed rows size, including footers.
+
+        // TODO: might be wise to do a contiguity check here, but it would impact performance.
+        return this.isLastRowKnown && this.nodeMap.getSize() === this.numberOfRows;
+    }
+
     public isLastRowIndexKnown() {
         return this.isLastRowKnown;
     }
@@ -894,6 +908,40 @@ export class LazyCache extends BeanStub {
         return String(id);
     }
 
+    public getOrderedNodeMap() {
+        const obj: { [key: number]: LazyStoreNode } = {};
+        this.nodeMap.forEach(node => obj[node.index] = node);
+        return obj;
+    }
+
+    public clearDisplayIndexes() {
+        this.nodeDisplayIndexMap.clear();
+    }
+
+    /**
+     * Client side sorting
+     */
+    public clientSideSortRows() {
+        // the node map does not need entirely recreated, only the indexes need updated.
+        const allNodes = new Array(this.nodeMap.getSize());
+        this.nodeMap.forEach(lazyNode => allNodes[lazyNode.index] = lazyNode.node);
+        this.nodeMap.clear();
+
+        const sortedNodes = this.rowNodeSorter.doFullSort(allNodes, this.sortController.getSortOptions());
+        sortedNodes.forEach((node, index) => {
+            this.nodeMap.set({
+                id: node.id!,
+                node,
+                index,
+            });
+        });
+    }
+
+    /**
+     * Legacy Transaction Support here
+     */
+
+
     public updateRowNodes(updates: any[]): RowNode[] {
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
@@ -964,16 +1012,6 @@ export class LazyCache extends BeanStub {
 
         // finally insert the new rows
         return uniqueInserts.map((data, uniqueInsertOffset) => this.createRowAtIndex(addIndex + uniqueInsertOffset, data));
-    }
-
-    public getOrderedNodeMap() {
-        const obj: { [key: number]: LazyStoreNode } = {};
-        this.nodeMap.forEach(node => obj[node.index] = node);
-        return obj;
-    }
-
-    public clearDisplayIndexes() {
-        this.nodeDisplayIndexMap.clear();
     }
 
     public removeRowNodes(idsToRemove: string[]): RowNode[] {

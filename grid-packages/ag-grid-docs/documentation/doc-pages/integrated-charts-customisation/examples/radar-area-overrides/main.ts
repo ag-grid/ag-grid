@@ -21,11 +21,9 @@ const gridOptions: GridOptions = {
     'radar-area': {
       axes: {
         'angle-category': {
-          type: 'angle-category',
           shape: 'circle'
         },
         'radius-number': {
-          type: 'radius-number',
           positionAngle: 72,
           label: {
             rotation: -72
