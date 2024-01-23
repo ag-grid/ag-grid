@@ -18,7 +18,9 @@
     display: flex;
     min-width: 100%;
     height: 100%;
-    transition: transform 0.33s ease-in-out, min-width 0.33s ease-in-out;
+    transition:
+        transform 0.33s ease-in-out,
+        min-width 0.33s ease-in-out;
 
     @container (width < 640px) {
         height: calc(100% - var(--mobile-header-height));
@@ -108,7 +110,9 @@
     border-bottom-right-radius: 0;
     border-bottom-left-radius: var(--radius-sm);
     border-top-left-radius: var(--radius-sm);
-    transition: color $transition-default-timing, background-color $transition-default-timing,
+    transition:
+        color $transition-default-timing,
+        background-color $transition-default-timing,
         border-color $transition-default-timing;
 
     &:hover {
