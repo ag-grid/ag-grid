@@ -10,8 +10,14 @@
     flex-grow: 1;
     margin-bottom: $spacing-size-2;
 
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        margin-right: $spacing-size-6;
+        margin-left: $spacing-size-6;
+    }
+
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
         margin-bottom: $spacing-size-4;
+        margin-left: $spacing-size-6;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {

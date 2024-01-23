@@ -18,25 +18,18 @@
     }
 }
 
-.headerContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    @media screen and (max-width: $breakpoint-docs-nav-medium) {
-        width: 100%;
-    }
-}
-
 .headerInner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     width: 100%;
     min-height: var(--layout-site-header-height);
-    justify-content: space-between;
 
     @media screen and (max-width: $breakpoint-site-header-small) {
+        &:global(.layout-page-max-width) {
+            max-width: 100%;
+        }
+
         // Required for collapsible mobile menu
         :global(#main-nav),
         :global(#main-nav) > div {
@@ -55,9 +48,18 @@
     min-height: var(--layout-site-header-height);
     padding: $spacing-size-2 10px;
     margin-left: -16px;
+
     svg {
         width: unset;
         height: 34px;
+    }
+
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        margin-left: 8px;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        margin-right: 16px;
     }
 }
 
@@ -72,9 +74,18 @@ button.mobileNavButton {
         margin-right: -$spacing-size-1;
     }
 
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        margin-left: $spacing-size-6;
+        margin-right: 0;
+    }
+
+    @media screen and (max-width: $breakpoint-docs-search-small) {
+        margin-left: $spacing-size-6;
+        margin-right: $spacing-size-6;
+    }
+
     @media screen and (min-width: $breakpoint-docs-search-small) {
         width: auto;
-        margin-right: $spacing-size-4;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
@@ -186,17 +197,8 @@ button.mobileNavButton {
     }
 }
 
+.mainNav,
 #mainNav {
-    width: 100%;
-
-    @media screen and (max-width: $breakpoint-site-header-small) {
-        position: relative;
-        min-width: calc(100% + var(--layout-horizontal-margins) * 2);
-        left: calc(var(--layout-horizontal-margins) * -1);
-    }
-}
-
-.mainNav {
     width: 100%;
     background-color: var(--color-bg-mobile-nav);
 
@@ -223,6 +225,10 @@ button.mobileNavButton {
     @media screen and (min-width: $breakpoint-site-header-large) {
         margin-left: auto;
     }
+
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        width: 100%;
+    }
 }
 
 .navItemList {
@@ -235,6 +241,10 @@ button.mobileNavButton {
 }
 
 .navItem {
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     @media screen and (min-width: $breakpoint-site-header-small) {
         &:hover a::after {
             opacity: 0.25;
@@ -264,7 +274,8 @@ button.mobileNavButton {
     }
 }
 
-.navLink {
+.navLink,
+button.navLink {
     --horizontal-padding: #{$spacing-size-4 - 2px};
 
     display: block;
@@ -320,10 +331,6 @@ button.mobileNavButton {
 }
 
 .buttonItem {
-    .navLink {
-        padding: 19px var(--layout-horizontal-margins) 16px;
-    }
-
     a::after {
         display: none;
     }
@@ -356,5 +363,12 @@ button.mobileNavButton {
                 0 0 0 4px var(--color-bg-site-header),
                 0 0 0 6px rgba(white, 0.3);
         }
+    }
+}
+
+.toggleDarkText {
+    display: none;
+    @media screen and (max-width: $breakpoint-site-header-small) {
+        display: inline;
     }
 }
