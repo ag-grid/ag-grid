@@ -23,10 +23,9 @@
     justify-content: space-between;
     align-items: center;
 
-
-@media screen and (max-width: $breakpoint-docs-nav-medium) {
-    width: 100%;
-}
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        width: 100%;
+    }
 }
 
 .headerInner {
@@ -38,8 +37,6 @@
     justify-content: space-between;
 
     @media screen and (max-width: $breakpoint-site-header-small) {
-
-        
         // Required for collapsible mobile menu
         :global(#main-nav),
         :global(#main-nav) > div {
@@ -62,7 +59,6 @@
         width: unset;
         height: 34px;
     }
-
 }
 
 button.mobileNavButton {
@@ -278,7 +274,9 @@ button.mobileNavButton {
     font-weight: 500;
     letter-spacing: 0.01em;
     color: var(--color-white);
-    transition: color $transition-default-timing, opacity $transition-default-timing;
+    transition:
+        color $transition-default-timing,
+        opacity $transition-default-timing;
     cursor: pointer;
 
     @at-root button#{&} {
@@ -305,7 +303,9 @@ button.mobileNavButton {
             background-color: var(--color-white);
             opacity: 0;
             transform: scaleX(0);
-            transition: transform 0.33s ease-in-out, opacity 0.33s ease-in-out;
+            transition:
+                transform 0.33s ease-in-out,
+                opacity 0.33s ease-in-out;
         }
     }
 
@@ -352,7 +352,9 @@ button.mobileNavButton {
         }
 
         .navLink:hover svg {
-            box-shadow: 0 0 0 4px var(--color-bg-site-header), 0 0 0 6px rgba(white, 0.3);
+            box-shadow:
+                0 0 0 4px var(--color-bg-site-header),
+                0 0 0 6px rgba(white, 0.3);
         }
     }
 }
