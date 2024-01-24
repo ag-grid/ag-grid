@@ -237,6 +237,9 @@ const AG_GRID_LOCALE_EN = {
     rangeBar: 'Range Bar',
     boxPlot: 'Box Plot',
 
+    cumulativeChart: 'Cumulative',
+    waterfall: 'Waterfall',
+
     combinationChart: 'Combination',
     columnLineCombo: 'Column & Line',
     AreaColumnCombo: 'Area & Column',
@@ -336,6 +339,7 @@ const AG_GRID_LOCALE_EN = {
     histogramGroup: 'Histogram',
     polarGroup: 'Polar',
     statisticalGroup: 'Statistical',
+    cumulativeGroup: 'Cumulative',
     combinationGroup: 'Combination',
     groupedColumnTooltip: 'Grouped',
     stackedColumnTooltip: 'Stacked',
@@ -355,6 +359,7 @@ const AG_GRID_LOCALE_EN = {
     radarLineTooltip: 'Radar Line',
     radarAreaTooltip: 'Radar Area',
     nightingaleTooltip: 'Nightingale',
+    waterfallTooltip: 'Waterfall',
     columnLineComboTooltip: 'Column & Line',
     areaColumnComboTooltip: 'Area & Column',
     customComboTooltip: 'Custom Combination',

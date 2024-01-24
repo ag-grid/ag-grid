@@ -135,6 +135,10 @@ describe('isValidChartType', () => {
                 subMenu: [{ name: "rangeBar" }, { name: "boxPlot" }]
             },
             {
+                name: "cumulativeChart",
+                subMenu: [{ name: "waterfall" }]
+            },
+            {
                 name: "combinationChart",
                 subMenu: [{ name: "columnLineCombo" }, { name: "AreaColumnCombo" }]
             }
