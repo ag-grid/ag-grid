@@ -1,4 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
+
 import { getIsDev } from './env';
 import { pathJoin } from './pathJoin';
 
@@ -8,6 +9,12 @@ export type DocsPage =
           slug: string;
       };
 
+export interface InternalFrameworkExample {
+    internalFramework: InternalFramework;
+    pageName: string;
+    exampleName: string;
+}
+
 /**
  * The root url where the monorepo exists
  */
@@ -15,11 +22,14 @@ export const getRootUrl = (): URL => {
     const root = getIsDev()
         ? // Relative to the folder of this file
           '../../../../'
-        : // Relative to `/dist/packages/ag-charts-website/chunks/pages` folder (Nx specific)
+        : // TODO: Relative to `/dist/chunks/pages` folder (Nx specific)
           '../../../../../';
     return new URL(root, import.meta.url);
 };
 
+/**
+ *  TODO: Figure this out when working on build
+ */
 export const getExampleRootFileUrl = (): URL => {
     const root = getRootUrl().pathname;
     return new URL(`${root}/dist/generated-examples/ag-grid-website/`, import.meta.url);
@@ -32,8 +42,8 @@ const getWebsiteRootUrl = ({ isDev = getIsDev() }: { isDev?: boolean } = { isDev
     const root = isDev
         ? // Relative to the folder of this file
           '../../'
-        : // Relative to `/dist/packages/ag-charts-website/chunks/pages` folder (Nx specific)
-          '../../../../../packages/ag-grid-website/';
+        : // Relative to `/dist/chunks/pages` folder (Nx specific)
+          '../../../';
     return new URL(root, import.meta.url);
 };
 

@@ -118,3 +118,8 @@ export const getExampleFileUrl = ({
         fileName
     );
 };
+
+export const getGifStillImageUrl = ({ pageName, imagePath }: { pageName: string; imagePath: string }) => {
+    const stillImagePath = imagePath.replace('.gif', '-still.png');
+    return pathJoin(SITE_BASE_URL, 'docs', pageName, stillImagePath);
+};

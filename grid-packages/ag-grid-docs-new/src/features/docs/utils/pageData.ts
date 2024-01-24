@@ -1,5 +1,6 @@
 import { FRAMEWORKS } from '@constants';
-import type { DocsPage } from '@utils/pages';
+import { type DocsPage, getContentRootFileUrl } from '@utils/pages';
+import { pathJoin } from '@utils/pathJoin';
 
 import { getGeneratedContentsFileList } from '../../example-generator';
 import { getInternalFrameworkExamples, getPagesList } from './filesData';
@@ -84,3 +85,28 @@ export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
         };
     });
 }
+
+export const getGifStillImageFiles = ({ allDocsGifs }: { allDocsGifs: string[] }) => {
+    const contentRoot = getContentRootFileUrl();
+    const docsPath = 'docs';
+
+    return allDocsGifs.map((docsImagePath) => {
+        const pathParts = docsImagePath.split('/');
+        const pageName = pathParts[0];
+        const imagePath = pathParts.slice(1).join('/');
+        const imagePathExclExt = imagePath.replace('.gif', '');
+        const stillImagePath = imagePath.replace('.gif', '-still.png');
+        const fullFilePath = pathJoin(contentRoot.pathname, docsPath, pageName, imagePath);
+
+        return {
+            params: {
+                pageName,
+                imagePathExclExt,
+            },
+            props: {
+                stillImagePath,
+                fullFilePath,
+            },
+        };
+    });
+};

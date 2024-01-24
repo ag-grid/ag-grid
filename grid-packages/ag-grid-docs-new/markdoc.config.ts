@@ -73,6 +73,15 @@ export default defineMarkdocConfig({
         idea: {
             render: component('./src/components/alert/Idea'),
         },
+        gif: {
+            render: component('./src/components/image/Gif.astro'),
+            attributes: {
+                imagePath: { type: String, required: true },
+                alt: { type: String, required: true },
+                autoPlay: { type: Boolean },
+                wrapped: { type: Boolean },
+            },
+        },
         imageCaption: {
             render: component('./src/components/image/ImageCaption.astro'),
             attributes: {
@@ -101,6 +110,10 @@ export default defineMarkdocConfig({
                  * dark mode image manually
                  */
                 enableDarkModeFilter: { type: Boolean },
+                /**
+                 * Autoplay gif
+                 */
+                autoPlay: { type: Boolean },
             },
         },
         //     apiReference: {

@@ -1,4 +1,9 @@
-import { getIsDev } from '@utils/env';
+import {
+    type DocsPage,
+    type InternalFrameworkExample,
+    getContentRootFileUrl,
+    getExampleRootFileUrl,
+} from '@utils/pages';
 import type { ImageMetadata } from 'astro';
 import fs from 'fs/promises';
 import path from 'path';
@@ -6,13 +11,16 @@ import path from 'path';
 // NOTE: These imports can't be aliases because it is used by `astro.config.mjs`
 // and ts alias paths don't work there
 import { INTERNAL_FRAMEWORKS } from '../../../constants';
+import { getIsDev } from '../../../utils/env';
 import { getFolders } from '../../../utils/fs';
-import {
-    type DocsPage,
-    type InternalFrameworkExample,
-    getContentRootFileUrl,
-    getExampleRootFileUrl,
-} from '../../../utils/pages';
+import { getGifStillImageUrl } from './urlPaths';
+
+interface PageImages {
+    imageSrc?: string;
+    darkModeImageSrc?: string;
+    gifStillImageSrc?: string;
+    gifDarkModeStillImageSrc?: string;
+}
 
 function ignoreUnderscoreFiles(page: DocsPage) {
     const pageFolders = page.slug.split('/');
@@ -99,7 +107,9 @@ export const getAllExamplesFileList = async () => {
  * Get image on docs page
  *
  * If a `-dark` suffixed image in `imagePath` exists, return the dark mode
- * image source too
+ * image source.
+ *
+ * If the image is a gif, return the still image of the gif
  */
 export const getPageImages = async ({
     pageName,
@@ -113,7 +123,7 @@ export const getPageImages = async ({
      * Image path relative to `/src/content/docs/[pageName]`
      */
     imagePath: string;
-}): Promise<{ imageSrc?: string; darkModeImageSrc?: string }> => {
+}): Promise<PageImages> => {
     // NOTE: Relative to this file
     const docsPath = '../../../content/docs/';
     const fullImagePath = path.join(docsPath, pageName, imagePath);
@@ -138,12 +148,26 @@ export const getPageImages = async ({
 
     const splitName = fullImagePath.split('.');
     const extension = splitName.at(-1);
-    const fullDarkModeImagePath = fullImagePath.replace(`.${extension}`, `-dark.${extension}`);
+    const darkModeImagePath = imagePath.replace(`.${extension}`, `-dark.${extension}`);
+    const fullDarkModeImagePath = path.join(docsPath, pageName, darkModeImagePath);
     const darkModeImage = images[fullDarkModeImagePath];
     const darkModeImageSrc = darkModeImage ? (await darkModeImage()).default.src : undefined;
+
+    const gifImages: Partial<PageImages> = {};
+    if (extension === 'gif') {
+        gifImages.gifStillImageSrc = getGifStillImageUrl({ pageName, imagePath });
+
+        if (darkModeImage) {
+            gifImages.gifDarkModeStillImageSrc = getGifStillImageUrl({
+                pageName,
+                imagePath: darkModeImagePath,
+            });
+        }
+    }
 
     return {
         imageSrc,
         darkModeImageSrc,
+        ...gifImages,
     };
 };

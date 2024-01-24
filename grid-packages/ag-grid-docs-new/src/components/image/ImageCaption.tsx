@@ -3,6 +3,8 @@ import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
 
+import { Gif } from './Gif';
+
 interface Props {
     imageSrc: string;
     alt: string;
@@ -22,6 +24,12 @@ interface Props {
     enableDarkModeFilter?: boolean;
     darkModeImageSrc?: string;
     captionHtml?: string;
+
+    isGif?: boolean;
+    /**
+     * Autoplay gif
+     */
+    autoPlay?: boolean;
 }
 
 /**
@@ -40,7 +48,12 @@ export const ImageCaption = ({
     minWidth,
     enableDarkModeFilter = false,
     darkModeImageSrc,
+    gifStillImageSrc,
+    gifDarkModeStillImageSrc,
     captionHtml,
+
+    isGif,
+    autoPlay,
 }: Props) => {
     const [darkMode] = useDarkmode();
     const [src, setSrc] = useState<string>(imageSrc);
@@ -87,7 +100,19 @@ export const ImageCaption = ({
             style={style}
         >
             {descriptionTop && description}
-            <img src={src} className={styles.image} alt={alt} />
+            {isGif ? (
+                <Gif
+                    imageSrc={src}
+                    darkModeImageSrc={darkModeImageSrc}
+                    stillImageSrc={gifStillImageSrc}
+                    darkModeStillImageSrc={gifDarkModeStillImageSrc}
+                    alt={alt}
+                    wrapped={true}
+                    autoPlay={autoPlay}
+                />
+            ) : (
+                <img src={src} className={styles.image} alt={alt} />
+            )}
             {!descriptionTop && description}
         </div>
     );
