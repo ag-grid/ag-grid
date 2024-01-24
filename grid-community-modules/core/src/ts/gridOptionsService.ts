@@ -12,7 +12,7 @@ import { RowModelType } from "./interfaces/iRowModel";
 import { AnyGridOptions, INITIAL_GRID_OPTION_KEYS, PropertyKeys } from "./propertyKeys";
 import { warnOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
-import { getScrollbarWidth } from './utils/browser';
+import { getScrollbarWidth, isBrowserJsdom } from './utils/browser';
 import { IRowNode } from "./interfaces/iRowNode";
 import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
 import { ValidationService } from "./validation/validationService";
@@ -565,5 +565,14 @@ export class GridOptionsService {
         updatedParams.columnApi = this.columnApi;
         updatedParams.context = this.context;
         return updatedParams;
+    }
+
+    public isSuppressColumnVirtualisation(): boolean {
+        if(this.exists('suppressColumnVirtualisation')){
+            return this.get('suppressColumnVirtualisation');
+        }
+        // Jsdom doesn't support browser layout, so we always suppress column virtualisation when running unit tests.
+        // Otherwise jest tests will never show all the columns.
+        return isBrowserJsdom();
     }
 }

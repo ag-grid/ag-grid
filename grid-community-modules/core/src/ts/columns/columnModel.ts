@@ -267,7 +267,7 @@ export class ColumnModel extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.suppressColumnVirtualisation = this.gridOptionsService.get('suppressColumnVirtualisation');
+        this.suppressColumnVirtualisation = this.gridOptionsService.isSuppressColumnVirtualisation();
 
         const pivotMode = this.gridOptionsService.get('pivotMode');
 

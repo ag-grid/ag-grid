@@ -8,6 +8,7 @@ let isChrome: boolean;
 let isFirefox: boolean;
 let isMacOs: boolean;
 let isIOS: boolean;
+let isJsdom: boolean;
 let invisibleScrollbar: boolean;
 let browserScrollbarWidth: number;
 
@@ -71,6 +72,14 @@ export function isIOSUserAgent(): boolean {
     }
 
     return isIOS;
+}
+
+export function isBrowserJsdom(): boolean {
+    if (isJsdom === undefined) {
+        isJsdom = /(jsdom)/i.test(navigator.userAgent);
+    }
+
+    return isJsdom;
 }
 
 export function browserSupportsPreventScroll(): boolean {
