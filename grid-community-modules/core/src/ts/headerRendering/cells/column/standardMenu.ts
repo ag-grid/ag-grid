@@ -11,7 +11,7 @@ import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
 import { CtrlsService } from '../../../ctrlsService';
 import { setAriaRole } from '../../../utils/aria';
 
-@Bean('menuFactory')
+@Bean('filterMenuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
     @Autowired('filterManager') private filterManager: FilterManager;
@@ -131,6 +131,6 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
     public isMenuEnabled(column: Column): boolean {
         // for standard, we show menu if filter is enabled, and the menu is not suppressed by passing an empty array
-        return column.isFilterAllowed() && column.getMenuTabs(['filterMenuTab']).includes('filterMenuTab');
+        return column.isFilterAllowed() && (column.getColDef().menuTabs ?? ['filterMenuTab']).includes('filterMenuTab');
     }
 }

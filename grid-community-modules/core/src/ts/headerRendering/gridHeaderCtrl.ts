@@ -6,6 +6,7 @@ import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { FilterManager } from "../filter/filterManager";
 import { FocusService } from "../focusService";
+import { MenuService } from "../misc/menuService";
 import { exists } from "../utils/generic";
 import { ManagedFocusFeature } from "../widgets/managedFocusFeature";
 import { HeaderNavigationDirection, HeaderNavigationService } from "./common/headerNavigationService";
@@ -22,6 +23,7 @@ export class GridHeaderCtrl extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('menuService') private menuService: MenuService;
 
     private comp: IGridHeaderComp;
     private eGui: HTMLElement;
@@ -46,6 +48,8 @@ export class GridHeaderCtrl extends BeanStub {
 
         this.onPivotModeChanged();
         this.setupHeaderHeight();
+
+        this.addManagedListener(this.eGui, 'contextmenu', this.onHeaderContextMenu.bind(this));
 
         this.ctrlsService.registerGridHeaderCtrl(this);
     }
@@ -170,6 +174,19 @@ export class GridHeaderCtrl extends BeanStub {
 
         if (!this.eGui.contains(relatedTarget as HTMLElement)) {
             this.focusService.clearFocusedHeader();
+        }
+    }
+
+    private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
+        if (!this.gridOptionsService.get('enableColumnContextMenu') || (!mouseEvent && !touchEvent)) { return; }
+
+        const event = (mouseEvent ?? touchEvent)!;
+        event.preventDefault();
+
+        const { target } = (mouseEvent ?? touch)!;
+
+        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
+            this.menuService.showColumnMenuAfterMouseClick(null as any, mouseEvent ?? touch!);
         }
     }
 }

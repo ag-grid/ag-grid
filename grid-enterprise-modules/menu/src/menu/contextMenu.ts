@@ -226,7 +226,7 @@ class ContextMenu extends Component {
     @PostConstruct
     private addMenuItems(): void {
         const menuList = this.createManagedBean(new AgMenuList());
-        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
+        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null, () => this.getGui());
 
         menuList.addMenuItems(menuItemsMapped);
 

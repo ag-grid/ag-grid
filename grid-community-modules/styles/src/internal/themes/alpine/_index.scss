@@ -39,6 +39,10 @@
         background-color: var(--ag-control-panel-background-color);
     }
 
+    .ag-panel-content-wrapper .ag-column-select {
+        background-color: var(--ag-control-panel-background-color);
+    }
+
     .ag-menu-header {
         background-color: var(--ag-control-panel-background-color);
         padding-top: 1px; // hack to align column menu tab header border with header row border

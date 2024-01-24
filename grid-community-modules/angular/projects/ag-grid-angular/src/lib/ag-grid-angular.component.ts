@@ -356,6 +356,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public suppressMenuHide: boolean | undefined = undefined;
+    /** 
+         * @initial
+         */
+    @Input() public enableNewColumnMenu: boolean | undefined = undefined;
+    /** 
+         */
+    @Input() public enableColumnContextMenu: boolean | undefined = undefined;
     /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component.
          * @default false
          * @initial
@@ -1947,5 +1954,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_masterDetail: boolean | null | '';
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
+    static ngAcceptInputType_enableNewColumnMenu: boolean | null | '';
+    static ngAcceptInputType_enableColumnContextMenu: boolean | null | '';
     // @END@
 }

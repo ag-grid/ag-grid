@@ -1,7 +1,6 @@
-import { Autowired, PreDestroy } from "../../../context/context";
+import { Autowired } from "../../../context/context";
 import { Column } from "../../../entities/column";
 import { IComponent } from "../../../interfaces/iComponent";
-import { IMenuFactory } from "../../../interfaces/iMenuFactory";
 import { AgGridCommon } from "../../../interfaces/iCommon";
 import { SortController } from "../../../sortController";
 import { firstExistingValue } from "../../../utils/array";
@@ -17,7 +16,7 @@ import { SortIndicatorComp } from "./sortIndicatorComp";
 import { ColumnModel } from "../../../columns/columnModel";
 import { Events } from "../../../eventKeys";
 import { SortDirection } from "../../../entities/colDef";
-import { GridApi } from "../../../gridApi";
+import { MenuService } from "../../../misc/menuService";
 
 export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column the header is for. */
@@ -88,9 +87,8 @@ export class HeaderComp extends Component implements IHeaderComp {
         </div>`;
 
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('menuService') private menuService: MenuService;
     @Autowired('columnModel')  private readonly  columnModel: ColumnModel;
-    @Autowired('gridApi') private readonly api: GridApi;
 
     @RefSelector('eFilter') private eFilter: HTMLElement;
     @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
@@ -188,7 +186,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        const { gridOptionsService, api } = this;
+        const { gridOptionsService, menuService } = this;
 
         if (gridOptionsService.get('suppressTouch')) { return; }
 
@@ -200,7 +198,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
-                api.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
+                menuService.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
@@ -266,7 +264,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             eventSource = this.eMenu;
         }
 
-        this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource, 'columnMenu');
+        this.menuService.showColumnMenuAfterButtonClick(this.params.column, eventSource);
     }
 
     private workOutSort(): boolean | undefined {

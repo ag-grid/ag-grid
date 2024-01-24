@@ -181,6 +181,7 @@ export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
 export { AlignedGrid } from "./interfaces/iAlignedGrid";
 export { ExpansionService } from "./misc/expansionService";
+export { MenuService } from "./misc/menuService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from "./interfaces/iCellEditor";
@@ -282,7 +283,7 @@ export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFoc
 export { TabGuardComp } from "./widgets/tabGuardComp";
 export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from "./widgets/tabGuardCtrl";
 export { PopupComponent } from "./widgets/popupComponent";
-export { PopupService, AgPopup, PopupPositionParams } from "./widgets/popupService";
+export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
 export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
@@ -384,6 +385,7 @@ export { IServerSideSelectionState, IServerSideGroupSelectionState } from "./int
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
+export { IColumnChooserFactory } from "./interfaces/iColumnChooserFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
 export { RowPosition, RowPositionUtils } from "./entities/rowPositionUtils";
 export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";

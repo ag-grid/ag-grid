@@ -188,6 +188,15 @@ export interface GridOptions<TData = any> {
      */
     suppressMenuHide?: boolean;
     /**
+     * 
+     * @initial
+     */
+    enableNewColumnMenu?: boolean;
+    /**
+     * 
+     */
+    enableColumnContextMenu?: boolean;
+    /**
      * Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component.
      * @default false
      * @initial

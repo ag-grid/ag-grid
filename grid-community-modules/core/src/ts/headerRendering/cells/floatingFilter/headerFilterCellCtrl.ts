@@ -6,7 +6,6 @@ import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
 import { IFloatingFilter } from '../../../filter/floating/floatingFilter';
-import { IMenuFactory } from '../../../interfaces/iMenuFactory';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { AgPromise } from '../../../utils';
@@ -16,6 +15,7 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { setAriaLabel } from "../../../utils/aria";
+import { MenuService } from "../../../misc/menuService";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveBodyCssClass(cssClassName: string, on: boolean): void;
@@ -30,7 +30,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
-    @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
+    @Autowired('menuService') private readonly menuService: MenuService;
 
     private eButtonShowMainFilter: HTMLElement;
     private eFloatingFilterBody: HTMLElement;
@@ -262,7 +262,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private showParentFilter() {
         const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
-        this.menuFactory.showMenuAfterButtonClick(this.column, eventSource, 'floatingFilter', 'filterMenuTab', ['filterMenuTab']);
+        this.menuService.showFilterMenu({ column: this.column, buttonElement: eventSource, containerType: 'floatingFilter' });
     }
 
     private setupSyncWithFilter(): void {

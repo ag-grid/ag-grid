@@ -8,7 +8,7 @@ import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { IRowNode } from "../interfaces/iRowNode";
-import { IFrameworkOverrides } from "../main";
+import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { FrameworkEventListenerService } from "../misc/frameworkEventListenerService";
 import { ColumnHoverService } from "../rendering/columnHoverService";
 import { exists, missing } from "../utils/generic";
@@ -826,6 +826,9 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return this.colDef.enableRowGroup === true;
     }
 
+    /**
+     * @deprecated v31.1 Use `getColDef().menuTabs ?? defaultValues` instead.
+     */
     public getMenuTabs(defaultValues: ColumnMenuTab[]): ColumnMenuTab[] {
         let menuTabs = this.getColDef().menuTabs;
 

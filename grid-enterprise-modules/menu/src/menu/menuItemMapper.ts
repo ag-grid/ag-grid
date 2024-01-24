@@ -13,8 +13,13 @@ import {
     Optional,
     FocusService,
     RowPositionUtils,
+    MenuService,
+    AgDialog,
+    FilterManager,
+    IFilterComp,
 } from '@ag-grid-community/core';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
+import { ColumnChooserFactory } from './columnChooserFactory';
 
 @Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {
@@ -26,8 +31,11 @@ export class MenuItemMapper extends BeanStub {
     @Autowired('focusService') private readonly focusService: FocusService;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('chartMenuItemMapper') private readonly chartMenuItemMapper: ChartMenuItemMapper;
+    @Autowired('menuService') private readonly menuService: MenuService;
+    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    @Autowired('columnChooserFactory') private readonly columnChooserFactory: ColumnChooserFactory;
 
-    public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
+    public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null, sourceElement: () => HTMLElement): (MenuItemDef | string)[] {
         if (!originalList) {
             return [];
         }
@@ -38,7 +46,7 @@ export class MenuItemMapper extends BeanStub {
             let result: MenuItemDef | string | null;
 
             if (typeof menuItemOrString === 'string') {
-                result = this.getStockMenuItem(menuItemOrString, column);
+                result = this.getStockMenuItem(menuItemOrString, column, sourceElement);
             } else {
                 // Spread to prevent leaking mapped subMenus back into the original menuItem
                 result = { ...menuItemOrString };
@@ -50,7 +58,7 @@ export class MenuItemMapper extends BeanStub {
             const { subMenu } = resultDef;
 
             if (subMenu && subMenu instanceof Array) {
-                resultDef.subMenu = this.mapWithStockItems(subMenu as (MenuItemDef | string)[], column);
+                resultDef.subMenu = this.mapWithStockItems(subMenu as (MenuItemDef | string)[], column, sourceElement);
             }
 
             if (result != null) {
@@ -61,7 +69,7 @@ export class MenuItemMapper extends BeanStub {
         return resultList;
     }
 
-    private getStockMenuItem(key: string, column: Column | null): MenuItemDef | string | null {
+    private getStockMenuItem(key: string, column: Column | null, sourceElement: () => HTMLElement): MenuItemDef | string | null {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gridOptionsService.get('skipHeaderOnAutoSize');
 
@@ -261,6 +269,28 @@ export class MenuItemMapper extends BeanStub {
             case 'pivotChart':
             case 'chartRange':
                 return this.chartMenuItemMapper.getChartItems(key) ?? null;
+            case 'columnFilter':
+                if (this.gridOptionsService.get('enableNewColumnMenu')) {
+                    return {
+                        name: localeTextFunc('columnFilter', 'Column Filter'),
+                        icon: _.createIconNoSpan('filter', this.gridOptionsService, null),
+                        action: () => this.menuService.showFilterMenu({
+                            column: column!, buttonElement: sourceElement(), containerType: 'columnFilter'
+                        })
+                    };
+                } else {
+                    return null;
+                }
+            case 'columnChooser':
+                if (this.gridOptionsService.get('enableNewColumnMenu') && ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId())) {
+                    return {
+                        name: localeTextFunc('columnChooser', 'Choose Columns'),
+                        icon: _.createIconNoSpan('columns', this.gridOptionsService, null),
+                        action: () => this.columnChooserFactory.showColumnChooser({ column })
+                    }
+                } else {
+                    return null;
+                }
             default: {
                 console.warn(`AG Grid: unknown menu item type ${key}`);
                 return null;

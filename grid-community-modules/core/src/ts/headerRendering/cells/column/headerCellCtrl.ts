@@ -5,8 +5,6 @@ import { Autowired } from "../../../context/context";
 import { DragAndDropService, DragItem, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
 import { Events } from "../../../eventKeys";
-import { GridApi } from "../../../gridApi";
-import { IMenuFactory } from "../../../interfaces/iMenuFactory";
 import { ColumnHoverService } from "../../../rendering/columnHoverService";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { SortController } from "../../../sortController";
@@ -33,6 +31,7 @@ import {
     ColumnHeaderClickedEvent,
     ColumnHeaderContextMenuEvent,
 } from "../../../events";
+import { MenuService } from "../../../misc/menuService";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -50,9 +49,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     @Autowired('sortController') private readonly sortController: SortController;
-    @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
+    @Autowired('menuService') private readonly menuService: MenuService;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
 
     private refreshFunctions: (() => void)[] = [];
     private selectAllFeature: SelectAllFeature;
@@ -208,7 +206,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             enableSorting: this.column.isSortable(),
             enableMenu: this.menuEnabled,
             showColumnMenu: (source: HTMLElement) => {
-                this.gridApi.showColumnMenuAfterButtonClick(this.column, source);
+                this.menuService.showColumnMenuAfterButtonClick(this.column, source);
             },
             progressSort: (multiSort?: boolean) => {
                 this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
@@ -374,7 +372,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private updateState(): void {
         const colDef = this.column.getColDef();
-        this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
+        this.menuEnabled = this.menuService.isMenuEnabled(this.column) && !colDef.suppressMenu;
         this.sortable = this.column.isSortable();
         this.displayName = this.calculateDisplayName();
         this.draggable = this.workOutDraggable();
@@ -761,8 +759,16 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             Events.EVENT_COLUMN_HEADER_CONTEXT_MENU :
             Events.EVENT_COLUMN_HEADER_CLICKED;
 
-        if (isContextMenuEvent && this.gridOptionsService.get('preventDefaultOnContextMenu')) {
-            mouseEvent.preventDefault();
+        if (isContextMenuEvent) {
+            if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+                mouseEvent.preventDefault();
+            }
+            if (this.menuEnabled && this.gridOptionsService.get('enableColumnContextMenu')) {
+                const menuDisplayed = this.menuService.showColumnMenuAfterMouseClick(this.column, mouseEvent);
+                if (menuDisplayed) {
+                    mouseEvent.preventDefault();
+                }
+            }
         }
 
         const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {

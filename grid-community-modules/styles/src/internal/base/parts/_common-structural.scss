@@ -1199,6 +1199,10 @@
         }
     }
 
+    .ag-dialog .ag-panel-content-wrapper .ag-column-select {
+        user-select: none;
+    }
+
     .ag-menu-list {
         display: table;
         width: 100%;
