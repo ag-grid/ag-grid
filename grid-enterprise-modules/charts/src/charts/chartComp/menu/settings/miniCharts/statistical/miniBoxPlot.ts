@@ -1,8 +1,8 @@
 import { ChartType } from '@ag-grid-community/core';
-import { MiniChart } from '../miniChart';
 import { _Scene, _Util } from 'ag-charts-enterprise';
+import { MiniChartWithAxes } from '../miniChartWithAxes';
 
-export class MiniBoxPlot extends MiniChart {
+export class MiniBoxPlot extends MiniChartWithAxes {
     static chartType: ChartType = 'boxPlot';
 
     private readonly boxPlotGroups: _Scene.Group[];
@@ -25,13 +25,13 @@ export class MiniBoxPlot extends MiniChart {
             data.reduce((a, b) => Math.min(a, b), Infinity) * minRatio,
             data.reduce((a, b) => Math.max(a, b), 0) * maxRatio,
         ];
-        yScale.range = [size - padding, padding];
+        yScale.range = [size - 1.5 * padding, padding];
 
         const xScale = new _Scene.BandScale();
         xScale.domain = data.map((_, index) => index);
         xScale.range = [padding, size - padding];
         xScale.paddingInner = 0.4;
-        xScale.paddingOuter = 0.1;
+        xScale.paddingOuter = 0.2;
 
         const bandwidth = Math.round(xScale.bandwidth);
         const halfBandWidth = Math.round(xScale.bandwidth / 2);

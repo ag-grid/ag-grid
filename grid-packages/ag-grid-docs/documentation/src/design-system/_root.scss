@@ -154,7 +154,7 @@
     --color-bg-toolbar: var(--color-gray-100);
     --color-bg-code: var(--color-gray-100);
     --color-bg-site-header: var(--color-brand-500);
-    --color-bg-mobile-nav: #003264; // TODO, review & replace color
+    --color-bg-mobile-nav: var(--color-bg-site-header); //TODO, review & replace color
 
     // Foreground colors
     --color-fg-primary: var(--color-gray-900);

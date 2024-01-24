@@ -52,13 +52,13 @@ The example below demonstrates sorting using the SSRM. Note the following:
 
 ## Client-side Sorting
 
-When the store has been fully loaded into memory, the grid can perform sorting in the browser. This reduces the
-load on the server while also improving user experience.
+The Server-Side Row Model supports client-side sorting. This is achieved by enabling the property `serverSideEnableClientSideSort`.
+With this property enabled, if the grid has all of the rows belonging to the impacted group, the grid can sort these rows on the client-side. This can be useful for reducing the load on the server, and improving user experience by reducing loading view time.
 
-The example below demonstrates sorting using the CSRM. Note the following:
+The example below demonstrates client-side sorting using the SSRM. Note the following:
 
 - `cacheBlockSize` has been increased to 10,000 - this allows the first request to load every row.
-- `serverSideEnableClientSideSorting` is set to `true`
+- `serverSideEnableClientSideSort` is set to `true`
 - When sorting any column in this example, the rows are not replaced by loading rows, and a request to the server is not made.
 
 <grid-example title='Client Side Sorting' name='client-side-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
