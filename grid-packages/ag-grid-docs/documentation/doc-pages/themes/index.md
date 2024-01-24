@@ -19,7 +19,7 @@ The grid comes with several provided themes which act as a great starting point 
 
 ## Applying a Theme to an App
 
-To use a theme, add the theme class name to the `div` element that contains your grid. The following is an example of using the Alpine theme:
+To use a theme, add the theme class name to the `div` element that contains your grid. The following is an example of using the Quartz theme:
 
 ```html
 <div id="myGrid" class="ag-theme-quartz"></div>
