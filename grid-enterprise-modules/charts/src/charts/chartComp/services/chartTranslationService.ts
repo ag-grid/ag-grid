@@ -125,7 +125,7 @@ export class ChartTranslationService extends BeanStub {
         areaColumnComboTooltip: 'Area & Column',
         customComboTooltip: 'Custom Combination',
         whisker: 'Whisker',
-        cap: 'Caps',
+        cap: 'Cap',
         capLengthRatio: 'Length Ratio',
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',

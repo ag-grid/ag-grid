@@ -97,6 +97,6 @@ export class WhiskersPanel extends Component {
             .setMaxValue(30)
             .setTextFieldWidth(45)
             .setValue(`${lineDashOffset}`)
-            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("whisker.lineDashOffset", [newValue], this.getSelectedSeries()));
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("whisker.lineDashOffset", newValue, this.getSelectedSeries()));
     }
 }
