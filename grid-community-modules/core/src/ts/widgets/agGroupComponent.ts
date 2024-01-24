@@ -192,13 +192,21 @@ export class AgGroupComponent extends Component {
         items.forEach(item => this.addItem(item));
     }
 
+    public prependItem(item: GroupItem) {
+        this.insertItem(item, this.eContainer.firstChild);
+    }
+
     public addItem(item: GroupItem) {
+        this.insertItem(item, null);
+    }
+
+    private insertItem(item: GroupItem, before: Node | null) {
         const container = this.eContainer;
         const el = item instanceof Component ? item.getGui() : item;
 
         el.classList.add('ag-group-item', `ag-${this.cssIdentifier}-group-item`);
 
-        container.appendChild(el);
+        container.insertBefore(el, before);
         this.items.push(el);
     }
 
