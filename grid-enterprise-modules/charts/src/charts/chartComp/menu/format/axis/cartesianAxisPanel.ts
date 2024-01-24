@@ -101,6 +101,7 @@ export class CartesianAxisPanel extends Component {
         // Axis ticks are disabled for some chart types
         const chartType = this.chartController.getChartType();
         switch (chartType) {
+            case 'rangeBar':
             case 'boxPlot':
                 return false;
             default:

@@ -74,6 +74,11 @@ export class FontPanel extends Component {
         this.initFontColorPicker();
     }
 
+    public prependCompToPanel(comp: Component) {
+        this.fontGroup.prependItem(comp);
+        this.activeComps.push(comp);
+    }
+
     public addCompToPanel(comp: Component) {
         this.fontGroup.addItem(comp);
         this.activeComps.push(comp);

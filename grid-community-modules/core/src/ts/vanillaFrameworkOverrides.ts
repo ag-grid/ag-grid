@@ -1,4 +1,4 @@
-import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { FrameworkOverridesIncomingSource, IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { includes } from "./utils/array";
 import { AgPromise } from "./utils";
 
@@ -28,7 +28,7 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
         element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
     }
 
-    wrapIncoming: <T>(callback: () => T) => T = callback => callback();
+    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = callback => callback();
     wrapOutgoing: <T>(callback: () => T) => T = callback => callback();
     get shouldWrapOutgoing() { return false;}
 
