@@ -826,10 +826,36 @@ export class LazyCache extends BeanStub {
      * @returns true if all rows are loaded
      */
     public isStoreFullyLoaded() {
-        // check the numberOfRows attribute rather than func, as func is displayed rows size, including footers.
+        const knowsSize = this.isLastRowKnown;
+        const hasCorrectRowCount = this.nodeMap.getSize() === this.numberOfRows;
+        if (!knowsSize || !hasCorrectRowCount) {
+            return;
+        }
 
-        // TODO: might be wise to do a contiguity check here, but it would impact performance.
-        return this.isLastRowKnown && this.nodeMap.getSize() === this.numberOfRows;
+        if (this.nodesToRefresh.size > 0) {
+            return;
+        }
+
+        // nodeMap find cancels early when it finds a matching record.
+        // better to use this than forEach
+        let index = -1;
+        const firstOutOfPlaceNode = this.nodeMap.find(lazyNode => {
+            index += 1;
+            // node not contiguous, nodes must be missing
+            if (lazyNode.index !== index) {
+                return true;
+            }
+            // node data is out of date
+            if (lazyNode.node.__needsRefreshWhenVisible) {
+                return true;
+            }
+            // node not yet loaded
+            if (lazyNode.node.stub) {
+                return true;
+            }
+            return false;
+        });
+        return firstOutOfPlaceNode == null;
     }
 
     public isLastRowIndexKnown() {
@@ -938,10 +964,8 @@ export class LazyCache extends BeanStub {
     }
 
     /**
-     * Legacy Transaction Support here
+     * Transaction Support here
      */
-
-
     public updateRowNodes(updates: any[]): RowNode[] {
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
