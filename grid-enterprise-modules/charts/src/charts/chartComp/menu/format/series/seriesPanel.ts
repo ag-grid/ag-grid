@@ -11,6 +11,7 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
+import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
@@ -240,6 +241,44 @@ export class SeriesPanel extends Component {
             const calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsService, () => this.seriesType));
             labelPanelComp.addCompToPanel(calloutPanelComp);
             this.activePanels.push(calloutPanelComp);
+        }
+
+        if (this.seriesType === 'range-bar') {
+
+            // Add padding slider
+            {
+                const currentValue = this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType);
+                const paddingSlider = labelPanelComp.createManagedBean(new AgSlider());
+                paddingSlider.setLabel(this.chartTranslationService.translate('padding'))
+                    .setMaxValue(getMaxValue(currentValue, 200))
+                    .setValue(`${currentValue}`)
+                    .setTextFieldWidth(45)
+                    .onValueChange(newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType));
+
+                labelPanelComp.prependCompToPanel(paddingSlider);
+                this.activePanels.push(paddingSlider);
+            }
+
+            // Add label placement dropdown
+            {
+                const options: Array<ListOption<AgRangeBarSeriesLabelPlacement>> = [
+                    { value: 'inside', text: this.translate('inside') },
+                    { value: 'outside', text: this.translate('outside') },
+                ];
+                const currentValue = this.chartOptionsService.getSeriesOption<AgRangeBarSeriesLabelPlacement>('label.placement', this.seriesType);
+                const placementSelect = labelPanelComp.createManagedBean(new AgSelect());
+                placementSelect
+                    .setLabel(this.translate('labelPlacement'))
+                    .setLabelAlignment('left')
+                    .setLabelWidth('flex')
+                    .setInputWidth('flex')
+                    .addOptions(options)
+                    .setValue(currentValue)
+                    .onValueChange((newValue) => this.chartOptionsService.setSeriesOption('label.placement', newValue, this.seriesType));
+    
+                labelPanelComp.prependCompToPanel(placementSelect);
+                this.activePanels.push(placementSelect);
+            }
         }
 
         this.addWidget(labelPanelComp);
