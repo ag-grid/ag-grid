@@ -986,8 +986,9 @@ testing with AG Grid in this section.
 
 <framework-specific-section frameworks="react">
 |Note that we're accessing exposed `getApi` method via the `ref`:  `componentRef.current.getApi()`.
-|
-|A full working example can be found in the following <a href="https://github.com/seanlandsman/ag-grid-react-hook-testing">GitHub Repo</a>.
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<p>A full working example can be found in the following <a href="https://github.com/seanlandsman/ag-grid-react-hook-testing">GitHub Repo</a>.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
