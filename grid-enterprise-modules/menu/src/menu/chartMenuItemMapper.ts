@@ -255,6 +255,8 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
             polarGroup: null,
             // Statistical charts do not currently support pivot mode
             statisticalGroup: null,
+            // Cumulative charts do not currently support pivot mode
+            cumulativeGroup: null,
         }
     }
 
@@ -271,6 +273,7 @@ export type RangeMenuOptionName =
     'rangeHistogramChart' |
     'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' |
     'rangeStatisticalChart' | 'rangeRangeBar' | 'rangeBoxPlot' |
+    'rangeCumulativeChart' | 'rangeWaterfall' |
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
@@ -357,6 +360,14 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     _key: 'rangeStatisticalChart'
                 },
                 {
+                    name: localeTextFunc('cumulativeChart', 'Cumulative'),
+                    subMenu:
+                        [
+                            getMenuItem('waterfall', 'Waterfall&lrm;', 'waterfall', 'rangeWaterfall'),
+                        ],
+                    _key: 'rangeCumulativeChart'
+                },
+                {
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
                         getMenuItem('columnLineCombo', 'Column & Line&lrm;', 'columnLineCombo', 'rangeColumnLineCombo'),
@@ -417,6 +428,10 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 _key: 'rangeStatisticalChart',
                 rangeBar: 'rangeRangeBar',
                 boxPlot: 'rangeBoxPlot',
+            },
+            cumulativeGroup: {
+                _key: 'rangeCumulativeChart',
+                waterfall: 'rangeWaterfall',
             },
             combinationGroup: {
                 _key: 'rangeCombinationChart',

@@ -19,6 +19,7 @@ export type ChartSeriesType =
     'nightingale' |
     'range-bar' |
     'box-plot' |
+    'waterfall' |
     'common';
 
 type PolarChartSeriesType = Extract<ChartSeriesType,
@@ -41,6 +42,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'nightingale',
     'range-bar',
     'box-plot',
+    'waterfall',
 ];
 
 const horizontalChartTypes = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
@@ -90,6 +92,8 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'pie':
         case 'doughnut':
             return 'pie';
+        case 'waterfall':
+            return 'waterfall';
         default:
             return 'cartesian';
     }

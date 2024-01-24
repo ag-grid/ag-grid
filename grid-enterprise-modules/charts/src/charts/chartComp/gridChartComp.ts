@@ -36,6 +36,7 @@ import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
 import {RangeBarChartProxy} from "./chartProxies/statistical/rangeBarChartProxy";
 import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
 import {BoxPlotChartProxy} from "./chartProxies/statistical/boxPlotChartProxy";
+import {WaterfallChartProxy} from './chartProxies/cartesian/waterfallChartProxy';
 import {ChartTranslationService} from "./services/chartTranslationService";
 import {ChartCrossFilterService} from "./services/chartCrossFilterService";
 import {CrossFilteringContext} from "../chartService";
@@ -261,6 +262,8 @@ export class GridChartComp extends Component {
                 return new RangeBarChartProxy(chartProxyParams);
             case 'boxPlot':
                 return new BoxPlotChartProxy(chartProxyParams);
+            case 'waterfall':
+                return new WaterfallChartProxy(chartProxyParams);
             case 'columnLineCombo':
             case 'areaColumnCombo':
             case 'customCombo':

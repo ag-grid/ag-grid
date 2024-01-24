@@ -31,6 +31,8 @@ export * from './polar/miniNightingale';
 export * from './statistical/miniRangeBar';
 export * from './statistical/miniBoxPlot';
 
+export * from './cumulative/miniWaterfall';
+
 export * from "./combo/miniColumnLineCombo";
 export * from "./combo/miniAreaColumnCombo";
 export * from "./combo/miniCustomCombo";

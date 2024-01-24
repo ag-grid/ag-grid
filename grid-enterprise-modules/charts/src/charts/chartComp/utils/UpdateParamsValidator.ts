@@ -54,6 +54,7 @@ export class UpdateParamsValidator {
         'nightingale',
         'rangeBar',
         'boxPlot',
+        'waterfall',
         'columnLineCombo',
         'areaColumnCombo',
         'customCombo'
