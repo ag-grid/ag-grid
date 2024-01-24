@@ -78,6 +78,7 @@ export class ChartTranslationService extends BeanStub {
         blur: 'Blur',
         xOffset: 'X Offset',
         yOffset: 'Y Offset',
+        connectorLine: 'Connector Line',
         lineWidth: 'Line Width',
         lineDash: 'Line Dash',
         lineDashOffset: 'Dash Offset',

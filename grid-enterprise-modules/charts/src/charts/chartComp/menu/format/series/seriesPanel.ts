@@ -22,6 +22,7 @@ import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
 import { CalloutPanel } from "./calloutPanel";
 import { CapsPanel } from "./capsPanel";
+import { WaterfallPanel } from "./waterfallPanel";
 import { WhiskersPanel } from "./whiskersPanel";
 
 export class SeriesPanel extends Component {
@@ -58,6 +59,7 @@ export class SeriesPanel extends Component {
         'bins': () => this.initBins(),
         'whiskers': () => this.initWhiskers(),
         'caps': () => this.initCaps(),
+        'waterfall': () => this.initWaterfall(),
     };
 
     private seriesWidgetMappings: {[name: string]: string[]} = {
@@ -71,7 +73,7 @@ export class SeriesPanel extends Component {
         'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
-        'waterfall': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
+        'waterfall': ['tooltips', 'waterfall'],
         'scatter': ['tooltips', 'markers', 'labels'],
         'bubble': ['tooltips', 'markers', 'labels'],
         'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
@@ -306,6 +308,11 @@ export class SeriesPanel extends Component {
     private initCaps() {
         const capsPanelComp = this.createBean(new CapsPanel(this.chartOptionsService, () => this.seriesType));
         this.addWidget(capsPanelComp);
+    }
+
+    private initWaterfall() {
+        const waterfallPanelComp = this.createBean(new WaterfallPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(waterfallPanelComp);
     }
 
     private addWidget(widget: Component): void {
