@@ -34,7 +34,7 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(() => {
-                this.getGui().innerText = localeTextFunc('noRowsToShow', 'No Rows To Show');
+                this.getGui().textContent = localeTextFunc('noRowsToShow', 'No Rows To Show');
             });
         }
     }
