@@ -79,4 +79,44 @@ export class MenuUtils extends BeanStub {
             this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true, preventScrollOnBrowserFocus: true });
         }
     }
+
+    public onContextMenu(
+        mouseEvent: MouseEvent | null | undefined,
+        touchEvent: TouchEvent | null | undefined,
+        showMenuCallback: (eventOrTouch: (MouseEvent | Touch)
+    ) => boolean): void {
+        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
+        // not everyone wants this, so first 'if' below allows to turn this hack off.
+        if (!this.gridOptionsService.get('allowContextMenuWithControlKey')) {
+            // then do the check
+            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
+        }
+
+        // need to do this regardless of context menu showing or not, so doing
+        // before the isSuppressContextMenu() check
+        if (mouseEvent) {
+            this.blockMiddleClickScrollsIfNeeded(mouseEvent);
+        }
+
+        if (this.gridOptionsService.get('suppressContextMenu')) { return; }
+
+        const eventOrTouch: (MouseEvent | Touch) = mouseEvent ?? touchEvent!.touches[0];
+        if (showMenuCallback(eventOrTouch)) {
+            const event = mouseEvent ?? touchEvent;
+            event!.preventDefault();
+        }
+    }
+
+    private blockMiddleClickScrollsIfNeeded(mouseEvent: MouseEvent): void {
+        // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
+        // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
+        // button in the browser). so this property allows the user to receive middle button clicks if
+        // they want.
+        const { gridOptionsService } = this;
+        const { which } = mouseEvent;
+
+        if (gridOptionsService.get('suppressMiddleClickScrolls') && which === 2) {
+            mouseEvent.preventDefault();
+        }
+    }
 }

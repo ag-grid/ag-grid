@@ -195,7 +195,10 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
-                menuService.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
+                menuService.showColumnMenu({
+                    column: this.params.column,
+                    mouseEvent: event.touchStart
+                });
             };
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
@@ -266,7 +269,10 @@ export class HeaderComp extends Component implements IHeaderComp {
             eventSource = this.eMenu;
         }
 
-        this.menuService.showColumnMenuAfterButtonClick(this.params.column, eventSource);
+        this.menuService.showColumnMenu({
+            column: this.params.column,
+            buttonElement: eventSource
+        });
     }
 
     private workOutSort(): boolean | undefined {

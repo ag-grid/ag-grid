@@ -14,9 +14,7 @@ import {
     FocusService,
     RowPositionUtils,
     MenuService,
-    AgDialog,
-    FilterManager,
-    IFilterComp,
+    SortController,
 } from '@ag-grid-community/core';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 import { ColumnChooserFactory } from './columnChooserFactory';
@@ -32,8 +30,8 @@ export class MenuItemMapper extends BeanStub {
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('chartMenuItemMapper') private readonly chartMenuItemMapper: ChartMenuItemMapper;
     @Autowired('menuService') private readonly menuService: MenuService;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnChooserFactory') private readonly columnChooserFactory: ColumnChooserFactory;
+    @Autowired('sortController') private readonly sortController: SortController;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null, sourceElement: () => HTMLElement): (MenuItemDef | string)[] {
         if (!originalList) {
@@ -290,6 +288,24 @@ export class MenuItemMapper extends BeanStub {
                     }
                 } else {
                     return null;
+                }
+            case 'sortAscending':
+                return {
+                    name: localeTextFunc('sortAscending', 'Sort Ascending'),
+                    icon: _.createIconNoSpan('sortAscending', this.gridOptionsService, null),
+                    action: () => this.sortController.setSortForColumn(column!, 'asc', false, 'columnMenu')
+                }
+            case 'sortDescending':
+                return {
+                    name: localeTextFunc('sortDescending', 'Sort Descending'),
+                    icon: _.createIconNoSpan('sortDescending', this.gridOptionsService, null),
+                    action: () => this.sortController.setSortForColumn(column!, 'desc', false, 'columnMenu')
+                }
+            case 'sortUnSort':
+                return {
+                    name: localeTextFunc('sortUnSort', 'Clear Sort'),
+                    icon: _.createIconNoSpan('sortUnSort', this.gridOptionsService, null),
+                    action: () => this.sortController.setSortForColumn(column!, null, false, 'columnMenu')
                 }
             default: {
                 console.warn(`AG Grid: unknown menu item type ${key}`);

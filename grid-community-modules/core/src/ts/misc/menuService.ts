@@ -4,14 +4,14 @@ import { IMenuFactory } from "../interfaces/iMenuFactory";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { Column } from "../entities/column";
 import { ContainerType } from "../interfaces/iAfterGuiAttachedParams";
+import { RowNode } from "../entities/rowNode";
 
 interface BaseShowMenuParams {
     column: Column,
 }
 
-interface BaseShowColumnMenuParams extends BaseShowMenuParams {
-    defaultTab?: string,
-    restrictToTabs?: string[],
+interface BaseShowFilterMenuParams extends BaseShowMenuParams {
+    containerType: ContainerType;
 }
 
 interface MouseShowMenuParams {
@@ -20,73 +20,91 @@ interface MouseShowMenuParams {
 
 interface ButtonShowMenuParams {
     buttonElement: HTMLElement;
-    containerType?: ContainerType;
 }
 
 function isButtonShowMenuParams(params: (ButtonShowMenuParams | MouseShowMenuParams)): params is ButtonShowMenuParams {
     return !!(params as ButtonShowMenuParams).buttonElement;
 }
 
-export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams) & BaseShowColumnMenuParams;
+export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams) & BaseShowMenuParams;
 
-export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams) & BaseShowMenuParams;
+export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams) & BaseShowFilterMenuParams;
+
+interface BaseShowContextMenuParams { 
+    rowNode?: RowNode | null,
+    column?: Column | null,
+    value: any,
+    anchorToElement: HTMLElement
+}
+
+interface MouseShowContextMenuParams {
+    mouseEvent: MouseEvent;
+}
+
+interface TouchShowContextMenuParam {
+    touchEvent: TouchEvent;
+}
+
+export type ShowContextMenuParams = (MouseShowContextMenuParams | TouchShowContextMenuParam) & BaseShowContextMenuParams;
 
 @Bean('menuService')
 export class MenuService extends BeanStub {
-    @Optional('tabbedMenuFactory') private readonly tabbedMenuFactory: IMenuFactory;
+    @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory? : IMenuFactory;
     @Autowired('filterMenuFactory') private readonly filterMenuFactory: IMenuFactory;
-    @Optional('contextMenuFactory') private readonly contextMenuFactory: IContextMenuFactory;
+    @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
 
     private activeMenuFactory: IMenuFactory;
 
     @PostConstruct
     private postConstruct(): void {
-        this.activeMenuFactory = this.tabbedMenuFactory ?? this.filterMenuFactory;
+        this.activeMenuFactory = this.enterpriseMenuFactory ?? this.filterMenuFactory;
     }
 
     public showColumnMenu(params: ShowColumnMenuParams): void {
         if (isButtonShowMenuParams(params)) {
-            const { column, buttonElement, containerType, defaultTab, restrictToTabs } = params;
-            this.showColumnMenuAfterButtonClick(column, buttonElement, defaultTab, restrictToTabs, containerType);
+            const { column, buttonElement } = params;
+            this.activeMenuFactory.showMenuAfterButtonClick(column, buttonElement, 'columnMenu');
         } else {
-            const { column, mouseEvent, defaultTab, restrictToTabs } = params;
-            this.showColumnMenuAfterMouseClick(column, mouseEvent, defaultTab, restrictToTabs);
+            const { column, mouseEvent } = params;
+            this.activeMenuFactory.showMenuAfterMouseEvent(column, mouseEvent, 'columnMenu');
         }
     }
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
-        const { column } = params;
-        const menuFactory: IMenuFactory = !column.getMenuParams()?.enableNewFormat ? this.tabbedMenuFactory : this.filterMenuFactory;
+        const { column, containerType } = params;
+        const menuFactory: IMenuFactory = !column.getMenuParams()?.enableNewFormat && this.enterpriseMenuFactory
+            ? this.enterpriseMenuFactory
+            : this.filterMenuFactory;
         if (isButtonShowMenuParams(params)) {
-            const { buttonElement, containerType } = params;
-            menuFactory.showMenuAfterButtonClick(column, buttonElement, containerType ?? 'columnMenu', 'filterMenuTab', ['filterMenuTab']);
+            const { buttonElement } = params;
+            menuFactory.showMenuAfterButtonClick(column, buttonElement, containerType, true);
         } else {
             const { mouseEvent } = params;
-            menuFactory.showMenuAfterMouseEvent(column, mouseEvent, 'filterMenuTab', ['filterMenuTab']);
+            menuFactory.showMenuAfterMouseEvent(column, mouseEvent, containerType, true);
         }
     }
 
-    public showColumnMenuAfterButtonClick(
-        column: Column,
-        buttonElement: HTMLElement,
-        defaultTab?: string,
-        restrictToTabs?: string[],
-        containerType: ContainerType = 'columnMenu'
-    ): void {
-        this.activeMenuFactory.showMenuAfterButtonClick(column, buttonElement, containerType, defaultTab, restrictToTabs);
+    public showHeaderContextMenu(column: Column, mouseEvent?: MouseEvent, touchEvent?: TouchEvent): void {
+        this.activeMenuFactory.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
     }
 
-    public showColumnMenuAfterMouseClick(column: Column, mouseEvent: MouseEvent | Touch, defaultTab?: string, restrictToTabs?: string[]): boolean {
-        this.activeMenuFactory.showMenuAfterMouseEvent(column, mouseEvent, defaultTab, restrictToTabs);
-        // TODO - return whether this was handled or not
-        return true;
+    public showContextMenu(
+        params: ShowContextMenuParams
+    ): void {
+        const { column, anchorToElement, rowNode, value } = params;
+        this.contextMenuFactory?.onContextMenu(
+            (params as MouseShowContextMenuParams).mouseEvent ?? null,
+            (params as TouchShowContextMenuParam).touchEvent ?? null,
+            rowNode ?? null,
+            column ?? null,
+            value,
+            anchorToElement
+        );
     }
 
     public hidePopupMenu(): void {
         // hide the context menu if in enterprise
-        if (this.contextMenuFactory) {
-            this.contextMenuFactory.hideActiveMenu();
-        }
+        this.contextMenuFactory?.hideActiveMenu();
         // and hide the column menu always
         this.activeMenuFactory.hideActiveMenu();
     }

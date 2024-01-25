@@ -1288,7 +1288,10 @@ export class GridApi<TData = any> {
             console.error(`AG Grid: column '${colKey}' not found`);
             return;
         }
-        this.menuService.showColumnMenuAfterButtonClick(column, buttonElement);
+        this.menuService.showColumnMenu({
+            column,
+            buttonElement
+        });
     }
 
     /** Shows the column menu after and positions it relative to the mouse event. Use in conjunction with your own header template. */
@@ -1302,7 +1305,10 @@ export class GridApi<TData = any> {
             console.error(`AG Grid: column '${colKey}' not found`);
             return;
         }
-        this.menuService.showColumnMenuAfterMouseClick(column, mouseEvent);
+        this.menuService.showColumnMenu({
+            column,
+            mouseEvent
+        });
     }
 
     public showColumnChooser(params?: ColumnsMenuParams): void {

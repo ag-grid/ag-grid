@@ -28,15 +28,15 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         }
     }
 
-    public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch): void {
+    public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch, containerType: ContainerType): void {
         this.showPopup(column, eMenu => {
             this.popupService.positionPopupUnderMouseEvent({
                 column,
-                type: 'columnMenu',
+                type: containerType,
                 mouseEvent,
                 ePopup: eMenu
             });
-        }, 'columnMenu', mouseEvent.target as HTMLElement);
+        }, containerType, mouseEvent.target as HTMLElement);
     }
 
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType): void {
@@ -132,5 +132,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     public isMenuEnabled(column: Column): boolean {
         // for standard, we show menu if filter is enabled, and the menu is not suppressed by passing an empty array
         return column.isFilterAllowed() && (column.getColDef().menuTabs ?? ['filterMenuTab']).includes('filterMenuTab');
+    }
+
+    public showMenuAfterContextMenuEvent(): void {
+        // not supported in standard menu
     }
 }

@@ -1,4 +1,3 @@
-import { RefSelector } from '@ag-grid-community/core';
 import {
     _,
     AgEvent,
@@ -15,6 +14,7 @@ import {
     ModuleRegistry,
     PopupService,
     PostConstruct,
+    RefSelector,
     AgPromise,
     TabbedItem,
     TabbedLayout,
@@ -43,7 +43,7 @@ interface EnterpriseColumnMenu {
     showTabBasedOnPreviousSelection?(): void;
 }
 
-@Bean('tabbedMenuFactory')
+@Bean('enterpriseMenuFactory')
 export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('popupService') private readonly popupService: PopupService;
     @Autowired('focusService') private readonly focusService: FocusService;
@@ -51,7 +51,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
-    @Autowired('columnMenuFactory') private readonly columnMenuFactory: ColumnMenuFactory;
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseColumnMenu | null;
@@ -60,12 +59,13 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         this.destroyBean(this.activeMenu);
     }
 
-    public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void {
+    public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch, containerType: ContainerType, filtersOnly?: boolean): void {
+        const defaultTab = filtersOnly ? 'filterMenuTab' : undefined;
         this.showMenu(column, (menu: EnterpriseColumnMenu) => {
             const ePopup = menu.getGui();
 
             this.popupService.positionPopupUnderMouseEvent({
-                type: 'columnMenu',
+                type: containerType,
                 column,
                 mouseEvent,
                 ePopup
@@ -74,10 +74,10 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (defaultTab) {
                 menu.showTab?.(defaultTab);
             }
-        }, 'columnMenu', defaultTab, undefined, mouseEvent.target as HTMLElement);
+        }, containerType, defaultTab, undefined, mouseEvent.target as HTMLElement);
     }
 
-    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType, defaultTab?: string, restrictToTabs?: ColumnMenuTab[]): void {
+    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType, filtersOnly?: boolean): void {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
@@ -85,6 +85,9 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             multiplier = 1;
             alignSide = 'right';
         }
+
+        const defaultTab: ColumnMenuTab | undefined = filtersOnly ? 'filterMenuTab' : undefined;
+        const restrictToTabs = defaultTab ? [defaultTab] : undefined;
 
         this.showMenu(column, (menu: EnterpriseColumnMenu) => {
             const ePopup = menu.getGui();
@@ -207,7 +210,8 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ): (EnterpriseColumnMenu & BeanStub) {
-        if (column?.getMenuParams()?.enableNewFormat) {
+        const menuParams = column ? column.getMenuParams() : this.gridOptionsService.get('defaultColDef')?.menuParams;
+        if (menuParams?.enableNewFormat) {
             return this.createBean(new ColumnContextMenu(column, eventSource));
         } else {
             return this.createBean(new TabbedColumnMenu(column, this.lastSelectedTab, restrictToTabs, eventSource));
@@ -225,6 +229,13 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             ? tabs.length - 1
             : tabs.length;
         return numActiveTabs > 0;
+    }
+
+    public showMenuAfterContextMenuEvent(column: Column<any>, mouseEvent?: MouseEvent | null, touchEvent?: TouchEvent | null): void {
+        this.menuUtils.onContextMenu(mouseEvent, touchEvent, (eventOrTouch) => {
+            this.showMenuAfterMouseEvent(column, eventOrTouch, 'columnMenu');
+            return true;
+        })
     }
 }
 

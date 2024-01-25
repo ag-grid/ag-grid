@@ -59,12 +59,10 @@ export class ColumnMenuFactory extends BeanStub {
 
         const enableNewFormat = column?.getMenuParams()?.enableNewFormat;
 
-        if (enableNewFormat) {
-            result.push('columnChooser');
-            result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
-        }
-
         if (!column) {
+            if (enableNewFormat) {
+                result.push('columnChooser');
+            }
             result.push('resetColumns');
             return result;
         }
@@ -98,6 +96,20 @@ export class ColumnMenuFactory extends BeanStub {
             result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
         }
 
+        if (enableNewFormat && column.isSortable()) {
+            const sort = column.getSort();
+            if (sort !== 'asc') {
+                result.push('sortAscending');
+            }
+            if (sort !== 'desc') {
+                result.push('sortDescending');
+            }
+            if (sort) {
+                result.push('sortUnSort');
+            }
+            result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+        }
+
         if (allowPinning) {
             result.push('pinSubMenu');
         }
@@ -128,6 +140,9 @@ export class ColumnMenuFactory extends BeanStub {
             }
         }
         result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+        if (enableNewFormat) {
+            result.push('columnChooser');
+        }
         result.push('resetColumns');
 
         // only add grouping expand/collapse if grouping in the InMemoryRowModel

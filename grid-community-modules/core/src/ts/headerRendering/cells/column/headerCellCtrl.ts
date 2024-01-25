@@ -199,7 +199,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             enableSorting: this.column.isSortable(),
             enableMenu: this.menuEnabled,
             showColumnMenu: (source: HTMLElement) => {
-                this.menuService.showColumnMenuAfterButtonClick(this.column, source);
+                this.menuService.showColumnMenu({
+                    column: this.column,
+                    buttonElement: source
+                });
             },
             progressSort: (multiSort?: boolean) => {
                 this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
@@ -724,8 +727,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private addActiveHeaderMouseListeners(): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
-        const clickListener = (event: MouseEvent) => this.handleColumnClick(event, false, this.column, this.menuEnabled);
-        const contextMenuListener = (event: MouseEvent) => this.handleColumnClick(event, true, this.column, this.menuEnabled);
+        const clickListener = () => this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CLICKED, this.column);
+        const contextMenuListener = (event: MouseEvent) => this.handleContextMenuMouseEvent(event, undefined, this.column, this.menuEnabled);
 
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);

@@ -233,25 +233,19 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         }
     }
 
-    protected handleColumnClick(mouseEvent: MouseEvent, isContextMenuEvent: boolean, column: Column | ProvidedColumnGroup, menuEnabled: boolean): void {
-        const eventType = isContextMenuEvent ?
-            Events.EVENT_COLUMN_HEADER_CONTEXT_MENU :
-            Events.EVENT_COLUMN_HEADER_CLICKED;
-
-        if (isContextMenuEvent) {
-            if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
-                mouseEvent.preventDefault();
-            }
-            if (menuEnabled && column.getMenuParams()?.enableHeaderContextMenu && (
-                this.gridOptionsService.get('allowContextMenuWithControlKey') || (!mouseEvent.ctrlKey && !mouseEvent.metaKey)
-            )) {
-                const menuDisplayed = this.menuService.showColumnMenuAfterMouseClick(column instanceof Column ? column : (null as any), mouseEvent);
-                if (menuDisplayed) {
-                    mouseEvent.preventDefault();
-                }
-            }
+    protected handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, column: Column | ProvidedColumnGroup, menuEnabled: boolean): void {
+        const event = mouseEvent ?? touchEvent!;
+        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+            event.preventDefault();
+        }
+        if (menuEnabled && column.getMenuParams()?.enableHeaderContextMenu) {
+            this.menuService.showHeaderContextMenu(column instanceof Column ? column : (null as any), mouseEvent, touchEvent);
         }
 
+        this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CONTEXT_MENU, column);
+    }
+
+    protected dispatchColumnMouseEvent(eventType: "columnHeaderContextMenu" | "columnHeaderClicked", column: Column | ProvidedColumnGroup): void {
         const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
             type: eventType,
             column,

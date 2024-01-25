@@ -7,8 +7,10 @@ import { Events } from "../eventKeys";
 import { FilterManager } from "../filter/filterManager";
 import { FocusService } from "../focusService";
 import { MenuService } from "../misc/menuService";
+import { isIOSUserAgent } from "../utils/browser";
 import { exists } from "../utils/generic";
 import { ManagedFocusFeature } from "../widgets/managedFocusFeature";
+import { LongTapEvent, TouchListener } from "../widgets/touchListener";
 import { HeaderNavigationDirection, HeaderNavigationService } from "./common/headerNavigationService";
 
 export interface IGridHeaderComp {
@@ -49,7 +51,9 @@ export class GridHeaderCtrl extends BeanStub {
         this.onPivotModeChanged();
         this.setupHeaderHeight();
 
-        this.addManagedListener(this.eGui, 'contextmenu', this.onHeaderContextMenu.bind(this));
+        const listener = this.onHeaderContextMenu.bind(this)
+        this.addManagedListener(this.eGui, 'contextmenu', listener);
+        this.mockContextMenuForIPad(listener);
 
         this.ctrlsService.registerGridHeaderCtrl(this);
     }
@@ -183,11 +187,20 @@ export class GridHeaderCtrl extends BeanStub {
         const { target } = (mouseEvent ?? touch)!;
 
         if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
-            const menuDisplayed = this.menuService.showColumnMenuAfterMouseClick(null as any, mouseEvent ?? touch!);
-            if (menuDisplayed) {
-                const event = (mouseEvent ?? touchEvent)!;
-                event.preventDefault();
-            }
+            this.menuService.showHeaderContextMenu(null as any, mouseEvent, touchEvent);
         }
+    }
+
+    private mockContextMenuForIPad(listener: (mouseListener?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent) => void): void {
+        // we do NOT want this when not in iPad
+        if (!isIOSUserAgent()) { return; }
+
+        const touchListener = new TouchListener(this.eGui);
+        const longTapListener = (event: LongTapEvent) => {
+            listener(undefined, event.touchStart, event.touchEvent);
+        };
+
+        this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+        this.addDestroyFunc(() => touchListener.destroy());
     }
 }
