@@ -18,6 +18,7 @@ import { AgGridAngular } from './ag-grid-angular.component';
         [rowData]="rowData"
         [modules]="modules"
         (gridReady)="onGridReady($event)"
+        [suppressBrowserResizeObserver]="suppressBrowserResizeObserver"
         (firstDataRendered)="onFirstDataRendered($event)"></ag-grid-angular>`,
 })
 export class GridWrapperComponent {
@@ -27,6 +28,8 @@ export class GridWrapperComponent {
 
     gridOptions: GridOptions = {};
     gridApi: GridApi;
+
+    suppressBrowserResizeObserver = false;
 
     @ViewChild(AgGridAngular) agGrid: AgGridAngular;
 
@@ -62,7 +65,7 @@ describe('Grid OnReady', () => {
         }, 0);
     });
 
-    it('Grid Ready run', async () => {
+    const runGridReadyTest = async () => {
         spyOn(component, 'onGridReady').and.callThrough();
         spyOn(component, 'onFirstDataRendered').and.callThrough();
 
@@ -78,6 +81,18 @@ describe('Grid OnReady', () => {
 
         expect(component.onGridReady).toHaveBeenCalled();
         expect(component.onFirstDataRendered).toHaveBeenCalled();
+    };
+
+    it('Grid Ready run', async () => {
+        await runGridReadyTest();
+    });
+
+    it('Grid Ready run suppressBrowserResizeObserver', async () => {
+
+        // Test with the fallback polling to mimic Jest not supporting ResizeObserver
+        component.suppressBrowserResizeObserver = true;
+
+        await runGridReadyTest();
     });
 
     it('Grid Ready run Auto', async () => {
