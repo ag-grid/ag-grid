@@ -17,7 +17,9 @@ export type ChartSeriesType =
     'radar-line' |
     'radar-area' |
     'nightingale' |
+    'range-bar' |
     'box-plot' |
+    'waterfall' |
     'common';
 
 type PolarChartSeriesType = Extract<ChartSeriesType,
@@ -38,7 +40,9 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'radar-line',
     'radar-area',
     'nightingale',
+    'range-bar',
     'box-plot',
+    'waterfall',
 ];
 
 const horizontalChartTypes = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
@@ -81,11 +85,15 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
             return 'radar-area';
         case 'nightingale':
             return 'nightingale';
+        case 'rangeBar':
+            return 'range-bar';
         case 'boxPlot':
             return 'box-plot';
         case 'pie':
         case 'doughnut':
             return 'pie';
+        case 'waterfall':
+            return 'waterfall';
         default:
             return 'cartesian';
     }
