@@ -1,10 +1,15 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AgGridAngular } from './ag-grid-angular.component';
+import { AgGridAngular } from '../ag-grid-angular.component';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GetRowIdParams, GridApi, GridOptions, GridReadyEvent, ICellRendererParams, Module } from '@ag-grid-community/core';
-import { ICellRendererAngularComp } from './interfaces';
+import { GetRowIdParams, GridApi, GridOptions, GridReadyEvent, ICellRendererParams, Module, RowClassParams } from '@ag-grid-community/core';
+import { ICellRendererAngularComp } from '../interfaces';
+
+// These tests are run to validate that the grid is running in / out of the Angular Zone as expected
+// We need to ensure that custom components are running in the Angular Zone so that change detection
+// is triggered correctly.
+// We also test that callbacks / events are running correctly out / in of the Angular Zone.
 
 function updateCount(counts: Record<string, boolean>, key: string, isInAngularZone: boolean) {
     counts[key] = isInAngularZone;
@@ -19,11 +24,12 @@ function updateCount(counts: Record<string, boolean>, key: string, isInAngularZo
     `,
   })
   export class TestComponent implements ICellRendererAngularComp {
-   
+    // Validate that component variables are running in Zone
     private testInZone = NgZone.isInAngularZone();
     private params: ICellRendererParams & {getZoneStatus: () => any};
   
     agInit(params: ICellRendererParams & {getZoneStatus: () => any}): void {
+        // Validate that agInit is running inside Zone
         updateCount(params.getZoneStatus(), 'TestComp -> agInit', NgZone.isInAngularZone());
         updateCount(params.getZoneStatus(), 'TestComp -> class variable',this.testInZone);
         this.params = params;
@@ -35,6 +41,8 @@ function updateCount(counts: Record<string, boolean>, key: string, isInAngularZo
     }
 
     getName() {
+        // This validates that the template is running in the correct zone which is important for
+        // any other components that are rendered in the template
         updateCount(this.params.getZoneStatus(), 'TestComp -> template1', NgZone.isInAngularZone());
         return 'Test';
     }
@@ -53,11 +61,15 @@ export class GridWrapperComponent {
     columnDefs = [{ field: 'make' }, { field: 'model' }, { field: 'price', cellRenderer: TestComponent, cellRendererParams: { getZoneStatus: () => this.zoneStatus} }];
 
     gridOptions: GridOptions = {
-        getRowClass: (params) => {
+        getRowClass: (params: RowClassParams) => {
+            // Callbacks should run outside of Angular Zone as they are just for configuring the grid
+            // and they get called a lot in some cases.
             updateCount(this.zoneStatus, 'gridOptions -> callback', NgZone.isInAngularZone());
             return 'my-class';
         },
         onStateUpdated: () => {
+            // Events should run inside Angular Zone as they are triggered by the grid for updating
+            // user applications.
             updateCount(this.zoneStatus, 'gridOptions -> event', NgZone.isInAngularZone());
         },
     };
@@ -72,12 +84,14 @@ export class GridWrapperComponent {
     constructor(private zone: NgZone) {}
 
     onGridReady(params: GridReadyEvent) {
+        // Validate event passed to component is running in Angular Zone
         updateCount(this.zoneStatus, 'component -> event', NgZone.isInAngularZone());
 
         this.setupListeners(this.zone, params.api, this.zoneStatus);
     }
 
     getRowId = (params: GetRowIdParams) => {
+        // Validate callback passed to component is run outside of Angular Zone
         updateCount(this.zoneStatus, 'component -> callback', NgZone.isInAngularZone());
         return params.data.make;
     };
@@ -207,7 +221,8 @@ describe('GridWrapperComponent', () => {
         
 
         fixture.componentInstance.setupListeners = (zone: NgZone, api: GridApi, zoneStatus: any) => {
-            // For testing purposes, we are going to add listeners to the grid outside of angular to mimic
+            // For testing purposes, we are going to add listeners to the grid outside of angular
+            // This is to enable users to add listeners outside of angular and still have them run outside
             zone.runOutsideAngular(() => {
                 setupTestListeners(zoneStatus, api);
             });
@@ -264,6 +279,8 @@ function setupTestListeners(zoneStatus: any, api: GridApi<any>) {
         updateCount(zoneStatus, 'api -> eventListener', NgZone.isInAngularZone());
     };
 
+    // Test that api added event listeners are running in the Angular Zone
+    // Both global and individual events
     api.addGlobalListener(globalListener);
     api.addEventListener('newColumnsLoaded', eventListener);
 
