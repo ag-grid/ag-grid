@@ -22,13 +22,14 @@ var keyGenerator_1 = __importDefault(require("./keyGenerator"));
 var react_dom_1 = require("react-dom");
 var server_1 = require("react-dom/server");
 var ReactComponent = /** @class */ (function () {
-    function ReactComponent(reactComponent, portalManager, componentType) {
+    function ReactComponent(reactComponent, portalManager, componentType, suppressFallbackMethods) {
         var _this = this;
         this.portal = null;
         this.oldPortal = null;
         this.reactComponent = reactComponent;
         this.portalManager = portalManager;
         this.componentType = componentType;
+        this.suppressFallbackMethods = !!suppressFallbackMethods;
         this.statelessComponent = this.isStateless(this.reactComponent);
         this.key = keyGenerator_1.default();
         this.portalKey = keyGenerator_1.default();
@@ -194,11 +195,14 @@ var ReactComponent = /** @class */ (function () {
     };
     ReactComponent.prototype.fallbackMethod = function (name, params) {
         var method = this[name + "Component"];
-        if (!!method) {
+        if (!this.suppressFallbackMethods && !!method) {
             return method.bind(this)(params);
         }
     };
     ReactComponent.prototype.fallbackMethodAvailable = function (name) {
+        if (this.suppressFallbackMethods) {
+            return false;
+        }
         var method = this[name + "Component"];
         return !!method;
     };

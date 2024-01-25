@@ -6,17 +6,37 @@ class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     constructor(_ngZone) {
         super('angular');
         this._ngZone = _ngZone;
+        // Flag used to control Zone behaviour when running tests as many test features rely on Zone.
+        this.isRunningWithinTestZone = false;
         // Make all events run outside Angular as they often trigger the setup of event listeners
         // By having the event listeners outside Angular we can avoid triggering change detection
         // This also means that if a user calls an AG Grid API method from within their component
         // the internal side effects will not trigger change detection. Without this the events would
         // run inside Angular and trigger change detection as the source of the event was within the angular zone.
-        this.wrapIncoming = (callback) => this.runOutsideAngular(callback);
+        this.wrapIncoming = (callback, source) => this.runOutside(callback, source);
         /**
          * Make sure that any code that is executed outside of AG Grid is running within the Angular zone.
          * This means users can update templates and use binding without having to do anything extra.
          */
         this.wrapOutgoing = (callback) => this.runInsideAngular(callback);
+        this.isRunningWithinTestZone = window?.AG_GRID_UNDER_TEST ?? !!(window?.Zone?.AsyncTestZoneSpec);
+        if (!this._ngZone) {
+            this.runOutside = (callback) => callback();
+        }
+        else if (this.isRunningWithinTestZone) {
+            this.runOutside = (callback, source) => {
+                if (source === 'resize-observer') {
+                    // ensure resize observer callbacks are run outside of Angular even under test due to Jest not supporting ResizeObserver
+                    // which means it just loops continuously with a setTimeout with no way to flush the queue or have fixture.whenStable() resolve.
+                    return this._ngZone.runOutsideAngular(callback);
+                }
+                // When under test run inside Angular so that tests can use fixture.whenStable() to wait for async operations to complete.
+                return callback();
+            };
+        }
+        else {
+            this.runOutside = (callback) => this._ngZone.runOutsideAngular(callback);
+        }
     }
     // Only setup wrapping when the call is coming from within Angular zone, i.e from a users application code.
     // Used to distinguish between user code and AG Grid code setting up events against RowNodes and Columns
@@ -35,8 +55,8 @@ class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
         // Check for _ngZone existence as it is not present when Zoneless
         return this._ngZone ? this._ngZone.run(callback) : callback();
     }
-    runOutsideAngular(callback) {
-        return this._ngZone ? this._ngZone.runOutsideAngular(callback) : callback();
+    runOutsideAngular(callback, source) {
+        return this.runOutside(callback, source);
     }
 }
 AngularFrameworkOverrides.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.3.0", ngImport: i0, type: AngularFrameworkOverrides, deps: [{ token: i0.NgZone }], target: i0.ɵɵFactoryTarget.Injectable });
@@ -55,8 +75,10 @@ class AngularFrameworkComponentWrapper extends BaseComponentWrapper {
         let that = this;
         class DynamicAgNg2Component extends BaseGuiComponent {
             init(params) {
-                angularFrameworkOverrides.runInsideAngular(() => super.init(params));
-                this._componentRef.changeDetectorRef.detectChanges();
+                angularFrameworkOverrides.runInsideAngular(() => {
+                    super.init(params);
+                    this._componentRef.changeDetectorRef.detectChanges();
+                });
             }
             createComponent() {
                 return angularFrameworkOverrides.runInsideAngular(() => that.createComponent(OriginalConstructor));

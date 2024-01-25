@@ -732,7 +732,8 @@ let FilterManager = class FilterManager extends BeanStub {
         // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
         filterWrapper.filterPromise.then(filter => {
             const shouldRefreshFilter = (filter === null || filter === void 0 ? void 0 : filter.refresh) ? filter.refresh(Object.assign(Object.assign(Object.assign({}, this.createFilterParams(column, column.getColDef())), { filterModifiedCallback: this.filterModifiedCallbackFactory(filter, column), filterChangedCallback: this.filterChangedCallbackFactory(filter, column), doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filter, node) }), newFilterParams)) : true;
-            if (!shouldRefreshFilter) {
+            // framework wrapper always implements optional methods, but returns null if no underlying method
+            if (shouldRefreshFilter === false) {
                 this.destroyFilter(column, 'columnChanged');
             }
         });

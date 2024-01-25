@@ -67,7 +67,7 @@ var ResizeObserverService = /** @class */ (function (_super) {
         if (resizeObserverExists && !suppressResize) {
             return useBrowserResizeObserver();
         }
-        return usePolyfill();
+        return this.getFrameworkOverrides().wrapIncoming(function () { return usePolyfill(); }, 'resize-observer');
     };
     ResizeObserverService.prototype.doNextPolyfillTurn = function (func) {
         this.polyfillFunctions.push(func);

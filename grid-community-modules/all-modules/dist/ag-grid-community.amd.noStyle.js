@@ -4746,7 +4746,9 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
     }
     isColumnInRowViewport(col) {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
-        if (col.isAutoHeight()) {
+        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
+        // tests to validate all the columns.
+        if (col.isAutoHeight() || this.viewportRight === 0) {
             return true;
         }
         const columnLeft = col.getLeft() || 0;
@@ -20816,7 +20818,7 @@ class LoadingOverlayComponent extends _widgets_component_mjs__WEBPACK_IMPORTED_M
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(() => {
-                this.getGui().innerText = localeTextFunc('loadingOoo', 'Loading...');
+                this.getGui().textContent = localeTextFunc('loadingOoo', 'Loading...');
             });
         }
     }
@@ -20850,7 +20852,7 @@ class NoRowsOverlayComponent extends _widgets_component_mjs__WEBPACK_IMPORTED_MO
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(() => {
-                this.getGui().innerText = localeTextFunc('noRowsToShow', 'No Rows To Show');
+                this.getGui().textContent = localeTextFunc('noRowsToShow', 'No Rows To Show');
             });
         }
     }
@@ -23121,7 +23123,8 @@ let FilterManager = class FilterManager extends _context_beanStub_mjs__WEBPACK_I
         // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
         filterWrapper.filterPromise.then(filter => {
             const shouldRefreshFilter = (filter === null || filter === void 0 ? void 0 : filter.refresh) ? filter.refresh(Object.assign(Object.assign(Object.assign({}, this.createFilterParams(column, column.getColDef())), { filterModifiedCallback: this.filterModifiedCallbackFactory(filter, column), filterChangedCallback: this.filterChangedCallbackFactory(filter, column), doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filter, node) }), newFilterParams)) : true;
-            if (!shouldRefreshFilter) {
+            // framework wrapper always implements optional methods, but returns null if no underlying method
+            if (shouldRefreshFilter === false) {
                 this.destroyFilter(column, 'columnChanged');
             }
         });
@@ -39070,7 +39073,7 @@ let ResizeObserverService = class ResizeObserverService extends _context_beanStu
         if (resizeObserverExists && !suppressResize) {
             return useBrowserResizeObserver();
         }
-        return usePolyfill();
+        return this.getFrameworkOverrides().wrapIncoming(() => usePolyfill(), 'resize-observer');
     }
     doNextPolyfillTurn(func) {
         this.polyfillFunctions.push(func);

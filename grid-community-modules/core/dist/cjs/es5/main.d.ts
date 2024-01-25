@@ -229,7 +229,7 @@ export { IHeaderParams, IHeaderComp, IHeader } from "./headerRendering/cells/col
 export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "./headerRendering/cells/columnGroup/headerGroupComp";
 export { ColumnApi } from "./columns/columnApi";
 export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
-export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+export { IFrameworkOverrides, FrameworkOverridesIncomingSource } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams, TooltipLocation } from "./rendering/tooltipComponent";
 export { TooltipFeature } from "./widgets/tooltipFeature";

@@ -4717,7 +4717,9 @@ var ColumnModel = /** @class */ (function (_super) {
     };
     ColumnModel.prototype.isColumnInRowViewport = function (col) {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
-        if (col.isAutoHeight()) {
+        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
+        // tests to validate all the columns.
+        if (col.isAutoHeight() || this.viewportRight === 0) {
             return true;
         }
         var columnLeft = col.getLeft() || 0;
@@ -19921,7 +19923,7 @@ var LoadingOverlayComponent$1 = /** @class */ (function (_super) {
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(function () {
-                _this.getGui().innerText = localeTextFunc_1('loadingOoo', 'Loading...');
+                _this.getGui().textContent = localeTextFunc_1('loadingOoo', 'Loading...');
             });
         }
     };
@@ -19963,7 +19965,7 @@ var NoRowsOverlayComponent$1 = /** @class */ (function (_super) {
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(function () {
-                _this.getGui().innerText = localeTextFunc_1('noRowsToShow', 'No Rows To Show');
+                _this.getGui().textContent = localeTextFunc_1('noRowsToShow', 'No Rows To Show');
             });
         }
     };
@@ -24767,7 +24769,8 @@ var FilterManager = /** @class */ (function (_super) {
         // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
         filterWrapper.filterPromise.then(function (filter) {
             var shouldRefreshFilter = (filter === null || filter === void 0 ? void 0 : filter.refresh) ? filter.refresh(__assign$f(__assign$f(__assign$f({}, _this.createFilterParams(column, column.getColDef())), { filterModifiedCallback: _this.filterModifiedCallbackFactory(filter, column), filterChangedCallback: _this.filterChangedCallbackFactory(filter, column), doesRowPassOtherFilter: function (node) { return _this.doesRowPassOtherFilters(filter, node); } }), newFilterParams)) : true;
-            if (!shouldRefreshFilter) {
+            // framework wrapper always implements optional methods, but returns null if no underlying method
+            if (shouldRefreshFilter === false) {
                 _this.destroyFilter(column, 'columnChanged');
             }
         });
@@ -38676,7 +38679,7 @@ var ResizeObserverService = /** @class */ (function (_super) {
         if (resizeObserverExists && !suppressResize) {
             return useBrowserResizeObserver();
         }
-        return usePolyfill();
+        return this.getFrameworkOverrides().wrapIncoming(function () { return usePolyfill(); }, 'resize-observer');
     };
     ResizeObserverService.prototype.doNextPolyfillTurn = function (func) {
         this.polyfillFunctions.push(func);

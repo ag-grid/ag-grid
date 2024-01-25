@@ -1,4 +1,5 @@
 import { AgPromise } from "../utils";
+export declare type FrameworkOverridesIncomingSource = 'resize-observer';
 export interface IFrameworkOverrides {
     setInterval(action: any, interval?: any): AgPromise<number>;
     addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
@@ -11,7 +12,7 @@ export interface IFrameworkOverrides {
      * Before events are returned to the user, those functions are wrapped in Angular's zone
      * again so that the user's code triggers change detection as normal. See wrapOutgoing() below.
      */
-    wrapIncoming: <T>(callback: () => T) => T;
+    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T;
     /**
      * This method is to cater for Angular's change detection.
      * This is currently used for events that the user provides either via the component or via registration with the grid api.

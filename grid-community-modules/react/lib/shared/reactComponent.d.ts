@@ -17,7 +17,8 @@ export declare class ReactComponent implements IComponent<any>, WrappableInterfa
     private params;
     protected instanceCreated: AgPromise<boolean>;
     private resolveInstanceCreated?;
-    constructor(reactComponent: any, portalManager: PortalManager, componentType: ComponentType);
+    private suppressFallbackMethods;
+    constructor(reactComponent: any, portalManager: PortalManager, componentType: ComponentType, suppressFallbackMethods?: boolean);
     getGui(): HTMLElement;
     destroy(): void;
     protected createParentElement(params: any): HTMLElement;

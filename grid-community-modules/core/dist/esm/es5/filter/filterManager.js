@@ -787,7 +787,8 @@ var FilterManager = /** @class */ (function (_super) {
         // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
         filterWrapper.filterPromise.then(function (filter) {
             var shouldRefreshFilter = (filter === null || filter === void 0 ? void 0 : filter.refresh) ? filter.refresh(__assign(__assign(__assign({}, _this.createFilterParams(column, column.getColDef())), { filterModifiedCallback: _this.filterModifiedCallbackFactory(filter, column), filterChangedCallback: _this.filterChangedCallbackFactory(filter, column), doesRowPassOtherFilter: function (node) { return _this.doesRowPassOtherFilters(filter, node); } }), newFilterParams)) : true;
-            if (!shouldRefreshFilter) {
+            // framework wrapper always implements optional methods, but returns null if no underlying method
+            if (shouldRefreshFilter === false) {
                 _this.destroyFilter(column, 'columnChanged');
             }
         });

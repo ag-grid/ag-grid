@@ -49,7 +49,7 @@ let ResizeObserverService = class ResizeObserverService extends BeanStub {
         if (resizeObserverExists && !suppressResize) {
             return useBrowserResizeObserver();
         }
-        return usePolyfill();
+        return this.getFrameworkOverrides().wrapIncoming(() => usePolyfill(), 'resize-observer');
     }
     doNextPolyfillTurn(func) {
         this.polyfillFunctions.push(func);

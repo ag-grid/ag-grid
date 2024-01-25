@@ -5,12 +5,13 @@ import generateNewKey from './keyGenerator.mjs';
 import { createPortal } from 'react-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 export class ReactComponent {
-    constructor(reactComponent, portalManager, componentType) {
+    constructor(reactComponent, portalManager, componentType, suppressFallbackMethods) {
         this.portal = null;
         this.oldPortal = null;
         this.reactComponent = reactComponent;
         this.portalManager = portalManager;
         this.componentType = componentType;
+        this.suppressFallbackMethods = !!suppressFallbackMethods;
         this.statelessComponent = this.isStateless(this.reactComponent);
         this.key = generateNewKey();
         this.portalKey = generateNewKey();
@@ -172,11 +173,14 @@ export class ReactComponent {
     }
     fallbackMethod(name, params) {
         const method = this[`${name}Component`];
-        if (!!method) {
+        if (!this.suppressFallbackMethods && !!method) {
             return method.bind(this)(params);
         }
     }
     fallbackMethodAvailable(name) {
+        if (this.suppressFallbackMethods) {
+            return false;
+        }
         const method = this[`${name}Component`];
         return !!method;
     }

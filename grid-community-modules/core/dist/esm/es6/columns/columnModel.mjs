@@ -667,7 +667,9 @@ let ColumnModel = class ColumnModel extends BeanStub {
     }
     isColumnInRowViewport(col) {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
-        if (col.isAutoHeight()) {
+        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
+        // tests to validate all the columns.
+        if (col.isAutoHeight() || this.viewportRight === 0) {
             return true;
         }
         const columnLeft = col.getLeft() || 0;

@@ -201,7 +201,9 @@ var ReactFrameworkComponentWrapper = /** @class */ (function (_super) {
                 return new ComponentClass(UserReactComponent, this.parent, componentType);
             }
         }
-        return new reactComponent_1.ReactComponent(UserReactComponent, this.parent, componentType);
+        // only cell renderers and tool panel should use fallback methods
+        var suppressFallbackMethods = !componentType.cellRenderer && componentType.propertyName !== 'toolPanel';
+        return new reactComponent_1.ReactComponent(UserReactComponent, this.parent, componentType, suppressFallbackMethods);
     };
     return ReactFrameworkComponentWrapper;
 }(ag_grid_community_1.BaseComponentWrapper));

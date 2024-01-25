@@ -36,7 +36,7 @@ var LoadingOverlayComponent = /** @class */ (function (_super) {
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(function () {
-                _this.getGui().innerText = localeTextFunc_1('loadingOoo', 'Loading...');
+                _this.getGui().textContent = localeTextFunc_1('loadingOoo', 'Loading...');
             });
         }
     };
