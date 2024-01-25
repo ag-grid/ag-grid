@@ -402,6 +402,281 @@ When you run your application, you should see a basic grid with three rows. To s
 
 <note>To live-edit the code, open the example in CodeSandbox or Plunkr using the buttons to the lower-right.</note>
 
+<framework-specific-section frameworks="react">
+
+## Key Concepts
+
+Now that you have a basic grid running, let's explore some of the key concepts. This guide will give you an introduction to 80% of the AG Grid features you will use on a daily basis! 
+
+### Showing Data
+
+The `field` or `valueGetter` attributes map data to columns. A [Value Getter](../value-getters/) is for more complex cases such as executing expressions on the data before display.
+
+<snippet transform={false} language="jsx">
+|  const [rowData, setRowData] = useState([
+|    { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+|  ]);
+|
+| const price1000ValueGetter = (params) => {
+|   // multiply the price by 1000
+|   return params.data.price * 1000;
+| };
+|
+| const [colDefs, setColDefs] = useState([
+|    { field: "make" },
+|    { field: "model" },
+|    { headerName: "price", valueGetter: price1000ValueGetter },
+|    { field: "electric" }
+|  ]);
+</snippet>
+
+The field value is the default header name of the column, override this with `headerName`.
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    // ...
+|    { field: "model", headerName: "Type" },
+|    // ...
+|  ]);
+</snippet>
+
+Format cell content using a [Value Formatter](../value-formatters/):
+
+<snippet transform={false} language="jsx">
+| const currencyFormatter = (params) => {
+|   return '£' + formatNumber(params.value);
+| };
+|
+| const [colDefs, setColDefs] = useState([
+|    // ...
+|    { field: "price", valueGetter: currencyFormatter },
+|    // ...
+|  ]);
+</snippet>
+
+Add buttons, checkboxes or images to cells with a [Cell Renderer](../cell-rendering/):
+
+<snippet transform={false} language="jsx">
+| const CustomButtonComponent = (props) => {
+|    return &lt;button onClick={() => {}}>Button&lt;/button>;
+|  };
+|
+| const [colDefs, setColDefs] = useState([
+|    // ...
+|    { field: "button", cellRenderer: CustomButtonComponent },
+|    // ...
+|  ]);
+</snippet>
+
+Columns resizing is enabled by default. Assign `flex` values to allow columns to take up proportional space in the grid:
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    { field: "make", flex: 2 }, //This column will be twice as wide as the others
+|    { field: "model", flex: 1 },
+|    { field: "price", flex: 1 },
+|    { field: "electric", flex: 1 }
+|  ]);
+</snippet>
+
+### Working with Data
+
+[Cell Data Types](../cell-data-types/) are inferred from the `rowData` but can also be set to one of the pre-defined cell data types: `text`, `number`, `boolean`, `date`, `dateString` and `object`.
+These allow different grid features to work without additional configuration. 
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    { field: "make", cellDataType: 'text' },
+|    { field: "model", cellDataType: 'text' },
+|    { field: "price", cellDataType: 'number' },
+|    { field: "electric", cellDataType: 'boolean' }
+|  ]);
+</snippet>
+
+A [Quick Filter](../filter-quick/) applies to all the rows in the grid. To filter depending on column data use [Column Filters](../filtering/). These are set using the column menu.
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    // ...
+|    { field: "make", filter: 'agTextColumnFilter' },
+|    { field: "price", filter: 'agNumberColumnFilter' },
+|    // ...
+|  ]);
+</snippet>
+
+Multiple filters are applied using a [Multi Filter](../filter-multi/):
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    // ...
+|    { field: "make", filter: 'agMultiColumnFilter' },
+|    // ...
+|  ]);
+</snippet>
+
+[Floating Filters](../floating-filters/) display and change the state of the column filter without using the column menu:
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    // ...
+|    { field: "make", filter: 'agTextColumnFilter', floatingFilter: true },
+|    // ...
+|  ]);
+</snippet>
+
+Enable editing by set the `editable` attribute to `true`. This uses the default [Cell Editor](../cell-editing/) for the cell data type:
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    // ...
+|    { field: "make", editable: true },
+|    // ...
+|  ]);
+</snippet>
+
+Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](../provided-cell-editors/) which can be set through this attribute.
+These are configured with the `cellEditorParams` attribute.
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    {
+|        cellEditor: 'agSelectCellEditor',
+|        cellEditorParams: {
+|            values: ['Tesla', 'Ford', 'Toyota'],
+|        },
+|    },
+|    // ...
+|  ]);
+</snippet>
+
+[Row Sorting](../row-sorting/) is enabled by default. Configure custom sorting using the `comparator` attribute:
+
+<snippet transform={false} language="jsx">
+| //Sorts months into date order
+| const monthComparator = (valueA, valueB) => {
+|    const months = [
+|      'January', 'February', 'March', 'April',
+|      'May', 'June', 'July', 'August',
+|      'September', 'October', 'November', 'December',
+|    ];
+|    const idxA = months.indexOf(valueA);
+|    const idxB = months.indexOf(valueB);
+|    return idxA - idxB;
+|  };
+|
+| const [colDefs, setColDefs] = useState([
+|   // ...
+|   { field: "month", comparator: monthComparator },
+|   // ...
+|  ]);
+</snippet>
+
+### Changing the look
+
+Apply a [Theme](../themes/) as a class to the grid's container element to style the grid:
+
+<snippet transform={false} language="jsx">
+|return (
+|  // Container
+|  &lt;div id="myGrid" class="ag-theme-quartz">
+|    {/* The AG Grid component */}
+|    &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
+|  &lt;/div>
+|)
+</snippet>
+
+Customise themes using CSS variables:
+
+<snippet transform={false} language="jsx">
+|.ag-theme-quartz {
+|    --ag-foreground-color: rgb(126, 46, 132); // Changes the color of the grid text
+|}
+</snippet>
+
+If you are designing within Figma, you can use the [AG Grid Design System](../ag-grid-design-system/) to replicate Alpine and Alpine Dark AG Grid themes within Figma.These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid themes.
+
+Define rules to apply styling to cells and rows using `cellClassRules` and `rowClassRules`:
+
+<snippet transform={false} language="jsx">
+|const [colDefs, setColDefs] = useState([
+|    // ...
+|    {
+|        field: 'electric',
+|        cellClassRules: {
+|            // apply green to electric cars
+|            'rag-green-outer': params => params.value === true,
+|        }
+|    }
+|    // ...
+|]);
+|
+|const rowClassRules = {
+|     // apply red to Ford cars
+|     'rag-red-outer': function(params) { return params.data.electric === 'Ford'; },
+| };
+|
+|&lt;AgGridReact rowClassRules={rowClassRules}  />
+</snippet>
+
+Change the [Row Height](../row-height/) to any positive number or set the row height based on cell content using `autoHeight`:
+
+<snippet transform={false} language="jsx">
+|const rowHeight = 50;
+|
+| const [colDefs, setColDefs] = useState([
+|    // ...
+|    // Without wrapText, autoHeight cell contents will display on one line
+|    { field: "make", wrapText: true, autoHeight: true },
+|    // ...
+|  ]);
+|
+|&lt;AgGridReact rowHeight={rowHeight} columnDefs={colDefs} />
+</snippet>
+
+Enable [Pagination](../row-pagination/) by setting `pagination` to be true:
+
+<snippet transform={false} language="jsx">
+|&lt;AgGridReact pagination={true} />
+</snippet>
+
+<!-- To [Pin a Column](../column-pinning/), use the `pinned` attribute:
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    // ...
+|    { field: "make", pinned: "left" },
+|    // ...
+|  ]);
+</snippet> -->
+
+<!-- You can define [Pinned Rows](../row-pinning/) by setting either `pinnedTopRowData` or `pinnedBottomRowData` in the same way you set `rowData`:
+
+<snippet transform={false} language="jsx">
+|const pinnedTopRowData = useMemo(() => {
+|    return [ { make: "Tesla", model: "Model Y", price: 64950, electric: true } ];
+|  }, []);
+|
+|&lt;AgGridReact pinnedTopRowData={pinnedTopRowData} />
+</snippet> -->
+
+<!-- Define a [Column Group](../column-groups/) using the `children` property:
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    {
+|       headerName: "model",
+|       children: [
+|           { field: 'model' },
+|           { field: 'price' },
+|           { field: 'electric' },
+|       ]
+|   },
+|    // ...
+|  ]);
+</snippet> -->
+
+</framework-specific-section>
+
 ## Next Steps
 
 - Read our [Introductory Tutorial](/deep-dive/).
