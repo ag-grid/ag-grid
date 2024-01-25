@@ -35,7 +35,7 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(() => {
-                this.getGui().innerText = localeTextFunc('loadingOoo', 'Loading...');
+                this.getGui().textContent = localeTextFunc('loadingOoo', 'Loading...');
             });
         }
     }
