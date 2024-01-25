@@ -6,11 +6,12 @@ import { Column } from "../entities/column";
 import { ContainerType } from "../interfaces/iAfterGuiAttachedParams";
 import { RowNode } from "../entities/rowNode";
 
-interface BaseShowMenuParams {
-    column: Column,
+interface BaseShowColumnMenuParams {
+    column?: Column,
 }
 
-interface BaseShowFilterMenuParams extends BaseShowMenuParams {
+interface BaseShowFilterMenuParams {
+    column: Column,
     containerType: ContainerType;
 }
 
@@ -26,7 +27,7 @@ function isButtonShowMenuParams(params: (ButtonShowMenuParams | MouseShowMenuPar
     return !!(params as ButtonShowMenuParams).buttonElement;
 }
 
-export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams) & BaseShowMenuParams;
+export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams) & BaseShowColumnMenuParams;
 
 export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams) & BaseShowFilterMenuParams;
 
@@ -84,7 +85,7 @@ export class MenuService extends BeanStub {
         }
     }
 
-    public showHeaderContextMenu(column: Column, mouseEvent?: MouseEvent, touchEvent?: TouchEvent): void {
+    public showHeaderContextMenu(column: Column | undefined, mouseEvent?: MouseEvent, touchEvent?: TouchEvent): void {
         this.activeMenuFactory.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
     }
 

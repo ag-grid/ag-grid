@@ -19,7 +19,7 @@ export class MenuUtils extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     public restoreFocusOnClose(
-        column: Column,
+        column: Column | undefined,
         component: BeanStub,
         headerPosition: HeaderPosition | null,
         columnIndex: number,

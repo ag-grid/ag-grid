@@ -28,7 +28,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         }
     }
 
-    public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch, containerType: ContainerType): void {
+    public showMenuAfterMouseEvent(column: Column | undefined, mouseEvent: MouseEvent | Touch, containerType: ContainerType): void {
         this.showPopup(column, eMenu => {
             this.popupService.positionPopupUnderMouseEvent({
                 column,
@@ -39,7 +39,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         }, containerType, mouseEvent.target as HTMLElement);
     }
 
-    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType): void {
+    public showMenuAfterButtonClick(column: Column | undefined, eventSource: HTMLElement, containerType: ContainerType): void {
         this.showPopup(column, eMenu => {
             this.popupService.positionPopupByComponent({
                 type: containerType,
@@ -52,9 +52,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         }, containerType, eventSource);
     }
 
-    private showPopup(column: Column, positionCallback: (eMenu: HTMLElement) => void, containerType: ContainerType, eventSource: HTMLElement): void {
-        const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
-        if (!filterWrapper) {
+    private showPopup(column: Column | undefined, positionCallback: (eMenu: HTMLElement) => void, containerType: ContainerType, eventSource: HTMLElement): void {
+        const filterWrapper =  column ? this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU') : undefined;
+        if (!filterWrapper || !column) {
             throw new Error('AG Grid - unable to show popup filter, filter instantiation failed');
         }
 

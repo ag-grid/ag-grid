@@ -239,7 +239,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
             event.preventDefault();
         }
         if (menuEnabled && column.getMenuParams()?.enableHeaderContextMenu) {
-            this.menuService.showHeaderContextMenu(column instanceof Column ? column : (null as any), mouseEvent, touchEvent);
+            this.menuService.showHeaderContextMenu(column instanceof Column ? column : undefined, mouseEvent, touchEvent);
         }
 
         this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CONTEXT_MENU, column);

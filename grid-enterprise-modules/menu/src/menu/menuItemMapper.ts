@@ -273,7 +273,7 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('columnFilter', 'Column Filter'),
                         icon: _.createIconNoSpan('filter', this.gridOptionsService, null),
                         action: () => this.menuService.showFilterMenu({
-                            column: column!, buttonElement: sourceElement(), containerType: 'columnFilter'
+                            column, buttonElement: sourceElement(), containerType: 'columnFilter'
                         })
                     };
                 } else {

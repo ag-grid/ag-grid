@@ -21,11 +21,11 @@ export class ColumnMenuFactory extends BeanStub {
 
     private static MENU_ITEM_SEPARATOR = 'separator';
 
-    public createMenu(parent: BeanStub, column: Column, sourceElement: () => HTMLElement): AgMenuList {
+    public createMenu(parent: BeanStub, column: Column | undefined, sourceElement: () => HTMLElement): AgMenuList {
         const menuList = parent.createManagedBean(new AgMenuList());
 
         const menuItems = this.getMenuItems(column);
-        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, column, sourceElement);
+        const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, column ?? null, sourceElement);
 
         menuList.addMenuItems(menuItemsMapped);
 
