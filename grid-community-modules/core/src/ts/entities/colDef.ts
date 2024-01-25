@@ -56,6 +56,8 @@ export interface AbstractColDef<TData = any, TValue = any> {
      * @default 'gridcell'
      */
     cellAriaRole?: string;
+
+    menuParams?: MenuParams;
 }
 
 /** Configuration options for column groups in AG Grid.  */
@@ -757,6 +759,15 @@ export interface ColumnsMenuParams {
     contractColumnSelection?: boolean;
     /** Custom Columns Panel layout */
     columnLayout?: (ColDef | ColGroupDef)[];
+}
+
+export interface MenuParams {
+    enableNewFormat?: boolean;
+    suppressHeaderFilterActive?: boolean;
+    enableHeaderFilterButton?: boolean;
+    suppressHeaderMenuButton?: boolean;
+    enableHeaderContextMenu?: boolean;
+    enableFloatingFilterActive?: boolean;
 }
 
 export interface BaseColDefParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {

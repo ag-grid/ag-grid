@@ -341,6 +341,7 @@
     }
 
     .ag-header-cell-menu-button,
+    .ag-header-cell-filter-button,
     .ag-panel-title-bar-button,
     .ag-header-expand-icon,
     .ag-column-group-icons,
@@ -363,6 +364,13 @@
             box-shadow: 0 0 0 4px var(--ag-quartz-icon-hover-color);
             cursor: pointer;
         }
+    }
+
+    .ag-filter-active {
+        --ag-quartz-icon-active-color: color-mix(in srgb, transparent, var(--ag-active-color) 10%);
+        border-radius: 1px;
+        background-color: var(--ag-quartz-icon-active-color);
+        box-shadow: 0 0 0 4px var(--ag-quartz-icon-active-color);
     }
 
     .ag-chart-menu-close {

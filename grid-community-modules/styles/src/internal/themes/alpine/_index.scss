@@ -186,6 +186,7 @@
     }
 
     .ag-header-cell-menu-button,
+    .ag-header-cell-filter-button,
     .ag-side-button-button,
     .ag-tab,
     .ag-panel-title-bar-button,
@@ -205,6 +206,10 @@
         &:hover {
             color: var(--ag-alpine-active-color);
         }
+    }
+
+    .ag-filter-active {
+        color: var(--ag-alpine-active-color);
     }
 
     .ag-chart-menu-close {

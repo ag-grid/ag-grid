@@ -359,14 +359,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** 
          * @initial
          */
-    @Input() public enableNewColumnMenu: boolean | undefined = undefined;
-    /** 
-         */
-    @Input() public enableColumnContextMenu: boolean | undefined = undefined;
-    /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component.
-         * @default false
-         * @initial
-         */
     @Input() public enableBrowserTooltips: boolean | undefined = undefined;
     /** The trigger that will cause tooltips to show and hide.
          *  - `hover` - The tooltip will show/hide when a cell/header is hovered.
@@ -1954,7 +1946,5 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_masterDetail: boolean | null | '';
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
-    static ngAcceptInputType_enableNewColumnMenu: boolean | null | '';
-    static ngAcceptInputType_enableColumnMenuAsContextMenu: boolean | null | '';
     // @END@
 }

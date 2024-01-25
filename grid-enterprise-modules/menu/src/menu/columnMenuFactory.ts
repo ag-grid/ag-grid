@@ -57,7 +57,9 @@ export class ColumnMenuFactory extends BeanStub {
     private getDefaultMenuOptions(column?: Column): string[] {
         const result: string[] = [];
 
-        if (this.gridOptionsService.get('enableNewColumnMenu')) {
+        const enableNewFormat = column?.getMenuParams()?.enableNewFormat;
+
+        if (enableNewFormat) {
             result.push('columnChooser');
             result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
         }
@@ -88,7 +90,7 @@ export class ColumnMenuFactory extends BeanStub {
             || !isPrimary;
 
         if (
-            this.gridOptionsService.get('enableNewColumnMenu') &&
+            enableNewFormat &&
             this.filterManager.isFilterAllowed(column) &&
             !column.getColDef().floatingFilter
         ) {

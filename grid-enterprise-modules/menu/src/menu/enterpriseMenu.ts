@@ -207,7 +207,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ): (EnterpriseColumnMenu & BeanStub) {
-        if (this.gridOptionsService.get('enableNewColumnMenu')) {
+        if (column?.getMenuParams()?.enableNewFormat) {
             return this.createBean(new ColumnContextMenu(column, eventSource));
         } else {
             return this.createBean(new TabbedColumnMenu(column, this.lastSelectedTab, restrictToTabs, eventSource));
@@ -215,7 +215,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public isMenuEnabled(column: Column): boolean {
-        if (this.gridOptionsService.get('enableNewColumnMenu')) {
+        if (column?.getMenuParams()?.enableNewFormat) {
             return true;
         }
         // Determine whether there are any tabs to show in the menu, given that the filter tab may be hidden

@@ -270,7 +270,7 @@ export class MenuItemMapper extends BeanStub {
             case 'chartRange':
                 return this.chartMenuItemMapper.getChartItems(key) ?? null;
             case 'columnFilter':
-                if (this.gridOptionsService.get('enableNewColumnMenu')) {
+                if (column?.getMenuParams()?.enableNewFormat) {
                     return {
                         name: localeTextFunc('columnFilter', 'Column Filter'),
                         icon: _.createIconNoSpan('filter', this.gridOptionsService, null),
@@ -282,7 +282,7 @@ export class MenuItemMapper extends BeanStub {
                     return null;
                 }
             case 'columnChooser':
-                if (this.gridOptionsService.get('enableNewColumnMenu') && ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId())) {
+                if (column?.getMenuParams()?.enableNewFormat && ModuleRegistry.__isRegistered(ModuleNames.ColumnsToolPanelModule, this.context.getGridId())) {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _.createIconNoSpan('columns', this.gridOptionsService, null),

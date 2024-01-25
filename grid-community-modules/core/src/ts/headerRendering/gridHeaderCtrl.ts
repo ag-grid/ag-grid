@@ -178,15 +178,16 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
-        if (!this.gridOptionsService.get('enableColumnContextMenu') || (!mouseEvent && !touchEvent)) { return; }
-
-        const event = (mouseEvent ?? touchEvent)!;
-        event.preventDefault();
+        if ((!mouseEvent && !touchEvent) || !this.gridOptionsService.get('defaultColDef')?.menuParams?.enableHeaderContextMenu) { return; }
 
         const { target } = (mouseEvent ?? touch)!;
 
         if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl().getViewport()) {
-            this.menuService.showColumnMenuAfterMouseClick(null as any, mouseEvent ?? touch!);
+            const menuDisplayed = this.menuService.showColumnMenuAfterMouseClick(null as any, mouseEvent ?? touch!);
+            if (menuDisplayed) {
+                const event = (mouseEvent ?? touchEvent)!;
+                event.preventDefault();
+            }
         }
     }
 }

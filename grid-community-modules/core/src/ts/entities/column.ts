@@ -17,7 +17,7 @@ import {
     AbstractColDef,
     BaseColDefParams,
     ColDef,
-    ColSpanParams, ColumnFunctionCallbackParams, ColumnMenuTab, IAggFunc, RowSpanParams, SortDirection
+    ColSpanParams, ColumnFunctionCallbackParams, ColumnMenuTab, IAggFunc, MenuParams, RowSpanParams, SortDirection
 } from "./colDef";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
@@ -837,6 +837,10 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         }
 
         return menuTabs;
+    }
+
+    public getMenuParams(): MenuParams | undefined {
+        return this.colDef.menuParams;
     }
 
     private dispatchStateUpdatedEvent(key: keyof ColumnState): void {

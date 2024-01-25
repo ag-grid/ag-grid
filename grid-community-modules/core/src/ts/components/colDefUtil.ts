@@ -137,6 +137,7 @@ export class ColDefUtil {
         suppressSpanHeaderHeight: undefined,
         useValueFormatterForExport: undefined,
         useValueParserForImport: undefined,
+        menuParams: undefined,
     };
 
     public static ALL_PROPERTIES: ColKey[] = Object.keys(ColDefUtil.ColDefPropertyMap) as ColKey[];

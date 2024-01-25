@@ -79,6 +79,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private static TEMPLATE = /* html */
         `<div class="ag-cell-label-container" role="presentation">
             <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+            <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button" aria-hidden="true"></span>
             <div ref="eLabel" class="ag-header-cell-label" role="presentation">
                 <span ref="eText" class="ag-header-cell-text"></span>
                 <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
@@ -91,6 +92,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     @Autowired('columnModel')  private readonly  columnModel: ColumnModel;
 
     @RefSelector('eFilter') private eFilter: HTMLElement;
+    @RefSelector('eFilterButton') private eFilterButton: HTMLElement;
     @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
     @RefSelector('eMenu') private eMenu: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
@@ -154,10 +156,10 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.currentTemplate = this.workOutTemplate();
         this.setTemplate(this.currentTemplate);
         this.setupTap();
-        this.setupIcons(params.column);
         this.setMenu();
         this.setupSort();
         this.setupFilterIcon();
+        this.setupFilterButton();
         this.setDisplayName(params);
     }
 
@@ -169,11 +171,6 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.eText.textContent = displayNameSanitised!;
             }
         }
-    }
-
-    private setupIcons(column: Column): void {
-        this.addInIcon('menu', this.eMenu, column);
-        this.addInIcon('filter', this.eFilter, column);
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
@@ -226,6 +223,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutShowMenu(): boolean {
+        if (this.params.column.getMenuParams()?.suppressHeaderMenuButton) {
+            return false;
+        }
         // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device/
         // However if suppressMenuHide is set to true the menu will be displayed alwasys, so it's ok
         // to show it on iPad in this case (as hover isn't needed). If suppressMenuHide
@@ -253,6 +253,8 @@ export class HeaderComp extends Component implements IHeaderComp {
             removeFromParent(this.eMenu);
             return;
         }
+
+        this.addInIcon('menu', this.eMenu, this.params.column);
 
         this.currentSuppressMenuHide = this.shouldSuppressMenuHide();
         this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
@@ -342,15 +344,47 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupFilterIcon(): void {
-
         if (!this.eFilter) { return; }
-
-        this.addManagedListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.onFilterChanged();
+        this.configureFilter(!this.params.column.getMenuParams()?.suppressHeaderFilterActive, this.eFilter, this.onFilterChangedIcon.bind(this));
     }
 
-    private onFilterChanged(): void {
+    private setupFilterButton(): void {
+        const { column } = this.params;
+        const configured = this.configureFilter(
+            !!column.getMenuParams()?.enableHeaderFilterButton,
+            this.eFilterButton,
+            this.onFilterChangedButton.bind(this)
+        );
+        if (configured) {
+            this.addManagedListener(this.eFilterButton, 'click', () => this.menuService.showFilterMenu({
+                column,
+                buttonElement: this.eFilterButton,
+                containerType: 'columnFilter'
+            }));
+        }
+    }
+
+    private configureFilter(enabled: boolean, element: HTMLElement, filterChangedCallback: () => void): boolean {
+        if (!enabled) {
+            removeFromParent(element);
+            return false;
+        }
+
+        const { column } = this.params;
+        this.addInIcon('filter', element, column);
+
+        this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, filterChangedCallback);
+        filterChangedCallback();
+        return true;
+    }
+
+    private onFilterChangedIcon(): void {
         const filterPresent = this.params.column.isFilterActive();
         setDisplayed(this.eFilter, filterPresent, { skipAriaHidden: true });
+    }
+
+    private onFilterChangedButton(): void {
+        const filterPresent = this.params.column.isFilterActive();
+        this.eFilterButton.classList.toggle('ag-filter-active', filterPresent);
     }
 }

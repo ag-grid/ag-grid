@@ -10,8 +10,6 @@ import {
 import { Column } from "../../../entities/column";
 import {
     ColumnEventType,
-    ColumnHeaderClickedEvent,
-    ColumnHeaderContextMenuEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
     Events
@@ -191,8 +189,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
 
     private addHeaderMouseListeners(): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
-        const clickListener = (event: MouseEvent) => this.handleColumnClick(event, false);
-        const contextMenuListener = (event: MouseEvent) => this.handleColumnClick(event, true);
+        const clickListener = (event: MouseEvent) => this.handleColumnClick(event, false, this.column.getProvidedColumnGroup(), true);
+        const contextMenuListener = (event: MouseEvent) => this.handleColumnClick(event, true, this.column.getProvidedColumnGroup(), true);
 
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
@@ -206,23 +204,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE;
 
         const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
-            type: eventType,
-            column: this.column.getProvidedColumnGroup(),
-        };
-
-        this.eventService.dispatchEvent(event);
-    }
-
-    private handleColumnClick(mouseEvent: MouseEvent, isContextMenuEvent: boolean): void {
-        const eventType = isContextMenuEvent ?
-            Events.EVENT_COLUMN_HEADER_CONTEXT_MENU :
-            Events.EVENT_COLUMN_HEADER_CLICKED;
-
-        if (isContextMenuEvent && this.gridOptionsService.get('preventDefaultOnContextMenu')) {
-            mouseEvent.preventDefault();
-        }
-
-        const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
             type: eventType,
             column: this.column.getProvidedColumnGroup(),
         };

@@ -1,5 +1,5 @@
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
-import { ColGroupDef } from "./colDef";
+import { ColGroupDef, MenuParams } from "./colDef";
 import { ColumnGroupShowType } from "./columnGroup";
 import { Column, getNextColInstanceId } from "./column";
 import { EventService } from "../eventService";
@@ -211,6 +211,10 @@ export class ProvidedColumnGroup implements IProvidedColumn, IEventEmitter {
             };
             this.localEventService.dispatchEvent(event);
         }
+    }
+
+    public getMenuParams(): MenuParams | undefined {
+        return this.colGroupDef?.menuParams;
     }
 
     private findChildrenRemovingPadding(): IProvidedColumn[] {

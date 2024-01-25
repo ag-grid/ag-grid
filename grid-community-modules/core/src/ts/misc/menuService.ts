@@ -38,12 +38,10 @@ export class MenuService extends BeanStub {
     @Optional('contextMenuFactory') private readonly contextMenuFactory: IContextMenuFactory;
 
     private activeMenuFactory: IMenuFactory;
-    private useTabs: boolean;
 
     @PostConstruct
     private postConstruct(): void {
         this.activeMenuFactory = this.tabbedMenuFactory ?? this.filterMenuFactory;
-        this.useTabs = !this.gridOptionsService.get('enableNewColumnMenu');
     }
 
     public showColumnMenu(params: ShowColumnMenuParams): void {
@@ -57,12 +55,13 @@ export class MenuService extends BeanStub {
     }
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
-        const menuFactory: IMenuFactory = this.useTabs ? this.tabbedMenuFactory : this.filterMenuFactory;
+        const { column } = params;
+        const menuFactory: IMenuFactory = !column.getMenuParams()?.enableNewFormat ? this.tabbedMenuFactory : this.filterMenuFactory;
         if (isButtonShowMenuParams(params)) {
-            const { column, buttonElement, containerType } = params;
+            const { buttonElement, containerType } = params;
             menuFactory.showMenuAfterButtonClick(column, buttonElement, containerType ?? 'columnMenu', 'filterMenuTab', ['filterMenuTab']);
         } else {
-            const { column, mouseEvent } = params;
+            const { mouseEvent } = params;
             menuFactory.showMenuAfterMouseEvent(column, mouseEvent, 'filterMenuTab', ['filterMenuTab']);
         }
     }
