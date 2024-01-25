@@ -18,8 +18,10 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapp
         let that = this;
         class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrappableInterface {
             init(params: any): void {
-                angularFrameworkOverrides.runInsideAngular(() => super.init(params));
-                this._componentRef.changeDetectorRef.detectChanges();
+                angularFrameworkOverrides.runInsideAngular(() => {
+                    super.init(params);
+                    this._componentRef.changeDetectorRef.detectChanges();
+                });
             }
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
