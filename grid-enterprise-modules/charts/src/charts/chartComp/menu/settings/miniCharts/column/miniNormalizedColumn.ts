@@ -1,3 +1,4 @@
+import { ThemeTemplateParameters } from "../../miniChartsContainer";
 import { MiniStackedColumn } from "./miniStackedColumn";
 import { ChartType } from "@ag-grid-community/core";
 
@@ -10,7 +11,7 @@ export class MiniNormalizedColumn extends MiniStackedColumn {
         [2, 4, 6]
     ];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters) {
+        super(container, fills, strokes, themeTemplateParameters, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip");
     }
 }
