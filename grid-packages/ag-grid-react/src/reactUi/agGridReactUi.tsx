@@ -204,7 +204,9 @@ class ReactFrameworkComponentWrapper
                 return new ComponentClass(UserReactComponent, this.parent, componentType);
             }
         }
-        return new ReactComponent(UserReactComponent, this.parent, componentType);
+        // only cell renderers and tool panel should use fallback methods
+        const suppressFallbackMethods = !componentType.cellRenderer && componentType.propertyName !== 'toolPanel';
+        return new ReactComponent(UserReactComponent, this.parent, componentType, suppressFallbackMethods);
     }
 }
 
