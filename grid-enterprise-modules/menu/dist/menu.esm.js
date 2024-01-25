@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/menu - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.2
+          * @ag-grid-enterprise/menu - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.3
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -49035,7 +49035,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.0.2
+ * @version v31.0.3
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -49500,7 +49500,7 @@ class LicenseManager {
         this.watermarkMessage = "License Expired";
     }
 }
-LicenseManager.RELEASE_INFORMATION = 'MTcwNTIyNzE3MTAzNg==';
+LicenseManager.RELEASE_INFORMATION = 'MTcwNjE5NzMxMzM3Mg==';
 
 var __decorate$z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -49569,7 +49569,7 @@ __decorate$y([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$4 = '31.0.2';
+const VERSION$4 = '31.0.3';
 
 const EnterpriseCoreModule = {
     version: VERSION$4,
@@ -53948,7 +53948,7 @@ FilterAggregatesStage = __decorate$g([
 ], FilterAggregatesStage);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$3 = '31.0.2';
+const VERSION$3 = '31.0.3';
 
 var __decorate$f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -55606,7 +55606,7 @@ ToolPanelColDefService = __decorate$6([
 ], ToolPanelColDefService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '31.0.2';
+const VERSION$2 = '31.0.3';
 
 var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -55864,7 +55864,7 @@ ModelItemUtils = __decorate$4([
 ], ModelItemUtils);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.0.2';
+const VERSION$1 = '31.0.3';
 
 ({
     version: VERSION$1,
@@ -56900,7 +56900,7 @@ MenuItemMapper = __decorate$1([
 ], MenuItemMapper);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.0.2';
+const VERSION = '31.0.3';
 
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;

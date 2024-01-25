@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.0.2
+// @ag-grid-community/react v31.0.3
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext.mjs';
 import { GridHeaderCtrl, } from '@ag-grid-community/core';

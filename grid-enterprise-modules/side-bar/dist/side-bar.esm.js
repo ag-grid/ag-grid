@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/side-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.2
+          * @ag-grid-enterprise/side-bar - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.3
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -49035,7 +49035,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.0.2
+ * @version v31.0.3
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -49500,7 +49500,7 @@ class LicenseManager {
         this.watermarkMessage = "License Expired";
     }
 }
-LicenseManager.RELEASE_INFORMATION = 'MTcwNTIyNzE3MTAzNg==';
+LicenseManager.RELEASE_INFORMATION = 'MTcwNjE5NzMxMzM3Mg==';
 
 var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -49569,7 +49569,7 @@ __decorate$7([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.0.2';
+const VERSION$1 = '31.0.3';
 
 const EnterpriseCoreModule = {
     version: VERSION$1,
@@ -50467,7 +50467,7 @@ ToolPanelColDefService = __decorate$1([
 ], ToolPanelColDefService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.0.2';
+const VERSION = '31.0.3';
 
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;

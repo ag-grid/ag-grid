@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.0.2
+// @ag-grid-community/react v31.0.3
 import { useCallback, useContext, useEffect } from 'react';
 import { BeansContext } from '../beansContext.mjs';
 const useJsCellRenderer = (showDetails, showTools, eCellValue, cellValueVersion, jsCellRendererRef, eGui) => {

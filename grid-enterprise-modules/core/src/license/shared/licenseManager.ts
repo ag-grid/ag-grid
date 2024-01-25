@@ -16,7 +16,7 @@ const LICENSE_TYPES = {
 }
 
 export class LicenseManager {
-    private static RELEASE_INFORMATION: string = 'MTcwNTIyNzE3MTAzNg==';
+    private static RELEASE_INFORMATION: string = 'MTcwNjE5NzMxMzM3Mg==';
     private static licenseKey: string;
     private watermarkMessage: string | undefined = undefined;
 

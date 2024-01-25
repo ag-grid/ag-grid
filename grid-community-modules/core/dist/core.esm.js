@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.2
+          * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.3
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -49786,7 +49786,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.0.2
+ * @version v31.0.3
  * @link https://www.ag-grid.com/
  * @license MIT
  */

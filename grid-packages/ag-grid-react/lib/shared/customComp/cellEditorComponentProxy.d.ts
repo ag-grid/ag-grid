@@ -1,4 +1,4 @@
-// ag-grid-react v31.0.2
+// ag-grid-react v31.0.3
 import { AgPromise, ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { CustomCellEditorCallbacks, CustomCellEditorProps } from "./interfaces";
 export declare class CellEditorComponentProxy implements ICellEditor {

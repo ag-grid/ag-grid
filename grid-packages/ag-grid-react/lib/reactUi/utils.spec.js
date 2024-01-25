@@ -1,4 +1,4 @@
-// ag-grid-react v31.0.2
+// ag-grid-react v31.0.3
 /* import { describe, expect, xtest, test, jest, beforeEach, afterEach } from '@jest/globals';
 
 import { getNextValueIfDifferent } from './utils';

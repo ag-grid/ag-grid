@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.0.2
+// @ag-grid-community/react v31.0.3
 import { BaseComponentWrapper, ColumnApi, ComponentUtil, CtrlsService, GridCoreCreator, ModuleRegistry, VanillaFrameworkOverrides, _ } from '@ag-grid-community/core';
 import React, { forwardRef, useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper.mjs';

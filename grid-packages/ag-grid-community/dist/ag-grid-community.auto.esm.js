@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.2
+          * @ag-grid-community/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.3
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -55500,7 +55500,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.0.2
+ * @version v31.0.3
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -57671,7 +57671,7 @@ var ImmutableService = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$2 = '31.0.2';
+var VERSION$2 = '31.0.3';
 
 var ClientSideRowModelModule = {
     version: VERSION$2,
@@ -58446,7 +58446,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$1 = '31.0.2';
+var VERSION$1 = '31.0.3';
 
 var InfiniteRowModelModule = {
     version: VERSION$1,
@@ -59235,7 +59235,7 @@ var GridSerializer = /** @class */ (function (_super) {
 }(BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '31.0.2';
+var VERSION = '31.0.3';
 
 var CsvExportModule = {
     version: VERSION,

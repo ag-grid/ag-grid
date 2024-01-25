@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.0.2
+// @ag-grid-community/react v31.0.3
 import { AgPromise } from "@ag-grid-community/core";
 import { addOptionalMethods } from "./customComponentWrapper.mjs";
 export class CellEditorComponentProxy {

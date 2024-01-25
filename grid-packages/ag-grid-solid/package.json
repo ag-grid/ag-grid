@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-solid",
-  "version": "31.0.2",
+  "version": "31.0.3",
   "description": "AG Grid SolidJS Component",
   "license": "MIT",
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
@@ -37,14 +37,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "ag-grid-community": "~31.0.2"
+    "ag-grid-community": "~31.0.3"
   },
   "peerDependencies": {
     "solid-js": ">=1.0.0"
   },
   "devDependencies": {
-    "ag-grid-community": "~31.0.2",
-    "ag-grid-enterprise": "~31.0.2",
+    "ag-grid-community": "~31.0.3",
+    "ag-grid-enterprise": "~31.0.3",
     "prettier": "2.7.1",
     "rollup": "^2.77.2",
     "rollup-preset-solid": "^1.4.0",
