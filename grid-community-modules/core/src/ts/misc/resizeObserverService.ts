@@ -54,7 +54,7 @@ export class ResizeObserverService extends BeanStub {
             return useBrowserResizeObserver();
         }
 
-        return usePolyfill();
+        return this.getFrameworkOverrides().wrapIncoming(() => usePolyfill(), 'resize-observer');
     }
 
 

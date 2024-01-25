@@ -56,6 +56,13 @@ describe('GridWrapperComponent', () => {
     let component: GridWrapperComponent;
     let fixture: ComponentFixture<GridWrapperComponent>;
 
+    beforeAll(() => {
+        (window as any).AG_GRID_UNDER_TEST = false;
+    });
+    afterAll(() => {
+        (window as any).AG_GRID_UNDER_TEST = undefined;
+    });
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [GridWrapperComponent, AgGridAngular],

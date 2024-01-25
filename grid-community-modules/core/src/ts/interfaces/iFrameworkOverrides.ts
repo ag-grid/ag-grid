@@ -1,5 +1,7 @@
 import { AgPromise } from "../utils";
 
+export type FrameworkOverridesIncomingSource = 'resize-observer';
+
 export interface IFrameworkOverrides {
 
     setInterval(action: any, interval?: any): AgPromise<number>;
@@ -15,7 +17,7 @@ export interface IFrameworkOverrides {
      * Before events are returned to the user, those functions are wrapped in Angular's zone
      * again so that the user's code triggers change detection as normal. See wrapOutgoing() below.
      */
-    wrapIncoming: <T>(callback: () => T) => T;
+    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T;
 
     /**
      * This method is to cater for Angular's change detection. 
