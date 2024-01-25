@@ -34,12 +34,10 @@
             {
                 "type": "whats-new",
                 "title": "What's New",
-                "excludeFromFeatures": true,
                 "path": "/whats-new"
             },
             {
                 "title": "Overview",
-                "excludeFromFeatures": true,
                 "items": [
                     {
                         "title": "Get Started",
