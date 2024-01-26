@@ -5,7 +5,7 @@ import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/con
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { CellPosition } from "./entities/cellPositionUtils";
-import { ColDef, ColGroupDef, ColumnsMenuParams, HeaderLocation, IAggFunc } from "./entities/colDef";
+import { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from "./entities/colDef";
 import { Column, ColumnPinnedType } from "./entities/column";
 import {
     ChartRef,
@@ -137,7 +137,6 @@ import { ApiEventService } from "./misc/apiEventService";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 import { WithoutGridCommon } from "./interfaces/iCommon";
-import { IColumnChooserFactory } from "./interfaces/iColumnChooserFactory";
 import { MenuService } from "./misc/menuService";
 
 export interface DetailGridInfo {
@@ -208,7 +207,6 @@ export class GridApi<TData = any> {
     @Autowired('expansionService') private expansionService: IExpansionService;
     @Autowired('apiEventService') private apiEventService: ApiEventService;
     @Autowired('frameworkOverrides') private frameworkOverrides: IFrameworkOverrides;
-    @Optional('columnChooserFactory') private columnChooserFactory?: IColumnChooserFactory;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -1290,7 +1288,8 @@ export class GridApi<TData = any> {
         }
         this.menuService.showColumnMenu({
             column,
-            buttonElement
+            buttonElement,
+            positionBy: 'button'
         });
     }
 
@@ -1307,12 +1306,26 @@ export class GridApi<TData = any> {
         }
         this.menuService.showColumnMenu({
             column,
-            mouseEvent
+            mouseEvent,
+            positionBy: 'mouse'
         });
     }
 
-    public showColumnChooser(params?: ColumnsMenuParams): void {
-        this.columnChooserFactory?.showColumnChooser({ params });
+    public showColumnChooser(params?: ColumnChooserParams): void {
+        this.menuService.showColumnChooser({ params });
+    }
+
+    public showColumnFilter(colKey: string | Column): void {
+        const column = this.columnModel.getGridColumn(colKey);
+        if (!column) {
+            console.error(`AG Grid: column '${colKey}' not found`);
+            return;
+        }
+        this.menuService.showFilterMenu({
+            column,
+            containerType: 'columnFilter',
+            positionBy: 'auto'
+        });
     }
 
     /** Hides any visible context menu or column menu. */

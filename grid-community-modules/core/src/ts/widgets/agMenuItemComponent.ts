@@ -16,18 +16,20 @@ import { CustomTooltipFeature } from './customTooltipFeature';
 import { getAriaLevel, setAriaDisabled, setAriaExpanded } from '../utils/aria';
 import { IComponent } from '../interfaces/iComponent';
 import { WithoutGridCommon } from '../interfaces/iCommon';
+import { IMenuActionParams } from '../interfaces/iCallbackParams';
 
 interface MenuItemComponentParams extends MenuItemLeafDef {
     isCompact?: boolean;
     isAnotherSubMenuOpen: () => boolean;
     subMenu?: (MenuItemDef | string)[] | IComponent<any>;
+    contextParams: WithoutGridCommon<IMenuActionParams>;
 }
 
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;
     disabled?: boolean;
     shortcut?: string;
-    action?: () => void;
+    action?: (params: IMenuActionParams) => void;
     checked?: boolean;
     icon?: Element | string;
     subMenu?: (MenuItemDef | string)[] | IPopupComponent<any>;
@@ -112,7 +114,7 @@ export class AgMenuItemComponent extends Component {
         if (this.params.subMenu instanceof Array) {
             const currentLevel = getAriaLevel(this.getGui());
             const nextLevel = isNaN(currentLevel) ? 1 : (currentLevel + 1);
-            const childMenu = this.createBean(new AgMenuList(nextLevel));
+            const childMenu = this.createBean(new AgMenuList(nextLevel, this.params.contextParams));
 
             childMenu.setParentComponent(this);
             childMenu.addMenuItems(this.params.subMenu);
@@ -298,7 +300,9 @@ export class AgMenuItemComponent extends Component {
 
     private onItemSelected(event: MouseEvent | KeyboardEvent): void {
         if (this.params.action) {
-            this.params.action();
+            this.params.action(this.gridOptionsService.addGridCommonParams({
+                ...this.params.contextParams
+            }));
         } else {
             this.openSubMenu(event && event.type === 'keydown');
         }

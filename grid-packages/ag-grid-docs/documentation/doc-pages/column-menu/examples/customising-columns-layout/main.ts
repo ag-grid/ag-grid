@@ -9,7 +9,7 @@ const columnDefs: ColGroupDef[] = [
         headerName: 'Name',
         field: 'athlete',
         minWidth: 150,
-        columnsMenuParams: {
+        columnChooserParams: {
           columnLayout: [{
             headerName: 'Group 1', // Athlete group renamed to "Group 1"
               children: [
@@ -28,7 +28,7 @@ const columnDefs: ColGroupDef[] = [
       {
         field: 'sport',
         minWidth: 150,
-        columnsMenuParams: {
+        columnChooserParams: {
           // contracts all column groups
           contractColumnSelection: true,
         },

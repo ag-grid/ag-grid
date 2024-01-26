@@ -151,6 +151,11 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             cssClasses: ['ag-multi-filter-menu-item'],
             isCompact: true,
             isAnotherSubMenuOpen: () => false,
+            contextParams: {
+                column: null,
+                node: null,
+                value: null
+            }
         }));
 
         menuItem.setParentComponent(this);

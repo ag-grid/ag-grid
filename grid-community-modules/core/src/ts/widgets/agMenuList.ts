@@ -7,6 +7,8 @@ import { MenuItemDef } from "../entities/gridOptions";
 import { loadTemplate } from "../utils/dom";
 import { last } from "../utils/array";
 import { setAriaLevel } from "../utils/aria";
+import { WithoutGridCommon } from "../interfaces/iCommon";
+import { IMenuActionParams } from "../interfaces/iCallbackParams";
 
 export class AgMenuList extends TabGuardComp {
 
@@ -14,9 +16,15 @@ export class AgMenuList extends TabGuardComp {
 
     private menuItems: AgMenuItemComponent[] = [];
     private activeMenuItem: AgMenuItemComponent | null;
+    private params: WithoutGridCommon<IMenuActionParams>;
 
-    constructor(private readonly level = 1) {
-        super(/* html */`<div class="ag-menu-list" role="tree"></div>`);
+    constructor(private readonly level = 1, params?: WithoutGridCommon<IMenuActionParams>) {
+    super(/* html */`<div class="ag-menu-list" role="tree"></div>`);
+    this.params = params ?? {
+        column: null,
+        node: null,
+        value: null
+    };
     }
 
     @PostConstruct
@@ -85,7 +93,8 @@ export class AgMenuList extends TabGuardComp {
     public addItem(menuItemDef: MenuItemDef): void {
         const menuItem = this.createManagedBean(new AgMenuItemComponent({
             ...menuItemDef,
-            isAnotherSubMenuOpen: () => this.menuItems.some(m => m.isSubMenuOpen())
+            isAnotherSubMenuOpen: () => this.menuItems.some(m => m.isSubMenuOpen()),
+            contextParams: this.params
         }));
 
         menuItem.setParentComponent(this);

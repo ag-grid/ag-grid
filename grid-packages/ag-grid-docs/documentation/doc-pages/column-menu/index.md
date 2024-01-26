@@ -84,9 +84,9 @@ The example below shows the `getMainMenuItems()` callback in action. To demonstr
 
 ## Customising the Columns Menu Tab
 
-The behaviour and appearance of the Columns Menu tab can be customised by supplying `ColumnsMenuParams` to the column definition: `colDef.columnsMenuParams`. Note that all of the properties are initially set to `false`.
+The behaviour and appearance of the Columns Menu tab can be customised by supplying `ColumnChooserParams` to the column definition: `colDef.columnChooserParams`. Note that all of the properties are initially set to `false`.
 
-<interface-documentation interfaceName='ColumnsMenuParams' ></interface-documentation>
+<interface-documentation interfaceName='ColumnChooserParams' ></interface-documentation>
 
 The following example demonstrates all of the above columns menu tab properties **except columnLayout** which will be covered later on. Note the following:
 
@@ -100,14 +100,14 @@ The following example demonstrates all of the above columns menu tab properties 
 
 By default the order of columns in the Columns Menu Tab is derived from the `columnDefs` supplied in the grid options, and is kept in sync with the grid when columns are moved.
 
-However, a custom column layout can be provided using the **columnLayout** property in the `colDef.columnsMenuParams`.
+However, a custom column layout can be provided using the **columnLayout** property in the `colDef.columnChooserParams`.
 
 <snippet>
 const gridOptions = {
     // original column definitions supplied to the grid
     columnDefs: [
         {
-            columnsMenuParams: {
+            columnChooserParams: {
                 columnLayout: [{
                     headerName: 'Group 1', // group doesn't appear in grid
                     children: [

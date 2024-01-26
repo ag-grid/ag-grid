@@ -17,7 +17,6 @@ import {
     SortController,
 } from '@ag-grid-community/core';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
-import { ColumnChooserFactory } from './columnChooserFactory';
 
 @Bean('menuItemMapper')
 export class MenuItemMapper extends BeanStub {
@@ -30,7 +29,6 @@ export class MenuItemMapper extends BeanStub {
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('chartMenuItemMapper') private readonly chartMenuItemMapper: ChartMenuItemMapper;
     @Autowired('menuService') private readonly menuService: MenuService;
-    @Autowired('columnChooserFactory') private readonly columnChooserFactory: ColumnChooserFactory;
     @Autowired('sortController') private readonly sortController: SortController;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null, sourceElement: () => HTMLElement): (MenuItemDef | string)[] {
@@ -273,7 +271,7 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('columnFilter', 'Column Filter'),
                         icon: _.createIconNoSpan('filter', this.gridOptionsService, null),
                         action: () => this.menuService.showFilterMenu({
-                            column, buttonElement: sourceElement(), containerType: 'columnFilter'
+                            column, buttonElement: sourceElement(), containerType: 'columnFilter', positionBy: 'button'
                         })
                     };
                 } else {
@@ -284,7 +282,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _.createIconNoSpan('columns', this.gridOptionsService, null),
-                        action: () => this.columnChooserFactory.showColumnChooser({ column })
+                        action: () => this.menuService.showColumnChooser({ column })
                     }
                 } else {
                     return null;

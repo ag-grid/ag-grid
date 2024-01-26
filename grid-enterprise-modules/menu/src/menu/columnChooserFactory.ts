@@ -1,4 +1,4 @@
-import { AgDialog, Bean, BeanStub, Column, ColumnsMenuParams, IColumnChooserFactory } from "@ag-grid-community/core";
+import { AgDialog, Bean, BeanStub, Column, ColumnChooserParams, IColumnChooserFactory } from "@ag-grid-community/core";
 import { PrimaryColsPanel } from "@ag-grid-enterprise/column-tool-panel";
 
 @Bean('columnChooserFactory')
@@ -7,16 +7,16 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
     private activeColumnChooserDialog: AgDialog | undefined;
 
     public createColumnSelectPanel(
-        parent: BeanStub, column?: Column | null, draggable?: boolean, params?: ColumnsMenuParams
+        parent: BeanStub, column?: Column | null, draggable?: boolean, params?: ColumnChooserParams
     ): PrimaryColsPanel {
         const columnSelectPanel = parent.createManagedBean(new PrimaryColsPanel());
     
-        const columnsMenuParams = params ?? column?.getColDef().columnsMenuParams ?? {};
+        const columnChooserParams = params ?? column?.getColDef().columnChooserParams ?? column?.getColDef().columnsMenuParams ?? {};
     
         const {
             contractColumnSelection, suppressColumnExpandAll, suppressColumnFilter,
             suppressColumnSelectAll, suppressSyncLayoutWithGrid, columnLayout
-        } = columnsMenuParams;
+        } = columnChooserParams;
     
         columnSelectPanel.init(!!draggable, this.gridOptionsService.addGridCommonParams({
             suppressColumnMove: false,
@@ -39,7 +39,7 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
         return columnSelectPanel;
     }
 
-    public showColumnChooser({ column, params }: { column?: Column | null, params?: ColumnsMenuParams }): void {
+    public showColumnChooser({ column, params }: { column?: Column | null, params?: ColumnChooserParams }): void {
         this.hideActiveColumnChooser();
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, params);

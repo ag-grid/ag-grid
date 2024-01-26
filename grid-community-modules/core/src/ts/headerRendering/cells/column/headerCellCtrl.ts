@@ -201,7 +201,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             showColumnMenu: (source: HTMLElement) => {
                 this.menuService.showColumnMenu({
                     column: this.column,
-                    buttonElement: source
+                    buttonElement: source,
+                    positionBy: 'button'
                 });
             },
             progressSort: (multiSort?: boolean) => {

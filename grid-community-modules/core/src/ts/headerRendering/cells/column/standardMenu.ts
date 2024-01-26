@@ -71,7 +71,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         const afterGuiDetached = () => filterWrapper.filterPromise?.then(filter => filter?.afterGuiDetached?.());
 
-        const anchorToElement = eventSource || this.ctrlsService.getGridBodyCtrl().getGui();
+        const anchorToElement = column?.getMenuParams()?.suppressColumnMenuAnchoring ? undefined : (eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui());
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             column.setMenuVisible(false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;

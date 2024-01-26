@@ -356,7 +356,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public suppressMenuHide: boolean | undefined = undefined;
-    /** 
+    /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component.
+         * @default false
          * @initial
          */
     @Input() public enableBrowserTooltips: boolean | undefined = undefined;
@@ -1390,7 +1391,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** For customising the main 'column header' menu.
          * @initial
          */
-    @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
+    @Input() public getMainMenuItems: GetMainMenuItems<TData> | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
          */
     @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;

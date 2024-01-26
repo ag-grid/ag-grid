@@ -197,7 +197,8 @@ export class HeaderComp extends Component implements IHeaderComp {
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
                 menuService.showColumnMenu({
                     column: this.params.column,
-                    mouseEvent: event.touchStart
+                    mouseEvent: event.touchStart,
+                    positionBy: 'mouse'
                 });
             };
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
@@ -257,7 +258,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        this.addInIcon('menu', this.eMenu, this.params.column);
+        this.addInIcon('menu-alt', this.eMenu, this.params.column);
 
         this.currentSuppressMenuHide = this.shouldSuppressMenuHide();
         this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
@@ -271,7 +272,8 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         this.menuService.showColumnMenu({
             column: this.params.column,
-            buttonElement: eventSource
+            buttonElement: eventSource,
+            positionBy: 'button'
         });
     }
 
@@ -365,7 +367,8 @@ export class HeaderComp extends Component implements IHeaderComp {
             this.addManagedListener(this.eFilterButton, 'click', () => this.menuService.showFilterMenu({
                 column,
                 buttonElement: this.eFilterButton,
-                containerType: 'columnFilter'
+                containerType: 'columnFilter',
+                positionBy: 'button'
             }));
         }
     }

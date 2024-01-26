@@ -441,6 +441,7 @@ export {
     HeaderCheckboxSelectionCallback,
     HeaderLocation,
     ColumnsMenuParams,
+    ColumnChooserParams,
     ColumnMenuTab,
     HeaderClassParams,
     HeaderClass,
@@ -449,6 +450,7 @@ export {
     KeyCreatorParams,
     SortDirection,
     NestedFieldPaths,
+    MenuParams
 } from "./entities/colDef";
 export {
     DataTypeDefinition,
@@ -524,7 +526,8 @@ export {
     PostSortRowsParams,
     GetLocaleTextParams,
     GetGroupAggFilteringParams,
-    GetGroupIncludeFooterParams
+    GetGroupIncludeFooterParams,
+    IMenuActionParams
 } from "./interfaces/iCallbackParams";
 export {
     WithoutGridCommon

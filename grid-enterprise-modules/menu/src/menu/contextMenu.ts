@@ -108,7 +108,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
 
-        const menu = new ContextMenu(menuItems);
+        const menu = new ContextMenu(menuItems, column, node, value);
         this.createBean(menu);
 
         const eMenuGui = menu.getGui();
@@ -184,18 +184,25 @@ class ContextMenu extends Component {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
 
-    private menuItems: (MenuItemDef | string)[];
     private menuList: AgMenuList | null = null;
     private focusedCell: CellPosition | null = null;
 
-    constructor(menuItems: (MenuItemDef | string)[]) {
+    constructor(
+        private readonly menuItems: (MenuItemDef | string)[],
+        private readonly column: Column | null,
+        private readonly node: RowNode | null,
+        private readonly value: any
+    ) {
         super(/* html */`<div class="${CSS_MENU}" role="presentation"></div>`);
-        this.menuItems = menuItems;
     }
 
     @PostConstruct
     private addMenuItems(): void {
-        const menuList = this.createManagedBean(new AgMenuList());
+        const menuList = this.createManagedBean(new AgMenuList(1, {
+            column: this.column,
+            node: this.node,
+            value: this.value
+        }));
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null, () => this.getGui());
 
         menuList.addMenuItems(menuItemsMapped);

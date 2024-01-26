@@ -5,6 +5,10 @@ import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { Column } from "../entities/column";
 import { ContainerType } from "../interfaces/iAfterGuiAttachedParams";
 import { RowNode } from "../entities/rowNode";
+import { CtrlsService } from "../ctrlsService";
+import { AnimationFrameService } from "./animationFrameService";
+import { IColumnChooserFactory } from "../interfaces/iColumnChooserFactory";
+import { ColumnChooserParams } from "../entities/colDef";
 
 interface BaseShowColumnMenuParams {
     column?: Column,
@@ -17,19 +21,21 @@ interface BaseShowFilterMenuParams {
 
 interface MouseShowMenuParams {
     mouseEvent: MouseEvent | Touch;
+    positionBy: 'mouse';
 }
 
 interface ButtonShowMenuParams {
     buttonElement: HTMLElement;
+    positionBy: 'button';
 }
 
-function isButtonShowMenuParams(params: (ButtonShowMenuParams | MouseShowMenuParams)): params is ButtonShowMenuParams {
-    return !!(params as ButtonShowMenuParams).buttonElement;
+interface AutoShowMenuParams {
+    positionBy: 'auto';
 }
 
 export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams) & BaseShowColumnMenuParams;
 
-export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams) & BaseShowFilterMenuParams;
+export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) & BaseShowFilterMenuParams;
 
 interface BaseShowContextMenuParams { 
     rowNode?: RowNode | null,
@@ -53,6 +59,9 @@ export class MenuService extends BeanStub {
     @Optional('enterpriseMenuFactory') private readonly enterpriseMenuFactory? : IMenuFactory;
     @Autowired('filterMenuFactory') private readonly filterMenuFactory: IMenuFactory;
     @Optional('contextMenuFactory') private readonly contextMenuFactory?: IContextMenuFactory;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
+    @Optional('columnChooserFactory') private columnChooserFactory: IColumnChooserFactory;
 
     private activeMenuFactory: IMenuFactory;
 
@@ -62,7 +71,7 @@ export class MenuService extends BeanStub {
     }
 
     public showColumnMenu(params: ShowColumnMenuParams): void {
-        if (isButtonShowMenuParams(params)) {
+        if (params.positionBy === 'button') {
             const { column, buttonElement } = params;
             this.activeMenuFactory.showMenuAfterButtonClick(column, buttonElement, 'columnMenu');
         } else {
@@ -72,16 +81,24 @@ export class MenuService extends BeanStub {
     }
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
-        const { column, containerType } = params;
+        const { column, containerType, positionBy } = params;
         const menuFactory: IMenuFactory = !column.getMenuParams()?.enableNewFormat && this.enterpriseMenuFactory
             ? this.enterpriseMenuFactory
             : this.filterMenuFactory;
-        if (isButtonShowMenuParams(params)) {
+        if (positionBy === 'button') {
             const { buttonElement } = params;
             menuFactory.showMenuAfterButtonClick(column, buttonElement, containerType, true);
-        } else {
+        } else if (positionBy === 'mouse') {
             const { mouseEvent } = params;
             menuFactory.showMenuAfterMouseEvent(column, mouseEvent, containerType, true);
+        } else {
+            // auto
+            this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
+            // make sure we've finished scrolling into view before displaying the filter
+            this.animationFrameService.requestAnimationFrame(() => {
+                const eHeader = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned()).getHtmlElementForColumnHeader(column)!;
+                menuFactory.showMenuAfterButtonClick(column, eHeader, containerType, true);
+            });
         }
     }
 
@@ -101,6 +118,10 @@ export class MenuService extends BeanStub {
             value,
             anchorToElement
         );
+    }
+
+    public showColumnChooser(params: { column?: Column | null, params?: ColumnChooserParams }): void {
+        this.columnChooserFactory?.showColumnChooser(params);
     }
 
     public hidePopupMenu(): void {

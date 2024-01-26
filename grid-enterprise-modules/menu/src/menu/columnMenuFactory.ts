@@ -22,7 +22,11 @@ export class ColumnMenuFactory extends BeanStub {
     private static MENU_ITEM_SEPARATOR = 'separator';
 
     public createMenu(parent: BeanStub, column: Column | undefined, sourceElement: () => HTMLElement): AgMenuList {
-        const menuList = parent.createManagedBean(new AgMenuList());
+        const menuList = parent.createManagedBean(new AgMenuList(1, {
+            column: column ?? null,
+            node: null,
+            value: null
+        }));
 
         const menuItems = this.getMenuItems(column);
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, column ?? null, sourceElement);
@@ -33,18 +37,27 @@ export class ColumnMenuFactory extends BeanStub {
     }
 
     private getMenuItems(column?: Column): (string | MenuItemDef)[] {
-        const defaultMenuOptions = this.getDefaultMenuOptions(column);
+        const defaultItems = this.getDefaultMenuOptions(column);
         let result: (string | MenuItemDef)[];
 
-        const userFunc = this.gridOptionsService.getCallback('getMainMenuItems');
-
-        if (column && userFunc) {
-            result = userFunc({
-                column,
-                defaultItems: defaultMenuOptions
-            });
+        const columnMainMenuItems = column?.getColDef().mainMenuItems;
+        if (Array.isArray(columnMainMenuItems)) {
+            result = columnMainMenuItems;
+        } else if (typeof columnMainMenuItems === 'function') {
+            result = columnMainMenuItems(this.gridOptionsService.addGridCommonParams({
+                column: column!,
+                defaultItems
+            }));
         } else {
-            result = defaultMenuOptions;
+            const userFunc = this.gridOptionsService.getCallback('getMainMenuItems');
+            if (userFunc && column) {
+                result = userFunc({
+                    column,
+                    defaultItems
+                });
+            } else {
+                result = defaultItems;
+            }
         }
 
         // GUI looks weird when two separators are side by side. this can happen accidentally

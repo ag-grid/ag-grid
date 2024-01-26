@@ -7,7 +7,7 @@ import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ITooltipParams } from "../rendering/tooltipComponent";
 import { Column } from "./column";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
-import { RowClassParams } from "./gridOptions";
+import { RowClassParams, MenuItemDef, GetMainMenuItems } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { IRowNode } from "../interfaces/iRowNode";
 
@@ -373,13 +373,16 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.
      */
     menuTabs?: ColumnMenuTab[];
-    /** Params used to change the behaviour and appearance of the Columns Menu tab. */
+    /** Params used to change the behaviour and appearance of the Columns Chooser/Columns Menu tab. */
+    columnChooserParams?: ColumnChooserParams;
+    /** @deprecated v31.1 Use columnChooserParams instead */
     columnsMenuParams?: ColumnsMenuParams;
     /**
      * Set to `true` if no menu should be shown for this column header.
      * @default false
      */
     suppressMenu?: boolean;
+    mainMenuItems?: (string | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
     /**
@@ -745,7 +748,10 @@ export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgG
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
 
-export interface ColumnsMenuParams {
+/** @deprecated v31.1 Use `ColumnChooserParams` instead */
+export interface ColumnsMenuParams extends ColumnChooserParams {}
+
+export interface ColumnChooserParams {
     /** To suppress updating the layout of columns as they are rearranged in the grid */
     suppressSyncLayoutWithGrid?: boolean;
     /** To suppress Column Filter section*/
@@ -768,6 +774,7 @@ export interface MenuParams {
     suppressHeaderMenuButton?: boolean;
     enableHeaderContextMenu?: boolean;
     enableFloatingFilterActive?: boolean;
+    suppressColumnMenuAnchoring?: boolean
 }
 
 export interface BaseColDefParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {

@@ -234,3 +234,12 @@ export interface GetGroupAggFilteringParams<TData = any, TContext = any> extends
 export interface GetGroupIncludeFooterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     node: IRowNode<TData>;
 }
+
+export interface IMenuActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The column, if a cell was clicked, otherwise null. */
+    column: Column | null;
+    /** The row node, if a cell was clicked, otherwise null. */
+    node: IRowNode<TData> | null;
+    /** The value, if a cell was clicked, otherwise null.  */
+    value: any;
+}

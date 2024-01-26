@@ -44,6 +44,9 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
     columnsMenuParams: {
         module: [ModuleNames.MenuModule, ModuleNames.ColumnsToolPanelModule],
     },
+    columnChooserParams: {
+        module: [ModuleNames.MenuModule, ModuleNames.ColumnsToolPanelModule],
+    },
     
     headerCheckboxSelection: {
         supportedRowModels: ['clientSide', 'serverSide'],

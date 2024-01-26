@@ -138,7 +138,8 @@ import {
     TabToNextHeaderParams,
     GetGroupAggFilteringParams,
     GetGroupIncludeFooterParams,
-    ProcessUnpinnedColumnsParams
+    ProcessUnpinnedColumnsParams,
+    IMenuActionParams
 } from "../interfaces/iCallbackParams";
 
 import { SideBarDef } from "../interfaces/iSideBar";
@@ -1570,7 +1571,7 @@ export interface GridOptions<TData = any> {
      * For customising the main 'column header' menu.
      * @initial
      */
-    getMainMenuItems?: GetMainMenuItems;
+    getMainMenuItems?: GetMainMenuItems<TData>;
     /**
      * Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
@@ -2247,13 +2248,13 @@ export interface RowClassParams<TData = any, TContext = any> extends AgGridCommo
     rowIndex: number;
 }
 
-export interface GetContextMenuItems<TData = any> {
-    (params: GetContextMenuItemsParams<TData>): (string | MenuItemDef)[];
+export interface GetContextMenuItems<TData = any, TContext = any> {
+    (params: GetContextMenuItemsParams<TData, TContext>): (string | MenuItemDef<TData, TContext>)[];
 }
 export interface GetChartToolbarItems {
     (params: GetChartToolbarItemsParams): ChartMenuOptions[];
 }
-export interface MenuItemLeafDef {
+export interface MenuItemLeafDef<TData = any, TContext = any> {
     /**
      * Name of the menu item */
     name: string;
@@ -2265,7 +2266,7 @@ export interface MenuItemLeafDef {
     shortcut?: string;
     /**
      * Function that gets executed when item is chosen */
-    action?: () => void;
+    action?: (params: IMenuActionParams<TData, TContext>) => void;
     /**
      * Set to true to provide a check beside the option */
     checked?: boolean;
@@ -2280,13 +2281,13 @@ export interface MenuItemLeafDef {
     tooltip?: string;
 }
 
-export interface MenuItemDef extends MenuItemLeafDef {
+export interface MenuItemDef<TData = any, TContext = any> extends MenuItemLeafDef<TData, TContext> {
     /**
      * If this item is a sub menu, contains a list of menu item definitions */
-    subMenu?: (MenuItemDef | string)[];
+    subMenu?: (MenuItemDef<TData, TContext> | string)[];
 }
-export interface GetMainMenuItems {
-    (params: GetMainMenuItemsParams): (string | MenuItemDef)[];
+export interface GetMainMenuItems<TData = any, TContext = any> {
+    (params: GetMainMenuItemsParams<TData, TContext>): (string | MenuItemDef<TData, TContext>)[];
 }
 
 export interface GetRowNodeIdFunc<TData = any> {

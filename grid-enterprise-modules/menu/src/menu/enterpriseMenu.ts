@@ -153,13 +153,15 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             positionCallback(menu);
         }
 
-        // if user starts showing / hiding columns, or otherwise move the underlying column
-        // for this menu, we want to stop tracking the menu with the column position. otherwise
-        // the menu would move as the user is using the columns tab inside the menu.
-        const stopAnchoringPromise = this.popupService.setPopupPositionRelatedToElement(eMenuGui, anchorToElement);
-
-        if (stopAnchoringPromise && column) {
-            this.addStopAnchoring(stopAnchoringPromise, column, closedFuncs);
+        if (!column?.getMenuParams()?.suppressColumnMenuAnchoring) {
+            // if user starts showing / hiding columns, or otherwise move the underlying column
+            // for this menu, we want to stop tracking the menu with the column position. otherwise
+            // the menu would move as the user is using the columns tab inside the menu.
+            const stopAnchoringPromise = this.popupService.setPopupPositionRelatedToElement(eMenuGui, anchorToElement);
+            
+            if (stopAnchoringPromise && column) {
+                this.addStopAnchoring(stopAnchoringPromise, column, closedFuncs);
+            }
         }
 
         menu.addEventListener(TabbedColumnMenu.EVENT_TAB_SELECTED, (event: any) => {

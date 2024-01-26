@@ -145,7 +145,7 @@
             }
         },
         "menuTabs": {},
-        "columnsMenuParams": {
+        "columnChooserParams": {
             "more": {
                 "name": "Customising the Columns Menu Tab",
                 "url": "/column-menu/#customising-the-columns-menu-tab"
