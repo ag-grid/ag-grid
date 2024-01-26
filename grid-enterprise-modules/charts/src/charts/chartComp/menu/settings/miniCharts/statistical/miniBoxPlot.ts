@@ -1,5 +1,5 @@
 import { ChartType } from '@ag-grid-community/core';
-import { _Scene, _Util } from 'ag-charts-enterprise';
+import { _Scene, _Util } from 'ag-charts-community';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniBoxPlot extends MiniChartWithAxes {

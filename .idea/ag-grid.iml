@@ -113,9 +113,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/master-detail/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/sparklines/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/multi-filter/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/node_modules" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/clipboard/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/clipboard/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/excel-export/node_modules.nosync" />
@@ -145,6 +142,9 @@
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-vue/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-angular/dist" />
       <excludeFolder url="file://$MODULE_DIR$/charts-community-modules/ag-charts-react/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/node_modules.nosync" />
     </content>
     <content url="file://$MODULE_DIR$/grid-community-modules/react/dev" />
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />

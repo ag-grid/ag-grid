@@ -42,6 +42,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
         });
 
         if (esmAutoRegister) {
+            // ag-charts-community
             entries.push({
                 // contains only community or enterprise code (depending on source) - if enterprise community code is externalised
                 // module are self registered
@@ -114,6 +115,82 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                 env: 'production',
                 extension: '.auto.complete.esm.min.js'
             });
+
+            // ag-charts-enterprise
+            if(bundlePrefix === 'ag-grid-enterprise') {
+                entries.push({
+                    // contains only community or enterprise code (depending on source) - if enterprise community code is externalised
+                    // module are self registered
+                    name: 'es-modules-charts-enterprise-auto-dev',
+                    inputMainFile: './esm-main-charts-enterprise.auto.js',
+                    format: 'es',
+                    env: 'development',
+                    extension: '.charts-enterprise.auto.esm.js',
+                    useEsmEs5: true,
+                    config: {
+                        external: id => bundlePrefix === 'ag-grid-enterprise' ? 'ag-grid-community' === id || id.startsWith('@ag-grid-community') : false
+                    },
+                    plugins: bundlePrefix === 'ag-grid-enterprise' ? [
+                        replace({
+                            preventAssignment: true,
+                            values: {
+                                '@ag-grid-community/core': 'ag-grid-community',
+                                '@ag-grid-community/all-modules': 'ag-grid-community',
+                                '@ag-grid-community/csv-export': 'ag-grid-community',
+                                '@ag-grid-community/@ag-grid-community/client-side-row-model': 'ag-grid-community',
+                                '@ag-grid-community/infinite-row-model': 'ag-grid-community'
+                            },
+                            delimiters: ['', '']
+                        })
+                    ] : []
+                });
+                entries.push({
+                    // contains only community or enterprise code (depending on source) - if enterprise community code is externalised
+                    // module are self registered
+                    name: 'es-modules-charts-enterprise-auto-prod',
+                    inputMainFile: './esm-main-charts-enterprise.auto.js',
+                    format: 'es',
+                    env: 'production',
+                    extension: '.charts-enterprise.auto.esm.min.js',
+                    useEsmEs5: true,
+                    config: {
+                        external: id => bundlePrefix === 'ag-grid-enterprise' ? 'ag-grid-community' === id || id.startsWith('@ag-grid-community') : false
+                    },
+                    plugins: bundlePrefix === 'ag-grid-enterprise' ? [
+                        replace({
+                            preventAssignment: true,
+                            values: {
+                                '@ag-grid-community/core': 'ag-grid-community',
+                                '@ag-grid-community/all-modules': 'ag-grid-community',
+                                '@ag-grid-community/csv-export': 'ag-grid-community',
+                                '@ag-grid-community/@ag-grid-community/client-side-row-model': 'ag-grid-community',
+                                '@ag-grid-community/infinite-row-model': 'ag-grid-community'
+                            },
+                            delimiters: ['', '']
+                        })
+                    ] : []
+                });
+                entries.push({
+                    // like the umd bundles in that every is in here - both community and enterprise (if doing @ag-grid-enterprise/all-modules)
+                    // module are self registered
+                    // analogous to legacy ag-grid-community / ag-grid-enterprise packages
+                    name: 'es-modules-complete-dev',
+                    inputMainFile: './esm-main-charts-enterprise.complete.js',
+                    format: 'es',
+                    env: 'development',
+                    extension: '.charts-enterprise.auto.complete.esm.js'
+                });
+                entries.push({
+                    // like the umd bundles in that every is in here - both community and enterprise (if doing @ag-grid-enterprise/all-modules)
+                    // module are self registered
+                    // analogous to legacy ag-grid-community / ag-grid-enterprise packages
+                    name: 'es-modules-complete-prod',
+                    inputMainFile: './esm-main-charts-enterprise.complete.js',
+                    format: 'es',
+                    env: 'production',
+                    extension: '.charts-enterprise.auto.complete.esm.min.js'
+                });
+            }
         }
     }
 
