@@ -19,6 +19,7 @@ import {
     ContainerType,
     TabGuardComp,
     AgMenuItemComponent,
+    AgMenuItemRenderer,
     MenuItemActivatedEvent,
     PostConstruct,
     IMultiFilter,
@@ -151,6 +152,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                 name,
                 subMenu: [],
                 cssClasses: ['ag-multi-filter-menu-item'],
+                menuItem: AgMenuItemRenderer,
                 menuItemParams: {
                     cssClassPrefix: 'ag-compact-menu-option',
                     isCompact: true,

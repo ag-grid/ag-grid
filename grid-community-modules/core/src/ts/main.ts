@@ -271,6 +271,7 @@ export { AgRichSelect, RichSelectParams } from "./widgets/agRichSelect";
 export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
 export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
+export { AgMenuItemRenderer } from "./widgets/agMenuItemRenderer";
 export { AgMenuItemComponent, MenuItemActivatedEvent, CloseMenuEvent } from "./widgets/agMenuItemComponent";
 export { AgMenuList } from "./widgets/agMenuList";
 export { AgMenuPanel } from "./widgets/agMenuPanel";

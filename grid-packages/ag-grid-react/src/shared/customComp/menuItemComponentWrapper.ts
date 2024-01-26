@@ -17,7 +17,7 @@ export class MenuItemComponentWrapper extends CustomComponentWrapper<IMenuItemPa
     }
 
     protected getOptionalMethods(): string[] {
-        return ['select'];
+        return ['select', 'configureDefaults'];
     }
 
     private updateActive(active: boolean): void {
