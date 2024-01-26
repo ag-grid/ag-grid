@@ -37,6 +37,11 @@ import {
     MiniStackedColumn,
 } from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
 
+export type ThemeTemplateParameters = {
+    extensions: Map<any, any>;
+    properties: Map<any, any>;
+}
+
 const miniChartMapping = {
     columnGroup: {
         column: MiniColumn,
@@ -92,6 +97,7 @@ export class MiniChartsContainer extends Component {
 
     private readonly fills: string[];
     private readonly strokes: string[];
+    private readonly themeTemplateParameters: ThemeTemplateParameters;
     private wrappers: { [key: string]: HTMLElement } = {};
     private chartController: ChartController;
 
@@ -99,12 +105,13 @@ export class MiniChartsContainer extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(chartController: ChartController, fills: string[], strokes: string[], chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS) {
+    constructor(chartController: ChartController, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters, chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS) {
         super(MiniChartsContainer.TEMPLATE);
 
         this.chartController = chartController;
         this.fills = fills;
         this.strokes = strokes;
+        this.themeTemplateParameters = themeTemplateParameters;
         this.chartGroups = {...chartGroups};
     }
 
@@ -146,7 +153,7 @@ export class MiniChartsContainer extends Component {
 
                 this.wrappers[miniClassChartType] = miniWrapper;
 
-                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes));
+                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes, this.themeTemplateParameters));
                 groupComponent.addItem(miniWrapper);
             });
 

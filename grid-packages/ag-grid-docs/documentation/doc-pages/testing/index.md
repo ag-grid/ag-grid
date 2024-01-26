@@ -442,69 +442,66 @@ testing with AG Grid in this section.
 <framework-specific-section frameworks="angular">
 | ## Configuring the Test Module
 |
-| The first thing we need to do is to import the `AgGridAngular` into the `TestBed.configureTestingModule`:
+| Before we can test our component we need to configure the `TestBed`. In this example we have a `TestHostComponent` that wraps `AgGridAngular` so we pass that to the `TestBed`.
 |
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false} language="ts">
-| beforeEach(async(() => {
-|     TestBed.configureTestingModule({
-|         imports: [
-|             FormsModule,
-|             AgGridAngular
-|         ],
-|         declarations: [TestHostComponent]
-|     }).compileComponents();
+| @Component({
+|     selector: 'app-grid-wrapper',
+|     standalone: true,
+|     imports: [AgGridAngular],
+|     template: `&lt;ag-grid-angular
+|         [rowData]="rowData"
+|         [columnDefs]="columnDefs"
+|         [modules]="modules">&lt;/ag-grid-angular>`,
+| })
+| export class TestHostComponent {
+|     modules: Module[] = [ClientSideRowModelModule];
+| 
+|     rowData: any[] = [{ name: 'Test Name', number: 42 }];
+|     columnDefs: ColDef[] = [
+|         { field: 'name' },
+|         { field: 'number', colId: 'raw', headerName: 'Raw Number', editable: true, cellEditor: EditorComponent },
+|         { field: 'number', colId: 'renderer', headerName: 'Renderer Value', cellRenderer: PoundRenderer },
+|     ];
+| 
+|     @ViewChild(AgGridAngular) public agGrid: AgGridAngular;
+| }
+| 
+| 
+| beforeEach(async () => {
+|   await TestBed.configureTestingModule({
+|       imports: [TestHostComponent],
+|    }).compileComponents();
 |
-|     fixture = TestBed.createComponent(TestHostComponent);
-|     component = fixture.componentInstance;
-|
-| }));
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-| Now that the test bed is aware of AG Grid we can continue with our testing. If however you wish
-| to add any user provided components to the grid then you'll need to declare them here too.
-|
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false} language="diff">
-| beforeEach(async(() => {
-|     TestBed.configureTestingModule({
-|         imports: [
-|             FormsModule,
-| +            AgGridAngular
-|         ],
-| +        declarations: [TestHostComponent, RendererComponent, EditorComponent]
-|     }).compileComponents();
-|
-|     fixture = TestBed.createComponent(TestHostComponent);
-|     component = fixture.componentInstance;
-| }));
+|    fixture = TestBed.createComponent(TestHostComponent);
+|    component = fixture.componentInstance;
+| });
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 | ## Testing via the Grid API
 |
-| The grid's API will only be ready after `detectChanges` has been run:
+| The grid api will be available after `detectChanges()` has run and the fixture is stable. This is true if you store a reference to the `api` within `onGridReady` or use a `ViewChild` to access the `AgGridAngular` component.
 |
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false}>
-| it('grid API is not available until  `detectChanges`', () => {
-|     expect(component.gridOptions.api).not.toBeTruthy();
+| it('ViewChild not available until `detectChanges`', () => {
+|    expect(component.agGrid).not.toBeTruthy();
 | });
 |
-| it('grid API is available after `detectChanges`', () => {
-|     // Setup template bindings and run ngOInit. This causes the &lt;ag-grid-angular> component to be created.
-|     // As part of the creation the grid apis will be attached to the gridOptions property.
-|     fixture.detectChanges();
-|     expect(component.gridOptions.api).toBeTruthy();
+| it('ViewChild is available after `detectChanges`', async () => {
+|    // Detect changes triggers the AgGridAngular lifecycle hooks
+|    fixture.detectChanges();
+|    // Wait for the fixture to stabilise
+|    await fixture.whenStable();
+|    // ViewChild now has a reference to the component
+|    expect(component.agGrid.api).toBeTruthy();
 | });
 </snippet>
 </framework-specific-section>
@@ -518,19 +515,17 @@ testing with AG Grid in this section.
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false}>
-| it('the grid cells should be as expected', () => {
+| it('the grid cells should be as expected', async () => {
 |
-|     // Setup template bindings and run ngOInit. This causes the &lt;ag-grid-angular> component to be created.
-|     // As part of the creation the grid apis will be attached to the gridOptions property.
 |     fixture.detectChanges();
+|     await fixture.whenStable();
 |
-|     const appElement = fixture.nativeElement;
-|     const cellElements = appElement.querySelectorAll('.ag-cell-value');
+|     const cellElements =  fixture.nativeElement.querySelectorAll('.ag-cell-value');
 |
 |     expect(cellElements.length).toEqual(3);
 |     expect(cellElements[0].textContent).toEqual("Test Name");
 |     expect(cellElements[1].textContent).toEqual("42");
-|     expect(cellElements[2].textContent).toEqual("84");
+|     expect(cellElements[2].textContent).toEqual("£42");
 | });
 </snippet>
 </framework-specific-section>
@@ -546,6 +541,24 @@ testing with AG Grid in this section.
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false} language="ts">
+| 
+|   @Component({
+|     standalone: true,
+|     template: `£{{params?.value}}`,
+|   })
+|   export class PoundRenderer implements ICellRendererAngularComp {
+|     params: ICellRendererParams | undefined;
+|   
+|     agInit(params: ICellRendererParams): void {
+|         this.params = params;
+|     }
+|   
+|     refresh(params: ICellRendererParams) {
+|         this.params = params;
+|         return true;
+|     }
+|   }
+| 
 | @Component({
 |     selector: 'editor-cell',
 |     template: `&lt;input #input [(ngModel)]="value" style="width: 100%">`
@@ -588,7 +601,6 @@ testing with AG Grid in this section.
 |                 [columnDefs]="columnDefs"
 |                 [rowData]="rowData"
 |                 [stopEditingWhenCellsLoseFocus]="false"
-|                 [components]="components"
 |                 (gridReady)="onGridReady($event)">
 |             &lt;/ag-grid-angular>
 |         &lt;/div>`
@@ -598,13 +610,9 @@ testing with AG Grid in this section.
 |
 |     columnDefs: ColDef[] = [
 |         {field: "name"},
-|         {field: "number", colId: "raw", headerName: "Raw Number", editable: true, cellEditor: 'editor'},
-|         {field: "number", colId: "renderer", headerName: "Renderer Value"}
+|         {field: "number", colId: "raw", headerName: "Raw Number", editable: true, cellEditor: EditorComponent},
+|         {field: "number", colId: "renderer", headerName: "Renderer Value", cellRenderer: PoundRenderer}
 |     ];
-|
-|     components = {
-|         'editor': EditorComponent
-|     };
 |
 |     api: GridApi;
 |
@@ -621,10 +629,11 @@ testing with AG Grid in this section.
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false} >
-| it('cell should be editable and editor component usable', () => {
+| it('cell should be editable and editor component usable', async () => {
 |     // Setup template bindings and run ngOInit. This causes the &lt;ag-grid-angular> component to be created.
 |     // As part of the creation the grid apis will be attached to the gridOptions property.
-|     fixture.detectChanges();
+|       fixture.autoDetectChanges();
+|       await fixture.whenStable();
 |
 |     // we use the API to start and stop editing - in a real e2e test we could actually double click on the cell etc
 |     component.api.startEditingCell({
@@ -640,12 +649,13 @@ testing with AG Grid in this section.
 |
 |     component.api.stopEditing();
 |
-|     const appElement = fixture.nativeElement;
-|     const cellElements = appElement.querySelectorAll('.ag-cell-value');
+|     await fixture.whenStable();
+|
+|     const cellElements = fixture.nativeElement.querySelectorAll('.ag-cell-value');
 |     expect(cellElements.length).toEqual(3);
 |     expect(cellElements[0].textContent).toEqual("Test Name");
 |     expect(cellElements[1].textContent).toEqual("100");
-|     expect(cellElements[2].textContent).toEqual("200");
+|     expect(cellElements[2].textContent).toEqual("£100");
 | });
 </snippet>
 </framework-specific-section>

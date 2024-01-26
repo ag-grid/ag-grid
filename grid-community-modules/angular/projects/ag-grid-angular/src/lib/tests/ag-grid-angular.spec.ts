@@ -1,12 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import {
-    ComponentFixture,
-    TestBed
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { GridApi, GridOptions, GridReadyEvent, Module } from '@ag-grid-community/core';
-import { AgGridAngular } from './ag-grid-angular.component';
+import { AgGridAngular } from '../ag-grid-angular.component';
 
 @Component({
     selector: 'app-grid-wrapper',
@@ -18,6 +15,7 @@ import { AgGridAngular } from './ag-grid-angular.component';
         [rowData]="rowData"
         [modules]="modules"
         (gridReady)="onGridReady($event)"
+        [suppressBrowserResizeObserver]="suppressBrowserResizeObserver"
         (firstDataRendered)="onFirstDataRendered($event)"></ag-grid-angular>`,
 })
 export class GridWrapperComponent {
@@ -27,6 +25,8 @@ export class GridWrapperComponent {
 
     gridOptions: GridOptions = {};
     gridApi: GridApi;
+
+    suppressBrowserResizeObserver = false;
 
     @ViewChild(AgGridAngular) agGrid: AgGridAngular;
 
@@ -39,7 +39,6 @@ export class GridWrapperComponent {
 }
 
 describe('Grid OnReady', () => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 50000;
     let component: GridWrapperComponent;
     let fixture: ComponentFixture<GridWrapperComponent>;
 
@@ -47,14 +46,12 @@ describe('Grid OnReady', () => {
         await TestBed.configureTestingModule({
             imports: [GridWrapperComponent, AgGridAngular],
         }).compileComponents();
-    });
 
-    beforeEach(async () => {
         fixture = TestBed.createComponent(GridWrapperComponent);
         component = fixture.componentInstance;
     });
 
-    it('should run in / out Angular Zone', (done) => {
+    it('gridReady is completed by the time a timeout finishes', (done) => {
         fixture.detectChanges();
         setTimeout(() => {
             expect(component.gridApi).toBeDefined();
@@ -62,7 +59,7 @@ describe('Grid OnReady', () => {
         }, 0);
     });
 
-    it('Grid Ready run', async () => {
+    const runGridReadyTest = async () => {
         spyOn(component, 'onGridReady').and.callThrough();
         spyOn(component, 'onFirstDataRendered').and.callThrough();
 
@@ -78,6 +75,18 @@ describe('Grid OnReady', () => {
 
         expect(component.onGridReady).toHaveBeenCalled();
         expect(component.onFirstDataRendered).toHaveBeenCalled();
+    };
+
+    it('Fixture goes stable and calls gridReady', async () => {
+        await runGridReadyTest();
+    });
+
+    it('Fixture goes stable even with suppressBrowserResizeObserver= true', async () => {
+        // Test with the fallback polling to mimic Jest not supporting ResizeObserver
+        // We must have the polling run outside of the Angular zone
+        component.suppressBrowserResizeObserver = true;
+
+        await runGridReadyTest();
     });
 
     it('Grid Ready run Auto', async () => {
