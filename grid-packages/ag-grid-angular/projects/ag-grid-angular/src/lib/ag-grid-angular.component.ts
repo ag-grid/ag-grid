@@ -1178,6 +1178,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
+    /** When enabled, sorts fully loaded groups in the browser instead of requesting from the server.
+         * @default false
+         */
+    @Input() public serverSideEnableClientSideSort: boolean | undefined = undefined;
     /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
          * @default false
          * @initial
@@ -1916,6 +1920,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_detailRowAutoHeight: boolean | null | '';
     static ngAcceptInputType_serverSideFilterAllLevels: boolean | null | '';
     static ngAcceptInputType_serverSideSortAllLevels: boolean | null | '';
+    static ngAcceptInputType_serverSideEnableClientSideSort: boolean | null | '';
     static ngAcceptInputType_serverSideOnlyRefreshFilteredGroups: boolean | null | '';
     static ngAcceptInputType_serverSideSortOnServer: boolean | null | '';
     static ngAcceptInputType_serverSideFilterOnServer: boolean | null | '';

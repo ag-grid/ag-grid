@@ -12,7 +12,7 @@
   "scripts": {
     "initSubModules": "sh ./scripts/initialiseSubModules.sh",
     "initLatest": "npm run initSubModules && sh ./scripts/switchToBranch.sh latest",
-    "initLatestEssential": "npm run intSubModules && sh ./scripts/switchToBranch.sh latest && npm run updateAndRebuild",
+    "initLatestEssential": "npm run initSubModules && sh ./scripts/switchToBranch.sh latest && npm run updateAndRebuild",
     "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
     "init": "npm run initLatest && npm run updateAndRebuild",
     "init-prod": "npm run initLatest && npm run updateAndRebuildProd",

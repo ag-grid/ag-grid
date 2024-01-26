@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import classnames from 'classnames';
 import styles from '@design-system/modules/ExampleRunnerResult.module.scss';
 import { getIndexHtmlUrl } from './helpers';
@@ -10,83 +10,54 @@ import exampleRuntimeInjectedStyles from './exampleRuntimeInjectedStyles'
  * This executes the given example in an iframe.
  */
 const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, exampleInfo, darkMode }) => {
-    const [isExecuting, setExecuting] = useState(isOnScreen && resultFrameIsVisible);
     const { pageName, name, internalFramework, importType } = exampleInfo;
-    const [htmlVersion, setHtmlVersion] = useState(0);
-    const [showIframe, setShowIframe] = useState(false);
+    const frameRef = useRef(null);
 
-    useEffect(() => {
-        // trigger the example to execute when it is on screen and the result pane is visible
-        if (isOnScreen && resultFrameIsVisible && !isExecuting) {
-            setExecuting(true);
-        }
-    }, [isOnScreen, resultFrameIsVisible]); // eslint-disable-line react-hooks/exhaustive-deps
+    // Set to true after the first time dark mode has been applied, to prevent flickering.
+    const [loaded, setLoaded] = useState(false);
 
-    useEffect(() => {
-        // if the example info changes (e.g. if modules and switched to packages) and the example is off screen,
-        // stop it executing
-        if (!isOnScreen && isExecuting) {
-            setExecuting(false);
-        }
-    }, [exampleInfo]); // eslint-disable-line react-hooks/exhaustive-deps
+    // hide the iframe if dark mode hasn't been initialised
+    const style = useMemo(() => ({
+        visibility: loaded ? 'visible' : 'hidden'
+    }), [loaded]);
 
-    const iframeRef = React.createRef();
+    const className = useMemo(() => (
+        classnames(styles.exampleRunnerResult, { [styles.hidden]: !resultFrameIsVisible })
+    ), [resultFrameIsVisible]);
 
-    useEffect(() => {
-        const iframe = iframeRef.current;
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-
+    // If locally developing, provide the srcDoc content, otherwise the prebuilt URL
+    const content = useMemo(() => {
         if (isDevelopment()) {
             const { plunkerIndexHtml, codesandboxIndexHtml } = getIndexHtml(exampleInfo, true);
-
-            // in development mode we generate the index HTML on the fly and inject it into the iframe
-            iframeDoc.open();
-            iframeDoc.write(isExecuting ? plunkerIndexHtml : '');
-            iframeDoc.close();
-        } else {
-            iframe.src = isExecuting ? getIndexHtmlUrl(exampleInfo) : '';
-            // setting the src causes a new document object to be created at
-            // some point in the future, with no event to track it, so expire
-            // the document and we poll until there's a new one
-            iframeDoc._expired = true;
+            return { srcDoc: plunkerIndexHtml };
         }
-        if (isExecuting) {
-            setHtmlVersion((version) => version + 1);
-        }
-    }, [isExecuting, exampleInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
+        return { src: getIndexHtmlUrl(exampleInfo) };
+    }, [exampleInfo]);
+
+    // when dark mode is changed, applies it to the iframe.
     useEffect(() => {
-        if (darkMode == null || htmlVersion === 0) return;
-        const apply = () => {
-            const innerDocument = iframeRef.current?.contentDocument;
-            if (!innerDocument || innerDocument.readyState !== "complete" || innerDocument._expired) return false;
-            applyExampleDarkMode(innerDocument, darkMode);
-            setShowIframe(true);
-            return true;
+        if (!frameRef.current) {
+            return;
         }
-        if (!apply()) {
-            let interval = null;
-            const poll = () => {
-                if (apply()) {
-                    stopPolling();
-                }
-            }
-            const stopPolling = () => {
-                clearInterval(interval)
-            }
-            interval = setInterval(poll, 10);
-            return stopPolling;
-        }
-    }, [htmlVersion, darkMode]);
+        applyExampleDarkMode(frameRef.current.contentDocument, darkMode);
+    }, [darkMode]);
+
+    if (!isOnScreen && !frameRef.current) {
+        return <div className={className} />;
+    }
 
     return <iframe
         key={`${pageName}_${name}_${internalFramework}_${importType}`}
-        ref={iframeRef}
+        ref={frameRef}
         title={name}
-        className={classnames(styles.exampleRunnerResult, { [styles.hidden]: !resultFrameIsVisible })}
-        style={{
-            visibility: showIframe ? 'visible' : 'hidden'
+        className={className}
+        style={style}
+        onLoad={() => {
+            applyExampleDarkMode(frameRef.current.contentDocument, darkMode);
+            setLoaded(true);
         }}
+        { ...content }
     />;
 };
 
@@ -118,7 +89,7 @@ const applyExampleDarkMode = (document, darkMode) => {
     document.dispatchEvent(new CustomEvent('color-scheme-change', { detail: { darkMode } }));
 }
 
-export const injectStylesheet = (document) => {
+const injectStylesheet = (document) => {
     const id = 'example-runner-injected-styles';
     let style = document.body.querySelector(`#${id}`);
     if (!style) {

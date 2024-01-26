@@ -131,6 +131,14 @@ describe('isValidChartType', () => {
                 subMenu: [{ name: "radarLine" }, { name: "radarArea" }, { name: 'nightingale' }]
             },
             {
+                name: "statisticalChart",
+                subMenu: [{ name: "rangeBar" }, { name: "boxPlot" }]
+            },
+            {
+                name: "cumulativeChart",
+                subMenu: [{ name: "waterfall" }]
+            },
+            {
                 name: "combinationChart",
                 subMenu: [{ name: "columnLineCombo" }, { name: "AreaColumnCombo" }]
             }

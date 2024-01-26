@@ -28,7 +28,9 @@
     border-radius: var(--radius-md);
     padding: $spacing-size-4;
     margin: $spacing-size-4;
-    transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    transition:
+        color 0.2s ease-in-out,
+        border-color 0.2s ease-in-out;
     width: calc(100% - 2 * $spacing-size-4);
     box-sizing: border-box;
     color: var(--color-text-primary);

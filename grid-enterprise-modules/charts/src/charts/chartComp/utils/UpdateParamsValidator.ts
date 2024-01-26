@@ -52,6 +52,9 @@ export class UpdateParamsValidator {
         'radarLine',
         'radarArea',
         'nightingale',
+        'rangeBar',
+        'boxPlot',
+        'waterfall',
         'columnLineCombo',
         'areaColumnCombo',
         'customCombo'

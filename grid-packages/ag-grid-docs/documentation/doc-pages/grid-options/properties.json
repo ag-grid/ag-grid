@@ -1469,6 +1469,7 @@
             }
         },
         "serverSideSortAllLevels": {},
+        "serverSideEnableClientSideSort": {},
         "serverSideOnlyRefreshFilteredGroups": {
             "more": {
                 "name": "Filters",
