@@ -36,11 +36,6 @@ const links = [
         docsLink: true,
     },
     {
-        name: 'Blog',
-        url: 'https://blog.ag-grid.com/',
-        docsLink: false,
-    },
-    {
         name: 'Pricing',
         url: '/license-pricing',
         docsLink: false,
