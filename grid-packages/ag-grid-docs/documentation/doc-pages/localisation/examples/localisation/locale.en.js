@@ -319,6 +319,7 @@ const AG_GRID_LOCALE_EN = {
     blur: 'Blur',
     xOffset: 'X Offset',
     yOffset: 'Y Offset',
+    connectorLine: 'Connector Line',
     lineWidth: 'Line Width',
     lineDash: 'Line Dash',
     lineDashOffset: 'Dash Offset',
