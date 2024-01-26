@@ -185,47 +185,55 @@ gatsby-fast-refresh {
 }
 
 .customersInner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: $spacing-size-6;
+    text-align: center;
 
     p {
-        margin-bottom: 0;
-        text-align: center;
-
-        @media screen and (min-width: $breakpoint-hero-large) {
-            font-size: var(--text-fs-xl);
-        }
+        max-width: 420px;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
 .customerLogos {
-    display: inline-flex;
-    max-width: 58em;
-    margin-left: auto;
-    margin-right: auto;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 0 $spacing-size-8;
+    --overflow-width: 10vw;
 
-    @media screen and (min-width: 640px) {
-        gap: 0 $spacing-size-12;
+    position: relative;
+    width: calc(100% + var(--overflow-width) * 2);
+    height: 107px;
+    margin-left: calc(var(--overflow-width) * -1);
+    background-image: url('../../images/customer-logos/ag-grid-customer-logos.webp');
+    background-size: auto 107px;
+    animation-name: customerMarquee;
+    animation-duration: 400s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        height: 100%;
+        width: var(--overflow-width);
     }
 
-    img {
-        height: $spacing-size-2 * 7;
+    &::before {
+        left: 0;
+        background-image: linear-gradient(90deg, var(--color-util-gray-50), transparent);
+    }
 
-        @media screen and (min-width: 640px) {
-            height: $spacing-size-2 * 10;
-        }
+    &::after {
+        right: 0;
+        background-image: linear-gradient(90deg, transparent, var(--color-util-gray-50));
+    }
+}
 
-        // WIP darkmode adjustment for customer logos
-        #{$selector-darkmode} & {
-            filter: invert(0.5) sepia(13%) saturate(534%) hue-rotate(173deg) brightness(92%) contrast(88%);
-        }
+@keyframes customerMarquee {
+    from {
+        background-position-x: 0%;
+    }
+
+    to {
+        background-position-x: 5000%;
     }
 }
 
