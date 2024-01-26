@@ -126,7 +126,7 @@ type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
 export type ManagedGridOptionKey = Exclude<GridOptionKey, InitialGridOptionKey>;
 
 export type ManagedGridOptions<TData = any> = {
-    [K in (keyof GridOptions<TData> & ManagedGridOptionKey)]: GridOptions<TData>[K]
+    [K in (ManagedGridOptionKey)]?: GridOptions<TData>[K]
 };
 
 /**
