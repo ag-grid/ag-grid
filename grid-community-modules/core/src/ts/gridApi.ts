@@ -1836,8 +1836,10 @@ export class GridApi<TData = any> {
 
     /**
      * Updates the provided subset of gridOptions with the provided values. (Cannot be used on `Initial` properties.)
-     */
+     */    
     public updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void {
+        // NOTE: The TDataUpdate generic is used to ensure that the update options match the generic passed into the GridApi above as TData.
+        // This is required because if we just use TData directly then Typescript will get into an infinite loop due to callbacks which recursively include the GridApi.
         this.gos.updateGridOptions({ options });
     }
 
