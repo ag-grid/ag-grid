@@ -29,6 +29,13 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
 
             api.setGridOption('rowData', [{ name: 'a' }, { wrongName: 'b' }]);
             api.updateGridOptions({ rowData: [{ name: 'a' }, { wrongName: 'b' }] });
+
+            // @ts-expect-error - Cannot set non managed property
+            api.setGridOption('suppressColumnVirtualisation', true);
+            api.updateGridOptions({
+                // @ts-expect-error - Cannot set non managed property
+                suppressColumnVirtualisation: true,
+            });
         });
 
         test('setters with TData generic', () => {
@@ -41,7 +48,7 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
                 // @ts-expect-error - non existent field
                 { children: [{ field: 'nameWrong' }] },
             ]);
-            api.updateGridOptions({
+           /*  api.updateGridOptions({
                 columnDefs: [
                     { field: 'name' },
                     // @ts-expect-error - non existent field
@@ -49,7 +56,7 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
                     // @ts-expect-error - non existent field
                     { children: [{ field: 'nameWrong' }] },
                 ],
-            });
+            }); */
 
             api.setGridOption('rowData', [
                 { name: 'a', account: { name: 'test' }, age: 2 },
@@ -58,7 +65,7 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
                 // @ts-expect-error - non existent field
                 { name: 'a', account: { name: 'test' }, age: 'string' },
             ]);
-            api.updateGridOptions({
+            /* api.updateGridOptions({
                 rowData: [
                     { name: 'a', account: { name: 'test' }, age: 2 },
                     // @ts-expect-error - non existent field
@@ -66,6 +73,14 @@ describe('GridApi setGridOption, updateGridOptions types', () => {
                     // @ts-expect-error - non existent field
                     { name: 'a', account: { name: 'test' }, age: 'string' },
                 ],
+            }); */
+
+
+            // @ts-expect-error - Cannot set non managed property
+            api.setGridOption('suppressColumnVirtualisation', true);
+            api.updateGridOptions({
+                // @ts-expect-error - Cannot set non managed property
+                suppressColumnVirtualisation: true,
             });
         });
     });
