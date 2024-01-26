@@ -272,7 +272,7 @@ export type RangeMenuOptionName =
     'rangeAreaChart' | 'rangeArea' | 'rangeStackedArea' | 'rangeNormalizedArea' |
     'rangeHistogramChart' |
     'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' |
-    'rangeStatisticalChart' | 'rangeRangeBar' | 'rangeBoxPlot' |
+    'rangeStatisticalChart' | 'rangeRangeBar' | 'rangeRangeArea' | 'rangeBoxPlot' |
     'rangeCumulativeChart' | 'rangeWaterfall' |
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
@@ -355,6 +355,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     subMenu:
                         [
                             getMenuItem('rangeBar', 'Range Bar&lrm;', 'rangeBar', 'rangeRangeBar'),
+                            getMenuItem('rangeArea', 'Range Area&lrm;', 'rangeArea', 'rangeRangeArea'),
                             getMenuItem('boxPlot', 'Box Plot&lrm;', 'boxPlot', 'rangeBoxPlot'),
                         ],
                     _key: 'rangeStatisticalChart'
@@ -427,6 +428,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
             statisticalGroup: {
                 _key: 'rangeStatisticalChart',
                 rangeBar: 'rangeRangeBar',
+                rangeArea: 'rangeRangeArea',
                 boxPlot: 'rangeBoxPlot',
             },
             cumulativeGroup: {

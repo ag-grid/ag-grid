@@ -30,6 +30,7 @@ import {
     MiniRadarArea,
     MiniRadarLine,
     MiniRangeBar,
+    MiniRangeArea,
     MiniWaterfall,
     MiniScatter,
     MiniStackedArea,
@@ -79,6 +80,7 @@ const miniChartMapping = {
     },
     statisticalGroup: {
         rangeBar: MiniRangeBar,
+        rangeArea: MiniRangeArea,
         boxPlot: MiniBoxPlot,
     },
     cumulativeGroup: {

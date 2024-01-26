@@ -18,6 +18,7 @@ export type ChartSeriesType =
     'radar-area' |
     'nightingale' |
     'range-bar' |
+    'range-area' |
     'box-plot' |
     'waterfall' |
     'common';
@@ -41,6 +42,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'radar-area',
     'nightingale',
     'range-bar',
+    'range-area',
     'box-plot',
     'waterfall',
 ];
@@ -87,6 +89,8 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
             return 'nightingale';
         case 'rangeBar':
             return 'range-bar';
+        case 'rangeArea':
+            return 'range-area';
         case 'boxPlot':
             return 'box-plot';
         case 'pie':
