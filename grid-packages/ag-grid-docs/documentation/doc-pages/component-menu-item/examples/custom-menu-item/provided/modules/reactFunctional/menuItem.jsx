@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useGridMenuItem } from '@ag-grid-community/react';
 
-export default ({ name, subMenu, buttonValue, configureDefaults }) => {
-    useEffect(() => {
-        configureDefaults();
-    }, []);
+export default ({ name, subMenu, buttonValue }) => {
+    useGridMenuItem({
+        configureDefaults: () => true
+    });
 
     const onClick = () => alert(`${name} clicked`);
 

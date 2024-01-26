@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { NgIf } from "@angular/common";
 import { IMenuItemAngularComp } from "@ag-grid-community/angular";
-import { IMenuItemParams } from "@ag-grid-community/core";
+import { IMenuConfigParams, IMenuItemParams } from "@ag-grid-community/core";
 import { FormsModule } from "@angular/forms";
 
 export interface CustomMenuItemParams extends IMenuItemParams {
@@ -33,7 +33,10 @@ export class MenuItem implements IMenuItemAngularComp {
         this.name = params.name;
         this.showSubMenu = !!params.subMenu;
         this.buttonValue = params.buttonValue;
-        params.configureDefaults();
+    }
+
+    configureDefaults(): boolean | IMenuConfigParams {
+        return true;
     }
 
     onClick(): void {

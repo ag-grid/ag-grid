@@ -10,11 +10,11 @@ export default {
         </div>
     `,
     methods: {
+        configureDefaults() {
+            return true;
+        },
         onClick() {
             alert(`${this.params.name} clicked`);
         },
-    },
-    mounted() {
-        this.params.configureDefaults();
     },
 }

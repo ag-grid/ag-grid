@@ -73,11 +73,14 @@ export class AgMenuItemComponent extends BeanStub {
             closeSubMenu: () => this.closeSubMenu(),
             closeMenu: event => this.closeMenu(event),
             updateTooltip: tooltip => this.updateTooltip(tooltip),
-            configureDefaults: params => this.configureDefaults(params),
             onItemActivated: () => this.onItemActivated()
         });
         return compDetails.newAgStackInstance().then((comp: IMenuItemComp) => {
             this.menuItemComp = comp;
+            const configureDefaults = comp.configureDefaults?.();
+            if (configureDefaults) {
+                this.configureDefaults(configureDefaults === true ? undefined : configureDefaults);
+            }
         });
     }
 

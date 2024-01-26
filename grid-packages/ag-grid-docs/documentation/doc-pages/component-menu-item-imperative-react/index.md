@@ -21,6 +21,13 @@ The interface for a custom menu item component is as follows:
 |interface IMenuItemReactComp {
 |    // optional methods
 |
+|    // Configure the default grid behaviour for this item, including styling,
+|    // and mouse and keyboard interactions.
+|    // Return `true` to use all default behaviour, `false` to use no default behaviour
+|    // (equivalent to `configureDefaults` not being defined),
+|    // or `IMenuConfigParams` to choose what default behaviour to use.
+|    configureDefaults(): boolean | IMenuConfigParams;
+|
 |    // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
 |    setActive(active: boolean): void;
 |

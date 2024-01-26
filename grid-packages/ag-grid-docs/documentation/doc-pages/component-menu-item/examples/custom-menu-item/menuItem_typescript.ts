@@ -1,4 +1,4 @@
-import { IMenuItemComp, IMenuItemParams } from '@ag-grid-community/core';
+import { IMenuConfigParams, IMenuItemComp, IMenuItemParams } from '@ag-grid-community/core';
 
 export interface CustomMenuItemParams extends IMenuItemParams {
     buttonValue: string;
@@ -6,7 +6,7 @@ export interface CustomMenuItemParams extends IMenuItemParams {
 
 export class MenuItem implements IMenuItemComp {
     eGui!: HTMLDivElement;
-    eButton: HTMLButtonElement;
+    eButton!: HTMLButtonElement;
     eventListener!: () => void;
 
     init(params: CustomMenuItemParams): void {
@@ -19,14 +19,17 @@ export class MenuItem implements IMenuItemComp {
                 ${params.subMenu ? '<span class="ag-icon ag-icon-small-right" unselectable="on" role="presentation"></span>' : ''}
             </span>
         `;
-        params.configureDefaults();
-        this.eButton = this.eGui.querySelector('.alert-button');
+        this.eButton = this.eGui.querySelector('.alert-button')!;
         this.eventListener = () => alert(`${params.name} clicked`);
         this.eButton.addEventListener('click', this.eventListener);
     }
 
     getGui(): HTMLElement {
         return this.eGui;
+    }
+
+    configureDefaults(): boolean | IMenuConfigParams {
+        return true;
     }
 
     destroy(): void {

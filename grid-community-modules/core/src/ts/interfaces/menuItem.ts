@@ -109,8 +109,6 @@ export interface BaseMenuItemParams<TData = any, TContext = any> extends MenuIte
     closeMenu: (event?: KeyboardEvent | MouseEvent) => void;
     /** Update the grid-provided tooltip for this item. */
     updateTooltip: (tooltip?: string) => void;
-    /** Configure the default grid behaviour for this item, including styling, and mouse and keyboard interactions. */
-    configureDefaults: (params?: IMenuConfigParams) => void;
 }
 
 export interface IMenuItemParams<TData = any, TContext = any> extends BaseMenuItemParams<TData, TContext> {
@@ -124,6 +122,15 @@ export interface IMenuItemParams<TData = any, TContext = any> extends BaseMenuIt
 export interface BaseMenuItem {
     /** Called when the item is selected, e.g. clicked or Enter is pressed. */
     select?(): void;
+    /**
+     * Configure the default grid behaviour for this item, including styling,
+     * and mouse and keyboard interactions.
+     *
+     * @returns `true` to use all default behaviour, `false` to use no default behaviour
+     * (equivalent to `configureDefaults` not being defined),
+     * or `IMenuConfigParams` to choose what default behaviour to use.
+     */
+    configureDefaults?(): boolean | IMenuConfigParams;
 }
 
 export interface IMenuItem extends BaseMenuItem {

@@ -95,7 +95,7 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             menuItem: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['setActive', 'select', 'setExpanded']
+                optionalMethodList: ['setActive', 'select', 'setExpanded', 'configureDefaults']
             },
         };
     }

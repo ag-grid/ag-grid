@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
-import { CustomMenuItemProps } from '@ag-grid-community/react';
+import React from 'react';
+import { CustomMenuItemProps, useGridMenuItem } from '@ag-grid-community/react';
 
 export interface ButtonCustomMenuItemProps extends CustomMenuItemProps {
     buttonValue: string;
 }
 
-export default ({ name, subMenu, buttonValue, configureDefaults }: ButtonCustomMenuItemProps) => {
-    useEffect(() => {
-        configureDefaults();
-    }, []);
+export default ({ name, subMenu, buttonValue }: ButtonCustomMenuItemProps) => {
+    useGridMenuItem({
+        configureDefaults: () => true
+    });
 
     const onClick = () => alert(`${name} clicked`);
 

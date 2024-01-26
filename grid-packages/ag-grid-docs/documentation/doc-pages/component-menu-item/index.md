@@ -26,6 +26,13 @@ The following example demonstrates a custom menu item component in both the colu
 |
 |    // optional methods
 |
+|    // Configure the default grid behaviour for this item, including styling,
+|    // and mouse and keyboard interactions.
+|    // Return `true` to use all default behaviour, `false` to use no default behaviour
+|    // (equivalent to `configureDefaults` not being defined),
+|    // or `IMenuConfigParams` to choose what default behaviour to use.
+|    configureDefaults(): boolean | IMenuConfigParams;
+|
 |    // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
 |    setActive(active: boolean): void;
 |
@@ -50,6 +57,13 @@ The following example demonstrates a custom menu item component in both the colu
 |    // The init(params) method is called on the menu item once. See below for details on the parameters.
 |    init(params: IMenuItemParams): void;
 |
+|    // Configure the default grid behaviour for this item, including styling,
+|    // and mouse and keyboard interactions.
+|    // Return `true` to use all default behaviour, `false` to use no default behaviour
+|    // (equivalent to `configureDefaults` not being defined),
+|    // or `IMenuConfigParams` to choose what default behaviour to use.
+|    configureDefaults(): boolean | IMenuConfigParams;
+|
 |    // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
 |    setActive(active: boolean): void;
 |
@@ -65,6 +79,13 @@ The following example demonstrates a custom menu item component in both the colu
 <snippet transform={false} language="ts">
 |interface IMenuItem {
 |    // optional methods
+|
+|    // Configure the default grid behaviour for this item, including styling,
+|    // and mouse and keyboard interactions.
+|    // Return `true` to use all default behaviour, `false` to use no default behaviour
+|    // (equivalent to `configureDefaults` not being defined),
+|    // or `IMenuConfigParams` to choose what default behaviour to use.
+|    configureDefaults(): boolean | IMenuConfigParams;
 |
 |    // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
 |    setActive(active: boolean): void;
@@ -83,10 +104,10 @@ The following example demonstrates a custom menu item component in both the colu
 </framework-specific-section>
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
-|export default ({ name, icon, shortcut, subMenu, configureDefaults }) => {
-|    useEffect(() => {
-|        configureDefaults();
-|    }, []);
+|export default ({ name, icon, shortcut, subMenu }) => {
+|    useGridMenuItem(() => {
+|        configureDefaults: () => true;
+|    });
 |    return (
 |        &lt;div>
 |            &lt;span className="ag-menu-option-part ag-menu-option-icon">{icon}&lt;/span>
@@ -103,10 +124,10 @@ The following example demonstrates a custom menu item component in both the colu
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript,angular,vue">
-|To enable the default menu item behaviour, call `params.configureDefaults` when the component is created (see [Providing Custom Behaviour](/component-menu-item/#providing-custom-behaviour)).
+|To enable the default menu item behaviour, implement the `configureDefaults` method and return `true` (see [Providing Custom Behaviour](/component-menu-item/#providing-custom-behaviour)).
 </framework-specific-section>
 <framework-specific-section frameworks="react">
-|To enable the default menu item behaviour, call the prop `configureDefaults` when the component is created (see [Providing Custom Behaviour](/component-menu-item/#providing-custom-behaviour)).
+|To enable the default menu item behaviour, pass the callback `configureDefaults` to the `useGridMenuItem` hook and return `true` (see [Providing Custom Behaviour](/component-menu-item/#providing-custom-behaviour)).
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -156,11 +177,11 @@ This format can be overridden by [Styling the Menu](/global-style-customisation-
 
 ## Providing Custom Behaviour
 
-As described above, the easiest way to configure the behaviour of a custom menu item is using the `configureDefaults` callback.
+As described above, the easiest way to configure the behaviour of a custom menu item is returning `true` from `configureDefaults`.
 
-If this is not called, then the custom menu item will need to implement all of the required behaviour itself.
+If this is not done, then the custom menu item will need to implement all of the required behaviour itself.
 
-It is also possible to disable certain parts of the behaviour by passing params of type `IMenuConfigParams` to `configureDefaults`:
+It is also possible to disable certain parts of the behaviour by returning an object of type `IMenuConfigParams` from `configureDefaults`:
 
 <interface-documentation interfaceName='IMenuConfigParams' config='{ "description": "" }'></interface-documentation>
 

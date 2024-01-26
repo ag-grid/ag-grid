@@ -27,8 +27,10 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
         this.addName();
         this.addShortcut();
         this.addSubMenu();
+    }
 
-        params.configureDefaults();
+    public configureDefaults(): boolean {
+        return true;
     }
 
     private addIcon(): void {
