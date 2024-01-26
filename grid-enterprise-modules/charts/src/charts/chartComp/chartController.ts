@@ -239,17 +239,36 @@ export class ChartController extends BeanStub {
         return this.model.crossFiltering;
     }
 
-    public getThemes(): string[] {
+    public getThemeNames(): string[] {
         return this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
     }
 
-    public getPalettes(): AgChartThemePalette[] {
-        const themeNames = this.getThemes();
+    public getThemes(): _Theme.ChartTheme[] {
+        const themeNames = this.getThemeNames();
 
-        return themeNames.map(themeName => {
+        return themeNames.map((themeName) => {
             const stockTheme = isStockTheme(themeName);
             const theme = stockTheme ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
-            return _Theme.getChartTheme(theme).palette;
+            return _Theme.getChartTheme(theme);
+        });
+    }
+
+    public getPalettes(): AgChartThemePalette[] {
+        const themes = this.getThemes();
+
+        return themes.map((theme) => {
+            return theme.palette;
+        });
+    }
+
+    public getThemeTemplateParameters(): {
+        extensions: Map<any, any>;
+        properties: Map<any, any>;
+    }[] {
+        const themes = this.getThemes();
+
+        return themes.map((theme) => {
+            return theme.getTemplateParameters();
         });
     }
 
