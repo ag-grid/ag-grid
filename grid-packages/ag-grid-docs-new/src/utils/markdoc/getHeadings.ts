@@ -4,6 +4,7 @@ import { type MarkdownHeading } from 'astro';
 import Slugger from 'github-slugger';
 
 import markdocConfig from '../../../markdoc.config';
+import { transformMarkdoc } from './transformMarkdoc';
 
 const TABS_TAG_NAME = 'tabs';
 const TAB_ITEM_TAG_NAME = 'tabItem';
@@ -102,19 +103,7 @@ export function getHeadings({
     framework: Framework;
     getTabItemSlug: (id: string) => string;
 }): MarkdownHeading[] {
-    const ast = Markdoc.parse(markdocContent);
-    const headingSlugger = new Slugger();
-    const config = {
-        ...markdocConfig,
-        variables: {
-            ...markdocConfig.variables,
-            framework,
-        },
-        ctx: {
-            headingSlugger,
-        },
-    };
-    const renderTree = Markdoc.transform(ast as Node, config as ConfigType);
+    const { ast, renderTree } = transformMarkdoc({ framework, markdocContent });
     if (!renderTree) {
         return [];
     }
