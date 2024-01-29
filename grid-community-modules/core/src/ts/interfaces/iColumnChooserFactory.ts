@@ -1,8 +1,14 @@
 import { Column } from "../entities/column";
 import { ColumnChooserParams } from "../entities/colDef";
 
+export interface ShowColumnChooserParams {
+    column?: Column | null;
+    chooserParams?: ColumnChooserParams;
+    eventSource?: HTMLElement;
+}
+
 export interface IColumnChooserFactory {
-    showColumnChooser({ column, params }: { column?: Column | null, params?: ColumnChooserParams }): void;
+    showColumnChooser(params: ShowColumnChooserParams): void;
 
     hideActiveColumnChooser(): void
 }

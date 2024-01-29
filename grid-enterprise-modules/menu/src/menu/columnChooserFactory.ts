@@ -1,8 +1,24 @@
-import { AgDialog, Bean, BeanStub, Column, ColumnChooserParams, IColumnChooserFactory } from "@ag-grid-community/core";
+import {
+    AgDialog,
+    Autowired,
+    Bean,
+    BeanStub,
+    Column,
+    ColumnChooserParams,
+    ColumnModel,
+    FocusService,
+    IColumnChooserFactory,
+    ShowColumnChooserParams
+} from "@ag-grid-community/core";
 import { PrimaryColsPanel } from "@ag-grid-enterprise/column-tool-panel";
+import { MenuUtils } from "./menuUtils";
 
 @Bean('columnChooserFactory')
 export class ColumnChooserFactory extends BeanStub implements IColumnChooserFactory {
+    @Autowired('focusService') private readonly focusService: FocusService;
+    @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+
     private activeColumnChooser: PrimaryColsPanel | undefined;
     private activeColumnChooserDialog: AgDialog | undefined;
 
@@ -39,11 +55,13 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
         return columnSelectPanel;
     }
 
-    public showColumnChooser({ column, params }: { column?: Column | null, params?: ColumnChooserParams }): void {
+    public showColumnChooser({ column, chooserParams, eventSource }: ShowColumnChooserParams): void {
         this.hideActiveColumnChooser();
 
-        const columnSelectPanel = this.createColumnSelectPanel(this, column, true, params);
+        const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
         const translate = this.localeService.getLocaleTextFunc();
+        const columnIndex = this.columnModel.getAllDisplayedColumns().indexOf(column!);
+        const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 
         this.activeColumnChooserDialog = this.createBean(new AgDialog({
             title: translate('chooseColumns', 'Choose Columns'),
@@ -54,15 +72,21 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
             movable: true,
             centered: true,
             closable: true,
+            afterGuiAttached: () => {
+                this.focusService.findNextFocusableElement(columnSelectPanel.getGui())?.focus();
+            },
+            closedCallback: (event) => {
+                const eComp = this.activeColumnChooser!.getGui();
+                this.destroyBean(this.activeColumnChooser);
+                this.activeColumnChooser = undefined;
+                this.activeColumnChooserDialog = undefined;
+                if (column) {
+                    this.menuUtils.restoreFocusOnClose(column, eComp, headerPosition, columnIndex, eventSource, event);
+                }
+            }
         }));
 
         this.activeColumnChooser = columnSelectPanel;
-
-        this.activeColumnChooserDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
-            this.destroyBean(this.activeColumnChooser);
-            this.activeColumnChooser = undefined;
-            this.activeColumnChooserDialog = undefined;
-        });
     }
 
     public hideActiveColumnChooser(): void {

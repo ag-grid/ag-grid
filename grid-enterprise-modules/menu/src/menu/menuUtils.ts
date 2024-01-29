@@ -20,17 +20,20 @@ export class MenuUtils extends BeanStub {
 
     public restoreFocusOnClose(
         column: Column | undefined,
-        component: BeanStub,
+        eComp:  HTMLElement,
         headerPosition: HeaderPosition | null,
         columnIndex: number,
         eventSource?: HTMLElement,
         e?: Event
     ): void {
-        this.destroyBean(component);
-        column?.setMenuVisible(false, 'contextMenu');
-
         const isKeyboardEvent = e instanceof KeyboardEvent;
         if (!isKeyboardEvent || !eventSource) { return; }
+        
+        const eDocument = this.gridOptionsService.getDocument();
+        if (!eComp.contains(eDocument.activeElement) && eDocument.activeElement !== eDocument.body) {
+            // something else has focus, so don't return focus to the header
+            return;
+        }
 
         const isColumnStillVisible = this.columnModel.getAllDisplayedColumns().some(col => col === column);
 
@@ -60,14 +63,14 @@ export class MenuUtils extends BeanStub {
         }
     }
 
-    public restoreFocusOnSelect(hidePopupFunc: (popupParams?: PopupEventParams) => void, event?: MenuItemSelectedEvent): void {
+    public closePopupAndRestoreFocusOnSelect(hidePopupFunc: (popupParams?: PopupEventParams) => void, event?: MenuItemSelectedEvent): void {
         let keyboardEvent: KeyboardEvent | undefined;
 
         if (event && event.event && event.event instanceof KeyboardEvent) {
             keyboardEvent = event.event;
         }
 
-        hidePopupFunc(keyboardEvent && { keyboardEvent: keyboardEvent });
+        hidePopupFunc(keyboardEvent && { keyboardEvent });
 
         // this method only gets called when the menu was closed by selection an option
         // in this case we highlight the cell that was previously highlighted

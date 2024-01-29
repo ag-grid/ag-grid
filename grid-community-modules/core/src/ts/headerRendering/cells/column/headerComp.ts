@@ -16,7 +16,7 @@ import { SortIndicatorComp } from "./sortIndicatorComp";
 import { ColumnModel } from "../../../columns/columnModel";
 import { Events } from "../../../eventKeys";
 import { SortDirection } from "../../../entities/colDef";
-import { MenuService } from "../../../misc/menuService";
+import { MenuService, ShowColumnMenuParams } from "../../../misc/menuService";
 
 export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column the header is for. */
@@ -42,6 +42,11 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
      *  grid position the menu over the button.
      */
     showColumnMenu: (source: HTMLElement) => void;
+    /**
+     * Callback to request the grid to show the column menu.
+     * Similar to `showColumnMenu`, but will position the menu next to the provided `mouseEvent`.
+     */
+     showColumnMenuAfterMouseClick: (mouseEvent: MouseEvent | Touch) => void;
     /**
      * Callback to progress the sort for this column.
      * The grid will decide the next sort direction eg ascending, descending or 'no sort'.
@@ -258,23 +263,23 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        this.addInIcon('menu-alt', this.eMenu, this.params.column);
+        this.addInIcon('menuAlt', this.eMenu, this.params.column);
 
         this.currentSuppressMenuHide = this.shouldSuppressMenuHide();
         this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
         this.eMenu.classList.toggle('ag-header-menu-always-show', this.currentSuppressMenuHide);
     }
 
-    public showMenu(eventSource?: HTMLElement) {
-        if (!eventSource) {
-            eventSource = this.eMenu;
-        }
-
-        this.menuService.showColumnMenu({
+    public showMenu(buttonElement?: HTMLElement) {
+        const params: ShowColumnMenuParams = this.currentShowMenu ? {
             column: this.params.column,
-            buttonElement: eventSource,
+            buttonElement: buttonElement ?? this.eMenu,
             positionBy: 'button'
-        });
+        } : {
+            column: this.params.column,
+            positionBy: 'auto'
+        };
+        this.menuService.showColumnMenu(params);
     }
 
     private workOutSort(): boolean | undefined {

@@ -124,7 +124,12 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         if (column) {
             // if we don't have a column, then the menu wasn't launched via keyboard navigation
             closedFuncs.push(
-                (e) => this.menuUtils.restoreFocusOnClose(column, menu, currentHeaderPosition, currentColumnIndex, eventSource, e)
+                (e) => {
+                    const eComp = menu.getGui();
+                    this.destroyBean(menu);
+                    column?.setMenuVisible(false, 'contextMenu');
+                    this.menuUtils.restoreFocusOnClose(column, eComp, currentHeaderPosition, currentColumnIndex, eventSource, e);
+                }
             );
         }
 
@@ -397,7 +402,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
     }
 
     private onHidePopup(event?: MenuItemSelectedEvent): void {
-        this.menuUtils.restoreFocusOnSelect(this.hidePopupFunc, event);
+        this.menuUtils.closePopupAndRestoreFocusOnSelect(this.hidePopupFunc, event);
     }
 
     private createFilterPanel(): TabbedItem {
@@ -476,6 +481,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
 class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     @Autowired('columnMenuFactory') private readonly columnMenuFactory: ColumnMenuFactory;
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
+    @Autowired('focusService') private readonly focusService: FocusService;
 
     @RefSelector('eColumnMenu') private readonly eColumnMenu: HTMLElement;
 
@@ -496,7 +502,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     }
 
     private onHidePopup(event?: MenuItemSelectedEvent): void {
-        this.menuUtils.restoreFocusOnSelect(this.hidePopupFunc, event);
+        this.menuUtils.closePopupAndRestoreFocusOnSelect(this.hidePopupFunc, event);
     }
 
     public afterGuiAttached({ hidePopup }: IAfterGuiAttachedParams): void {
@@ -504,5 +510,6 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
             this.hidePopupFunc = hidePopup;
             this.addDestroyFunc(hidePopup);
         }
+        this.focusService.focusInto(this.mainMenuList.getGui());
     }
 }

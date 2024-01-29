@@ -198,11 +198,18 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             displayName: this.displayName!,
             enableSorting: this.column.isSortable(),
             enableMenu: this.menuEnabled,
-            showColumnMenu: (source: HTMLElement) => {
+            showColumnMenu: (buttonElement: HTMLElement) => {
                 this.menuService.showColumnMenu({
                     column: this.column,
-                    buttonElement: source,
+                    buttonElement,
                     positionBy: 'button'
+                });
+            },
+            showColumnMenuAfterMouseClick: (mouseEvent: MouseEvent | Touch) => {
+                this.menuService.showColumnMenu({
+                    column: this.column,
+                    mouseEvent,
+                    positionBy: 'mouse'
                 });
             },
             progressSort: (multiSort?: boolean) => {

@@ -7,7 +7,7 @@ import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ITooltipParams } from "../rendering/tooltipComponent";
 import { Column } from "./column";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
-import { RowClassParams, MenuItemDef, GetMainMenuItems } from "./gridOptions";
+import { RowClassParams, MenuItemDef, GetMainMenuItems, GetContextMenuItems } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { IRowNode } from "../interfaces/iRowNode";
 
@@ -383,6 +383,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     suppressMenu?: boolean;
     mainMenuItems?: (string | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
+    contextMenuItems?: (string | MenuItemDef<TData>)[] | GetContextMenuItems<TData>;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
     /**

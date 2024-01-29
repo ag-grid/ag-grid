@@ -282,7 +282,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _.createIconNoSpan('columns', this.gridOptionsService, null),
-                        action: () => this.menuService.showColumnChooser({ column })
+                        action: () => this.menuService.showColumnChooser({ column, eventSource: sourceElement() })
                     }
                 } else {
                     return null;

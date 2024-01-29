@@ -385,7 +385,7 @@ export { IServerSideSelectionState, IServerSideGroupSelectionState } from "./int
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
-export { IColumnChooserFactory } from "./interfaces/iColumnChooserFactory";
+export { IColumnChooserFactory, ShowColumnChooserParams } from "./interfaces/iColumnChooserFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
 export { RowPosition, RowPositionUtils } from "./entities/rowPositionUtils";
 export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";

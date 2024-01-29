@@ -1278,14 +1278,10 @@ export class GridApi<TData = any> {
         this.assertClipboard('pasteFromClipboard', () => this.clipboardService.pasteFromClipboard());
     }
 
-    /** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */
+    /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
         // use grid column so works with pivot mode
-        const column = this.columnModel.getGridColumn(colKey);
-        if (!column) {
-            console.error(`AG Grid: column '${colKey}' not found`);
-            return;
-        }
+        const column = this.columnModel.getGridColumn(colKey)!;
         this.menuService.showColumnMenu({
             column,
             buttonElement,
@@ -1293,7 +1289,7 @@ export class GridApi<TData = any> {
         });
     }
 
-    /** Shows the column menu after and positions it relative to the mouse event. Use in conjunction with your own header template. */
+    /** @deprecated v31.1 Use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere. */
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
         // use grid column so works with pivot mode
         let column = this.columnModel.getGridColumn(colKey);
@@ -1312,7 +1308,7 @@ export class GridApi<TData = any> {
     }
 
     public showColumnChooser(params?: ColumnChooserParams): void {
-        this.menuService.showColumnChooser({ params });
+        this.menuService.showColumnChooser({ chooserParams: params });
     }
 
     public showColumnFilter(colKey: string | Column): void {
@@ -1328,9 +1324,25 @@ export class GridApi<TData = any> {
         });
     }
 
+    public showColumnMenu(colKey: string | Column): void {
+        const column = this.columnModel.getGridColumn(colKey);
+        if (!column) {
+            console.error(`AG Grid: column '${colKey}' not found`);
+            return;
+        }
+        this.menuService.showColumnMenu({
+            column,
+            positionBy: 'auto'
+        });
+    }
+
     /** Hides any visible context menu or column menu. */
     public hidePopupMenu(): void {
         this.menuService.hidePopupMenu();
+    }
+
+    public hideColumnChooser(): void {
+        this.menuService.hideColumnChooser();
     }
 
     /** Navigates the grid focus to the next cell, as if tabbing. */

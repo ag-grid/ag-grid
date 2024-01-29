@@ -7,8 +7,7 @@ import { ContainerType } from "../interfaces/iAfterGuiAttachedParams";
 import { RowNode } from "../entities/rowNode";
 import { CtrlsService } from "../ctrlsService";
 import { AnimationFrameService } from "./animationFrameService";
-import { IColumnChooserFactory } from "../interfaces/iColumnChooserFactory";
-import { ColumnChooserParams } from "../entities/colDef";
+import { IColumnChooserFactory, ShowColumnChooserParams } from "../interfaces/iColumnChooserFactory";
 
 interface BaseShowColumnMenuParams {
     column?: Column,
@@ -33,7 +32,7 @@ interface AutoShowMenuParams {
     positionBy: 'auto';
 }
 
-export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams) & BaseShowColumnMenuParams;
+export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) & BaseShowColumnMenuParams;
 
 export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) & BaseShowFilterMenuParams;
 
@@ -71,35 +70,15 @@ export class MenuService extends BeanStub {
     }
 
     public showColumnMenu(params: ShowColumnMenuParams): void {
-        if (params.positionBy === 'button') {
-            const { column, buttonElement } = params;
-            this.activeMenuFactory.showMenuAfterButtonClick(column, buttonElement, 'columnMenu');
-        } else {
-            const { column, mouseEvent } = params;
-            this.activeMenuFactory.showMenuAfterMouseEvent(column, mouseEvent, 'columnMenu');
-        }
+        this.showColumnMenuCommon(this.activeMenuFactory, params, 'columnMenu');
     }
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
-        const { column, containerType, positionBy } = params;
-        const menuFactory: IMenuFactory = !column.getMenuParams()?.enableNewFormat && this.enterpriseMenuFactory
+        const menuFactory: IMenuFactory = !params.column.getMenuParams()?.enableNewFormat && this.enterpriseMenuFactory
             ? this.enterpriseMenuFactory
             : this.filterMenuFactory;
-        if (positionBy === 'button') {
-            const { buttonElement } = params;
-            menuFactory.showMenuAfterButtonClick(column, buttonElement, containerType, true);
-        } else if (positionBy === 'mouse') {
-            const { mouseEvent } = params;
-            menuFactory.showMenuAfterMouseEvent(column, mouseEvent, containerType, true);
-        } else {
-            // auto
-            this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
-            // make sure we've finished scrolling into view before displaying the filter
-            this.animationFrameService.requestAnimationFrame(() => {
-                const eHeader = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned()).getHtmlElementForColumnHeader(column)!;
-                menuFactory.showMenuAfterButtonClick(column, eHeader, containerType, true);
-            });
-        }
+        this.showColumnMenuCommon(menuFactory, params, params.containerType, true);
+
     }
 
     public showHeaderContextMenu(column: Column | undefined, mouseEvent?: MouseEvent, touchEvent?: TouchEvent): void {
@@ -120,7 +99,7 @@ export class MenuService extends BeanStub {
         );
     }
 
-    public showColumnChooser(params: { column?: Column | null, params?: ColumnChooserParams }): void {
+    public showColumnChooser(params: ShowColumnChooserParams): void {
         this.columnChooserFactory?.showColumnChooser(params);
     }
 
@@ -131,7 +110,30 @@ export class MenuService extends BeanStub {
         this.activeMenuFactory.hideActiveMenu();
     }
 
+    public hideColumnChooser(): void {
+        this.columnChooserFactory?.hideActiveColumnChooser();
+    }
+
     public isMenuEnabled(column: Column): boolean {
         return this.activeMenuFactory.isMenuEnabled(column);
+    }
+
+    private showColumnMenuCommon(menuFactory: IMenuFactory, params: ShowColumnMenuParams, containerType: ContainerType, filtersOnly?: boolean): void {
+        const { column, positionBy } = params;
+        if (positionBy === 'button') {
+            const { buttonElement } = params;
+            menuFactory.showMenuAfterButtonClick(column, buttonElement, containerType, filtersOnly);
+        } else if (positionBy === 'mouse') {
+            const { mouseEvent } = params;
+            menuFactory.showMenuAfterMouseEvent(column, mouseEvent, containerType, filtersOnly);
+        } else if (column) {
+            // auto
+            this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
+            // make sure we've finished scrolling into view before displaying the menu
+            this.animationFrameService.requestAnimationFrame(() => {
+                const eHeader = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned()).getHtmlElementForColumnHeader(column)!;
+                menuFactory.showMenuAfterButtonClick(column, eHeader, containerType, true);
+            });
+        }
     }
 }

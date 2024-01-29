@@ -140,6 +140,7 @@ export class ColDefUtil {
         useValueParserForImport: undefined,
         menuParams: undefined,
         mainMenuItems: undefined,
+        contextMenuItems: undefined,
     };
 
     public static ALL_PROPERTIES: ColKey[] = Object.keys(ColDefUtil.ColDefPropertyMap) as ColKey[];
