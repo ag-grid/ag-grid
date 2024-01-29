@@ -57,7 +57,7 @@ function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
     const imports = [];
 
     if (gridSettings.enterprise) {
-        imports.push("import 'ag-grid-enterprise';");
+        imports.push(`import 'ag-grid-${bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");

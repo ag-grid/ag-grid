@@ -45,6 +45,36 @@ const builds = {
         format: 'esm',
         env: 'production',
         banner
+    },
+    'enterprise-charts-cjs-dev': {
+        entry: path.resolve(__dirname, './src/main-charts.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.cjs.js'),
+        format: 'cjs',
+        env: 'development',
+        nodeFormatOverride: 'es5-cjs',
+        banner
+    },
+    'enterprise-charts-cjs-prod': {
+        entry: path.resolve(__dirname, './src/main-charts.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.cjs.min.js'),
+        format: 'cjs',
+        env: 'production',
+        nodeFormatOverride: 'es5-cjs',
+        banner
+    },
+    'enterprise-charts-esm-dev': {
+        entry: path.resolve(__dirname, './src/main-charts.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.esm.js'),
+        format: 'esm',
+        env: 'development',
+        banner
+    },
+    'enterprise-charts-esm-prod': {
+        entry: path.resolve(__dirname, './src/main-charts.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.esm.min.js'),
+        format: 'esm',
+        env: 'production',
+        banner
     }
 };
 

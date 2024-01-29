@@ -16,7 +16,7 @@ const moduleDirectories = glob.sync('../../grid-community-modules/*', {
         '../../grid-community-modules/polymer'
     ]
 })
-    .concat(glob.sync('../../grid-enterprise-modules/*', {ignore: ['../../grid-enterprise-modules/all-modules', '../../grid-enterprise-modules/charts-enterprise']}));
+    .concat(glob.sync('../../grid-enterprise-modules/*', {ignore: ['../../grid-enterprise-modules/all-modules', '../../grid-enterprise-modules/charts']}));
 
 const mapDirectory = directory => glob.sync(`${directory}/src/**/*.ts`, {
     nodir: true,
@@ -40,13 +40,14 @@ module.exports = merge(common, {
     resolve: {
         alias: {
             "ag-charts-community": path.resolve('./node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/package/main.cjs.js'),
+            "ag-charts-enterprise": path.resolve('./node_modules/@ag-grid-enterprise/charts-enterprise/node_modules/ag-charts-enterprise/dist/package/main.cjs.js'),
             "@ag-grid-community/core": path.resolve(__dirname, "../../../grid-community-modules/core/src/ts/main.ts"),
             "@ag-grid-community/client-side-row-model": path.resolve(__dirname, "../../../grid-community-modules/client-side-row-model/src/main.ts"),
             "@ag-grid-community/infinite-row-model": path.resolve(__dirname, "../../../grid-community-modules/infinite-row-model/src/main.ts"),
             "@ag-grid-community/csv-export": path.resolve(__dirname, "../../../grid-community-modules/csv-export/src/main.ts"),
             "@ag-grid-enterprise/advanced-filter": path.resolve(__dirname, "../../../grid-enterprise-modules/advanced-filter/src/main.ts"),
             "@ag-grid-enterprise/core": path.resolve(__dirname, "../../../grid-enterprise-modules/core/src/main.ts"),
-            "@ag-grid-enterprise/charts": path.resolve(__dirname, "../../../grid-enterprise-modules/charts/src/main.ts"),
+            "@ag-grid-enterprise/charts-enterprise": path.resolve(__dirname, "../../../grid-enterprise-modules/charts-enterprise/src/main.ts"),
             "@ag-grid-enterprise/clipboard": path.resolve(__dirname, "../../../grid-enterprise-modules/clipboard/src/main.ts"),
             "@ag-grid-enterprise/column-tool-panel": path.resolve(__dirname, "../../../grid-enterprise-modules/column-tool-panel/src/main.ts"),
             "@ag-grid-enterprise/excel-export": path.resolve(__dirname, "../../../grid-enterprise-modules/excel-export/src/main.ts"),
@@ -67,7 +68,7 @@ module.exports = merge(common, {
         extensions: [".ts", ".tsx", ".js"]
     },
     output: {
-        filename: 'ag-grid-enterprise.js',
+        filename: 'ag-grid-enterprise-charts-enterprise.js',
         library: ['agGrid'],
         libraryTarget: 'umd',
         publicPath: '/',

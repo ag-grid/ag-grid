@@ -80,9 +80,11 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
 function addPackageImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
 
+    // bindings.gridSettings.modules.includes('charts-enterprise')
+
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
     if (gridSettings.enterprise) {
-        imports.push("import 'ag-grid-enterprise';");
+        imports.push(`import 'ag-grid-${bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");

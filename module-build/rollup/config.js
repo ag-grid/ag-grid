@@ -232,7 +232,7 @@ function genConfig(build, sourceDirectory, moduleName) {
         ...(build.config ? build.config : {}),
         input: path.resolve(sourceDirectory, build.inputMainFile),
         plugins: [
-            nodeResolve({useEsmEs5: build.useEsmEs5})      // for utils package - defaulting to use index.js
+            nodeResolve({dedupe: ['ag-charts-community'], useEsmEs5: build.useEsmEs5})      // for utils package - defaulting to use index.js
         ].concat(build.plugins || []),
         output: {
             file: path.resolve(sourceDirectory, `./dist/${moduleName}${build.extension}`),

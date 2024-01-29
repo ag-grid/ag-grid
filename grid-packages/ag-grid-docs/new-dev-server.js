@@ -327,11 +327,13 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
     const enterpriseModulesEntries = gridEnterpriseModules
         .filter(module => module.moduleDirName !== 'core')
         .filter(module => module.moduleDirName !== 'all-modules')
+        .filter(module => !module.moduleDirName.includes('charts'))
         .map(module => `const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};`);
 
     const enterpriseRegisterModuleLines = gridEnterpriseModules
         .filter(module => module.moduleDirName !== 'core')
         .filter(module => module.moduleDirName !== 'all-modules')
+        .filter(module => !module.moduleDirName.includes('charts'))
         .map(module => `ModuleRegistry.register(${module.moduleName});`);
     const moduleIsUmdLine = `ModuleRegistry.__setIsBundled();`
 
@@ -347,8 +349,29 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
             newEnterpriseBundleLines.push(line);
         }
     });
-    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
-    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).concat(moduleIsUmdLine).join(EOL), 'UTF-8');
+
+    const newEnterpriseBundleContent = newEnterpriseBundleLines
+        .concat(enterpriseModulesEntries)
+        .concat('const GridChartsModule = require("../../../../../grid-enterprise-modules/charts/dist/cjs/es5/gridChartsModule").GridChartsModule;')
+        .concat(communityModulesEntries);
+    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent
+        .concat(enterpriseRegisterModuleLines)
+        .concat('ModuleRegistry.register(GridChartsModule);')
+        .concat(communityRegisterModuleLines)
+        .concat(moduleIsUmdLine)
+        .join(EOL), 'UTF-8');
+
+    const newGridChartsEnterpriseBundleContent = newEnterpriseBundleLines
+        .concat(enterpriseModulesEntries)
+        .concat('const GridChartsModule = require("../../../../../grid-enterprise-modules/charts-enterprise/dist/cjs/es5/gridChartsModule").GridChartsModule;')
+        .concat(communityModulesEntries);
+
+    fs.writeFileSync('./src/_assets/ts/enterprise-grid-charts-all-modules-umd-beta.js', newGridChartsEnterpriseBundleContent
+        .concat(enterpriseRegisterModuleLines)
+        .concat('ModuleRegistry.register(GridChartsModule);')
+        .concat(communityRegisterModuleLines)
+        .concat(moduleIsUmdLine)
+        .join(EOL), 'UTF-8');
 
     const existingCommunityLines = fs.readFileSync(communityFilename).toString().split(EOL);
     modulesLineFound = false;
@@ -578,6 +601,7 @@ const performInitialBuild = async (skipFrameworks) => {
 };
 
 const addWebpackMiddleware = (app) => {
+    console.log("Adding webpack middleware");
     // for js examples that just require community functionality (landing pages, vanilla community examples etc)
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
     addWebpackMiddlewareForConfig(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
@@ -585,6 +609,10 @@ const addWebpackMiddleware = (app) => {
     // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
     addWebpackMiddlewareForConfig(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
+
+    // for js examples that just require grid & charts enterprise functionality (vanilla integrated charts examples etc)
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+    addWebpackMiddlewareForConfig(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise-charts-enterprise.js');
 };
 
 const watchCoreModulesAndCss = async (skipFrameworks) => {
