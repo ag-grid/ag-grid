@@ -55,6 +55,15 @@ export default defineMarkdocConfig({
         },
     },
     tags: {
+        kbd: {
+            render: 'kbd',
+            attributes: {
+                primary: { type: String },
+            },
+            transform(node) {
+                return new Markdoc.Tag(this.render, {}, [node.attributes.primary]);
+            },
+        },
         /**
          * External link that opens in a new tab
          */
