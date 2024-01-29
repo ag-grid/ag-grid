@@ -1,13 +1,11 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef } from '@ag-grid-community/core';
 import { describe, expect, test } from '@jest/globals';
-import { fireEvent, render, screen, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { useRef, useState } from 'react';
-import { AgGridReact } from '../agGridReact';
-import exp from 'constants';
 import { act } from 'react-dom/test-utils';
-import { wait } from '@testing-library/user-event/dist/types/utils';
+import { AgGridReact } from '../agGridReact';
 
 interface RowData {
     make: string;
@@ -24,11 +22,8 @@ const App = () => {
         { make: 'Porsche', model: 'Boxster', price: 72000 }
     ]);
     const [colDefs, setColDefs] = useState<ColDef<RowData>[]>([
-        { field: 'make'},
-        { field: 'model', valueGetter: (params) => {
-            console.log(params.data?.make.toUpperCase())
-            return params.data?.make.toUpperCase()
-        } },
+        { field: 'make' },
+        { field: 'model' },
         { field: 'price', filter: true, floatingFilter: true },
     ]);
 
@@ -38,17 +33,6 @@ const App = () => {
                 ref={gridRef}
                 rowData={rowData}
                 columnDefs={colDefs}
-                ensureDomOrder
-                onFilterChanged={(e) => console.log(e.type)}
-                onFilterModified={(e) => {
-                    let count = 0;
-                    
-                    e.api.forEachNodeAfterFilter(d => {
-                      
-                      count++
-                    })
-                    console.log(count, e.filterInstance.getModel())
-                }}
                 modules={[ClientSideRowModelModule]} />
         </div>
     );
@@ -59,8 +43,8 @@ describe('Filter Grid Data', () => {
     test('enter value to floating filter', async () => {
         render(<App />);
 
-        let fordCell1 = await screen.findByText('Ford')
-        expect(fordCell1).toBeDefined();
+        let fordCell = await screen.findByText('Ford')
+        expect(fordCell).toBeDefined();
 
         let priceFloatingFilters: HTMLInputElement[] = await screen.findAllByLabelText('Price Filter Input');
         let priceFloatingFilter = priceFloatingFilters[0];
@@ -69,21 +53,23 @@ describe('Filter Grid Data', () => {
 
         let rows = await screen.findAllByRole('row');
 
+        // 3 rows + the header rows (2)
         expect(rows.length).toBe(5);
 
-        console.log('priceFloatingFilter', priceFloatingFilter);
         // Click to focus the floating filter input
         await userEvent.click(priceFloatingFilter);
+        await act(async () => {
+            return await userEvent.keyboard('32000');
+        });
 
-         await act(async () => {
-             return await userEvent.keyboard('32000');
-         });
+        await waitForElementToBeRemoved(() => {
+            // Wait for Porsche row to be filtered out
+            return screen.queryByText('Porsche')
+        });
 
-        console.log('priceFloatingFilter', priceFloatingFilter.value);
-
-        await waitForElementToBeRemoved(() => screen.queryByText('Ford'), { timeout: 5000, interval: 1000});    
-
-         
+        rows = await screen.findAllByRole('row');
+        // 1 rows + the header rows (2)
+        expect(rows.length).toBe(3);
 
     });
 
