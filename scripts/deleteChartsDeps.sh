@@ -11,3 +11,8 @@ do
     fi
   done
 done
+
+if [ -d "grid-packages/ag-grid-docs/documentation" ]; then
+  cd "grid-packages/ag-grid-docs/documentation"
+  rm -rf ag-charts-community ag-charts-enterprise ag-charts-angular ag-charts-react ag-charts-vue ag-charts-vue3
+fi
