@@ -76,6 +76,10 @@
                 main: './dist/ag-grid-enterprise.cjs.min.js',
                 defaultExtension: 'js'
             },
+            'ag-grid-charts-enterprise': {
+                main: './dist/ag-grid-enterprise-charts-enterprise.cjs.js',
+                defaultExtension: 'js'
+            },
             "@ag-grid-community/angular": {
                 main: "./fesm2015/ag-grid-community-angular.mjs",
                 defaultExtension: "mjs"

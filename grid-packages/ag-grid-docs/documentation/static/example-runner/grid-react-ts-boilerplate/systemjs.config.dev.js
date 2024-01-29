@@ -137,6 +137,10 @@
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
+            '@ag-grid-enterprise/charts-enterprise': {
+                main: './dist/cjs/es5/main.js',
+                defaultExtension: 'js'
+            },
             '@ag-grid-enterprise/clipboard': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
