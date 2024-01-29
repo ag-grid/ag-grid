@@ -272,7 +272,8 @@ export { AgRichSelect, RichSelectParams } from "./widgets/agRichSelect";
 export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
 export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
-export { AgMenuItemComponent, MenuItemActivatedEvent, MenuItemSelectedEvent } from "./widgets/agMenuItemComponent";
+export { AgMenuItemRenderer } from "./widgets/agMenuItemRenderer";
+export { AgMenuItemComponent, MenuItemActivatedEvent, CloseMenuEvent } from "./widgets/agMenuItemComponent";
 export { AgMenuList } from "./widgets/agMenuList";
 export { AgMenuPanel } from "./widgets/agMenuPanel";
 export { AgDialog } from "./widgets/agDialog";
@@ -475,8 +476,6 @@ export {
     IsRowMaster,
     IsRowSelectable,
     IsRowFilterable,
-    MenuItemLeafDef,
-    MenuItemDef,
     GetMainMenuItems,
     GetRowNodeIdFunc,
     GetRowIdFunc,
@@ -554,6 +553,7 @@ export { ITooltipComp, ITooltipParams, TooltipLocation } from "./rendering/toolt
 export { TooltipFeature } from "./widgets/tooltipFeature";
 export { CustomTooltipFeature } from "./widgets/customTooltipFeature";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
+export { MenuItemLeafDef, MenuItemDef, IMenuConfigParams, IMenuItemParams, IMenuItem, IMenuItemComp, BaseMenuItem, BaseMenuItemParams } from "./interfaces/menuItem";
 
 // charts
 export * from "./interfaces/iChartOptions";

@@ -220,7 +220,7 @@ export class GridChartComp extends Component {
     }
 
     private getChartThemes(): string[] {
-        return this.chartController.getThemes();
+        return this.chartController.getThemeNames();
     }
 
     private getGridOptionsChartThemeOverrides(): AgChartThemeOverrides | undefined {

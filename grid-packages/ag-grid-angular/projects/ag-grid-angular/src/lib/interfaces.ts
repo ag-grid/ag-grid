@@ -16,6 +16,8 @@ import {
     ILoadingCellRendererParams,
     ILoadingOverlay,
     ILoadingOverlayParams,
+    IMenuItem,
+    IMenuItemParams,
     INoRowsOverlay,
     INoRowsOverlayParams,
     IStatusPanel,
@@ -82,4 +84,7 @@ export interface IToolPanelAngularComp extends AgFrameworkComponent<IToolPanelPa
 
 export interface ITooltipAngularComp extends AgFrameworkComponent<ITooltipParams> {
 
+}
+
+export interface IMenuItemAngularComp extends AgFrameworkComponent<IMenuItemParams>, IMenuItem {
 }

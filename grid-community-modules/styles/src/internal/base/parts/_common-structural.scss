@@ -1221,6 +1221,10 @@
         white-space: nowrap;
     }
 
+    .ag-menu-option-custom {
+        display: contents;
+    }
+
     .ag-compact-menu-option {
         width: 100%;
         display: flex;

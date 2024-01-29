@@ -28,7 +28,8 @@ export const GRID_COMPONENTS = [
     'cellRenderer',
     'tooltipComponent',
     'statusPanel',
-    'toolPanel'
+    'toolPanel',
+    'menuItem'
 ];
 
 export const PARAMS_PROPERTIES = [

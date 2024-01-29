@@ -174,7 +174,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
 
         // hide the popup if something gets selected
         if (addPopupRes) {
-            menu.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, addPopupRes.hideFunc);
+            menu.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, addPopupRes.hideFunc);
         }
 
         return true;
@@ -213,7 +213,7 @@ class ContextMenu extends Component {
         this.appendChild(menuList);
         this.menuList = menuList;
 
-        menuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, (e: AgEvent) => this.dispatchEvent(e));
+        menuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, (e: AgEvent) => this.dispatchEvent(e));
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {

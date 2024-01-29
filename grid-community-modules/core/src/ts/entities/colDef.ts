@@ -7,9 +7,10 @@ import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ITooltipParams } from "../rendering/tooltipComponent";
 import { Column } from "./column";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
-import { RowClassParams, MenuItemDef, GetMainMenuItems, GetContextMenuItems } from "./gridOptions";
+import { RowClassParams, GetMainMenuItems, GetContextMenuItems } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { IRowNode } from "../interfaces/iRowNode";
+import { MenuItemDef } from "../interfaces/menuItem";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any, TValue = any> {

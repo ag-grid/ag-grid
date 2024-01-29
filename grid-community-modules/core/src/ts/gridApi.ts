@@ -1853,7 +1853,7 @@ export class GridApi<TData = any> {
     /**
      * Returns the grid option value for a provided key.
      */
-    public getGridOption<Key extends keyof GridOptions>(key: Key): GridOptions[Key] {
+    public getGridOption<Key extends keyof GridOptions<TData>>(key: Key): GridOptions<TData>[Key] {
         return this.gos.get(key);
     }
 
@@ -1861,23 +1861,25 @@ export class GridApi<TData = any> {
      * Updates a single gridOption to the new value provided. (Cannot be used on `Initial` properties.)
      * If updating multiple options, it is recommended to instead use `api.updateGridOptions()` which batches update logic.
      */
-    public setGridOption<Key extends keyof GridOptions & ManagedGridOptionKey>(key: Key, value: GridOptions[Key]): void {
+    public setGridOption<Key extends ManagedGridOptionKey>(key: Key, value: GridOptions<TData>[Key]): void {
         this.updateGridOptions({ [key]: value });
     }
 
     /**
      * Updates the provided subset of gridOptions with the provided values. (Cannot be used on `Initial` properties.)
-     */
-    public updateGridOptions(options: Partial<ManagedGridOptions>): void {
+     */    
+    public updateGridOptions<TDataUpdate extends TData>(options: ManagedGridOptions<TDataUpdate>): void {
+        // NOTE: The TDataUpdate generic is used to ensure that the update options match the generic passed into the GridApi above as TData.
+        // This is required because if we just use TData directly then Typescript will get into an infinite loop due to callbacks which recursively include the GridApi.
         this.gos.updateGridOptions({ options });
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __internalUpdateGridOptions(options: Partial<GridOptions>): void {
+    public __internalUpdateGridOptions(options: GridOptions): void {
         this.gos.updateGridOptions({ options, source: 'gridOptionsUpdated' });
     }
 
-    private deprecatedUpdateGridOption<K extends keyof GridOptions & ManagedGridOptionKey>(key: K, value: GridOptions[K]) {
+    private deprecatedUpdateGridOption<K extends keyof GridOptions & ManagedGridOptionKey>(key: K, value: GridOptions<TData>[K]) {
         warnOnce(`set${key.charAt(0).toUpperCase()}${key.slice(1, key.length)} is deprecated. Please use 'api.setGridOption('${key}', newValue)' or 'api.updateGridOptions({ ${key}: newValue })' instead.`);
         this.setGridOption(key, value);
     }

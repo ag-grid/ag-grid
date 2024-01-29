@@ -5,6 +5,8 @@ import {
     BaseFilter,
     BaseFilterParams,
     BaseFloatingFilter,
+    BaseMenuItem,
+    BaseMenuItemParams,
     BaseToolPanelParams,
     ICellEditorParams,
     ICellRendererParams,
@@ -79,6 +81,16 @@ export interface CustomToolPanelProps<TData = any, TContext = any, TState = any>
     onStateChange: (model: TState | undefined) => void;
 }
 
+/** Props provided to custom menu item components */
+export interface CustomMenuItemProps<TData = any, TContext = any> extends BaseMenuItemParams<TData, TContext> {
+    /** The active status of the item (is it currently hovered with the mouse, or navigated to via the keyboard). */
+    active: boolean;
+    /** If the item is a sub menu, whether it is currently opened or closed. */
+    expanded: boolean;
+    /** Callback that should be called every time the active status is updated (if providing custom behaviour). */
+    onActiveChange: (active: boolean) => void;
+}
+
 /** Props provided to custom loading overlay component */
 export interface CustomLoadingOverlayProps<TData = any, TContext = any> extends ILoadingOverlayParams<TData, TContext> {}
 
@@ -123,6 +135,9 @@ export interface CustomFilterCallbacks extends BaseFilter {}
 /** Callbacks for custom floating filter components */
 export interface CustomFloatingFilterCallbacks extends BaseFloatingFilter {}
 
+/** Callbacks for custom menu item components */
+export interface CustomMenuItemCallbacks extends BaseMenuItem {}
+
 // *** Hooks ***
 
 function useGridCustomComponent<M>(methods: M): void {
@@ -131,21 +146,26 @@ function useGridCustomComponent<M>(methods: M): void {
 }
 
 /** Hook to allow custom cell editor component callbacks to be provided to the grid */
-export function useGridCellEditor(methods: CustomCellEditorCallbacks): void {
-    useGridCustomComponent(methods);
+export function useGridCellEditor(callbacks: CustomCellEditorCallbacks): void {
+    useGridCustomComponent(callbacks);
 }
 
 /** Hook to allow custom date component callbacks to be provided to the grid */
-export function useGridDate(methods: CustomDateCallbacks): void {
-    return useGridCustomComponent(methods);
+export function useGridDate(callbacks: CustomDateCallbacks): void {
+    return useGridCustomComponent(callbacks);
 }
 
 /** Hook to allow custom filter component callbacks to be provided to the grid */
-export function useGridFilter(methods: CustomFilterCallbacks): void {
-    return useGridCustomComponent(methods);
+export function useGridFilter(callbacks: CustomFilterCallbacks): void {
+    return useGridCustomComponent(callbacks);
 }
 
 /** Hook to allow custom floating filter component callbacks to be provided to the grid */
-export function useGridFloatingFilter(methods: CustomFloatingFilterCallbacks): void {
-    useGridCustomComponent(methods);
+export function useGridFloatingFilter(callbacks: CustomFloatingFilterCallbacks): void {
+    useGridCustomComponent(callbacks);
+}
+
+/** Hook to allow custom menu item component callbacks to be provided to the grid */
+export function useGridMenuItem(callbacks: CustomMenuItemCallbacks): void {
+    useGridCustomComponent(callbacks);
 }

@@ -24,9 +24,9 @@ import {
     CtrlsService,
     AgMenuList,
     AgMenuItemComponent,
-    MenuItemSelectedEvent,
     PopupEventParams,
-    Component
+    Component,
+    CloseMenuEvent
 } from '@ag-grid-community/core';
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
@@ -389,7 +389,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
 
     private createMainPanel(): TabbedItem {
         this.mainMenuList = this.columnMenuFactory.createMenu(this, this.column, () => this.sourceElement ?? this.getGui());
-        this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsService, this.column)!,
@@ -401,7 +401,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
         return this.tabItemGeneral;
     }
 
-    private onHidePopup(event?: MenuItemSelectedEvent): void {
+    private onHidePopup(event?: CloseMenuEvent): void {
         this.menuUtils.closePopupAndRestoreFocusOnSelect(this.hidePopupFunc, event);
     }
 
@@ -497,11 +497,11 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     @PostConstruct
     private init(): void {
         this.mainMenuList = this.columnMenuFactory.createMenu(this, this.column, () => this.sourceElement ?? this.getGui());
-        this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
         this.eColumnMenu.appendChild(this.mainMenuList.getGui());
     }
 
-    private onHidePopup(event?: MenuItemSelectedEvent): void {
+    private onHidePopup(event?: CloseMenuEvent): void {
         this.menuUtils.closePopupAndRestoreFocusOnSelect(this.hidePopupFunc, event);
     }
 

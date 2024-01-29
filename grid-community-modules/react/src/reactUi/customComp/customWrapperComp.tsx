@@ -8,6 +8,7 @@ const CustomWrapperComp = <P, M>(params: WrapperParams<P, M>) => {
     const [props, setProps] = useState(initialProps);
 
     useEffect(() => {
+        // this allows the ts wrapper component to update the props passed into the custom component
         addUpdateCallback(newProps => setProps(newProps));
     }, []);
 

@@ -7,7 +7,7 @@ import {
     FocusService,
     HeaderNavigationService,
     HeaderPosition,
-    MenuItemSelectedEvent,
+    CloseMenuEvent,
     PopupEventParams,
     _
 } from "@ag-grid-community/core";
@@ -63,7 +63,7 @@ export class MenuUtils extends BeanStub {
         }
     }
 
-    public closePopupAndRestoreFocusOnSelect(hidePopupFunc: (popupParams?: PopupEventParams) => void, event?: MenuItemSelectedEvent): void {
+    public closePopupAndRestoreFocusOnSelect(hidePopupFunc: (popupParams?: PopupEventParams) => void, event?: CloseMenuEvent): void {
         let keyboardEvent: KeyboardEvent | undefined;
 
         if (event && event.event && event.event instanceof KeyboardEvent) {

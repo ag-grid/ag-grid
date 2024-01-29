@@ -1,14 +1,15 @@
 import { FocusService } from "../focusService";
 import { Autowired, PostConstruct } from "../context/context";
-import { AgMenuItemComponent, MenuItemSelectedEvent, MenuItemActivatedEvent } from "./agMenuItemComponent";
+import { AgMenuItemComponent, CloseMenuEvent, MenuItemActivatedEvent } from "./agMenuItemComponent";
 import { TabGuardComp } from "./tabGuardComp";
 import { KeyCode } from "../constants/keyCode";
-import { MenuItemDef } from "../entities/gridOptions";
+import { MenuItemDef } from "../interfaces/menuItem";
 import { loadTemplate } from "../utils/dom";
 import { last } from "../utils/array";
-import { setAriaLevel } from "../utils/aria";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IMenuActionParams } from "../interfaces/iCallbackParams";
+import { BeanStub } from "../context/beanStub";
+import { AgPromise } from "../utils/promise";
 
 export class AgMenuList extends TabGuardComp {
 
@@ -18,13 +19,13 @@ export class AgMenuList extends TabGuardComp {
     private activeMenuItem: AgMenuItemComponent | null;
     private params: WithoutGridCommon<IMenuActionParams>;
 
-    constructor(private readonly level = 1, params?: WithoutGridCommon<IMenuActionParams>) {
-    super(/* html */`<div class="ag-menu-list" role="tree"></div>`);
-    this.params = params ?? {
-        column: null,
-        node: null,
-        value: null
-    };
+    constructor(private readonly level = 0, params?: WithoutGridCommon<IMenuActionParams>) {
+        super(/* html */`<div class="ag-menu-list" role="tree"></div>`);
+        this.params = params ?? {
+            column: null,
+            node: null,
+            value: null
+        };
     }
 
     @PostConstruct
@@ -79,41 +80,53 @@ export class AgMenuList extends TabGuardComp {
     public addMenuItems(menuItems?: (MenuItemDef | string)[]): void {
         if (menuItems == null) { return; }
 
-        menuItems.forEach(menuItemOrString => {
+        AgPromise.all(menuItems.map<AgPromise<{ eGui: HTMLElement | null, comp?: AgMenuItemComponent }>>(menuItemOrString => {
             if (menuItemOrString === 'separator') {
-                this.addSeparator();
+                return AgPromise.resolve({ eGui: this.createSeparator() });
             } else if (typeof menuItemOrString === 'string') {
                 console.warn(`AG Grid: unrecognised menu item ${menuItemOrString}`);
+                return AgPromise.resolve({ eGui: null });
             } else {
-                this.addItem(menuItemOrString);
+                return this.addItem(menuItemOrString);
             }
+        })).then(elements => {
+            elements!.forEach(element => {
+                if (element?.eGui) {
+                    this.appendChild(element.eGui);
+                    if (element.comp) {
+                        this.menuItems.push(element.comp);
+                    }
+                }
+            })
         });
     }
 
-    public addItem(menuItemDef: MenuItemDef): void {
-        const menuItem = this.createManagedBean(new AgMenuItemComponent({
-            ...menuItemDef,
+    private addItem(menuItemDef: MenuItemDef): AgPromise<{ comp: AgMenuItemComponent, eGui: HTMLElement }> {
+        const menuItem = this.createManagedBean(new AgMenuItemComponent());
+        return menuItem.init({
+            menuItemDef,
             isAnotherSubMenuOpen: () => this.menuItems.some(m => m.isSubMenuOpen()),
+            level: this.level,
             contextParams: this.params
-        }));
+        }).then(() => {
+            menuItem.setParentComponent(this);
 
-        menuItem.setParentComponent(this);
+            this.addManagedListener(menuItem, AgMenuItemComponent.EVENT_CLOSE_MENU, (event: CloseMenuEvent) => {
+                this.dispatchEvent(event);
+            });
 
-        setAriaLevel(menuItem.getGui(), this.level);
+            this.addManagedListener(menuItem, AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, (event: MenuItemActivatedEvent) => {
+                if (this.activeMenuItem && this.activeMenuItem !== event.menuItem) {
+                    this.activeMenuItem.deactivate();
+                }
 
-        this.menuItems.push(menuItem);
-        this.appendChild(menuItem.getGui());
+                this.activeMenuItem = event.menuItem;
+            });
 
-        this.addManagedListener(menuItem, AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
-            this.dispatchEvent(event);
-        });
-
-        this.addManagedListener(menuItem, AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, (event: MenuItemActivatedEvent) => {
-            if (this.activeMenuItem && this.activeMenuItem !== event.menuItem) {
-                this.activeMenuItem.deactivate();
-            }
-
-            this.activeMenuItem = event.menuItem;
+            return {
+                comp: menuItem,
+                eGui: menuItem.getGui()
+            };
         });
     }
 
@@ -125,7 +138,7 @@ export class AgMenuList extends TabGuardComp {
         item.activate();
     }
 
-    private addSeparator() {
+    private createSeparator(): HTMLElement {
         const separatorHtml = /* html */`
             <div class="ag-menu-separator" aria-hidden="true">
                 <div class="ag-menu-separator-part"></div>
@@ -134,7 +147,7 @@ export class AgMenuList extends TabGuardComp {
                 <div class="ag-menu-separator-part"></div>
             </div>`;
 
-        this.appendChild(loadTemplate(separatorHtml));
+        return loadTemplate(separatorHtml);
     }
 
     private findTopMenu(): AgMenuList | undefined {
@@ -178,7 +191,7 @@ export class AgMenuList extends TabGuardComp {
     }
 
     private closeIfIsChild(e?: KeyboardEvent): void {
-        const parentItem = this.getParentComponent();
+        const parentItem = this.getParentComponent() as BeanStub;
 
         if (parentItem && parentItem instanceof AgMenuItemComponent) {
             if (e) { e.preventDefault(); }
