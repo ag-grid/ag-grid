@@ -75,7 +75,13 @@ const menu = defineCollection({
     }),
 });
 
+const matrixTable = defineCollection({
+    type: 'data',
+    schema: z.array(z.record(z.string(), z.any())),
+});
+
 export const collections = {
     docs,
     menu,
+    'matrix-table': matrixTable,
 };

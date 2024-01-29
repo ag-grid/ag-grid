@@ -85,9 +85,31 @@ export default defineMarkdocConfig({
         //             options: { type: Object },
         //         },
         //     },
-        //     featureComparator: {
-        //         render: component('./src/components/featureComparator/FeatureComparator.astro'),
-        //     },
+        matrixTable: {
+            render: component('./src/features/matrixTable/components/MatrixTable.astro'),
+            attributes: {
+                /**
+                 * Data file name within `src/content/matrix-table`
+                 *
+                 * Excluding the extension
+                 */
+                dataFileName: { type: String },
+                /**
+                 * Mapping of column keys to the displayed column name and order
+                 */
+                columns: { type: Object, required: true },
+                /**
+                 * Filter condition for filtering row data, as a string
+                 *
+                 * NOTE: Only supports simple field key matches, `!key`, `&&` and `||` cases
+                 */
+                filter: { type: String },
+                /**
+                 * Cell renderer to use for the column fields
+                 */
+                cellRenderer: { type: Object },
+            },
+        },
         note: {
             render: component('./src/components/alert/Note'),
         },
