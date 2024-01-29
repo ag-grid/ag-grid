@@ -80,7 +80,7 @@
     "ag-charts-community": "9.0.2-beta.20240129",
     "ag-charts-enterprise": "9.0.2-beta.20240129",
     "@rollup/plugin-alias": "^2.2.0",
-    "@types/node": "12.20.20",
+    "@types/node": "18.19.10",
     "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-concat": "^2.6.1",

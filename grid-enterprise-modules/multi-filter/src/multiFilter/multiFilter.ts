@@ -19,6 +19,7 @@ import {
     ContainerType,
     TabGuardComp,
     AgMenuItemComponent,
+    AgMenuItemRenderer,
     MenuItemActivatedEvent,
     PostConstruct,
     IMultiFilter,
@@ -81,52 +82,54 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         });
 
         // we have to refresh the GUI here to ensure that Angular components are not rendered in odd places
-        return AgPromise
-            .all(filterPromises)
-            .then(filters => {
+        return new AgPromise<void>(resolve => {
+            AgPromise.all(filterPromises).then(filters => {
                 this.filters = filters as IFilterComp[];
-                this.refreshGui('columnMenu');
-
-                this.afterFiltersReadyFuncs.forEach(f => f());
-                this.afterFiltersReadyFuncs.length = 0;
+                this.refreshGui('columnMenu').then(() => {
+                    resolve();
+                });
             });
+        }).then(() => {
+            this.afterFiltersReadyFuncs.forEach(f => f());
+            this.afterFiltersReadyFuncs.length = 0;
+
+        });
     }
 
-    private refreshGui(container: ContainerType): void {
-        if (container === this.lastOpenedInContainer) { return; }
+    private refreshGui(container: ContainerType): AgPromise<void> {
+        if (container === this.lastOpenedInContainer) { return AgPromise.resolve(); }
 
         this.removeAllChildrenExceptTabGuards();
         this.destroyChildren();
 
-        this.filters!.forEach((filter, index) => {
+        return AgPromise.all(this.filters!.map((filter, index) => {
             if (index > 0) {
                 this.appendChild(_.loadTemplate(/* html */`<div class="ag-filter-separator"></div>`));
             }
 
             const filterDef = this.filterDefs[index];
             const filterTitle = this.getFilterTitle(filter, filterDef);
-            let filterGui: HTMLElement;
+            let filterGuiPromise: AgPromise<HTMLElement>;
 
             if (filterDef.display === 'subMenu' && container !== 'toolPanel') {
                 // prevent sub-menu being used in tool panel
-                const menuItem = this.insertFilterMenu(filter, filterTitle);
-
-                filterGui = menuItem.getGui();
-
+                filterGuiPromise = this.insertFilterMenu(filter, filterTitle).then(menuItem => menuItem!.getGui());
             } else if (filterDef.display === 'subMenu' || filterDef.display === 'accordion') {
                 // sub-menus should appear as groups in the tool panel
                 const group = this.insertFilterGroup(filter, filterTitle);
 
-                filterGui = group.getGui();
+                filterGuiPromise = AgPromise.resolve(group.getGui());
             } else {
                 // display inline
-                filterGui = filter.getGui();
+                filterGuiPromise = AgPromise.resolve(filter.getGui());
             }
 
-            this.appendChild(filterGui);
+            return filterGuiPromise.then(filterGui => {
+                this.appendChild(filterGui!);
+            });
+        })).then(() => {
+            this.lastOpenedInContainer = container;
         });
-
-        this.lastOpenedInContainer = container;
     }
 
     private getFilterTitle(filter: IFilterComp, filterDef: IMultiFilterDef): string {
@@ -134,9 +137,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             return filterDef.title;
         }
 
-        const filterWithoutType = filter as any;
-
-        return typeof filterWithoutType.getFilterTitle === 'function' ? filterWithoutType.getFilterTitle() : 'Filter';
+        return filter instanceof ProvidedFilter ? filter.getFilterTitle() : 'Filter';
     }
 
     private destroyChildren() {
@@ -144,35 +145,45 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         this.guiDestroyFuncs.length = 0;
     }
 
-    private insertFilterMenu(filter: IFilterComp, name: string): AgMenuItemComponent {
-        const menuItem = this.createBean(new AgMenuItemComponent({
-            name,
-            subMenu: filter,
-            cssClasses: ['ag-multi-filter-menu-item'],
-            isCompact: true,
+    private insertFilterMenu(filter: IFilterComp, name: string): AgPromise<AgMenuItemComponent> {
+        const menuItem = this.createBean(new AgMenuItemComponent());
+        return menuItem.init({
+            menuItemDef: {
+                name,
+                subMenu: [],
+                cssClasses: ['ag-multi-filter-menu-item'],
+                menuItem: AgMenuItemRenderer,
+                menuItemParams: {
+                    cssClassPrefix: 'ag-compact-menu-option',
+                    isCompact: true,
+                }
+            },
+            level: 0,
             isAnotherSubMenuOpen: () => false,
-        }));
+            childComponent: filter
+        }).then(() => {
+            menuItem.setParentComponent(this);
 
-        menuItem.setParentComponent(this);
+            this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
 
-        this.guiDestroyFuncs.push(() => this.destroyBean(menuItem));
+            this.addManagedListener(menuItem, AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, (event: MenuItemActivatedEvent) => {
+                if (this.lastActivatedMenuItem && this.lastActivatedMenuItem !== event.menuItem) {
+                    this.lastActivatedMenuItem.deactivate();
+                }
 
-        this.addManagedListener(menuItem, AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED, (event: MenuItemActivatedEvent) => {
-            if (this.lastActivatedMenuItem && this.lastActivatedMenuItem !== event.menuItem) {
-                this.lastActivatedMenuItem.deactivate();
-            }
+                this.lastActivatedMenuItem = event.menuItem;
+            });
 
-            this.lastActivatedMenuItem = event.menuItem;
+            const menuItemGui = menuItem.getGui();
+            menuItem.addManagedListener(menuItemGui, 'focusin', () => menuItem.activate());
+            menuItem.addManagedListener(menuItemGui, 'focusout', () => {
+                if (!menuItem.isSubMenuOpen()) {
+                    menuItem.deactivate();
+                }
+            });
+
+            return menuItem;
         });
-
-        menuItem.addGuiEventListener('focusin', () => menuItem.activate());
-        menuItem.addGuiEventListener('focusout', () => {
-            if (!menuItem.isSubMenuOpen()) {
-                menuItem.deactivate();
-            }
-        });
-
-        return menuItem;
     }
 
     private insertFilterGroup(filter: IFilterComp, title: string): AgGroupComponent {
@@ -304,29 +315,33 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+        let refreshPromise: AgPromise<void>;
         if (params) {
             this.hidePopup = params.hidePopup;
-            this.refreshGui(params.container!);
+            refreshPromise = this.refreshGui(params.container!);
         } else {
             this.hidePopup = undefined;
+            refreshPromise = AgPromise.resolve();
         }
 
-        const { filters } = this.params;
-        const suppressFocus = filters && filters.some(filter => filter.display! && filter.display !== 'inline');
+        refreshPromise.then(() => {
+            const { filters } = this.params;
+            const suppressFocus = filters && filters.some(filter => filter.display! && filter.display !== 'inline');
 
-        this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
-        const eDocument = this.gridOptionsService.getDocument();
-        const activeEl = eDocument.activeElement;
+            this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
+            const eDocument = this.gridOptionsService.getDocument();
+            const activeEl = eDocument.activeElement;
 
-        // if suppress focus is true, we might run into two scenarios:
-        // 1 - we are loading the filter for the first time and the component isn't ready,
-        //     which means the document will have focus.
-        // 2 - The focus will be somewhere inside the component due to auto focus
-        // In both cases we need to force the focus somewhere valid but outside the filter.
-        if (suppressFocus && (activeEl === eDocument.body || this.getGui().contains(activeEl))) {
-            // reset focus to the top of the container, and blur
-            this.forceFocusOutOfContainer(true);
-        }
+            // if suppress focus is true, we might run into two scenarios:
+            // 1 - we are loading the filter for the first time and the component isn't ready,
+            //     which means the document will have focus.
+            // 2 - The focus will be somewhere inside the component due to auto focus
+            // In both cases we need to force the focus somewhere valid but outside the filter.
+            if (suppressFocus && (activeEl === eDocument.body || this.getGui().contains(activeEl))) {
+                // reset focus to the top of the container, and blur
+                this.forceFocusOutOfContainer(true);
+            }     
+        });
     }
 
     public afterGuiDetached(): void {

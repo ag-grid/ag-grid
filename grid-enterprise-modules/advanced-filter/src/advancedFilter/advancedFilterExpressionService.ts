@@ -78,7 +78,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
             case 'dateString':
                 // displayed string format may be different from data string format, so parse before converting to date
                 const parsedDateString = this.valueParserService.parseValue(column, null, operand, undefined);
-                return _.serialiseDate(this.dataTypeService.getDateParserFunction()(parsedDateString) ?? null, false);
+                return _.serialiseDate(this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null, false);
         }
         return operand;
     }
@@ -101,7 +101,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
                     // need to convert from ISO date string to Date to data string format to formatted string format
                     const dateStringDateValue = _.parseDateTimeFromString(filter);
                     const dateStringStringValue = column
-                        ? this.dataTypeService.getDateFormatterFunction()(dateStringDateValue ?? undefined)
+                        ? this.dataTypeService.getDateFormatterFunction(column)(dateStringDateValue ?? undefined)
                         : null;
                     operand1 = column ? this.valueFormatterService.formatValue(column, null, dateStringStringValue) : null;
                     break;
@@ -229,7 +229,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         switch (baseCellDataType) {
             case 'dateString':
                 params = {
-                    valueConverter: this.dataTypeService.getDateParserFunction()
+                    valueConverter: this.dataTypeService.getDateParserFunction(column)
                 };
                 break;
             case 'object':

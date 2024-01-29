@@ -88,7 +88,7 @@
   "devDependencies": {
     "@babel/types": "7.12.7",
     "@ag-grid-community/core": "~31.0.2",
-    "@types/node": "12.20.20",
+    "@types/node": "18.19.10",
     "css-loader": "3.2.0",
     "cssnano": "4.1.0",
     "eslint": "6.3.0",

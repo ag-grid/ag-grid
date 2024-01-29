@@ -50,6 +50,7 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
             CustomComponentClass: reactComponent,
             setMethods: (methods: TMethods) => this.setMethods(methods),
             addUpdateCallback: (callback: (props: TOutputParams) => void) => {
+                // this hooks up `CustomWrapperComp` to allow props updates to be pushed to the custom component
                 this.refreshProps = () => callback(this.getProps());
             }
         });

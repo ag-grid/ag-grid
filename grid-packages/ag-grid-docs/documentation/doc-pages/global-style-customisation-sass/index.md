@@ -47,7 +47,7 @@ To use the theme, set the `ag-theme-quartz` class on your grid div:
 <div id="myGrid" class="ag-theme-quartz">
 ```
 
-To customise the Alpine theme, you can add more parameters to the `grid-styles` mixin, as described in the rest of this page.
+To customise the theme, you can add more parameters to the `grid-styles` mixin, as described in the rest of this page.
 
 ## Choosing a theme
 

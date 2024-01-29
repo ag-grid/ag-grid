@@ -72,6 +72,12 @@ abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
         return this._eGui;
     }
 
+    /** `getGui()` returns the `ng-component` element. This returns the actual root element. */
+    public getRootElement(): HTMLElement {
+        const firstChild = this._eGui.firstChild;
+        return firstChild as HTMLElement;
+    }
+
     public destroy(): void {
         if (this._frameworkComponentInstance && typeof this._frameworkComponentInstance.destroy === 'function') {
             this._frameworkComponentInstance.destroy();

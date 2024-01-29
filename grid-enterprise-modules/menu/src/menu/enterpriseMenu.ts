@@ -27,10 +27,10 @@ import {
     CtrlsService,
     AgMenuList,
     AgMenuItemComponent,
-    MenuItemSelectedEvent,
+    CloseMenuEvent,
     HeaderNavigationService,
-    HeaderPosition
-
+    HeaderPosition,
+    PopupEventParams
 } from '@ag-grid-community/core';
 
 import { MenuItemMapper } from './menuItemMapper';
@@ -269,7 +269,7 @@ export class EnterpriseMenu extends BeanStub {
     @Autowired('focusService') private readonly focusService: FocusService;
 
     private tabbedLayout: TabbedLayout;
-    private hidePopupFunc: Function;
+    private hidePopupFunc: (popupParams?: PopupEventParams) => void;
     private column: Column;
     private mainMenuList: AgMenuList;
 
@@ -492,7 +492,7 @@ export class EnterpriseMenu extends BeanStub {
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
 
         this.mainMenuList.addMenuItems(menuItemsMapped);
-        this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, this.onHidePopup.bind(this));
+        this.mainMenuList.addEventListener(AgMenuItemComponent.EVENT_CLOSE_MENU, this.onHidePopup.bind(this));
 
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsService, this.column)!,
@@ -504,7 +504,7 @@ export class EnterpriseMenu extends BeanStub {
         return this.tabItemGeneral;
     }
 
-    private onHidePopup(event?: MenuItemSelectedEvent): void {
+    private onHidePopup(event?: CloseMenuEvent): void {
         let keyboardEvent: KeyboardEvent | undefined;
 
         if (event && event.event && event.event instanceof KeyboardEvent) {
