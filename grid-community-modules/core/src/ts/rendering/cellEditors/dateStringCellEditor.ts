@@ -57,11 +57,11 @@ class DateStringCellEditorInput implements CellEditorInput<string, IDateStringCe
     }
 
     private parseDate(value: string | undefined): Date | undefined {
-        return this.getDataTypeService().getDateParserFunction()(value);
+        return this.getDataTypeService().getDateParserFunction(this.params.column)(value);
     }
 
     private formatDate(value: Date | undefined): string | undefined {
-        return this.getDataTypeService().getDateFormatterFunction()(value);
+        return this.getDataTypeService().getDateFormatterFunction(this.params.column)(value);
     }
 }
 
