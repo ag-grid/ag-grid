@@ -100,6 +100,7 @@ export class MiniChartsContainer extends Component {
     private readonly fills: string[];
     private readonly strokes: string[];
     private readonly themeTemplateParameters: ThemeTemplateParameters;
+    private readonly isCustomTheme: boolean;
     private wrappers: { [key: string]: HTMLElement } = {};
     private chartController: ChartController;
 
@@ -107,13 +108,14 @@ export class MiniChartsContainer extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(chartController: ChartController, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters, chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS) {
+    constructor(chartController: ChartController, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters, isCustomTheme: boolean, chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS) {
         super(MiniChartsContainer.TEMPLATE);
 
         this.chartController = chartController;
         this.fills = fills;
         this.strokes = strokes;
         this.themeTemplateParameters = themeTemplateParameters;
+        this.isCustomTheme = isCustomTheme;
         this.chartGroups = {...chartGroups};
     }
 
@@ -155,7 +157,7 @@ export class MiniChartsContainer extends Component {
 
                 this.wrappers[miniClassChartType] = miniWrapper;
 
-                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes, this.themeTemplateParameters));
+                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes, this.themeTemplateParameters, this.isCustomTheme));
                 groupComponent.addItem(miniWrapper);
             });
 
