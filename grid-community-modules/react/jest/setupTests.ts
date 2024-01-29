@@ -1,4 +1,6 @@
-import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import {  TextEncoder } from 'util';
 
-Enzyme.configure({adapter: new Adapter()});
+global.TextEncoder = TextEncoder;
+//global.TextDecoder = TextDecoder;
+//global.ArrayBuffer = ArrayBuffer;
+//global.Uint8Array = Uint8Array;

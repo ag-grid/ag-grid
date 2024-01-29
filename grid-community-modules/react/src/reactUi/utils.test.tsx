@@ -1,4 +1,4 @@
-/* import { describe, expect, xtest, test, jest, beforeEach, afterEach } from '@jest/globals'; 
+import { describe, expect, xtest, test, jest, beforeEach, afterEach } from '@jest/globals'; 
 
 import { getNextValueIfDifferent } from './utils';
 
@@ -45,4 +45,4 @@ describe('utils', () => {
         expect(resultDomOrder).toBe(next);
     });
 });
-   */
+   

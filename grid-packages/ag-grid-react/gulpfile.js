@@ -128,7 +128,8 @@ const copyFromModuleSource = () => {
         [
             "**/*",
             '!**/__tests__*/**/*',
-            '!**/*Test*'
+            '!**/*Test*',
+            '!**/*.test.tsx'
         ], {cwd: '../../grid-community-modules/react/src'})
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
         .pipe(replace('@ag-grid-enterprise', 'ag-grid-enterprise'))

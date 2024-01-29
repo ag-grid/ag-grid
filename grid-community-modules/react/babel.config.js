@@ -23,6 +23,9 @@ module.exports = {
                 // to get code coverage from tests
                 'babel-plugin-istanbul',
                 '@babel/plugin-proposal-throw-expressions',
+                '@babel/plugin-proposal-class-properties',
+                '@babel/plugin-proposal-private-methods',
+                '@babel/plugin-transform-private-property-in-object',
                 // we also want to export ES6 modules as objects
                 // to allow mocking named imports
                 [
