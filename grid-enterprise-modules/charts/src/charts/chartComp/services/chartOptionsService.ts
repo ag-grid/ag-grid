@@ -35,9 +35,9 @@ export class ChartOptionsService extends BeanStub {
                 value
             }));
         });
-        this.updateChart(chartOptions);
 
         if (!isSilent) {
+            this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
         }
     }

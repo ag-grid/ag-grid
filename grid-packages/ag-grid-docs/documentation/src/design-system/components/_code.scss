@@ -1,9 +1,12 @@
 @use '../core' as *;
 
 $vertical-padding: $spacing-size-2;
+$blog-code-selector: '.post-full pre[class*="language-"]';
 
 pre.code,
-pre.code code {
+#{$blog-code-selector},
+pre.code code,
+#{$blog-code-selector} code {
     color: black;
     background: none;
     text-align: left;
@@ -29,7 +32,8 @@ pre.code code {
     }
 }
 
-pre.code {
+pre.code,
+#{$blog-code-selector} {
     --color-code-background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
 
     --comment-color: #5d6376;
@@ -72,7 +76,8 @@ pre.code {
     }
 }
 
-pre.code > code {
+pre.code > code,
+#{$blog-code-selector} > code {
     position: relative;
     display: inline-block;
     min-width: 100%;
@@ -88,37 +93,47 @@ pre.code > code {
     overflow-x: auto;
 }
 
-pre.code > .language-bash {
+pre.code > .language-bash,
+#{$blog-code-selector} > .language-bash {
     color: var(--function-color);
 }
 
-pre.code.line-numbers.line-numbers code {
+pre.code.line-numbers.line-numbers code,
+#{$blog-code-selector}.line-numbers.line-numbers code {
     padding-left: 3.8em;
 }
 
-pre.code.line-numbers.line-numbers .line-numbers-rows {
+pre.code.line-numbers.line-numbers .line-numbers-rows,
+#{$blog-code-selector}.line-numbers.line-numbers .line-numbers-rows {
     left: 0;
 }
 
-pre.code[data-line] {
+pre.code[data-line],
+#{$blog-code-selector}[data-line] {
     padding-top: 0;
     padding-bottom: 0;
     padding-left: 0;
 }
-pre[data-line] code {
+
+pre[data-line] code,
+#{$blog-code-selector}[data-line] code {
     position: relative;
     padding-left: 4em;
 }
-pre.code .line-highlight {
+
+pre.code .line-highlight,
+#{$blog-code-selector} .line-highlight {
     margin-top: 0;
 }
 
-pre.code.line-numbers {
+pre.code.line-numbers,
+#{$blog-code-selector}.line-numbers {
     position: relative;
     counter-reset: linenumber;
 }
 
-pre.code.line-numbers > code {
+pre.code.line-numbers > code,
+#{$blog-code-selector}.line-numbers > code {
     position: relative;
     white-space: inherit;
     min-height: calc(100% - 1px);

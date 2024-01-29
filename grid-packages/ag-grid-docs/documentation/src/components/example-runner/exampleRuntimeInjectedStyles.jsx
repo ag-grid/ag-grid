@@ -15,37 +15,18 @@ body {
 }
 
 html[data-color-scheme='dark'] {
-    color-scheme: dark;
     background-color: #141D2C;
     /* TODO: Replace with bg-primary variable */
+}
+
+/* Apply "color-scheme: dark;" to all elements outside the grid */ 
+html[data-color-scheme='dark'] body > *:where(:not([class^=ag])) {
+    color-scheme: dark;
 }
 
 html[data-color-scheme='dark'] button:not(.ag-root-wrapper button, #myChart button, button[class*='ag-']) , .ag-fill-direction  {
     border: 1px solid rgba(255,255,255, 0.2);
 }
-
-.ag-theme-quartz-dark {
- 
-}
-
-.ag-theme-quartz {
-
-    
-/*
-TODO - reinstate these in a way that doesn't clobber example's row colours
-    .ag-row {
-        background: color-mix(in srgb, transparent, #fff 60%); 
-        --ag-data-color: rgba(0,0,0,0.75)
-    
-    }
-
-    .ag-header {
-        background: color-mix(in srgb, var(--ag-data-color), var(--ag-header-background-color) 98%); 
-    }
-*/
-}
-
-
 
 html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']), .ag-fill-direction  {
     appearance: none;
