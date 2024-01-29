@@ -10,7 +10,14 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             format: 'cjs',
             env: 'development',
             extension: '.cjs.js',
-            config: {external: id => /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' && /ag-charts-community/.test(id))} // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
+            config: {
+                external: (id, caller) => {
+                    if(("@ag-grid-enterprise/charts" === id && caller.includes("grid-enterprise-modules/charts-enterprise"))) {
+                        return false;
+                    }
+                    return /@ag-grid-/.test(id) || (bundlePrefix === 'ag-charts-enterprise' && /ag-charts-community/.test(id))
+                }
+            } // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
 
         },
         {
@@ -117,7 +124,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
             });
 
             // ag-charts-enterprise
-            if(bundlePrefix === 'ag-grid-enterprise') {
+            if (bundlePrefix === 'ag-grid-enterprise') {
                 entries.push({
                     // contains only community or enterprise code (depending on source) - if enterprise community code is externalised
                     // module are self registered
