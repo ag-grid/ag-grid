@@ -15,7 +15,7 @@ export class MiniStackedArea extends MiniChartWithAxes {
 
     private readonly areas: _Scene.Path[];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], _themeTemplateParameters: ThemeTemplateParameters, data: number[][] = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
+    constructor(container: HTMLElement, fills: string[], strokes: string[], _themeTemplateParameters: ThemeTemplateParameters, _isCustomTheme: boolean, data: number[][] = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
         super(container, tooltipName);
 
         const size = this.size;

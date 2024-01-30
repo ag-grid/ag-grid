@@ -20,6 +20,7 @@ export class MiniStackedColumn extends MiniChartWithAxes {
         fills: string[],
         strokes: string[],
         _themeTemplateParameters: ThemeTemplateParameters,
+        _isCustomTheme: boolean,
         data = MiniStackedColumn.data,
         yScaleDomain = [0, 16],
         tooltipName = "stackedColumnTooltip") {

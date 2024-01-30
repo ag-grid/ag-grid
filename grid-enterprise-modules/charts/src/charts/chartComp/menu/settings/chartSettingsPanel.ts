@@ -2,6 +2,7 @@ import { _, Autowired, Component, PostConstruct, RefSelector, ResizeObserverServ
 import { MiniChartsContainer } from "./miniChartsContainer";
 import { AgChartThemePalette } from "ag-charts-enterprise";
 import { ChartController } from "../../chartController";
+import { isStockTheme } from "../../chartProxies/chartTheme";
 
 type AnimationDirection = 'left' | 'right';
 
@@ -98,10 +99,23 @@ export class ChartSettingsPanel extends Component {
 
         this.destroyMiniCharts();
 
+        const { themes } = this;
+
         this.palettes.forEach((palette, index) => {
             const isActivePalette = this.activePaletteIndex === index;
             const { fills, strokes } = palette;
-            const miniChartsContainer = this.createBean(new MiniChartsContainer(this.chartController, fills, strokes, themeTemplateParameters[index], chartGroups));
+            const themeName = themes[index];
+            const isCustomTheme = !isStockTheme(themeName);
+            const miniChartsContainer = this.createBean(
+                new MiniChartsContainer(
+                    this.chartController,
+                    fills,
+                    strokes,
+                    themeTemplateParameters[index],
+                    isCustomTheme,
+                    chartGroups
+                )
+            );
 
             this.miniChartsContainers.push(miniChartsContainer);
             this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
