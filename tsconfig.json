@@ -16,7 +16,7 @@
     { "path" :  "grid-enterprise-modules/status-bar/tsconfig.cjs.es5.docs.json" },
     { "path" :  "grid-enterprise-modules/range-selection/tsconfig.cjs.es5.docs.json" },
     { "path" :  "grid-enterprise-modules/sparklines/tsconfig.cjs.es5.docs.json" },
-    { "path" :  "grid-enterprise-modules/charts/tsconfig.cjs.es5.docs.json" },
+    { "path" :  "grid-enterprise-modules/charts-enterprise/tsconfig.cjs.es5.docs.json" },
     { "path" :  "grid-enterprise-modules/excel-export/tsconfig.cjs.es5.docs.json" },
     { "path" :  "grid-enterprise-modules/master-detail/tsconfig.cjs.es5.docs.json" },
     { "path" :  "grid-enterprise-modules/rich-select/tsconfig.cjs.es5.docs.json" },
