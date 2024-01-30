@@ -2,25 +2,20 @@
 title: "Quick Start" 
 ---
 
-Create a grid in 60 Seconds
+Welcome to the AG Grid documentation. After reading this page you will have an overview of the key concepts of AG Grid that you will use on a daily basis.
 
-At a minimum, three things are required to create a grid:
+## Your First Grid
 
-- **Container:** for the grids placement in your application.
-- **Styles:** to define the grid's theme & dimensions.
-- **Row Data & Column Definitions:** to define the data and how it should be displayed.
+Add AG Grid to your application in these steps:
+
+**1. NPM Install**
 
 <framework-specific-section frameworks="react,angular,vue">
-
-## Install
-
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 
 <!-- Install React -->
-
-First, install the `ag-grid-react` library:
 
 <snippet transform={false} language="bash">
 npm install ag-grid-react
@@ -136,23 +131,15 @@ Other included themes can be found on the [Themes](../themes/) page.
 
 <!-- Create React -->
 
-## Create a Component
-
-Then, create a new component in your application with the required dependencies:
+**2. Import the Grid**
 
 <snippet transform={false} language="jsx">
-|import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
-|import "ag-grid-community/styles/ag-grid.css"; // Core CSS
-|import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
-|
-|const GridExample = () => {
-|  return (&lt;div>&lt;/div>);
-|}
+|import { AgGridReact } from 'ag-grid-react'; // AG Grid Component
+|import "ag-grid-community/styles/ag-grid.css"; // Mandatory Grid CSS
+|import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme
 </snippet>
 
-## Row Data & Column Definitions
-
-Next, add the `rowData` and `colDefs` arrays to your component to define the data and how it should be displayed:
+**3. Define Rows and Columns**
 
 <snippet transform={false} language="jsx">
 |const GridExample = () => {
@@ -176,39 +163,21 @@ Next, add the `rowData` and `colDefs` arrays to your component to define the dat
 |}
 </snippet>
 
-This is a basic example of Row Data & Column Definitions. The column definitions will access data via the provided `field` property, which maps directly to fields inside of the `rowData` objects.
+**4. Grid Component**
 
-## Rendering the Grid
-
-Then, return the `AgGridReact` component (wrapped in a container div) with `rowData` and `colDefs` as props:
+The `AgGridReact` component is wrapped in a container div. Style is applied to the parent.
+Rows and Columns are bound to the grid.
 
 <snippet transform={false} language="jsx">
 |return (
-|  // Container
-|  &lt;div>
-|    {/* The AG Grid component */}
-|    &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
+|  // wrapping container with theme & size
+|  &lt;div className="ag-theme-quartz" // grid comes with multiple themes out of the box
+|       style={{ height: 500 }} // the grid will fill the size of it's wrapping container
+|  >
+|    &lt;AgGridReact rowData={rowData} columnDefs={colDefs} /> // bind rows and columns
 |  &lt;/div>
 |)
 </snippet>
-
-## Styling the Grid
-
-Finally, configure the theme & dimensions for the grid, which are controlled by the grid's container element.
-
-In the container `<div>` add the `ag-theme-quartz` CSS class to apply the Quartz theme and specify a height:
-
-<snippet transform={false} language="jsx">
-|// Container with theme & dimensions
-|&lt;div className="ag-theme-quartz" style={{ height: 500 }}>
-|  {/* The AG Grid component */}
-|  &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
-|&lt;/div>
-</snippet>
-
-<note>
-Other included themes can be found on the [Themes](../themes/) page.
-</note>
 
 </framework-specific-section>
 
@@ -394,9 +363,7 @@ Other included themes can be found on the [Themes](../themes/) page.
 
 </framework-specific-section>
 
-## Result
-
-When you run your application, you should see a basic grid with three rows. To see the full code, click the `</> Code` button below the example.
+When you run the application, you should see a basic grid with three rows. To see the full code, click the `</> Code` button below the example.
 
 <grid-example title='Quick Start Example' name='quick-start-example' type='mixed' options='{ "exampleHeight": 350 }'></grid-example>
 
@@ -404,71 +371,54 @@ When you run your application, you should see a basic grid with three rows. To s
 
 <framework-specific-section frameworks="react">
 
-## Key Concepts
+Now that you have a basic grid running, the remained of this page explores some of the key concepts. 
+## Showing Data
 
-Now that you have a basic grid running, let's explore some of the key concepts. This guide will give you an introduction to 80% of the AG Grid features you will use on a daily basis! 
+This section gives an overview of getting data into your grid, formatting the data and inserting custom components.
 
-### Showing Data
+### Mapping Values
 
-The `field` or `valueGetter` attributes map data to columns. A [Value Getter](../value-getters/) is for more complex cases such as executing expressions on the data before display.
+The `field` or `valueGetter` attributes map data to columns. A field maps to a field in the data. A [Value Getter](../value-getters/) is a function callback that returns the cell value.
 
-<snippet transform={false} language="jsx">
-|  const [rowData, setRowData] = useState([
-|    { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-|  ]);
-|
-| const price1000ValueGetter = (params) => {
-|   // multiply the price by 1000
-|   return params.data.price * 1000;
-| };
-|
-| const [colDefs, setColDefs] = useState([
-|    { field: "make" },
-|    { field: "model" },
-|    { headerName: "price", valueGetter: price1000ValueGetter },
-|    { field: "electric" }
-|  ]);
-</snippet>
-
-The field value is the default header name of the column, override this with `headerName`.
+The `headerName` provides the title for the header. If missing the title is derived from `field`.
 
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
-|    // ...
-|    { field: "model", headerName: "Type" },
-|    // ...
+|    { headerName: "Make & Model", valueGetter: p => p.make + ' ' + p.model},
+|    { field: "price" },
 |  ]);
 </snippet>
+
+### Formatting
 
 Format cell content using a [Value Formatter](../value-formatters/):
 
 <snippet transform={false} language="jsx">
-| const currencyFormatter = (params) => {
-|   return '£' + formatNumber(params.value);
-| };
-|
 | const [colDefs, setColDefs] = useState([
-|    // ...
-|    { field: "price", valueGetter: currencyFormatter },
+|    { field: "price", valueFormatter: p => '£' + formatNumber(p.value) },
 |    // ...
 |  ]);
 </snippet>
+
+### Cell Components
 
 Add buttons, checkboxes or images to cells with a [Cell Renderer](../cell-rendering/):
 
 <snippet transform={false} language="jsx">
 | const CustomButtonComponent = (props) => {
-|    return &lt;button onClick={() => {}}>Button&lt;/button>;
+|    return &lt;button onClick={() => window.alert('clicked') }>Push Me!&lt;/button>;
 |  };
 |
 | const [colDefs, setColDefs] = useState([
-|    // ...
 |    { field: "button", cellRenderer: CustomButtonComponent },
 |    // ...
 |  ]);
 </snippet>
 
-Columns resizing is enabled by default. Assign `flex` values to allow columns to take up proportional space in the grid:
+### Resizing Coumns
+
+Columns are resized by dragging the Column Header edges. Additionaly assign `flex` values to 
+allow columns to flex to the grid width.
 
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
@@ -479,63 +429,47 @@ Columns resizing is enabled by default. Assign `flex` values to allow columns to
 |  ]);
 </snippet>
 
-### Working with Data
+## Working with Data
 
-[Cell Data Types](../cell-data-types/) are inferred from the `rowData` but can also be set to one of the pre-defined cell data types: `text`, `number`, `boolean`, `date`, `dateString` and `object`.
-These allow different grid features to work without additional configuration. 
+This section gives an overview of filtering, editing and sorting data in the grid.
 
-<snippet transform={false} language="jsx">
-| const [colDefs, setColDefs] = useState([
-|    { field: "make", cellDataType: 'text' },
-|    { field: "model", cellDataType: 'text' },
-|    { field: "price", cellDataType: 'number' },
-|    { field: "electric", cellDataType: 'boolean' }
-|  ]);
-</snippet>
+### Filtering
 
-A [Quick Filter](../filter-quick/) applies to all the rows in the grid. To filter depending on column data use [Column Filters](../filtering/). These are set using the column menu.
+[Column Filters](../filtering/) are embedded into each column menu. These are configured using the `filter` attribute.
 
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
-|    // ...
-|    { field: "make", filter: 'agTextColumnFilter' },
-|    { field: "price", filter: 'agNumberColumnFilter' },
+|    { field: "make", filter: 'agTextColumnFilter' }, // use the text filter
+|    { field: "price", filter: 'agNumberColumnFilter' }, // use the number filter
 |    // ...
 |  ]);
 </snippet>
 
-Multiple filters are applied using a [Multi Filter](../filter-multi/):
+There are 5 [Provided Filters](../filtering/) which can be set through this attribute.
+You can also create your own [Custom Filter](../filter-custom/).
+
+[Floating Filters](../floating-filters/) embed the Column Filter into the header for ease of access.
 
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
-|    // ...
-|    { field: "make", filter: 'agMultiColumnFilter' },
-|    // ...
-|  ]);
-</snippet>
-
-[Floating Filters](../floating-filters/) display and change the state of the column filter without using the column menu:
-
-<snippet transform={false} language="jsx">
-| const [colDefs, setColDefs] = useState([
-|    // ...
 |    { field: "make", filter: 'agTextColumnFilter', floatingFilter: true },
 |    // ...
 |  ]);
 </snippet>
 
-Enable editing by set the `editable` attribute to `true`. This uses the default [Cell Editor](../cell-editing/) for the cell data type:
+### Editing
+
+Enable editing by setting the `editable` attribute to `true`. This uses the default [Cell Editor](../cell-editing/) for the cell data type:
 
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
-|    // ...
 |    { field: "make", editable: true },
 |    // ...
 |  ]);
 </snippet>
 
 Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](../provided-cell-editors/) which can be set through this attribute.
-These are configured with the `cellEditorParams` attribute.
+You can also create your own [Custom Editors](../component-cell-editor/).
 
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
@@ -548,6 +482,8 @@ These are configured with the `cellEditorParams` attribute.
 |    // ...
 |  ]);
 </snippet>
+
+### Sorting
 
 [Row Sorting](../row-sorting/) is enabled by default. Configure custom sorting using the `comparator` attribute:
 
@@ -565,13 +501,16 @@ These are configured with the `cellEditorParams` attribute.
 |  };
 |
 | const [colDefs, setColDefs] = useState([
-|   // ...
 |   { field: "month", comparator: monthComparator },
 |   // ...
 |  ]);
 </snippet>
 
-### Changing the look
+## Themes & Style
+
+This section gives an overview of changing the look and feel of the grid.
+
+### Themes
 
 Apply a [Theme](../themes/) as a class to the grid's container element to style the grid:
 
@@ -585,6 +524,8 @@ Apply a [Theme](../themes/) as a class to the grid's container element to style 
 |)
 </snippet>
 
+### Customising a Theme
+
 Customise themes using CSS variables:
 
 <snippet transform={false} language="jsx">
@@ -593,9 +534,13 @@ Customise themes using CSS variables:
 |}
 </snippet>
 
-If you are designing within Figma, you can use the [AG Grid Design System](../ag-grid-design-system/) to replicate Alpine and Alpine Dark AG Grid themes within Figma.These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid themes.
+### Figma
 
-Define rules to apply styling to cells and rows using `cellClassRules` and `rowClassRules`:
+If you are designing within Figma, you can use the [AG Grid Design System](../ag-grid-design-system/) to replicate Alpine and Alpine Dark AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid themes.
+
+### Cell Style
+
+Define rules to apply styling to cells using `cellClassRules`:
 
 <snippet transform={false} language="jsx">
 |const [colDefs, setColDefs] = useState([
@@ -609,14 +554,22 @@ Define rules to apply styling to cells and rows using `cellClassRules` and `rowC
 |    }
 |    // ...
 |]);
-|
+</snippet>
+
+### Row Style
+
+Define rules to apply styling to rows using  and `rowClassRules`:
+
+<snippet transform={false} language="jsx">
 |const rowClassRules = {
 |     // apply red to Ford cars
-|     'rag-red-outer': function(params) { return params.data.electric === 'Ford'; },
+|     'rag-red-outer': params => params.data.electric === 'Ford',
 | };
 |
 |&lt;AgGridReact rowClassRules={rowClassRules}  />
 </snippet>
+
+### Row Height
 
 Change the [Row Height](../row-height/) to any positive number or set the row height based on cell content using `autoHeight`:
 
@@ -632,6 +585,8 @@ Change the [Row Height](../row-height/) to any positive number or set the row he
 |
 |&lt;AgGridReact rowHeight={rowHeight} columnDefs={colDefs} />
 </snippet>
+
+### Pagination
 
 Enable [Pagination](../row-pagination/) by setting `pagination` to be true:
 
