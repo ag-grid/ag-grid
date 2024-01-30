@@ -1082,7 +1082,11 @@ export class CellCtrl extends BeanStub {
 
         if (colDef.onCellContextMenu) {
             // to make the callback async, do in a timeout
-            window.setTimeout(() => (colDef.onCellContextMenu as any)(cellContextMenuEvent), 0);
+            window.setTimeout(() => {
+                this.beans.frameworkOverrides.wrapOutgoing(() => {
+                    (colDef.onCellContextMenu as any)(cellContextMenuEvent)
+                });
+            }, 0);
         }
     }
 
