@@ -23,7 +23,7 @@ import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
 import { CalloutPanel } from "./calloutPanel";
 import { CapsPanel } from "./capsPanel";
-import { WaterfallPanel } from "./waterfallPanel";
+import { ConnectorLinePanel } from "./connectorLinePanel";
 import { WhiskersPanel } from "./whiskersPanel";
 
 export class SeriesPanel extends Component {
@@ -60,24 +60,24 @@ export class SeriesPanel extends Component {
         'bins': () => this.initBins(),
         'whiskers': () => this.initWhiskers(),
         'caps': () => this.initCaps(),
-        'waterfall': () => this.initWaterfall(),
+        'connectorLine': () => this.initConnectorLine(),
     };
 
     private seriesWidgetMappings: {[name: string]: string[]} = {
-        'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
-        'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
+        'scatter': ['tooltips', 'markers', 'labels'],
+        'bubble': ['tooltips', 'markers', 'labels'],
+        'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
         'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
         'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
-        'waterfall': ['tooltips', 'waterfall'],
-        'scatter': ['tooltips', 'markers', 'labels'],
-        'bubble': ['tooltips', 'markers', 'labels'],
-        'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        'waterfall': ['tooltips', 'connectorLine'],
     }
 
     constructor({
@@ -349,9 +349,9 @@ export class SeriesPanel extends Component {
         this.addWidget(capsPanelComp);
     }
 
-    private initWaterfall() {
-        const waterfallPanelComp = this.createBean(new WaterfallPanel(this.chartOptionsService, () => this.seriesType));
-        this.addWidget(waterfallPanelComp);
+    private initConnectorLine() {
+        const connectorLinePanelComp = this.createBean(new ConnectorLinePanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(connectorLinePanelComp);
     }
 
     private addWidget(widget: Component): void {

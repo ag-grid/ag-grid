@@ -10,7 +10,6 @@ import automatedExamplesVars from '../../../components/automated-examples/lib/va
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
 import { UpdateSpeedSlider } from '../../../components/automated-examples/UpdateSpeedSlider';
-import FeaturesList from '../../../components/FeaturesList';
 import LogoMark from '../../../components/LogoMark';
 import breakpoints from '../../../design-system/breakpoint.module.scss';
 import { trackHomepageExampleRowGrouping, trackOnceHomepageExampleRowGrouping } from '../../../utils/analytics';
@@ -225,8 +224,6 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
                     setValue={updateFrequency}
                 />
             </footer>
-
-            <FeaturesList />
         </>
     );
 }
