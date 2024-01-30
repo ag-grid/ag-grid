@@ -219,12 +219,8 @@ button.mobileNavButton {
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         position: unset;
         width: unset;
-        margin-left: $spacing-size-4;
-        overflow: visible;
-    }
-
-    @media screen and (min-width: $breakpoint-site-header-large) {
         margin-left: auto;
+        overflow: visible;
     }
 
     @media screen and (max-width: $breakpoint-site-header-small) {
@@ -286,9 +282,7 @@ button.navLink {
     font-weight: 500;
     letter-spacing: 0.01em;
     color: var(--color-white);
-    transition:
-        color $transition-default-timing,
-        opacity $transition-default-timing;
+    transition: color $transition-default-timing, opacity $transition-default-timing;
     cursor: pointer;
 
     @at-root button#{&} {
@@ -315,9 +309,7 @@ button.navLink {
             background-color: var(--color-white);
             opacity: 0;
             transform: scaleX(0);
-            transition:
-                transform 0.33s ease-in-out,
-                opacity 0.33s ease-in-out;
+            transition: transform 0.33s ease-in-out, opacity 0.33s ease-in-out;
         }
     }
 
@@ -360,9 +352,7 @@ button.navLink {
         }
 
         .navLink:hover svg {
-            box-shadow:
-                0 0 0 4px var(--color-bg-site-header),
-                0 0 0 6px rgba(white, 0.3);
+            box-shadow: 0 0 0 4px var(--color-bg-site-header), 0 0 0 6px rgba(white, 0.3);
         }
     }
 }
