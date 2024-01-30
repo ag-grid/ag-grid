@@ -14,7 +14,7 @@ import styles from '@design-system/modules/license-pricing.module.scss';
 import AGGridLogo from '../images/inline-svgs/ag-grid-logo.svg';
 import AGChartsLogo from '../images/inline-svgs/ag-charts-logo.svg';
 import Background from '../images/inline-svgs/grid-pricing-background.svg';
-
+import ComparisonTable from '../components/licenses/ComparisonTable';
 
 export const LicensePricing = () => {
     useEffect(() => {
@@ -63,8 +63,8 @@ export const LicensePricing = () => {
 
                     <div className={styles.licensesOuter}>
                         <Licenses />
-
                     </div>
+                    <ComparisonTable/>
 
                     <div className={styles.videoPrompt}>
                         <a href="#video-explainer" className={styles.thumbnail}>

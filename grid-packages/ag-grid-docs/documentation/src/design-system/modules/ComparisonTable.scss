@@ -1,0 +1,55 @@
+@use '../core' as *;
+.comparison-table {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    align-items: center;
+    font-weight: bold;
+    padding-top: 48px;
+}
+
+.left-column {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.data-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.feature-row {
+    height: 54px;
+    border-bottom: 1px solid var(--color-border-secondary);
+    display: flex;
+    align-items: center;  
+}
+
+.feature-cell {
+    height:  54px;
+    font-size: 18px;
+    display: flex;
+    align-items: center; 
+    width: 100%;
+    justify-content: center;
+    border-bottom: 1px solid var(--color-border-secondary);
+}
+
+
+.category {
+    cursor: pointer;
+    user-select: none;
+    padding-top: 37px;
+}
+
+.category-cell {
+    height: 54px;
+    display: flex;
+    align-items: center;  
+    user-select: none;  
+}
+.feature-heading {
+    padding-bottom: 16px;
+}
