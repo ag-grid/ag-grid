@@ -53,7 +53,7 @@ which toolbar items should be shown and the order in which they appear:
 
 The example below shows how the toolbar can be customised to only show the 'Download Chart' toolbar item.
 
-<grid-example title='Toolbar Customisation' name='toolbar-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Toolbar Customisation' name='toolbar-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Next Up
 

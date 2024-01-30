@@ -52,6 +52,10 @@
                 main: './dist/ag-grid-enterprise.cjs.min.js',
                 defaultExtension: 'js'
             },
+            'ag-grid-enterprise-charts-enterprise': {
+                main: './dist/ag-grid-enterprise-charts-enterprise.cjs.js',
+                defaultExtension: 'js'
+            },
             '@ag-grid-community/vue3': {
                 main: './lib/AgGridVue.js',
                 defaultExtension: 'js'

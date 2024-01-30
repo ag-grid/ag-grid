@@ -14,7 +14,7 @@ Below shows an example of a grid using RTL. To make it look better we should rea
 
 Below shows a more complex example. It's the same example as used on the AG Grid main demo page. To demonstrate all the edge cases of RTL, the tool panel and pinned areas are shown. This example is using AG Grid Enterprise - hence the tool panel and context menu's are active.
 
-<grid-example title='RTL Complex' name='rtl-complex' type='typescript' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter", "csv", "excel", "charts", "clipboard", "range", "rowgrouping", "multifilter", "sidebar", "statusbar", "richselect"], "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='RTL Complex' name='rtl-complex' type='typescript' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter", "csv", "excel", "charts-enterprise", "clipboard", "range", "rowgrouping", "multifilter", "sidebar", "statusbar", "richselect"], "extras": ["fontawesome"] }'></grid-example>
 
 ## How it Works
 

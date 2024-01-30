@@ -43,7 +43,7 @@ The example below shows a subset of the provided chart groups with the chart typ
 * Note the order of the chart groups and their chart types matches the order they are specified in `chartGroupsDef`.
 * The Settings Panel is configured to be open by default via `defaultToolPanel: 'settings'`.
 
-<grid-example title='Settings Tool Panel Customisation' name='settings-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Settings Tool Panel Customisation' name='settings-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Data Tool Panel
 
@@ -84,7 +84,7 @@ The following example shows some Data Panel customisations. Note the following:
 * The **Series** group is closed by default.
 * The Data Panel is configured to be open by default via `defaultToolPanel: 'data'`.
 
-<grid-example title='Data Tool Panel Customisation' name='data-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Data Tool Panel Customisation' name='data-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Format Tool Panel
 
@@ -128,7 +128,7 @@ The following example shows some Format Panel customisations. Note the following
 * The **Navigator** group has been omitted.
 * The Format Panel is configured to be open by default via `defaultToolPanel: 'format'`.
 
-<grid-example title='Format Tool Panel Customisation' name='format-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Format Tool Panel Customisation' name='format-panel-customisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Omitting & Ordering Tool Panels 
 
@@ -158,7 +158,7 @@ The following example shows how the Chart Tool Panels can be omitted and ordered
 * The **Data** Tool Panel appears before the **Settings** Tool Panel.
 * The Data Panel is configured to be open by default via `defaultToolPanel: 'data'`.
 
-<grid-example title='Omitting & Ordering Tool Panels' name='omitting-ordering-tool-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Omitting & Ordering Tool Panels' name='omitting-ordering-tool-panels' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Chart Tool Panel API
 
@@ -172,7 +172,7 @@ The example below demonstrates how you can open and close the Chart Tool Panels.
 - Click **Open Chart Tool Panel Format tab** to open the `Format` tab via `openChartToolPanel()`
 - Click **Close Chart Tool Panel** to close via `closeChartToolPanel()`
 
-<grid-example title='Open/Close Chart Tool Panel' name='chart-tool-panel-api' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"], "myGridReference": 1 }'></grid-example>
+<grid-example title='Open/Close Chart Tool Panel' name='chart-tool-panel-api' type='generated' options='{ "exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"], "myGridReference": 1 }'></grid-example>
 
 ## Next Up
 

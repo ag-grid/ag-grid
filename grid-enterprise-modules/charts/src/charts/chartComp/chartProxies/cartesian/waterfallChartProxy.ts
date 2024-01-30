@@ -1,4 +1,4 @@
-import {AgCartesianAxisOptions, AgWaterfallSeriesOptions} from "ag-charts-enterprise";
+import {AgCartesianAxisOptions, AgWaterfallSeriesOptions} from "ag-charts-community";
 import {ChartProxyParams, UpdateParams} from "../chartProxy";
 import {CartesianChartProxy} from "./cartesianChartProxy";
 import {isHorizontal} from "../../utils/seriesTypeMapper";
