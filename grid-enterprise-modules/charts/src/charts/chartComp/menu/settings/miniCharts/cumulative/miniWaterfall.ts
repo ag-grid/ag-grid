@@ -11,24 +11,26 @@ export class MiniWaterfall extends MiniChartWithAxes {
 
     private data = [4, 3, -3, 6, -3];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], themeTemplate: ThemeTemplateParameters) {
+    constructor(container: HTMLElement, fills: string[], strokes: string[], themeTemplate: ThemeTemplateParameters, isCustomTheme: boolean) {
         super(container, 'waterfallTooltip');
 
         this.bars = this.createWaterfall(this.root, this.data, this.size, this.padding, 'vertical').bars;
-        this.updateColors(fills, strokes, themeTemplate);
+        this.updateColors(fills, strokes, themeTemplate, isCustomTheme);
     }
 
-    updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters) {
+    updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters, isCustomTheme?: boolean) {
         const { data } = this;
         const { properties } = themeTemplate ?? {};
-        const positive = properties?.get(_Theme.DEFAULT_WATERFALL_SERIES_POSITIVE_COLOURS) ?? {
+        const palettePositive = {
             fill: fills[0],
             stroke: strokes[0],
         };
-        const negative = properties?.get(_Theme.DEFAULT_WATERFALL_SERIES_NEGATIVE_COLOURS) ?? {
+        const paletteNegative = {
             fill: fills[1],
             stroke: strokes[1],
-        };
+        }
+        const positive = isCustomTheme ? palettePositive : properties?.get(_Theme.DEFAULT_WATERFALL_SERIES_POSITIVE_COLOURS) ?? palettePositive;
+        const negative = isCustomTheme ? paletteNegative : properties?.get(_Theme.DEFAULT_WATERFALL_SERIES_NEGATIVE_COLOURS) ?? paletteNegative;
         this.bars.forEach((bar, i) => {
             const isPositive = data[i] >= 0;
             bar.fill = isPositive ? positive.fill : negative.fill;
