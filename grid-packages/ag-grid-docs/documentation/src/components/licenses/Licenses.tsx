@@ -11,6 +11,7 @@ import ChartsGrid from '../../images/inline-svgs/pricing-grid-charts.svg';
 // @ts-ignore
 import styles from '@design-system/modules/Licenses.module.scss';
 
+
 type LicenseData = {
     className: string;
     id: string;
@@ -48,18 +49,6 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
         learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
         Logo: GridEnterprise
-    },
-    {
-        className: styles.chartsLicense,
-        id: 'charts',
-        subHeading: 'Charts',
-        description: 'Professional choice for building enterprise applications',
-        licenseBenefits: ['Perpetual License', '1 year of support', '1 year of updates'],
-        priceFullDollars: '199',
-        launchPrice: null,
-        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
-        learnMoreLink: "https://charts.ag-grid.com/javascript/licensing/",
-        Logo: ChartsPricing
     },
     {
         className: styles.chartsLicense,
@@ -110,7 +99,7 @@ const License = (props: LicenseData) => {
     return (
         <>
             <div className={classnames(styles.top, 'top')} id={id}>
-            <Logo className={styles.logo}/>
+            {/* <Logo className={styles.logo}/> */}
                 <div className={styles.licenseMeta}>
                 <h2 className="">{subHeading}</h2>
                 <p className="">{description}</p>
@@ -149,6 +138,7 @@ const License = (props: LicenseData) => {
 export const Licenses: FunctionComponent = () => {
     return (
         <>
+            <div className={styles.emptyColumn}></div> {/* Empty Column */}
             {DEV_LICENSE_DATA.map((data) => {
                 return (
                     <div key={data.id} className={classnames(styles.license, data.className)}>
