@@ -1,8 +1,7 @@
-import { _ } from "@ag-grid-community/core";
-import { AgWaterfallSeriesOptions, AgCartesianAxisOptions } from "ag-charts-enterprise";
-import { ChartProxyParams, UpdateParams } from "../chartProxy";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { isHorizontal } from "../../utils/seriesTypeMapper";
+import {AgCartesianAxisOptions, AgWaterfallSeriesOptions} from "ag-charts-enterprise";
+import {ChartProxyParams, UpdateParams} from "../chartProxy";
+import {CartesianChartProxy} from "./cartesianChartProxy";
+import {isHorizontal} from "../../utils/seriesTypeMapper";
 
 export class WaterfallChartProxy extends CartesianChartProxy {
 
@@ -11,7 +10,7 @@ export class WaterfallChartProxy extends CartesianChartProxy {
     }
 
     public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
-        const axes: AgCartesianAxisOptions[] = [
+        return [
             {
                 type: this.getXAxisType(params),
                 position: isHorizontal(this.chartType) ? 'left' : 'bottom',
@@ -21,22 +20,19 @@ export class WaterfallChartProxy extends CartesianChartProxy {
                 position: isHorizontal(this.chartType) ? 'bottom' : 'left',
             },
         ];
-
-        return axes;
     }
 
     public getSeries(params: UpdateParams): AgWaterfallSeriesOptions[] {
-        const series: AgWaterfallSeriesOptions[] = params.fields.map(f => (
-            {
-                type: this.standaloneChartType as 'waterfall',
-                direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
-                xKey: params.category.id,
-                xName: params.category.name,
-                yKey: f.colId,
-                yName: f.displayName ?? undefined
-            }
-        ));
+        const [firstField] = params.fields;
+        const firstSeries: AgWaterfallSeriesOptions = {
+            type: this.standaloneChartType as 'waterfall',
+            direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
+            xKey: params.category.id,
+            xName: params.category.name,
+            yKey: firstField.colId,
+            yName: firstField.displayName ?? undefined
+        };
 
-        return series;
+        return [firstSeries]; // waterfall only supports a single series!
     }
 }
