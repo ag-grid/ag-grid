@@ -3,6 +3,7 @@
 .customMenu {
     position: relative;
     padding-right: $spacing-size-2;
+    user-select: none;
 
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
         display: none;
@@ -17,9 +18,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition:
-        background-color 0.3s,
-        color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
     font-weight: var(--text-semibold);
     font-size: 17px;
     border: none;
@@ -92,9 +91,7 @@
     left: 0;
     opacity: 0;
     transform: translateY(10px) scale(0.95);
-    transition:
-        opacity 0.15s ease,
-        transform 0.15s ease;
+    transition: opacity 0.15s ease, transform 0.15s ease;
     padding: $spacing-size-2;
     border-radius: var(--radius-md);
     width: 400px;
