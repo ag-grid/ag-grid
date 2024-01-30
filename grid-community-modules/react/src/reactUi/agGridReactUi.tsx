@@ -18,6 +18,7 @@ import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper'
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
 import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';
+import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponentWrapper';
 import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverlayComponentWrapper';
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
@@ -197,6 +198,8 @@ class ReactFrameworkComponentWrapper
                         return StatusPanelComponentWrapper;
                     case 'toolPanel':
                         return ToolPanelComponentWrapper;
+                    case 'menuItem':
+                        return MenuItemComponentWrapper;
                 }
             }
             const ComponentClass = getComponentClass(componentType.propertyName);

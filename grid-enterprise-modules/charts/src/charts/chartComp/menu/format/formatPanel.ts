@@ -133,6 +133,8 @@ export class FormatPanel extends Component {
             'radar-line': ['axis'],
             'radar-area': ['axis'],
             'nightingale': ['axis'],
+            'range-bar': ['axis', 'navigator'],
+            'waterfall': ['axis', 'navigator'],
             'box-plot': ['axis', 'navigator'],
         };
         return extendedGroupPanels[seriesType]?.includes(group) ?? false;

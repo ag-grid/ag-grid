@@ -1,6 +1,7 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
+import { ThemeTemplateParameters } from "../../miniChartsContainer";
 
 export class MiniStackedBar extends MiniChartWithAxes {
 
@@ -17,6 +18,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
         container: HTMLElement,
         fills: string[],
         strokes: string[],
+        _themeTemplateParameters: ThemeTemplateParameters,
         data = MiniStackedBar.data,
         xScaleDomain = [0, 16],
         tooltipName = "stackedBarTooltip") {

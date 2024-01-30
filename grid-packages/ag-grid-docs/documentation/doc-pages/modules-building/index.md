@@ -111,7 +111,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 | Next we need to include the modules in the bundle we're going to create. We also need to ensure we include the relevant `core` packages - in our case we need both `@ag-grid-community/core` and
 | `@ag-grid-enterprise/core` as we're using both Community and Enterprise features. If you were only using the Community bundle you could omit the `@ag-grid-enterprise/core` entry here.
 |
-| Additionally we can include the theme(s) we want to include in our bundle - for our example we're going to specify the Alpine theme.
+| Additionally we can include the theme(s) we want to include in our bundle - for our example we're going to specify the Quartz theme.
 |
 | Let's create a file called `main.js` that will serve as our entry point:
 |

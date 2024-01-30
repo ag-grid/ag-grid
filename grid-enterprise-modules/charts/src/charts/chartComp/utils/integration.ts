@@ -19,6 +19,10 @@ export interface AgChartActual extends AgChartInstance {
     series: {
         type: string;
         toggleSeriesItem(itemId: string, enabled: boolean): void;
+        properties: {
+            [key: string]: any;
+            toJson(): any;
+        };
     }[];
     axes?: {
         type: AgCartesianAxisType;

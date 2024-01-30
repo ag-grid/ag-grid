@@ -91,9 +91,25 @@ export class CartesianAxisPanel extends Component {
     }
 
     private initAxisTicks() {
+        if (!this.hasConfigurableAxisTicks()) return;
         const axisTicksComp = this.createBean(new AxisTicksPanel(this.chartOptionsService));
         this.axisGroup.addItem(axisTicksComp);
         this.activePanels.push(axisTicksComp);
+    }
+
+    private hasConfigurableAxisTicks(): boolean {
+        // Axis ticks are disabled for some chart types
+        const chartType = this.chartController.getChartType();
+        switch (chartType) {
+            case 'radarLine':
+            case 'radarArea':
+            case 'rangeBar':
+            case 'boxPlot':
+            case 'waterfall':
+                return false;
+            default:
+                return true;
+        }
     }
 
     private initAxisLabels() {

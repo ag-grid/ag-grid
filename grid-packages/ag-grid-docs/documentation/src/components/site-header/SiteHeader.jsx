@@ -36,11 +36,6 @@ const links = [
         docsLink: true,
     },
     {
-        name: 'Blog',
-        url: 'https://blog.ag-grid.com/',
-        docsLink: false,
-    },
-    {
         name: 'Pricing',
         url: '/license-pricing',
         docsLink: false,
@@ -208,23 +203,23 @@ export const SiteHeader = ({ path, currentFramework }) => {
         <>
             <header className={classnames(styles.header, 'site-header')}>
                 <div className={classnames(styles.headerInner, 'layout-page-max-width')}>
-                    <div className={classnames(styles.headerContainer)}>
-                        <a
-                            href="/"
-                            aria-label="Home"
-                            className={styles.headerLogo}
-                            onMouseEnter={() => {
-                                setIsLogoHover(true);
-                            }}
-                            onMouseLeave={() => {
-                                setIsLogoHover(false);
-                            }}
-                        >
-                            <LogoType />
-                            <LogoMark bounce={isLogoHover} />
-                        </a>
-                        <ProductDropdown items={dropdownItems} />
-                    </div>
+                    <a
+                        href="/"
+                        aria-label="Home"
+                        className={styles.headerLogo}
+                        onMouseEnter={() => {
+                            setIsLogoHover(true);
+                        }}
+                        onMouseLeave={() => {
+                            setIsLogoHover(false);
+                        }}
+                    >
+                        <LogoType />
+                        <LogoMark bounce={isLogoHover} />
+                    </a>
+
+                    <ProductDropdown items={dropdownItems} />
+
                     <HeaderNav path={path} currentFramework={currentFramework} />
                 </div>
             </header>

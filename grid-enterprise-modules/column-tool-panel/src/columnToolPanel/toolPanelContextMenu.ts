@@ -152,7 +152,7 @@ export class ToolPanelContextMenu extends Component {
 
         eGui.appendChild(menuList.getGui());
         menuList.addMenuItems(menuItemsMapped);
-        menuList.addManagedListener(menuList, AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED, () => {
+        menuList.addManagedListener(menuList, AgMenuItemComponent.EVENT_CLOSE_MENU, () => {
             this.parentEl.focus();
             hideFunc();
         });

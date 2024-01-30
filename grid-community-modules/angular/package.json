@@ -9,6 +9,7 @@
     "build-docs": "npm run build",
     "build-prod": "npm run build",
     "test:e2e": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
+    "test:watch": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/ng test --watch true  --browsers ChromeHeadless",
     "lint": "./node_modules/.bin/ng lint",
     "update-angular-components": "node updateGridAndColumnProperties.js",
     "verify-properties": "node agGridPropertiesCheck.js"
@@ -32,8 +33,10 @@
     "@ag-grid-community/client-side-row-model": "~31.0.2",
     "@angular-devkit/build-angular": "^14.2.12",
     "@angular/cli": "^14.2.12",
+    "@angular/forms": "^14.2.12",
     "@angular/compiler-cli": "^14.3.0",
     "@types/jasmine": "~4.0.0",
+    "@types/node": "18.19.10",
     "jasmine-core": "~4.3.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",

@@ -104,6 +104,7 @@ The below table gives a summary of the components, where they are configured and
 | Date Component                | Grid Option               | dateComponent<br/>dateComponentParams                  | 
 | Status Bar Component          | Grid Option -> Status Bar | statusPanel<br/>statusPanelParams          | 
 | Tool Panel                    | Grid Option -> Side Bar   | toolPanel<br/>toolPanelParams            | 
+| Menu Item                     | Grid Option -> Menu       | menuItem<br/>menuItemParams            | 
 
 ## Grid Provided Components
 
@@ -261,6 +262,13 @@ The grid comes with pre-registered components that can be used. Each component p
             <td>agDetailCellRenderer<enterprise-icon></enterprise-icon></td>
             <td>Detail panel for master / detail grid.</td>
         </tr>
+        <tr>
+            <td colspan="2"><h3>Column Menu / Context Menu</h3></td>
+        </tr>
+        <tr>
+            <td>agMenuItem<enterprise-icon></enterprise-icon></td>
+            <td>Menu item within column or context menu</td>
+        </tr>
     </tbody>
 </table>
 
@@ -276,6 +284,7 @@ It is also possible to override components. Where the grid uses a default value,
 - **agNoRowsOverlay**: To change the default loading 'no rows' overlay.
 - **agCellEditor**: To change the default cell editor.
 - **agDetailCellRenderer**: To change the default detail panel for master / detail grids.
+- **agMenuItem**: To change the default menu item for column and context menus.
 
 To override the default component, register the custom component in the GridOptions `components` property under the above name.
 

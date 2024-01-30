@@ -523,16 +523,19 @@ export class DataTypeService extends BeanStub {
         return typeKeys;
     }
 
-    private getDateStringTypeDefinition(): DateStringDataTypeDefinition {
-        return this.dataTypeDefinitions.dateString as DateStringDataTypeDefinition;
+    private getDateStringTypeDefinition(column?: Column | null): DateStringDataTypeDefinition {
+        if (!column) {
+            return this.dataTypeDefinitions.dateString as DateStringDataTypeDefinition;
+        }
+        return (this.getDataTypeDefinition(column) ?? this.dataTypeDefinitions.dateString) as DateStringDataTypeDefinition;
     }
 
-    public getDateParserFunction(): (value: string | undefined) => Date | undefined {
-        return this.getDateStringTypeDefinition().dateParser!;
+    public getDateParserFunction(column?: Column | null): (value: string | undefined) => Date | undefined {
+        return this.getDateStringTypeDefinition(column).dateParser!;
     }
 
-    public getDateFormatterFunction(): (value: Date | undefined) => string | undefined {
-        return this.getDateStringTypeDefinition().dateFormatter!;
+    public getDateFormatterFunction(column?: Column | null): (value: Date | undefined) => string | undefined {
+        return this.getDateStringTypeDefinition(column).dateFormatter!;
     }
 
     public getDataTypeDefinition(column: Column): DataTypeDefinition | CoreDataTypeDefinition | undefined {
@@ -662,7 +665,7 @@ export class DataTypeService extends BeanStub {
             case 'dateString': {
                 colDef.cellEditor = 'agDateStringCellEditor';
                 colDef.keyCreator = (params: KeyCreatorParams) => formatValue(params.column, params.node, params.value)!;
-                const convertToDate = this.getDateParserFunction();
+                const convertToDate = (dataTypeDefinition as DateStringDataTypeDefinition).dateParser!;
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: (params: ValueFormatterParams) => {

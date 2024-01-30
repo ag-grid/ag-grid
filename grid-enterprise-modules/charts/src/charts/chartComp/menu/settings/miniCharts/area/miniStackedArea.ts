@@ -2,6 +2,7 @@ import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { ICoordinate } from "./miniArea";
 import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
+import { ThemeTemplateParameters } from "../../miniChartsContainer";
 
 export class MiniStackedArea extends MiniChartWithAxes {
 
@@ -14,7 +15,7 @@ export class MiniStackedArea extends MiniChartWithAxes {
 
     private readonly areas: _Scene.Path[];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
+    constructor(container: HTMLElement, fills: string[], strokes: string[], _themeTemplateParameters: ThemeTemplateParameters, data: number[][] = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
         super(container, tooltipName);
 
         const size = this.size;

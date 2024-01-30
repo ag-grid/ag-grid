@@ -11,6 +11,7 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
+import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
@@ -21,6 +22,9 @@ import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
 import { CalloutPanel } from "./calloutPanel";
+import { CapsPanel } from "./capsPanel";
+import { WaterfallPanel } from "./waterfallPanel";
+import { WhiskersPanel } from "./whiskersPanel";
 
 export class SeriesPanel extends Component {
 
@@ -54,6 +58,9 @@ export class SeriesPanel extends Component {
         'shadow': () => this.initShadow(),
         'tooltips': () => this.initTooltips(),
         'bins': () => this.initBins(),
+        'whiskers': () => this.initWhiskers(),
+        'caps': () => this.initCaps(),
+        'waterfall': () => this.initWaterfall(),
     };
 
     private seriesWidgetMappings: {[name: string]: string[]} = {
@@ -65,7 +72,9 @@ export class SeriesPanel extends Component {
         'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
         'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
+        'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
+        'waterfall': ['tooltips', 'waterfall'],
         'scatter': ['tooltips', 'markers', 'labels'],
         'bubble': ['tooltips', 'markers', 'labels'],
         'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
@@ -236,6 +245,44 @@ export class SeriesPanel extends Component {
             this.activePanels.push(calloutPanelComp);
         }
 
+        if (this.seriesType === 'range-bar') {
+
+            // Add padding slider
+            {
+                const currentValue = this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType);
+                const paddingSlider = labelPanelComp.createManagedBean(new AgSlider());
+                paddingSlider.setLabel(this.chartTranslationService.translate('padding'))
+                    .setMaxValue(getMaxValue(currentValue, 200))
+                    .setValue(`${currentValue}`)
+                    .setTextFieldWidth(45)
+                    .onValueChange(newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType));
+
+                labelPanelComp.prependCompToPanel(paddingSlider);
+                this.activePanels.push(paddingSlider);
+            }
+
+            // Add label placement dropdown
+            {
+                const options: Array<ListOption<AgRangeBarSeriesLabelPlacement>> = [
+                    { value: 'inside', text: this.translate('inside') },
+                    { value: 'outside', text: this.translate('outside') },
+                ];
+                const currentValue = this.chartOptionsService.getSeriesOption<AgRangeBarSeriesLabelPlacement>('label.placement', this.seriesType);
+                const placementSelect = labelPanelComp.createManagedBean(new AgSelect());
+                placementSelect
+                    .setLabel(this.translate('labelPlacement'))
+                    .setLabelAlignment('left')
+                    .setLabelWidth('flex')
+                    .setInputWidth('flex')
+                    .addOptions(options)
+                    .setValue(currentValue)
+                    .onValueChange((newValue) => this.chartOptionsService.setSeriesOption('label.placement', newValue, this.seriesType));
+    
+                labelPanelComp.prependCompToPanel(placementSelect);
+                this.activePanels.push(placementSelect);
+            }
+        }
+
         this.addWidget(labelPanelComp);
 
         if (this.seriesType === 'pie') {
@@ -292,6 +339,21 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesBinCountSlider);
     }
 
+    private initWhiskers() {
+        const whiskersPanelComp = this.createBean(new WhiskersPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(whiskersPanelComp);
+    }
+
+    private initCaps() {
+        const capsPanelComp = this.createBean(new CapsPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(capsPanelComp);
+    }
+
+    private initWaterfall() {
+        const waterfallPanelComp = this.createBean(new WaterfallPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(waterfallPanelComp);
+    }
+
     private addWidget(widget: Component): void {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
@@ -334,7 +396,9 @@ export class SeriesPanel extends Component {
                 ['radar-line', {value: 'radar-line', text: this.translate('radarLine', 'Radar Line')}],
                 ['radar-area', {value: 'radar-area', text: this.translate('radarArea', 'Radar Area')}],
                 ['nightingale', {value: 'nightingale', text: this.translate('nightingale', 'Nightingale')}],
-                ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Nightingale')}],
+                ['range-bar', {value: 'range-bar', text: this.translate('rangeBar', 'Range Bar')}],
+                ['waterfall', {value: 'waterfall', text: this.translate('waterfall', 'Waterfall')}],
+                ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
             ]);
         }

@@ -49,11 +49,11 @@
   "dependencies": {
     "@ag-grid-community/core": "~31.0.2",
     "@ag-grid-enterprise/core": "~31.0.2",
-    "ag-charts-community": "9.0.2-beta.20240123.1425"
+    "ag-charts-community": "9.0.2-beta.20240129.1520"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",
-    "@types/node": "12.20.20",
+    "@types/node": "18.19.10",
     "jest": "^29.5.0",
     "jest-canvas-mock": "2.5.1",
     "jest-environment-jsdom": "^29.5.0",

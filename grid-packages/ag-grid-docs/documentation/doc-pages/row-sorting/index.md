@@ -29,7 +29,7 @@ const gridOptions = {
     },
     columnDefs: [
         // Override default to enable sorting by name
-        { field: 'name', sorting: true },
+        { field: 'name', sortable: true },
         { field: 'age' },
         { field: 'address' },
     ],
