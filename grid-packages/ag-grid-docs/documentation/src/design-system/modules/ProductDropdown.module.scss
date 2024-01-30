@@ -105,8 +105,12 @@
 
 .productTitle {
     font-weight: var(--text-semibold);
-    color: var(--color-primary-text);
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-primary);
+    }
 }
+
 .productDescription {
     color: var(--color-text-secondary);
     opacity: 1;
@@ -133,9 +137,10 @@
 }
 
 .placeholderIcon {
-    background: var(--color-util-brand-50);
+    background: var(--color-util-brand-100);
     padding: 12px;
     border-radius: var(--radius-md);
+
     #{$selector-darkmode} & {
         background: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 90%);
     }
@@ -145,8 +150,9 @@
     background: var(--color-util-brand-50);
     cursor: pointer;
     transition: 0.3s all ease-in-out;
+
     #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 90%);
+        background: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 96%);
     }
 }
 
