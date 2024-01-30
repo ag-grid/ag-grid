@@ -19,6 +19,7 @@ export class MiniStackedBar extends MiniChartWithAxes {
         fills: string[],
         strokes: string[],
         _themeTemplateParameters: ThemeTemplateParameters,
+        _isCustomTheme: boolean,
         data = MiniStackedBar.data,
         xScaleDomain = [0, 16],
         tooltipName = "stackedBarTooltip") {

@@ -11,7 +11,7 @@ export class MiniNormalizedColumn extends MiniStackedColumn {
         [2, 4, 6]
     ];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters) {
-        super(container, fills, strokes, themeTemplateParameters, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters, isCustomTheme: boolean) {
+        super(container, fills, strokes, themeTemplateParameters, isCustomTheme, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip");
     }
 }

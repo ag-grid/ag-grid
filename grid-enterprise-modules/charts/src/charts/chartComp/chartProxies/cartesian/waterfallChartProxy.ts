@@ -1,5 +1,5 @@
 import { _ } from "@ag-grid-community/core";
-import { AgWaterfallSeriesOptions, AgCartesianAxisOptions } from "ag-charts-enterprise";
+import { AgWaterfallSeriesOptions, AgCartesianAxisOptions } from "ag-charts-community";
 import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { isHorizontal } from "../../utils/seriesTypeMapper";

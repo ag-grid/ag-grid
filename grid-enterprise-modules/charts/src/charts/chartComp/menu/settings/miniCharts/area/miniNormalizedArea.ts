@@ -10,7 +10,7 @@ export class MiniNormalizedArea extends MiniStackedArea {
         return stack.map(v => v / sum * 16);
     });
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters, data: number[][] = MiniNormalizedArea.data) {
-        super(container, fills, strokes, themeTemplateParameters, data, "normalizedAreaTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters, isCustomTheme: boolean, data: number[][] = MiniNormalizedArea.data) {
+        super(container, fills, strokes, themeTemplateParameters, isCustomTheme, data, "normalizedAreaTooltip");
     }
 }

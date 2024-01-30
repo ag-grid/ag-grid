@@ -397,6 +397,7 @@ export class SeriesPanel extends Component {
                 ['radar-area', {value: 'radar-area', text: this.translate('radarArea', 'Radar Area')}],
                 ['nightingale', {value: 'nightingale', text: this.translate('nightingale', 'Nightingale')}],
                 ['range-bar', {value: 'range-bar', text: this.translate('rangeBar', 'Range Bar')}],
+                ['range-area', {value: 'range-area', text: this.translate('rangeArea', 'Range Area')}],
                 ['waterfall', {value: 'waterfall', text: this.translate('waterfall', 'Waterfall')}],
                 ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
