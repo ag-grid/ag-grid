@@ -31,6 +31,35 @@ const data = [
       },
     ],
   },
+  {
+    category: 'Charts',
+    features: [
+      {
+        feature: 'Column groups',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Column spanning',
+        community: true,
+        enterprise: true,
+        chartsGrid: false,
+      },
+      {
+        feature: 'Column resizing',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Column autosizing',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+    ],
+  }
   // Add more categories and features as needed
 ];
 
