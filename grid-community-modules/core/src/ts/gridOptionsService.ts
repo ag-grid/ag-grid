@@ -125,7 +125,7 @@ export class GridOptionsService {
      * @param property GridOption callback properties based on the fact that this property has a callback with params extending AgGridCommon
      */
     public getCallback<K extends CallbackProps>(property: K): WrappedCallback<K, GridOptions[K]> {
-        return this.mergeGridCommonParams(this.gridOptions[property]);
+        return this.mergeGridCommonParams(this.gridOptions[property], property);
     }
 
     /**
@@ -141,7 +141,7 @@ export class GridOptionsService {
     * @param callback User provided callback
     * @returns Wrapped callback where the params object not require api, columnApi and context
     */
-    private mergeGridCommonParams<P extends AgGridCommon<any, any>, T>(callback: ((params: P) => T) | undefined):
+    private mergeGridCommonParams<P extends AgGridCommon<any, any>, T>(callback: ((params: P) => T) | undefined, property: CallbackProps):
         ((params: WithoutGridCommon<P>) => T) | undefined {
         if (callback) {
             const wrapped = (callbackParams: WithoutGridCommon<P>): T => {
@@ -150,6 +150,11 @@ export class GridOptionsService {
                 mergedParams.columnApi = this.columnApi;
                 mergedParams.context = this.context;
 
+                if(this.frameworkOverrides.shouldWrapCallback(property)){
+                   return this.frameworkOverrides.wrapOutgoing(() => {
+                        return callback(mergedParams);
+                    });
+                }
                 return callback(mergedParams);
             };
             return wrapped;

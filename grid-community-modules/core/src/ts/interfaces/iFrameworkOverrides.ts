@@ -1,3 +1,4 @@
+import { GridOptions } from "../entities/gridOptions";
 import { AgPromise } from "../utils";
 
 export type FrameworkOverridesIncomingSource = 'resize-observer';
@@ -33,6 +34,13 @@ export interface IFrameworkOverrides {
      * This is also used to not wrap internal event listeners that are registered with RowNodes and Columns.
      */
     shouldWrapOutgoing?: boolean;
+
+    /**
+     * Angular uses Zones, some callbacks run a lot of times and we want to run them outside of Zone JS so that we do not kick off Angular change detection.
+     * However, other callbacks contain actions that need to be run inside Angular's zone so that Angular change detection will be triggered.
+     * We use this method to determine if a callback should be wrapped in Angular's zone or not.
+     */
+    shouldWrapCallback(callbackName: keyof GridOptions): boolean;
 
     /*
     * vue components are specified in the "components" part of the vue component - as such we need a way to deteremine if a given component is

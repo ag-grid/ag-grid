@@ -1,5 +1,30 @@
 import {Injectable, NgZone} from "@angular/core";
-import {VanillaFrameworkOverrides, FrameworkOverridesIncomingSource} from "ag-grid-community";
+import {VanillaFrameworkOverrides, FrameworkOverridesIncomingSource, GridOptions} from "ag-grid-community";
+
+/**
+ * These callbacks are called a lot and are not used to trigger application state changes so we run them outside of Angular.
+ * This avoids triggering change detection and improves performance.
+ */
+const RUN_OUTSIDE = new Set<keyof GridOptions>([
+    'getRowClass',
+    'getRowId',
+    'getRowStyle',
+    'getRowHeight',
+    "isFullWidthRow",
+    "processRowPostCreate", //REMOVE
+    "processUnpinnedColumns",
+    'getLocaleText',
+    'groupIncludeFooter',
+    'groupIncludeTotalFooter',
+    'initialGroupOrderComparator',
+    'getGroupRowAgg',
+    'groupAggFiltering',
+    'isGroupOpenByDefault',
+    'postSortRows',
+    'paginationNumberFormatter',
+
+    'processCellForClipboard', // TODO validate if there is a cost to running inside each cell
+])
 
 @Injectable()
 export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
@@ -41,6 +66,10 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     // Used to distinguish between user code and AG Grid code setting up events against RowNodes and Columns
     get shouldWrapOutgoing() {
         return this._ngZone && NgZone.isInAngularZone(); 
+    }
+
+    shouldWrapCallback(callbackName: keyof GridOptions<any>): boolean {
+        return !RUN_OUTSIDE.has(callbackName);
     }
 
     /**
