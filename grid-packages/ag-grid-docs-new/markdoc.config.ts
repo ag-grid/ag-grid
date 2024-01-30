@@ -50,7 +50,7 @@ export default defineMarkdocConfig({
             },
         },
         enterpriseIcon: {
-            render: component('./src/components/icon/EnterpriseIcon.astro'),
+            render: component('./src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
         },
         //     chartExampleRunner: {
         //         render: component('./src/features/docs/components/DocsExampleRunner.astro'),
