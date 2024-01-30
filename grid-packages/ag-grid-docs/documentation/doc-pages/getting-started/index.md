@@ -171,10 +171,14 @@ Rows and Columns are bound to the grid.
 <snippet transform={false} language="jsx">
 |return (
 |  // wrapping container with theme & size
-|  &lt;div className="ag-theme-quartz" // grid comes with multiple themes out of the box
-|       style={{ height: 500 }} // the grid will fill the size of it's wrapping container
+|  &lt;div
+|   className="ag-theme-quartz" // the grid comes with multiple themes out of the box
+|   style={{ height: 500 }} // the grid will fill the size of it's wrapping container
 |  >
-|    &lt;AgGridReact rowData={rowData} columnDefs={colDefs} /> // bind rows and columns
+|    &lt;AgGridReact
+|        rowData={rowData} // bind rows
+|        columnDefs={colDefs} // bind columns
+|    />
 |  &lt;/div>
 |)
 </snippet>
@@ -371,10 +375,10 @@ When you run the application, you should see a basic grid with three rows. To se
 
 <framework-specific-section frameworks="react">
 
-Now that you have a basic grid running, the remained of this page explores some of the key concepts. 
+Now that you have a basic grid running, the remainder of this page explores some of the key concepts. 
 ## Showing Data
 
-This section gives an overview of getting data into your grid, formatting the data and inserting custom components.
+This section gives an overview of getting data into your grid, formatting the data, and inserting custom components.
 
 ### Mapping Values
 
@@ -391,7 +395,7 @@ The `headerName` provides the title for the header. If missing the title is deri
 
 ### Formatting
 
-Format cell content using a [Value Formatter](../value-formatters/):
+Format cell content using a [Value Formatter](../value-formatters/).
 
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
@@ -402,7 +406,7 @@ Format cell content using a [Value Formatter](../value-formatters/):
 
 ### Cell Components
 
-Add buttons, checkboxes or images to cells with a [Cell Renderer](../cell-rendering/):
+Add buttons, checkboxes or images to cells with a [Cell Renderer](../cell-rendering/).
 
 <snippet transform={false} language="jsx">
 | const CustomButtonComponent = (props) => {
@@ -459,7 +463,7 @@ You can also create your own [Custom Filter](../filter-custom/).
 
 ### Editing
 
-Enable editing by setting the `editable` attribute to `true`. This uses the default [Cell Editor](../cell-editing/) for the cell data type:
+Enable editing by setting the `editable` attribute to `true`. This uses the default [Cell Editor](../cell-editing/) for the cell data type.
 
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
@@ -485,7 +489,7 @@ You can also create your own [Custom Editors](../component-cell-editor/).
 
 ### Sorting
 
-[Row Sorting](../row-sorting/) is enabled by default. Configure custom sorting using the `comparator` attribute:
+Data is sorted by clicking the column headers. Configure custom sorting using the `comparator` attribute.
 
 <snippet transform={false} language="jsx">
 | //Sorts months into date order
@@ -512,21 +516,34 @@ This section gives an overview of changing the look and feel of the grid.
 
 ### Themes
 
-Apply a [Theme](../themes/) as a class to the grid's container element to style the grid:
+[Grid Themes](../themes/) define how the grid looks (colors, font, spacing etc).
+The gird comes with [Provided Themes](../themes/#provided-themes) such as Quartz and Alpine.
+To use a theme you need to 1) import the themes CSS and 2) apply the theme to the parent
+HTML element of the grid.
 
 <snippet transform={false} language="jsx">
+|import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
+| ...
 |return (
-|  // Container
-|  &lt;div id="myGrid" class="ag-theme-quartz">
-|    {/* The AG Grid component */}
-|    &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
+|  &lt;div class="ag-theme-quartz"> // set Quartz Theme on parent div
+|    &lt;AgGridReact rowData={...} columnDefs={...} />
+|  &lt;/div>
+|)
+</snippet>
+
+<snippet transform={false} language="jsx">
+|import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme
+| ...
+|return (
+|  &lt;div class="ag-theme-alpine"> // set Alpine Theme on parent div
+|    &lt;AgGridReact rowData={...} columnDefs={...} />
 |  &lt;/div>
 |)
 </snippet>
 
 ### Customising a Theme
 
-Customise themes using CSS variables:
+Customise themes using CSS variables.
 
 <snippet transform={false} language="jsx">
 |.ag-theme-quartz {
@@ -540,7 +557,7 @@ If you are designing within Figma, you can use the [AG Grid Design System](../ag
 
 ### Cell Style
 
-Define rules to apply styling to cells using `cellClassRules`:
+Define rules to apply styling to cells using `cellClassRules`. This can be used, for example, to set cell background colour based on its value.
 
 <snippet transform={false} language="jsx">
 |const [colDefs, setColDefs] = useState([
@@ -558,7 +575,7 @@ Define rules to apply styling to cells using `cellClassRules`:
 
 ### Row Style
 
-Define rules to apply styling to rows using  and `rowClassRules`:
+Define rules to apply styling to rows using  and `rowClassRules`. This allows changing style (e.g. row colour) based on row values.
 
 <snippet transform={false} language="jsx">
 |const rowClassRules = {
@@ -571,7 +588,7 @@ Define rules to apply styling to rows using  and `rowClassRules`:
 
 ### Row Height
 
-Change the [Row Height](../row-height/) to any positive number or set the row height based on cell content using `autoHeight`:
+Change the [Row Height](../row-height/) to any positive number.
 
 <snippet transform={false} language="jsx">
 |const rowHeight = 50;
@@ -586,9 +603,20 @@ Change the [Row Height](../row-height/) to any positive number or set the row he
 |&lt;AgGridReact rowHeight={rowHeight} columnDefs={colDefs} />
 </snippet>
 
+Allow the cell content to determine the row height by using `autoHeight`.
+
+<snippet transform={false} language="jsx">
+| const [colDefs, setColDefs] = useState([
+|    // ...
+|    // Without wrapText, autoHeight cell contents will display on one line
+|    { field: "make", wrapText: true, autoHeight: true },
+|    // ...
+|  ]);
+</snippet>
+
 ### Pagination
 
-Enable [Pagination](../row-pagination/) by setting `pagination` to be true:
+Enable [Pagination](../row-pagination/) by setting `pagination` to be true.
 
 <snippet transform={false} language="jsx">
 |&lt;AgGridReact pagination={true} />
