@@ -29,8 +29,6 @@ export abstract class CartesianChartProxy extends ChartProxy {
             series: this.getSeries(params),
         };
 
-        console.log(options)
-
         AgCharts.update(this.getChartRef(), options);
     }
 
