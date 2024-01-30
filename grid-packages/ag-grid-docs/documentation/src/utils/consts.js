@@ -28,4 +28,4 @@ export const isProductionEnvironment = () => (isProductionBuild() || isPreProduc
 
 // whether integrated charts includes ag-charts-enterprise or just ag-charts-community
 // also need to update grid-packages/ag-grid-docs/src/example-generation/consts.ts if this value is changed
-export const integratedChartsUsesChartsEnterprise = true;
+export const integratedChartsUsesChartsEnterprise = false;
