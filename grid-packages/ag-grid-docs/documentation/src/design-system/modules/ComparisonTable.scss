@@ -41,7 +41,6 @@
 .category {
     cursor: pointer;
     user-select: none;
-    padding-top: 37px;
 }
 
 .category-cell {
@@ -52,4 +51,21 @@
 }
 .feature-heading {
     padding-bottom: 16px;
+}
+
+.data-column:nth-child(3) {
+    background-color: var(--color-bg-tertiary);
+
+    .feature-cell {
+        border-left: 1px solid var(--color-border-primary);
+        border-right: 1px solid var(--color-border-primary);
+    }
+}
+
+.feature-row {
+  height: 54px;
+  border-bottom: 1px solid var(--color-border-secondary);
+  display: flex;
+  align-items: center;
+
 }
