@@ -77,11 +77,11 @@ const ComparisonTable = () => {
     <div className="comparison-table">
       <div className="left-column">
         {data.map((categoryData) => (
-          <div
-            className={`category ${expandedCategories[categoryData.category] ? 'expanded' : ''}`}
-            key={categoryData.category}
-          >
-            <div className="category-cell" onClick={() => toggleCategory(categoryData.category)}>
+          <React.Fragment key={categoryData.category}>
+            <div
+              className={`category category-cell ${expandedCategories[categoryData.category] ? 'expanded' : ''}`}
+              onClick={() => toggleCategory(categoryData.category)}
+            >
               {categoryData.category}
             </div>
             {expandedCategories[categoryData.category] &&
@@ -90,80 +90,61 @@ const ComparisonTable = () => {
                   {feature.feature}
                 </div>
               ))}
-          </div>
+          </React.Fragment>
         ))}
       </div>
       <div className="data-column">
         <div className="feature-heading">Community</div>
         {data.map((categoryData) => (
-          <div
-            className={`feature-cell ${expandedCategories[categoryData.category] ? '' : 'hidden'}`}
-            key={`heading-${categoryData.category}-community`}
-          >
-            -
-          </div>
-          )
-        )}
-        {data.map((categoryData) =>
-          categoryData.features.map((feature) => (
-            <div
-              className={`feature-cell ${feature.community ? 'enabled' : 'disabled'}`}
-              key={feature.feature}
-              style={{ display: expandedCategories[categoryData.category] ? '' : 'none' }}
-            >
-              {feature.community ? '✔' : '-'}
-            </div>
-          ))
-        )}
+          <React.Fragment key={`heading-${categoryData.category}-community`}>
+            <div className={`feature-cell ${expandedCategories[categoryData.category] ? 'hidden' : 'empty-cell'}`}>-</div>
+            {expandedCategories[categoryData.category] &&
+              categoryData.features.map((feature) => (
+                <div
+                  className={`feature-cell ${feature.community ? 'enabled' : 'disabled'}`}
+                  key={feature.feature}
+                >
+                  {feature.community ? '✔' : '-'}
+                </div>
+              ))}
+          </React.Fragment>
+        ))}
       </div>
       <div className="data-column">
         <div className="feature-heading">Enterprise</div>
         {data.map((categoryData) => (
-          <div
-            className={`feature-cell ${expandedCategories[categoryData.category] ? '' : 'hidden'}`}
-            key={`heading-${categoryData.category}-enterprise`}
-          >
-            -
-          </div>
-          )
-        )}
-        {data.map((categoryData) =>
-          categoryData.features.map((feature) => (
-            <div
-              className={`feature-cell ${feature.enterprise ? 'enabled' : 'disabled'}`}
-              key={feature.feature}
-              style={{ display: expandedCategories[categoryData.category] ? '' : 'none' }}
-            >
-              {feature.enterprise ? '✔' : '-'}
-            </div>
-          ))
-        )}
+          <React.Fragment key={`heading-${categoryData.category}-enterprise`}>
+            <div className={`feature-cell ${expandedCategories[categoryData.category] ? 'hidden' : 'empty-cell'}`}>-</div>
+            {expandedCategories[categoryData.category] &&
+              categoryData.features.map((feature) => (
+                <div
+                  className={`feature-cell ${feature.enterprise ? 'enabled' : 'disabled'}`}
+                  key={feature.feature}
+                >
+                  {feature.enterprise ? '✔' : '-'}
+                </div>
+              ))}
+          </React.Fragment>
+        ))}
       </div>
       <div className="data-column">
         <div className="feature-heading">Grid + Charts</div>
         {data.map((categoryData) => (
-          <div
-            className={`feature-cell ${expandedCategories[categoryData.category] ? '' : 'hidden'}`}
-            key={`heading-${categoryData.category}-chartsGrid`}
-          >
-            -
-          </div>
-          )
-        )}
-        {data.map((categoryData) =>
-          categoryData.features.map((feature) => (
-            <div
-              className={`feature-cell ${feature.chartsGrid ? 'enabled' : 'disabled'}`}
-              key={feature.feature}
-              style={{ display: expandedCategories[categoryData.category] ? '' : 'none' }}
-            >
-              {feature.chartsGrid ? '✔' : '-'}
-            </div>
-          ))
-        )}
+          <React.Fragment key={`heading-${categoryData.category}-chartsGrid`}>
+            <div className={`feature-cell ${expandedCategories[categoryData.category] ? 'hidden' : 'empty-cell'}`}>-</div>
+            {expandedCategories[categoryData.category] &&
+              categoryData.features.map((feature) => (
+                <div
+                  className={`feature-cell ${feature.chartsGrid ? 'enabled' : 'disabled'}`}
+                  key={feature.feature}
+                >
+                  {feature.chartsGrid ? '✔' : '-'}
+                </div>
+              ))}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );
 };
-
 export default ComparisonTable;
