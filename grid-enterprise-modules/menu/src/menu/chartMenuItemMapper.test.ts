@@ -144,7 +144,7 @@ describe('isValidChartType', () => {
             }
         ];
 
-        it.skip(`should pass with default`, () => {
+        it(`should pass with default`, () => {
             const chartMenuItemMapper = getChartMenuMapper(DEFAULT_CHART_GROUPS);
             const rangeItems = chartMenuItemMapper.getChartItems('chartRange').subMenu;
             const pivotItems = chartMenuItemMapper.getChartItems('pivotRange').subMenu;
