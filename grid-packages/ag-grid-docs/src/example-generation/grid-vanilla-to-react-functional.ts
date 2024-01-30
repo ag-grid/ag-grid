@@ -1,6 +1,7 @@
 import { convertFunctionToConstProperty, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getModuleRegistration, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 const path = require('path');
 
 function getModuleImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {
@@ -47,7 +48,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
     ];
 
     if (gridSettings.enterprise) {
-        imports.push(`import 'ag-grid-${bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");

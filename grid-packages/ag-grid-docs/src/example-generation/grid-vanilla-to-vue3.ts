@@ -20,6 +20,7 @@ import {
     OVERRIDABLE_AG_COMPONENTS
 } from "./grid-vanilla-to-vue-common";
 import * as JSON5 from "json5";
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 
 const path = require('path');
 
@@ -277,7 +278,7 @@ function getPackageImports(bindings: any, componentFileNames: string[], allStyle
     ];
 
     if (gridSettings.enterprise) {
-        imports.push(`import 'ag-grid-${bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
