@@ -20,8 +20,7 @@ export class ConnectorLinePanel extends Component {
                 <ag-color-picker ref="lineColorPicker"></ag-color-picker>
                 <ag-slider ref="lineStrokeWidthSlider"></ag-slider>
                 <ag-slider ref="lineOpacitySlider"></ag-slider>
-                <ag-slider ref="lineDashSlider"></ag-slider>
-                <ag-slider ref="lineDashOffsetSlider"></ag-slider>
+                <ag-slider ref="lineDashSlider"></ag-slider>                
             </ag-group-component>
         </div>`;
 
@@ -29,7 +28,6 @@ export class ConnectorLinePanel extends Component {
     @RefSelector('lineStrokeWidthSlider') private lineStrokeWidthSlider: AgSlider;
     @RefSelector('lineOpacitySlider') private lineOpacitySlider: AgSlider;
     @RefSelector('lineDashSlider') private lineDashSlider: AgSlider;
-    @RefSelector('lineDashOffsetSlider') private lineDashOffsetSlider: AgSlider;
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
@@ -56,9 +54,8 @@ export class ConnectorLinePanel extends Component {
     private initConnectorLineControls() {
         this.initColorPicker(this.lineColorPicker, "color", "line.stroke");
         this.initSlider(this.lineStrokeWidthSlider, "strokeWidth", 0, 10, 45, "line.strokeWidth");
-        this.initSlider(this.lineOpacitySlider, "strokeOpacity", 0, 1, 45, "line.strokeOpacity", 0.05, false);
         this.initSlider(this.lineDashSlider, "lineDash", 0, 30, 45, "line.lineDash", 1, true);
-        this.initSlider(this.lineDashOffsetSlider, "lineDashOffset", 0, 30, 45, "line.lineDashOffset");
+        this.initSlider(this.lineOpacitySlider, "strokeOpacity", 0, 1, 45, "line.strokeOpacity", 0.05, false);
     }
 
     private initColorPicker(colorPicker: AgColorPicker, labelKey: string, seriesOptionKey: string) {
