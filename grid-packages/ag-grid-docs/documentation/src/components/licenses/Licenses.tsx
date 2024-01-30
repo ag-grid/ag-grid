@@ -4,7 +4,10 @@ import { Icon } from '../../components/Icon';
 import { trackBuyButton } from '../../utils/analytics';
 import AGGridLogo from '../../images/inline-svgs/ag-grid-logo.svg';
 import AGChartsLogo from '../../images/inline-svgs/ag-charts-logo.svg';
-
+import ChartsPricing from '../../images/inline-svgs/pricing-charts.svg';
+import GridCommunity from '../../images/inline-svgs/pricing-community.svg';
+import GridEnterprise from '../../images/inline-svgs/pricing-enterprise.svg';
+import ChartsGrid from '../../images/inline-svgs/pricing-grid-charts.svg';
 // @ts-ignore
 import styles from '@design-system/modules/Licenses.module.scss';
 
@@ -18,31 +21,59 @@ type LicenseData = {
     buyLink: string;
     learnMoreLink: string;
     Logo: any;
+    description: string;
 };
 
 const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
+        id: 'community',
+        subHeading: 'Community',
+        description: 'Free for everyone, including production use',
+        priceFullDollars: '0',
+        launchPrice: null,
+        licenseBenefits: ['Free to use', 'Basic grid features', 'Theming and customisation'],
+        buyLink: 'https://ag-grid.com/react-data-grid/licensing/',
+        learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
+        Logo: GridCommunity
+    },
+    {
+        className: styles.gridLicense,
         id: 'grid',
         subHeading: 'Enterprise',
+        description: 'All the grid features and support via Zendesk',
         priceFullDollars: '999',
         launchPrice: null,
-        licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
+        licenseBenefits: ['Community features + more', '1 year of support', '1 year of updates'],
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
         learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
-        Logo: AGGridLogo
+        Logo: GridEnterprise
     },
     {
         className: styles.chartsLicense,
         id: 'charts',
-        subHeading: 'Enterprise',
-        licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
-        priceFullDollars: '399',
-        launchPrice: '199',
+        subHeading: 'Charts',
+        description: 'Professional choice for building enterprise applications',
+        licenseBenefits: ['Perpetual License', '1 year of support', '1 year of updates'],
+        priceFullDollars: '199',
+        launchPrice: null,
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
         learnMoreLink: "https://charts.ag-grid.com/javascript/licensing/",
-        Logo: AGChartsLogo
+        Logo: ChartsPricing
     },
+    {
+        className: styles.chartsLicense,
+        id: 'togther',
+        subHeading: 'Grid + Charts',
+        description: 'Extend to our enterprise grid and charting library',
+        licenseBenefits: ['Enterprise grid + chart library', '1 year of support', '1 year of updates'],
+        priceFullDollars: '1198',
+        launchPrice: null,
+        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
+        learnMoreLink: "https://charts.ag-grid.com/javascript/licensing/",
+        Logo: ChartsGrid
+    },
+    
 ];
 
 const makeNonBreaking = (text: string) => {
@@ -54,7 +85,7 @@ const makeNonBreaking = (text: string) => {
 const Price = ({ priceFullDollars, launchPrice }) => {
     return (
         <div className={styles.price}>
-            <p><b>Starting at...</b></p>
+            <p><b></b></p>
             <p className={styles.priceFullDollars}>
                 {launchPrice ? launchPrice : priceFullDollars}
                 { launchPrice && (
@@ -64,54 +95,33 @@ const Price = ({ priceFullDollars, launchPrice }) => {
                         </span>
                     </>
                 )}
+                  <p className={styles.developerText}>
+            per developer
             </p>
-            <p>
-                <b>Per Developer</b>
             </p>
+          
         </div>
     );
 };
 
 const License = (props: LicenseData) => {
-    const { id, subHeading, licenseBenefits, priceFullDollars, launchPrice, buyLink, learnMoreLink, Logo } = props;
+    const { id, description, subHeading, licenseBenefits, priceFullDollars, launchPrice, buyLink, learnMoreLink, Logo } = props;
 
     return (
         <>
             <div className={classnames(styles.top, 'top')} id={id}>
+            <Logo className={styles.logo}/>
                 <div className={styles.licenseMeta}>
-                    <Logo className={styles.logo}/>
-                    <p className="text-sm"><Icon name="enterprise" /> {subHeading}</p>
+                <h2 className="">{subHeading}</h2>
+                <p className="">{description}</p>
+                  
+                    {/* <p className="text-sm"><Icon name="enterprise" /> {subHeading}</p> */}
                 </div>
 
                 <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
-
-                <div className={styles.licenseBenefits}>
-                    <ul className="list-style-none">
-                        {licenseBenefits.map((benefit, i) => {
-                            return <li key={i}><Icon name="tick"/> {makeNonBreaking(benefit)}</li>;
-                        })}
-                    </ul>
-
-                    <a className={classnames(styles.learnMoreLink, 'text-sm')} href={learnMoreLink}>
-                        Learn more
-
-                        <Icon name="arrowRight" />
-                    </a>
-                </div>
-
-
-                <div className={styles.launchExplainer}>
-                    { launchPrice && (
-                        <>
-                            <p className='text-sm'>Limited time launch price</p>
-                            <p className='text-sm'>Standard price <b>${priceFullDollars}</b></p>
-                        </>
-                    )}
-                </div>
-
                 <div className={styles.licenseActions}>
-                    <a
-                        className="button-tertiary"
+                <a
+                        className={`${id === 'community' ? 'button-tertiary' : 'button'} ${styles.pricing}`}
                         href={buyLink}
                         target="_blank"
                         onClick={() => {
@@ -120,8 +130,16 @@ const License = (props: LicenseData) => {
                             });
                         }}
                     >
-                        Configure Now
+                           {id === 'community' ? 'Start for free' : 'Configure now'}
                     </a>
+                </div>
+
+                <div className={styles.licenseBenefits}>
+                    <ul className="list-style-none">
+                        {licenseBenefits.map((benefit, i) => {
+                            return <li key={i}><Icon name="tick"/> {makeNonBreaking(benefit)}</li>;
+                        })}
+                    </ul>
                 </div>
             </div>
         </>

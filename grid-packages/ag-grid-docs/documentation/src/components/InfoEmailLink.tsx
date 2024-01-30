@@ -25,7 +25,6 @@ export const InfoEmailLink: FunctionComponent<Props> = ({
         <a
             className={classnames(
                 {
-                    button: isButton,
                 },
                 className
             )}

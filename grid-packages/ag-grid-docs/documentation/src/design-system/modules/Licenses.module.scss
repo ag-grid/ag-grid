@@ -3,13 +3,15 @@
 .license {
     width: 100%;
     border-radius: var(--radius-md);
-    border: 1px solid var(--color-border-primary);
+    // border: 1px solid var(--color-border-secondary);
+    border-right: 1px solid var(--color-border-secondary);
     color: var(--color-fg-primary);
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        max-width: calc(50% - $spacing-size-4);
+        // max-width: calc(50% - $spacing-size-4);
         max-height: 480px;
     }
+
 
     p {
         margin: 0;
@@ -28,6 +30,10 @@
             text-align: left;
         }
     }
+}
+
+.license:last-child {
+    border-right: none;
 }
 
 .licenseMeta {
@@ -49,13 +55,9 @@
 }
 
 .logo {
-    height: 54px;
-    width: fit-content;
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        margin-left: -10px;
-        margin-bottom: -4px;
-    }
+    height: 40px;
+    width: auto;
+    margin-bottom: $spacing-size-5;
 
     #{$selector-darkmode} & {
         :global(#LogoType) * {
@@ -122,6 +124,17 @@ p.name {
 .priceFullDollars {
     font-weight: var(--text-bold);
     height: $spacing-size-16;
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+
+   .developerText {
+    font-size: var(--text-fs-base) !important;
+    font-weight: var(--text-regular);
+    letter-spacing: 0px;
+    padding-left: $spacing-size-2;
+    height: $spacing-size-4;
+   }
 
     :global(#grid) & {
         position: relative;
@@ -132,9 +145,12 @@ p.name {
 .licenseBenefits {
     display: flex;
     flex-direction: column;
+    margin-top: $spacing-size-4;
+    gap: $spacing-size-4;
+    color: var(--color-text-tertiary);
 
     ul li:where(:not(:last-child)) {
-        margin-bottom: $spacing-size-1;
+        margin-bottom: $spacing-size-3;
     }
 
     a {
@@ -148,8 +164,7 @@ p.name {
         width: 20px;
         height: 20px;
         border-radius: 3px;
-        fill: var(--color-util-gray-700);
-        background-color: var(--color-util-gray-300);
+        fill: var(--color-util-brand-700);
     }
 }
 
@@ -187,4 +202,12 @@ p.name {
 
         transform: translateX(5px);
     }
+}
+
+.developerText {
+   color: var(--color-text-tertiary);
+}
+
+.pricing {
+    // background-color: red;
 }

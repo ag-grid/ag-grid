@@ -10,7 +10,6 @@ import Seo from './components/SEO';
 // @ts-ignore
 import styles from '@design-system/modules/GridHomepage.module.scss';
 import LogoMark from '../components/LogoMark';
-import { GlobalContextProvider } from '../components/GlobalContext';
 import ChartsLogo from '../images/inline-svgs/ag-charts-logo.svg';
 
 const IS_SSR = typeof window === 'undefined';
@@ -71,20 +70,18 @@ const Default = () => {
             <div className={styles.homepageHero}>
                 <section className={classNames(styles.heroInner, 'layout-max-width-small')}>
                     <section className={styles.heroHeadings}>
-                        <h1 className="text-xl">
-                            The&nbsp;Best&nbsp;JavaScript Grid&nbsp;in&nbsp;the&nbsp;World
-                        </h1>
+                        <h1 className="text-xl">The&nbsp;Best&nbsp;JavaScript Grid&nbsp;in&nbsp;the&nbsp;World</h1>
                         <h2 className="text-base normal-weight-text">
                             The professional choice for developers building enterprise&nbsp;applications
                         </h2>
                     </section>
 
                     <section className={styles.heroGrid}>
-                        {IS_SSR &&
+                        {IS_SSR && (
                             <div className={styles.loadingLogoContainer}>
                                 <LogoMark isSpinning />
                             </div>
-                        }
+                        )}
                         {!IS_SSR && (
                             <React.Suspense fallback={<></>}>
                                 <HeroGrid />
@@ -102,32 +99,50 @@ const Default = () => {
                 </div>
             </div>
 
+            <div className={styles.homepageCustomers}>
+                <div className={classNames(styles.customersInner, 'layout-max-width-small')}>
+                    <h2>Used by 90% of the Fortune 500</h2>
+                    <p className="text-tertiary">
+                        Trusted by the finest teams globally, an unmatched experience for developers and users alike.
+                    </p>
+                    <div className={styles.customerLogos}></div>
+                </div>
+            </div>
+
             <div className={styles.homepageQuotes}>
                 <div className="layout-max-width-small">
                     <Quotes data={quotesData} />
                 </div>
             </div>
 
-            <div className={styles.homepageCustomers}>
-                <div className={classNames(styles.customersInner, 'layout-max-width-small')}>
-                    <h2>Used by 90% of the Fortune 500</h2>
-                    <p className='text-tertiary'>Trusted by the finest teams globally, an unmatched experience for developers and users alike.</p>
-                    <div className={styles.customerLogos}></div>
-                </div>
-            </div>
-
             <div className={styles.homepageCharts}>
-                <div className={classNames(styles.chartsInner, "layout-max-width-small")}>
+                <div className={classNames(styles.chartsInner, 'layout-max-width-small')}>
                     <div className={styles.chartsCopy}>
-                        <ChartsLogo className={styles.chartsLogo}/>
-                        <p className="text-lg">Check out the all new <a href="https://charts.ag-grid.com"><b>AG Charts</b></a>. Experience the power of <b>AG Grid</b> <a href="/javascript-data-grid/integrated-charts/">Integrated Charts</a> in a standalone library.</p>
+                        <ChartsLogo className={styles.chartsLogo} />
+                        <p className="text-lg">
+                            Check out the all new{' '}
+                            <a href="https://charts.ag-grid.com">
+                                <b>AG Charts</b>
+                            </a>
+                            . Experience the power of <b>AG Grid</b>{' '}
+                            <a href="/javascript-data-grid/integrated-charts/">Integrated Charts</a> in a standalone
+                            library.
+                        </p>
                     </div>
                     <div className={styles.chartsExample}>
-                        <img className={styles.chartsExampleLight} src="images/ag-charts-gallery-light.webp" alt="AG Charts" />
-                        <img className={styles.chartsExampleDark} src="images/ag-charts-gallery-dark.webp" alt="AG Charts" />
+                        <img
+                            className={styles.chartsExampleLight}
+                            src="images/ag-charts-gallery-light.webp"
+                            alt="AG Charts"
+                        />
+                        <img
+                            className={styles.chartsExampleDark}
+                            src="images/ag-charts-gallery-dark.webp"
+                            alt="AG Charts"
+                        />
                     </div>
                 </div>
-            </div>                
+            </div>
 
             <section className={styles.automatedRowGroupingOuter}>
                 <div className={classNames('layout-max-width-small', styles.homepageExample)}>
