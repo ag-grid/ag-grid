@@ -17,7 +17,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: background-color 0.3s, color 0.3s;
+    transition:
+        background-color 0.3s,
+        color 0.3s;
     font-weight: var(--text-semibold);
     font-size: 17px;
     border: none;
@@ -95,7 +97,9 @@
     box-shadow: var(--shadow-sm);
     opacity: 0;
     transform: translateY(10px) scale(0.95);
-    transition: opacity 0.15s ease, transform 0.15s ease;
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease;
 
     @media screen and (min-width: $breakpoint-hero-small) {
         top: 100%;
