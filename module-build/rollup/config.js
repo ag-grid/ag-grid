@@ -132,7 +132,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                     inputMainFile: './esm-main-charts-enterprise.auto.js',
                     format: 'es',
                     env: 'development',
-                    extension: '.charts-enterprise.auto.esm.js',
+                    extension: '-charts-enterprise.auto.esm.js',
                     useEsmEs5: true,
                     config: {
                         external: id => bundlePrefix === 'ag-grid-enterprise' ? 'ag-grid-community' === id || id.startsWith('@ag-grid-community') : false
@@ -158,7 +158,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                     inputMainFile: './esm-main-charts-enterprise.auto.js',
                     format: 'es',
                     env: 'production',
-                    extension: '.charts-enterprise.auto.esm.min.js',
+                    extension: '-charts-enterprise.auto.esm.min.js',
                     useEsmEs5: true,
                     config: {
                         external: id => bundlePrefix === 'ag-grid-enterprise' ? 'ag-grid-community' === id || id.startsWith('@ag-grid-community') : false
@@ -185,7 +185,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                     inputMainFile: './esm-main-charts-enterprise.complete.js',
                     format: 'es',
                     env: 'development',
-                    extension: '.charts-enterprise.auto.complete.esm.js'
+                    extension: '-charts-enterprise.auto.complete.esm.js'
                 });
                 entries.push({
                     // like the umd bundles in that every is in here - both community and enterprise (if doing @ag-grid-enterprise/all-modules)
@@ -195,7 +195,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                     inputMainFile: './esm-main-charts-enterprise.complete.js',
                     format: 'es',
                     env: 'production',
-                    extension: '.charts-enterprise.auto.complete.esm.min.js'
+                    extension: '-charts-enterprise.auto.complete.esm.min.js'
                 });
             }
         }

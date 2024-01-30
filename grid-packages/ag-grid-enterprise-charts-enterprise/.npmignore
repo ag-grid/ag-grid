@@ -10,5 +10,3 @@ tsconfig.json
 tsconfig-main.es6.json
 tsconfig-main.json
 *.map
-
-dist/*charts-enterprise*

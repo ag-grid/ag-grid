@@ -127,6 +127,7 @@
     "ag-grid-angular": "~31.0.2",
     "ag-grid-community": "~31.0.2",
     "ag-grid-enterprise": "~31.0.2",
+    "ag-grid-enterprise-charts-enterprise": "~31.0.2",
     "ag-grid-react": "~31.0.2",
     "ag-grid-testing": "0.0.3",
     "autoprefixer": "^9.6.0",
