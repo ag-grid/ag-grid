@@ -8,28 +8,28 @@ const data = [
     features: [
       {
         feature: 'Column groups',
-        community: true,
+        community: false,
         enterprise: true,
         chartsGrid: true,
         link: 'https://example.com/column-groups', 
       },
       {
         feature: 'Column spanning',
-        community: true,
+        community: false,
         enterprise: true,
         chartsGrid: false,
         link: 'https://example.com/column-spanning', 
       },
       {
         feature: 'Column resizing',
-        community: true,
+        community: false,
         enterprise: true,
         chartsGrid: true,
         link: 'https://example.com/column-resizing',
       },
       {
         feature: 'Column autosizing',
-        community: true,
+        community: false,
         enterprise: true,
         chartsGrid: true,
         link: 'https://example.com/column-autosizing', 
