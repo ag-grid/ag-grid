@@ -6,7 +6,7 @@ interface InitFontPanelParams {
     labelName: string,
     chartOptionsService: ChartOptionsService,
     getSelectedSeries: () => ChartSeriesType,
-    seriesOptionLabelProperty: 'calloutLabel' | 'sectorLabel' | 'label'
+    seriesOptionLabelProperty: 'calloutLabel' | 'sectorLabel' | 'label' | 'item.positive.label' | 'item.negative.label'
 }
 
 export function initFontPanelParams({

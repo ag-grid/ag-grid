@@ -25,6 +25,7 @@ import { CalloutPanel } from "./calloutPanel";
 import { CapsPanel } from "./capsPanel";
 import { ConnectorLinePanel } from "./connectorLinePanel";
 import { WhiskersPanel } from "./whiskersPanel";
+import { SeriesItemsPanel } from "./seriesItemsPanel";
 
 export class SeriesPanel extends Component {
 
@@ -61,6 +62,7 @@ export class SeriesPanel extends Component {
         'whiskers': () => this.initWhiskers(),
         'caps': () => this.initCaps(),
         'connectorLine': () => this.initConnectorLine(),
+        'seriesItems': () => this.initSeriesItemsPanel(),
     };
 
     private seriesWidgetMappings: {[name: string]: string[]} = {
@@ -77,7 +79,7 @@ export class SeriesPanel extends Component {
         'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'waterfall': ['tooltips', 'connectorLine'],
+        'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
     constructor({
@@ -246,41 +248,36 @@ export class SeriesPanel extends Component {
         }
 
         if (this.seriesType === 'range-bar') {
-
             // Add padding slider
-            {
-                const currentValue = this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType);
-                const paddingSlider = labelPanelComp.createManagedBean(new AgSlider());
-                paddingSlider.setLabel(this.chartTranslationService.translate('padding'))
-                    .setMaxValue(getMaxValue(currentValue, 200))
-                    .setValue(`${currentValue}`)
-                    .setTextFieldWidth(45)
-                    .onValueChange(newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType));
+            const paddingValue = this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType);
+            const paddingSlider = labelPanelComp.createManagedBean(new AgSlider());
+            paddingSlider.setLabel(this.chartTranslationService.translate('padding'))
+                .setMaxValue(getMaxValue(paddingValue, 200))
+                .setValue(`${paddingValue}`)
+                .setTextFieldWidth(45)
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType));
 
-                labelPanelComp.prependCompToPanel(paddingSlider);
-                this.activePanels.push(paddingSlider);
-            }
+            labelPanelComp.prependCompToPanel(paddingSlider);
+            this.activePanels.push(paddingSlider);
 
             // Add label placement dropdown
-            {
-                const options: Array<ListOption<AgRangeBarSeriesLabelPlacement>> = [
-                    { value: 'inside', text: this.translate('inside') },
-                    { value: 'outside', text: this.translate('outside') },
-                ];
-                const currentValue = this.chartOptionsService.getSeriesOption<AgRangeBarSeriesLabelPlacement>('label.placement', this.seriesType);
-                const placementSelect = labelPanelComp.createManagedBean(new AgSelect());
-                placementSelect
-                    .setLabel(this.translate('labelPlacement'))
-                    .setLabelAlignment('left')
-                    .setLabelWidth('flex')
-                    .setInputWidth('flex')
-                    .addOptions(options)
-                    .setValue(currentValue)
-                    .onValueChange((newValue) => this.chartOptionsService.setSeriesOption('label.placement', newValue, this.seriesType));
-    
-                labelPanelComp.prependCompToPanel(placementSelect);
-                this.activePanels.push(placementSelect);
-            }
+            const options: Array<ListOption<AgRangeBarSeriesLabelPlacement>> = [
+                { value: 'inside', text: this.translate('inside') },
+                { value: 'outside', text: this.translate('outside') },
+            ];
+            const placementValue = this.chartOptionsService.getSeriesOption<AgRangeBarSeriesLabelPlacement>('label.placement', this.seriesType);
+            const placementSelect = labelPanelComp.createManagedBean(new AgSelect());
+            placementSelect
+                .setLabel(this.translate('labelPlacement'))
+                .setLabelAlignment('left')
+                .setLabelWidth('flex')
+                .setInputWidth('flex')
+                .addOptions(options)
+                .setValue(placementValue)
+                .onValueChange((newValue) => this.chartOptionsService.setSeriesOption('label.placement', newValue, this.seriesType));
+
+            labelPanelComp.prependCompToPanel(placementSelect);
+            this.activePanels.push(placementSelect);
         }
 
         this.addWidget(labelPanelComp);
@@ -352,6 +349,11 @@ export class SeriesPanel extends Component {
     private initConnectorLine() {
         const connectorLinePanelComp = this.createBean(new ConnectorLinePanel(this.chartOptionsService, () => this.seriesType));
         this.addWidget(connectorLinePanelComp);
+    }
+
+    private initSeriesItemsPanel() {
+        const seriesItemsPanelComp = this.createBean(new SeriesItemsPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(seriesItemsPanelComp);
     }
 
     private addWidget(widget: Component): void {

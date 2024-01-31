@@ -607,17 +607,17 @@ const performInitialBuild = async (skipFrameworks) => {
 
 const addWebpackMiddleware = (app) => {
     console.log("Adding webpack middleware");
-    // for js examples that just require community functionality (landing pages, vanilla community examples etc)
+    // for js examples that just require community functionality (landing pages, vanilla community examples etc (not main demo))
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
     addWebpackMiddlewareForConfig(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
 
-    // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
+    // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc (not main demo))
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
     addWebpackMiddlewareForConfig(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
 
-    // for js examples that just require grid & charts enterprise functionality (vanilla integrated charts examples etc)
+    // for js examples that just require grid & charts enterprise functionality (vanilla integrated charts examples etc (not main demo))
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
-    addWebpackMiddlewareForConfig(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise-charts-enterprise.js');
+    addWebpackMiddlewareForConfig(app, 'webpack.grid-charts-enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise-charts-enterprise.js');
 };
 
 const watchCoreModulesAndCss = async (skipFrameworks) => {

@@ -65,3 +65,9 @@
 |}
 </snippet>
 </framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<warning>
+ Javascript components are run outside of NgZone. If they initiate calls into your Angular application you may need to wrap these calls within `ngZone.run()` for Change Detection to correctly run.
+</warning>
+</framework-specific-section>

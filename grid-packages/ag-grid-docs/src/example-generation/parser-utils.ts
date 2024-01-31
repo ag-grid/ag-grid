@@ -1,4 +1,5 @@
 import ts = require("typescript");
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 const sucrase = require("sucrase");
 
 export type ImportType = 'packages' | 'modules';
@@ -649,6 +650,8 @@ export function getModuleRegistration({ gridSettings, enterprise, exampleName })
 
     let gridSuppliedModules;
     let exampleModules = Array.isArray(modules) ? modules : ['clientside'];
+    exampleModules = exampleModules.map(module => module === 'charts-enterprise' && !integratedChartsUsesChartsEnterprise ? 'charts' : module)
+
     const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
     moduleRegistration.push(...moduleImports);
     gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
