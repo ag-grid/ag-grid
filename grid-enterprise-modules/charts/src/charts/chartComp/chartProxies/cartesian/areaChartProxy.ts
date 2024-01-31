@@ -1,4 +1,4 @@
-import { AgAreaSeriesOptions, AgCartesianAxisOptions } from "ag-charts-enterprise";
+import { AgAreaSeriesOptions, AgCartesianAxisOptions } from "ag-charts-community";
 import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 

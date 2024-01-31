@@ -1,5 +1,5 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-enterprise";
+import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 
 export class MiniBubble extends MiniChartWithAxes {

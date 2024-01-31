@@ -1,6 +1,6 @@
 import { _, Autowired, Component, PostConstruct, RefSelector, ResizeObserverService } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
-import { AgChartThemePalette } from "ag-charts-enterprise";
+import { AgChartThemePalette } from "ag-charts-community";
 import { ChartController } from "../../chartController";
 import { isStockTheme } from "../../chartProxies/chartTheme";
 

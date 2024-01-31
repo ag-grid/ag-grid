@@ -30,7 +30,7 @@ The following example demonstrates how Range Charts can be created programmatica
 - Clicking **'Bronze Medals by Country'** will chart Bronze by Country using all rows (the provided cell range does not specify rows).
 - Note the **'Bronze Medals by Country'** chart is unlinked from the grid as `unlinkChart=true`. Notice that sorting in the grid does not affect the chart and there is no chart range in the grid.
 
-<grid-example title='Charts in Grid Popup Window' name='chart-api' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Charts in Grid Popup Window' name='chart-api' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Range Chart Dashboard
 
@@ -44,7 +44,7 @@ location other than the grid's popup window. Note the following:
 - All data is editable in the grid. Changes to the grid data is reflected in the charts.
 - The pie charts have legends on the right side. This is configured in the `chartThemeOverrides`.
 
-<grid-example title='Charts in Dashboard' name='dashboard' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 700 }'></grid-example>
+<grid-example title='Charts in Dashboard' name='dashboard' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise", "rowgrouping"], "exampleHeight": 700 }'></grid-example>
 
 ## Hiding Chart Ranges
 
@@ -100,7 +100,7 @@ The following example demonstrates the above configuration, note the following:
 - Values are aggregated by the 'Month' category by setting `aggFunc: 'sum'`
 - Chart Ranges are hidden using `suppressChartRanges=true`
 
-<grid-example title='Combination Chart' name='combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"], "exampleHeight": 790 }'></grid-example>
+<grid-example title='Combination Chart' name='combination-chart' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise", "rowgrouping"], "exampleHeight": 790 }'></grid-example>
 
 ## Range Chart API
 
