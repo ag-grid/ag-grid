@@ -104,3 +104,8 @@
     border-radius: 24px;
     padding: $spacing-size-1;
 }
+ .disabled {
+    font-weight: var(--text-regular);
+    color: var(--color-text-tertiary);
+    opacity: 0.7;
+}
