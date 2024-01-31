@@ -160,6 +160,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
                 values = this.getValuesPivotNonLeaf(rowNode, colDef.colId!);
             }
 
+            // bit of a memory drain storing null/undefined, but seems to speed up performance.
             result[colDef.colId!] = this.aggregateValues(values, colDef.pivotValueColumn!.getAggFunc()!, colDef.pivotValueColumn!, rowNode, secondaryCol);
         }
 
@@ -173,6 +174,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
                 }
     
                 const aggResults: any[] = colDef.pivotTotalColumnIds.map((currentColId: string) => result[currentColId]);
+                // bit of a memory drain storing null/undefined, but seems to speed up performance.
                 result[colDef.colId!] = this.aggregateValues(aggResults, colDef.pivotValueColumn!.getAggFunc()!, colDef.pivotValueColumn!, rowNode, secondaryCol);
             }
         }
@@ -213,19 +215,16 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: Column): any[] {
         let mapPointer = mappedSet;
-        keys.forEach(key => (mapPointer = mapPointer ? mapPointer[key] : null));
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i];
+            mapPointer = mapPointer ? mapPointer[key] : null;
+        }
 
         if (!mapPointer) {
             return [];
         }
 
-        const values: any = [];
-        mapPointer.forEach((rowNode: RowNode) => {
-            const value = this.valueService.getValue(valueColumn, rowNode);
-            values.push(value);
-        });
-
-        return values;
+        return mapPointer.map((rowNode: RowNode) => this.valueService.getValue(valueColumn, rowNode));
     }
 
     private getValuesNormal(rowNode: RowNode, valueColumns: Column[], filteredOnly: boolean): any[][] {
