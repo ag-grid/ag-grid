@@ -7,7 +7,7 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import '@ag-grid-community/styles/ag-theme-balham.css';
 import '@ag-grid-community/styles/ag-theme-material.css';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
+import { GridChartsModule } from '@ag-grid-enterprise/charts';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
