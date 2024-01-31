@@ -138,7 +138,10 @@ const License = (props: LicenseData) => {
 export const Licenses: FunctionComponent = () => {
     return (
         <>
-            <div className={styles.emptyColumn}></div> {/* Empty Column */}
+            <div className={styles.emptyColumn}>
+            <div className={styles.pricingText}>Pricing</div>
+                
+                </div> {/* Empty Column */}
             {DEV_LICENSE_DATA.map((data) => {
                 return (
                     <div key={data.id} className={classnames(styles.license, data.className)}>
