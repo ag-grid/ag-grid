@@ -96,3 +96,12 @@
     opacity: 0.7;
     user-select: none;
 }
+
+.feature-cell  svg {
+    fill: var(--color-util-brand-700);
+    background: color-mix(in srgb, var(--color-util-brand-700), var(--color-bg-primary) 95%);
+    height: 24px;
+    width: 24px;
+    border-radius: 24px;
+    padding: $spacing-size-1;
+}

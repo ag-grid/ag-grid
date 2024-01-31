@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '@design-system/modules/ComparisonTable.scss';
+import { Icon } from '../../components/Icon';
 
 const data = [
   {
@@ -10,24 +11,28 @@ const data = [
         community: true,
         enterprise: true,
         chartsGrid: true,
+        link: 'https://example.com/column-groups', 
       },
       {
         feature: 'Column spanning',
         community: true,
         enterprise: true,
         chartsGrid: false,
+        link: 'https://example.com/column-spanning', 
       },
       {
         feature: 'Column resizing',
         community: true,
         enterprise: true,
         chartsGrid: true,
+        link: 'https://example.com/column-resizing',
       },
       {
         feature: 'Column autosizing',
         community: true,
         enterprise: true,
         chartsGrid: true,
+        link: 'https://example.com/column-autosizing', 
       },
     ],
   },
@@ -39,29 +44,34 @@ const data = [
         community: true,
         enterprise: true,
         chartsGrid: true,
+        link: 'https://example.com/charts-column-groups', 
       },
       {
         feature: 'Column spanning',
         community: true,
         enterprise: true,
         chartsGrid: false,
+        link: 'https://example.com/charts-column-spanning', 
       },
       {
         feature: 'Column resizing',
         community: true,
         enterprise: true,
         chartsGrid: true,
+        link: 'https://example.com/charts-column-resizing', 
       },
       {
         feature: 'Column autosizing',
         community: true,
         enterprise: true,
         chartsGrid: true,
+        link: 'https://example.com/charts-column-autosizing',
       },
     ],
-  }
-  // Add more categories and features as needed
+  },
+
 ];
+
 
 const ComparisonTable = () => {
   const [expandedCategories, setExpandedCategories] = useState({});
@@ -87,7 +97,13 @@ const ComparisonTable = () => {
             {expandedCategories[categoryData.category] &&
               categoryData.features.map((feature) => (
                 <div className="feature-row" key={feature.feature}>
-                  {feature.feature}
+                  {feature.community || feature.enterprise || feature.chartsGrid ? (
+                    <a href={feature.link} className="feature-link">
+                      {feature.feature}
+                    </a>
+                  ) : (
+                    feature.feature
+                  )}
                 </div>
               ))}
           </React.Fragment>
@@ -104,7 +120,7 @@ const ComparisonTable = () => {
                   className={`feature-cell ${feature.community ? 'enabled' : 'disabled'}`}
                   key={feature.feature}
                 >
-                  {feature.community ? '✔' : '-'}
+                  {feature.community ? <Icon name="tick" /> : '-'}
                 </div>
               ))}
           </React.Fragment>
@@ -121,7 +137,7 @@ const ComparisonTable = () => {
                   className={`feature-cell ${feature.enterprise ? 'enabled' : 'disabled'}`}
                   key={feature.feature}
                 >
-                  {feature.enterprise ? '✔' : '-'}
+                  {feature.enterprise ? <Icon name="tick" /> : '-'}
                 </div>
               ))}
           </React.Fragment>
@@ -138,7 +154,7 @@ const ComparisonTable = () => {
                   className={`feature-cell ${feature.chartsGrid ? 'enabled' : 'disabled'}`}
                   key={feature.feature}
                 >
-                  {feature.chartsGrid ? '✔' : '-'}
+                  {feature.chartsGrid ? <Icon name="tick"  /> : '-'}
                 </div>
               ))}
           </React.Fragment>

@@ -116,7 +116,7 @@
 .licensesOuter {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: $spacing-size-8;
+    // gap: $spacing-size-8;
 }
 
 
@@ -479,3 +479,42 @@
     opacity: 1;
    }
 }
+
+.fullWidthBar {
+    width: 100%;
+    position: fixed;
+    top: 64px;
+    background-color: var(--color-bg-primary);
+    border-bottom: 1px solid var(--color-border-secondary);
+    height: 56px;
+    padding-top: $spacing-size-4;
+    z-index: 2;
+}
+  
+  .fullWidthBarContainer {
+    margin: 0 auto; /* Center the container horizontally */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; /* Create a 3-column grid */
+    font-weight: bold; /* Add font-weight as needed */
+  }
+  
+  /* Style for the left part of the full-width bar (Pricing) */
+  .fullWidthBarLeft {
+    font-weight: bold; /* Add font-weight as needed */
+  }
+  
+  /* Style for the right part of the full-width bar (Community, Enterprise, Grid + Charts) */
+  .fullWidthBarRight {
+    display: flex;
+    gap: 10px; /* Adjust the gap between items as needed */
+  }
+
+  .fullWidthBarItem {
+display: flex;
+justify-content: center;
+  }
+  
+  /* Remove the border-right for the last item to avoid an extra separator */
+  .fullWidthBarItem:last-child {
+    border-right: none;
+  }
