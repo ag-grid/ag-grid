@@ -1,4 +1,5 @@
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 // import { DOCS_TAB_ITEM_ID_PREFIX } from './src/constants';
 
@@ -10,7 +11,21 @@ export default defineMarkdocConfig({
         },
         link: {
             ...nodes.link,
-            render: component('./src/components/Link.astro'),
+            /**
+             * Transform markdoc links to add url prefix and framework to href
+             */
+            transform(node, config) {
+                const { framework } = config.variables;
+                const children = node.transformChildren(config);
+                const nodeAttributes = node.transformAttributes(config);
+                const href = urlWithPrefix({ url: nodeAttributes.href, framework });
+                const attributes = {
+                    ...nodeAttributes,
+                    href,
+                };
+
+                return new Markdoc.Tag('a', attributes, children);
+            },
         },
         fence: {
             attributes: {
