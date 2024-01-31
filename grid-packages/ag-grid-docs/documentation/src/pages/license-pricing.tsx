@@ -14,6 +14,7 @@ import AGChartsLogo from '../images/inline-svgs/ag-charts-logo.svg';
 import Background from '../images/inline-svgs/grid-pricing-background.svg';
 import ComparisonTable from '../components/licenses/ComparisonTable';
 
+
 export const LicensePricing = () => {
     const [showFullWidthBar, setShowFullWidthBar] = useState(false);
 

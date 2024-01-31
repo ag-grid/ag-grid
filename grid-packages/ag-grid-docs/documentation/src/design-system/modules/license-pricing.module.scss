@@ -490,31 +490,37 @@
     padding-top: $spacing-size-4;
     z-index: 2;
 }
-  
-  .fullWidthBarContainer {
+
+.fullWidthBarContainer {
     margin: 0 auto; /* Center the container horizontally */
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr; /* Create a 3-column grid */
     font-weight: bold; /* Add font-weight as needed */
-  }
-  
-  /* Style for the left part of the full-width bar (Pricing) */
-  .fullWidthBarLeft {
+}
+
+/* Style for the left part of the full-width bar (Pricing) */
+.fullWidthBarLeft {
     font-weight: bold; /* Add font-weight as needed */
-  }
-  
-  /* Style for the right part of the full-width bar (Community, Enterprise, Grid + Charts) */
-  .fullWidthBarRight {
+}
+
+/* Style for the right part of the full-width bar (Community, Enterprise, Grid + Charts) */
+.fullWidthBarRight {
     display: flex;
     gap: 10px; /* Adjust the gap between items as needed */
-  }
+}
 
-  .fullWidthBarItem {
-display: flex;
-justify-content: center;
-  }
-  
-  /* Remove the border-right for the last item to avoid an extra separator */
-  .fullWidthBarItem:last-child {
+.fullWidthBarItem {
+    display: flex;
+    justify-content: center;
+}
+
+/* Remove the border-right for the last item to avoid an extra separator */
+.fullWidthBarItem:last-child {
     border-right: none;
-  }
+}
+
+/* Show the fullWidthBar when it appears */
+.fullWidthBar.active {
+    opacity: 1;
+    transform: translateY(0%);
+}
