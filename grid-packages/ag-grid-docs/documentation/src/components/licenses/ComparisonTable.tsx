@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import '@design-system/modules/ComparisonTable.scss';
 import { Icon } from '../../components/Icon';
+import {ChevronDown} from 'lucide-react';
+
 
 const data = [
   {
@@ -93,6 +95,7 @@ const ComparisonTable = () => {
               onClick={() => toggleCategory(categoryData.category)}
             >
               {categoryData.category}
+              <ChevronDown/>
             </div>
             {expandedCategories[categoryData.category] &&
               categoryData.features.map((feature) => (
