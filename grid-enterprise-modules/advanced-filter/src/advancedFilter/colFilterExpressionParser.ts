@@ -448,7 +448,7 @@ export class ColFilterExpressionParser {
                 break;
         }
         if (baseCellDataType === 'dateString') {
-            return this.params.dataTypeService.getDateParserFunction()(operand as string);
+            return this.params.dataTypeService.getDateParserFunction(column)(operand as string);
         }
         return operand;
     }

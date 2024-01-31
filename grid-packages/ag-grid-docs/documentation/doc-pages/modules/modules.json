@@ -62,6 +62,13 @@
     "exported": "GridChartsModule"
   },
   {
+    "title": "Charts Enterprise<enterprise-icon></enterprise-icon>",
+    "shortname": "charts-enterprise",
+    "module": "@ag-grid-enterprise/charts-enterprise",
+    "enterprise": true,
+    "exported": "GridChartsModule"
+  },
+  {
     "title": "Sparklines<enterprise-icon></enterprise-icon>",
     "shortname": "sparklines",
     "module": "@ag-grid-enterprise/sparklines",

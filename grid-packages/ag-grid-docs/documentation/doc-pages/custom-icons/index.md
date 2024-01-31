@@ -84,7 +84,7 @@ This example demonstrates using the `--ag-icon-image-icon-name` variables to set
 
 The following example replaces the grid's icons with SVG images:
 
-<grid-example title='SVG Icons' name='icons-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel", "charts"], "extras": ["fontawesome", "materialdesignicons"]  }'></grid-example>
+<grid-example title='SVG Icons' name='icons-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel", "charts-enterprise"], "extras": ["fontawesome", "materialdesignicons"]  }'></grid-example>
 
 ## Set the Icons Through gridOptions (JavaScript)
 

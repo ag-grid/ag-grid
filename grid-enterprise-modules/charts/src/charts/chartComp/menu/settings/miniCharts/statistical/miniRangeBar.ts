@@ -1,5 +1,5 @@
 import { ChartType } from '@ag-grid-community/core';
-import { _Scene } from 'ag-charts-enterprise';
+import { _Scene } from 'ag-charts-community';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniRangeBar extends MiniChartWithAxes {

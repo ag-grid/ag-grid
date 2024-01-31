@@ -42,7 +42,6 @@ export class PieChartProxy extends ChartProxy {
                 angleKey: f.colId,
                 angleName: f.displayName!,
                 sectorLabelKey: f.colId,
-                legendItemKey: params.category.id,
                 calloutLabelName: params.category.name,
                 calloutLabelKey: params.category.id,
             }
@@ -90,6 +89,7 @@ export class PieChartProxy extends ChartProxy {
         const primaryOptions = (seriesOptions: AgPieSeriesOptions) => {
             return {
                 ...seriesOptions,
+                legendItemKey: seriesOptions.calloutLabelKey,
                 calloutLabel: { enabled: false }, // hide labels on primary series
                 highlightStyle: { item: { fill: undefined } },
                 radiusKey: seriesOptions.angleKey,

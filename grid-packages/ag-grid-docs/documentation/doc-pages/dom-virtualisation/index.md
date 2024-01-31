@@ -22,7 +22,7 @@ By default the grid will render 10 rows before the first visible row and 10 rows
 
 To change the row buffer, set grid property `rowBuffer` to the number of rows you would like to render in addition to the visible rows. Set `rowBuffer=0` to turn off row buffering.
 
-The Row Buffer value is used to create a Pixel Range based on the row buffer value multiplied by the Default Row Height. For example if you were to set `rowBuffer=10` and the default row height is 42px (for the Alpine theme), the grid will extend the vertical pixel range by 420px in both directions and then draw rows into that. 
+The Row Buffer value is used to create a Pixel Range based on the row buffer value multiplied by the Default Row Height. For example if you were to set `rowBuffer=10` and the default row height is 42px (for the Quartz theme), the grid will extend the vertical pixel range by 420px in both directions and then draw rows into that. 
 
 This detail is important when using dynamic and auto row height as depending on the actual row height a different number of rows can fit inside the pixel range as its height is based on the default row height. 
 

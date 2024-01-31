@@ -10,6 +10,7 @@ import {
     IHeader,
     IHeaderGroup,
     ILoadingOverlay,
+    IMenuItem,
     INoRowsOverlay,
     IStatusPanel,
     IToolPanel,
@@ -87,4 +88,7 @@ export interface IToolPanelReactComp extends IToolPanel, AgReactComponent {
 }
 
 export interface ITooltipReactComp extends AgReactComponent {
+}
+
+export interface IMenuItemReactComp extends IMenuItem, AgReactComponent {
 }

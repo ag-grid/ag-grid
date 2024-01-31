@@ -66,7 +66,7 @@ Below shows a configured context menu in action demonstrating a customised menu 
 - The top menu item has CSS classes applied to it.
 - The 'Always Disabled' menu item has a tooltip.
 
-<grid-example title='Context Menu Example' name='context-menu' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "range", "clipboard", "charts"] }'></grid-example>
+<grid-example title='Context Menu Example' name='context-menu' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "range", "clipboard", "charts-enterprise"] }'></grid-example>
 
 ## Popup Parent
 

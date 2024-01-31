@@ -29,6 +29,7 @@ export * from './polar/miniRadarArea';
 export * from './polar/miniNightingale';
 
 export * from './statistical/miniRangeBar';
+export * from './statistical/miniRangeArea';
 export * from './statistical/miniBoxPlot';
 
 export * from './cumulative/miniWaterfall';

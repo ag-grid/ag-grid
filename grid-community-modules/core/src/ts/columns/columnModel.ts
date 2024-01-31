@@ -238,6 +238,7 @@ export class ColumnModel extends BeanStub {
     private groupDisplayColumnsMap: { [originalColumnId: string]: Column };
 
     private ready = false;
+    private changeEventsDispatching = false;
     private logger: Logger;
 
     private autoGroupsNeedBuilding = false;
@@ -347,6 +348,7 @@ export class ColumnModel extends BeanStub {
         this.destroyOldColumns(this.groupAutoColsBalancedTree);
     }
 
+
     private createColumnsFromColumnDefs(colsPreviouslyExisted: boolean, source: ColumnEventType = 'api'): void {
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = colsPreviouslyExisted ? this.compareColumnStatesAndDispatchEvents(source) : undefined;
@@ -398,11 +400,19 @@ export class ColumnModel extends BeanStub {
         // in case applications use it
         this.dispatchEverythingChanged(source);
 
+        // Row Models react to all of these events as well as new columns loaded,
+        // this flag instructs row model to ignore these events to reduce refreshes.
+        this.changeEventsDispatching = true;
         if (dispatchEventsFunc) {
             dispatchEventsFunc();
         }
+        this.changeEventsDispatching = false;
 
         this.dispatchNewColumnsLoaded(source);
+    }
+
+    public shouldRowModelIgnoreRefresh(): boolean {
+        return this.changeEventsDispatching;
     }
 
     private dispatchNewColumnsLoaded(source: ColumnEventType): void {
@@ -1760,11 +1770,11 @@ export class ColumnModel extends BeanStub {
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
     public getAllPrimaryColumns(): Column[] | null {
-        return this.primaryColumns ? this.primaryColumns.slice() : null;
+        return this.primaryColumns ? this.primaryColumns : null;
     }
 
     public getSecondaryColumns(): Column[] | null {
-        return this.secondaryColumns ? this.secondaryColumns.slice() : null;
+        return this.secondaryColumns ? this.secondaryColumns : null;
     }
 
     public getAllColumnsForQuickFilter(): Column[] {

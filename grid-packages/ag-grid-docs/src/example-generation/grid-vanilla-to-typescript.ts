@@ -1,4 +1,5 @@
 import {addBindingImports, addGenericInterfaceImport, getIntegratedDarkModeCode, getModuleRegistration, ImportType} from './parser-utils';
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 
 const path = require('path');
 const fs = require('fs-extra');
@@ -57,7 +58,7 @@ function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
     const imports = [];
 
     if (gridSettings.enterprise) {
-        imports.push("import 'ag-grid-enterprise';");
+        imports.push(`import 'ag-grid-enterprise${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? '-charts-enterprise' : ''}';`);
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");

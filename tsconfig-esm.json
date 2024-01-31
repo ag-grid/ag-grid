@@ -17,6 +17,7 @@
     { "path" :  "grid-enterprise-modules/range-selection/tsconfig.esm.es6.docs.json" },
     { "path" :  "grid-enterprise-modules/sparklines/tsconfig.esm.es6.docs.json" },
     { "path" :  "grid-enterprise-modules/charts/tsconfig.esm.es6.docs.json" },
+    { "path" :  "grid-enterprise-modules/charts-enterprise/tsconfig.esm.es6.docs.json" },
     { "path" :  "grid-enterprise-modules/excel-export/tsconfig.esm.es6.docs.json" },
     { "path" :  "grid-enterprise-modules/master-detail/tsconfig.esm.es6.docs.json" },
     { "path" :  "grid-enterprise-modules/rich-select/tsconfig.esm.es6.docs.json" },

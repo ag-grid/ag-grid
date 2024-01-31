@@ -43,6 +43,12 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         return this.eParentElement;
     }
 
+    /** `getGui()` returns the parent element. This returns the actual root element. */
+    public getRootElement(): HTMLElement {
+        const firstChild = this.eParentElement.firstChild;
+        return firstChild as HTMLElement;
+    }
+
     public destroy(): void {
         if (this.componentInstance && typeof this.componentInstance.destroy == 'function') {
             this.componentInstance.destroy();
