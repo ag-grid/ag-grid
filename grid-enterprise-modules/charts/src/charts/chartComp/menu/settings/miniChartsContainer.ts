@@ -1,3 +1,4 @@
+
 import {
     _,
     AgGroupComponent,
@@ -37,6 +38,8 @@ import {
     MiniStackedBar,
     MiniStackedColumn,
 } from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
+
+// import {isEnterprise} from "../../../../main";
 
 export type ThemeTemplateParameters = {
     extensions: Map<any, any>;
@@ -121,6 +124,8 @@ export class MiniChartsContainer extends Component {
 
     @PostConstruct
     private init() {
+        // console.log("isEnterprise", isEnterprise());
+
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
             this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
@@ -129,6 +134,8 @@ export class MiniChartsContainer extends Component {
         const eGui = this.getGui();
 
         Object.keys(this.chartGroups).forEach((group: keyof ChartGroupsDef) => {
+
+
             const chartGroupValues = this.chartGroups[group];
             const groupComponent = this.createBean(new AgGroupComponent({
                 title: this.chartTranslationService.translate(group),
