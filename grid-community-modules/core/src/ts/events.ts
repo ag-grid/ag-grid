@@ -580,7 +580,7 @@ interface BaseRowEvent<TData, TContext> extends AgGridEvent<TData, TContext> {
     /** Either 'top', 'bottom' or null / undefined (if not set) */
     rowPinned: RowPinnedType;
     /** If event was due to browser event (eg click), this is the browser event */
-    event?: Event | null;
+    event?: Event | MouseEvent | null;
     /** If the browser `event` is present the `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */
     eventPath?: EventTarget[];
 }
