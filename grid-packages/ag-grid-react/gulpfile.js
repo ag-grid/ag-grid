@@ -33,7 +33,8 @@ tscTask = () => {
             'src/**/*.ts*',
             '!src/**/old/**/*',
             '!src/**/__tests__/**/*',
-            '!src/**/setupTests.ts'
+            '!src/**/setupTests.ts',
+            '!src/**/*.test.ts'
         ]
     ).pipe(tscProject());
 
