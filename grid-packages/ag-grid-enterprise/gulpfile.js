@@ -61,10 +61,20 @@ const tscMainTask = () => {
 
     const newExports = `export { ${exports.join(',\n')} } from "ag-grid-community";`
 
-    const mainTsFilename = './src/main.ts';
-    const mainTsFileContents = fs.readFileSync(mainTsFilename, 'UTF-8');
+    let mainTsFilename = './src/main.ts';
+    let mainTsFileContents = fs.readFileSync(mainTsFilename, 'UTF-8');
 
-    const updatedUtilFileContents = updateBetweenStrings(mainTsFileContents,
+    let updatedUtilFileContents = updateBetweenStrings(mainTsFileContents,
+        '/* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */',
+        '/* COMMUNITY_EXPORTS_END_DO_NOT_DELETE */',
+        newExports);
+
+    fs.writeFileSync(mainTsFilename, updatedUtilFileContents, 'UTF-8');
+
+    mainTsFilename = './src/main-charts.ts';
+    mainTsFileContents = fs.readFileSync(mainTsFilename, 'UTF-8');
+
+    updatedUtilFileContents = updateBetweenStrings(mainTsFileContents,
         '/* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */',
         '/* COMMUNITY_EXPORTS_END_DO_NOT_DELETE */',
         newExports);

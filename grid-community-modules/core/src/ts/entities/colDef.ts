@@ -328,6 +328,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Events *** //
 
+    // NOTE: Make sure that wherever these are called that they are wrapped in frameworkOverrides.wrapOutgoing()
+
     /** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */
     onCellValueChanged?: (event: NewValueParams<TData, TValue>) => void;
     /** Callback called when a cell is clicked. */

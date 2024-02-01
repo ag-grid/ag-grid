@@ -23,22 +23,12 @@
     flex-wrap: wrap;
     align-items: center;
     width: 100%;
-    min-height: var(--layout-site-header-height);
-
-    @media screen and (max-width: $breakpoint-site-header-small) {
-        &:global(.layout-page-max-width) {
-            max-width: 100%;
-        }
-
-        // Required for collapsible mobile menu
-        :global(#main-nav),
-        :global(#main-nav) > div {
-            width: 100%;
-        }
-    }
+    max-width: calc(var(--layout-max-width) + var(--layout-horizontal-margins) * 2);
+    margin-left: auto;
+    margin-right: auto;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        flex-wrap: unset;
+        flex-wrap: nowrap;
     }
 }
 
@@ -47,26 +37,39 @@
     align-items: center;
     min-height: var(--layout-site-header-height);
     padding: $spacing-size-2 10px;
-    margin-left: -16px;
-    margin-right: 100%;
+    margin-left: calc(var(--layout-horizontal-margins) - 16px);
 
     svg {
         width: unset;
         height: 34px;
     }
+}
 
-    @media screen and (max-width: $breakpoint-site-header-small) {
-        margin-left: 8px;
-    }
+.docsNavBtnSearchContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-2 $spacing-size-4;
+    width: 100%;
+    margin: 0 var(--layout-horizontal-margins) $spacing-size-4 var(--layout-horizontal-margins);
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        margin-right: 16px;
+        display: contents;
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        order: 4;
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-medium) {
+        display: flex;
+        order: unset;
+        width: unset;
+        margin: 0 0 0 auto;
     }
 }
 
 button.mobileNavButton {
     width: 100%;
-    margin-bottom: $spacing-size-4;
 
     :global(.icon) {
         --icon-size: #{$spacing-size-6};
@@ -75,18 +78,8 @@ button.mobileNavButton {
         margin-right: -$spacing-size-1;
     }
 
-    @media screen and (max-width: $breakpoint-site-header-small) {
-        margin-left: $spacing-size-6;
-        margin-right: 0;
-    }
-
-    @media screen and (max-width: $breakpoint-docs-search-small) {
-        margin-left: $spacing-size-6;
-        margin-right: $spacing-size-6;
-    }
-
-    @media screen and (min-width: $breakpoint-docs-search-small) {
-        width: auto;
+    @media screen and (min-width: 520px) {
+        max-width: 120px;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
@@ -104,17 +97,20 @@ button.mobileNavButton {
 
 .mobileMenuButton {
     appearance: none;
+    position: absolute;
+    top: 0;
+    right: 6px;
     display: flex;
     justify-content: center;
     align-items: center;
     height: var(--layout-site-header-height);
-    margin-left: $spacing-size-2;
+    width: var(--layout-site-header-height);
     padding: 0 16px 0 14px;
     border-radius: var(--radius-none);
     border: none;
     color: transparent;
+    background-color: transparent;
     transition: background-color 0.4s ease-in-out;
-    margin-right: $spacing-size-2;
 
     &:hover {
         background-color: transparent;
@@ -131,13 +127,6 @@ button.mobileNavButton {
     svg {
         position: relative;
         left: 1px;
-    }
-
-    @media screen and (max-width: $breakpoint-docs-nav-medium) {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: transparent;
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
@@ -203,32 +192,10 @@ button.mobileNavButton {
     width: 100%;
     background-color: var(--color-bg-mobile-nav);
 
-    @media screen and (max-width: $breakpoint-site-header-small) {
-        width: calc(100% + var(--layout-horizontal-margins) * 2);
-    }
-
     @media screen and (min-width: $breakpoint-site-header-small) {
-        position: absolute;
-        top: 0;
-        right: var(--layout-horizontal-margins);
-        width: calc(100vw - 240px);
-        margin-right: -$spacing-size-4;
-        background-color: unset;
-    }
-
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        position: unset;
-        width: unset;
-        margin-left: $spacing-size-4;
-        overflow: visible;
-    }
-
-    @media screen and (min-width: $breakpoint-site-header-large) {
+        width: auto;
+        margin-right: $spacing-size-2;
         margin-left: auto;
-    }
-
-    @media screen and (max-width: $breakpoint-site-header-small) {
-        width: 100%;
     }
 }
 

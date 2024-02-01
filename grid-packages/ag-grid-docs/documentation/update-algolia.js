@@ -314,13 +314,13 @@ const processIndexForFramework = async framework => {
         const index = algoliaClient.initIndex(indexName);
 
         index.setSettings({
-            searchableAttributes: ['title', 'heading', 'subHeading', 'text'], // attributes used for searching
+            searchableAttributes: ['title', 'heading', 'subHeading'], // attributes used for searching
             disableExactOnAttributes: ['text'], // don't allow "exact matches" in the text
             attributesToSnippet: ['text:40'], // configure snippet length shown in results
             distinct: 1, // only allow each page to appear in the results once
             attributeForDistinct: 'breadcrumb', // configure what is used to decide if a page is the same
             customRanking: ['desc(rank)', 'asc(positionInPage)'], // custom tweaks to the ranking
-            camelCaseAttributes: ['heading', 'subHeading', 'text'], // split camelCased text so it can match regular text
+            camelCaseAttributes: ['heading', 'subHeading'], // split camelCased text so it can match regular text
             hitsPerPage: 10, // how many results should be returned per page
             snippetEllipsisText: '…', // the character used when truncating content for snippets
         });

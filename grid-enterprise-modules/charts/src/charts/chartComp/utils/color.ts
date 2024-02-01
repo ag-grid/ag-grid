@@ -1,4 +1,4 @@
-import { _Util } from "ag-charts-enterprise";
+import { _Util } from "ag-charts-community";
 
 export function hexToRGBA(hex: string, alpha: string) {
     const r = parseInt(hex.slice(1, 3), 16);

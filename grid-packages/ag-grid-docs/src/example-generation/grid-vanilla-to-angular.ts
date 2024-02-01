@@ -1,6 +1,7 @@
 import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput, toTitleCase } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getIntegratedDarkModeCode,getModuleRegistration,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 const path = require('path');
 
 function getOnGridReadyCode(
@@ -82,7 +83,7 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
     if (gridSettings.enterprise) {
-        imports.push("import 'ag-grid-enterprise';");
+        imports.push(`import 'ag-grid-enterprise${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? '-charts-enterprise' : ''}';`);
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");

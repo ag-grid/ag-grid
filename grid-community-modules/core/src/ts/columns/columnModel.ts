@@ -238,6 +238,7 @@ export class ColumnModel extends BeanStub {
     private groupDisplayColumnsMap: { [originalColumnId: string]: Column };
 
     private ready = false;
+    private changeEventsDispatching = false;
     private logger: Logger;
 
     private autoGroupsNeedBuilding = false;
@@ -347,6 +348,7 @@ export class ColumnModel extends BeanStub {
         this.destroyOldColumns(this.groupAutoColsBalancedTree);
     }
 
+
     private createColumnsFromColumnDefs(colsPreviouslyExisted: boolean, source: ColumnEventType = 'api'): void {
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = colsPreviouslyExisted ? this.compareColumnStatesAndDispatchEvents(source) : undefined;
@@ -398,11 +400,19 @@ export class ColumnModel extends BeanStub {
         // in case applications use it
         this.dispatchEverythingChanged(source);
 
+        // Row Models react to all of these events as well as new columns loaded,
+        // this flag instructs row model to ignore these events to reduce refreshes.
+        this.changeEventsDispatching = true;
         if (dispatchEventsFunc) {
             dispatchEventsFunc();
         }
+        this.changeEventsDispatching = false;
 
         this.dispatchNewColumnsLoaded(source);
+    }
+
+    public shouldRowModelIgnoreRefresh(): boolean {
+        return this.changeEventsDispatching;
     }
 
     private dispatchNewColumnsLoaded(source: ColumnEventType): void {
@@ -933,7 +943,7 @@ export class ColumnModel extends BeanStub {
         };
 
         // if doing column virtualisation, then we filter based on the viewport.
-        const filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInRowViewport.bind(this);
+        const filterCallback = this.isColumnVirtualisationSuppressed() ? null : this.isColumnInRowViewport.bind(this);
 
         return this.getDisplayedColumnsForRow(
             rowNode,
@@ -983,9 +993,7 @@ export class ColumnModel extends BeanStub {
 
     private isColumnInRowViewport(col: Column): boolean {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
-        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
-        // tests to validate all the columns.
-        if (col.isAutoHeight() || this.viewportRight === 0) { return true; }
+        if (col.isAutoHeight()) { return true; }
 
         const columnLeft = col.getLeft() || 0;
         const columnRight = columnLeft + col.getActualWidth();
@@ -1760,11 +1768,11 @@ export class ColumnModel extends BeanStub {
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
     public getAllPrimaryColumns(): Column[] | null {
-        return this.primaryColumns ? this.primaryColumns.slice() : null;
+        return this.primaryColumns ? this.primaryColumns : null;
     }
 
     public getSecondaryColumns(): Column[] | null {
-        return this.secondaryColumns ? this.secondaryColumns.slice() : null;
+        return this.secondaryColumns ? this.secondaryColumns : null;
     }
 
     public getAllColumnsForQuickFilter(): Column[] {
@@ -3661,8 +3669,14 @@ export class ColumnModel extends BeanStub {
         });
     }
 
+    private isColumnVirtualisationSuppressed(){
+        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
+        // tests to validate all the columns.
+        return this.suppressColumnVirtualisation || this.viewportRight === 0;
+    }
+
     private extractViewportColumns(): void {
-        if (this.suppressColumnVirtualisation) {
+        if (this.isColumnVirtualisationSuppressed()) {
             // no virtualisation, so don't filter
             this.viewportColumnsCenter = this.displayedColumnsCenter;
             this.headerViewportColumnsCenter = this.displayedColumnsCenter;

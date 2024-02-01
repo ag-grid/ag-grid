@@ -820,15 +820,12 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     // sets the data for an aggregation
     public setAggData(newAggData: any): void {
-        // find out all keys that could potentially change
-        const colIds = getAllKeysInObjects([this.aggData, newAggData]);
         const oldAggData = this.aggData;
-
         this.aggData = newAggData;
 
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
-            colIds.forEach(colId => {
+            const eventFunc = (colId: string) => {
                 const value = this.aggData ? this.aggData[colId] : undefined;
                 const oldValue = oldAggData ? oldAggData[colId] : undefined;
 
@@ -839,7 +836,15 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                 if (!column) { return; }
 
                 this.dispatchCellChangedEvent(column, value, oldValue);
-            });
+            };
+
+            for (const key in this.aggData) {
+                eventFunc(key);
+            }
+            for (const key in newAggData) {
+                if (key in this.aggData) { continue; } // skip if already fired an event.
+                eventFunc(key);
+            }
         }
     }
 

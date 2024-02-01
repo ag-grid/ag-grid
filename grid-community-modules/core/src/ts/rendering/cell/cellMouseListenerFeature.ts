@@ -71,7 +71,11 @@ export class CellMouseListenerFeature extends Beans {
 
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
-            window.setTimeout(() => colDef.onCellClicked!(cellClickedEvent), 0);
+            window.setTimeout(() => {
+                this.beans.frameworkOverrides.wrapOutgoing(() => {
+                    colDef.onCellClicked!(cellClickedEvent);
+                });
+            }, 0);
         }
 
         const editOnSingleClick = (gridOptionsService.get('singleClickEdit') || colDef.singleClickEdit)
@@ -103,7 +107,11 @@ export class CellMouseListenerFeature extends Beans {
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
             // to make the callback async, do in a timeout
-            window.setTimeout(() => (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent), 0);
+            window.setTimeout(() =>  {
+                this.beans.frameworkOverrides.wrapOutgoing(() => {
+                    (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent);
+                });
+            }, 0);
         }
 
         const editOnDoubleClick = !this.beans.gridOptionsService.get('singleClickEdit')

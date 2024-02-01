@@ -29,7 +29,12 @@ const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, e
     const content = useMemo(() => {
         if (isDevelopment()) {
             const { plunkerIndexHtml, codesandboxIndexHtml } = getIndexHtml(exampleInfo, true);
-            return { srcDoc: plunkerIndexHtml };
+            const origin = window.origin;
+            const wrapped = `
+                <base href="${origin}" />
+                ${plunkerIndexHtml}
+            `;
+            return { srcDoc: wrapped };
         }
 
         return { src: getIndexHtmlUrl(exampleInfo) };

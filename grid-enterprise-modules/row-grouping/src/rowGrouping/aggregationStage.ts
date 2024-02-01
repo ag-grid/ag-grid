@@ -139,45 +139,45 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         const result: any = {};
 
         const secondaryColumns = this.columnModel.getSecondaryColumns() ?? [];
-        secondaryColumns.forEach(secondaryCol => {
-            const { pivotValueColumn, pivotTotalColumnIds, colId, pivotKeys } = secondaryCol.getColDef();
-            if (_.exists(pivotTotalColumnIds)) {
-                return;
+        let canSkipTotalColumns = true;
+        for (let i = 0; i < secondaryColumns.length; i++) {
+            const secondaryCol = secondaryColumns[i];
+            const colDef = secondaryCol.getColDef();
+
+            if (colDef.pivotTotalColumnIds != null) {
+                canSkipTotalColumns = false;
+                continue;
             }
 
-            const keys: string[] = pivotKeys ?? [];
+            const keys: string[] = colDef.pivotKeys ?? [];
             let values: any[];
 
             if (rowNode.leafGroup) {
                 // lowest level group, get the values from the mapped set
-                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, pivotValueColumn!);
+                values = this.getValuesFromMappedSet(rowNode.childrenMapped, keys, colDef.pivotValueColumn!);
             } else {
                 // value columns and pivot columns, non-leaf group
-                values = this.getValuesPivotNonLeaf(rowNode, colId!);
+                values = this.getValuesPivotNonLeaf(rowNode, colDef.colId!);
             }
 
-            result[colId!] = this.aggregateValues(values, pivotValueColumn!.getAggFunc()!, pivotValueColumn!, rowNode, secondaryCol);
-        });
+            // bit of a memory drain storing null/undefined, but seems to speed up performance.
+            result[colDef.colId!] = this.aggregateValues(values, colDef.pivotValueColumn!.getAggFunc()!, colDef.pivotValueColumn!, rowNode, secondaryCol);
+        }
 
-        secondaryColumns.forEach(secondaryCol => {
-            const { pivotValueColumn, pivotTotalColumnIds, colId } = secondaryCol.getColDef();
-            if (!_.exists(pivotTotalColumnIds)) {
-                return;
+        if (!canSkipTotalColumns) {
+            for (let i = 0; i < secondaryColumns.length; i++) {
+                const secondaryCol = secondaryColumns[i];
+                const colDef = secondaryCol.getColDef();
+    
+                if (colDef.pivotTotalColumnIds == null || !colDef.pivotTotalColumnIds.length) {
+                    continue;
+                }
+    
+                const aggResults: any[] = colDef.pivotTotalColumnIds.map((currentColId: string) => result[currentColId]);
+                // bit of a memory drain storing null/undefined, but seems to speed up performance.
+                result[colDef.colId!] = this.aggregateValues(aggResults, colDef.pivotValueColumn!.getAggFunc()!, colDef.pivotValueColumn!, rowNode, secondaryCol);
             }
-
-            const aggResults: any[] = [];
-
-            //retrieve results for colIds associated with this pivot total column
-            if (!pivotTotalColumnIds || !pivotTotalColumnIds.length) {
-                return;
-            }
-
-            pivotTotalColumnIds.forEach((currentColId: string) => {
-                aggResults.push(result[currentColId]);
-            });
-
-            result[colId!] = this.aggregateValues(aggResults, pivotValueColumn!.getAggFunc()!, pivotValueColumn!, rowNode, secondaryCol);
-        });
+        }
 
         return result;
     }
@@ -210,29 +210,21 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     }
 
     private getValuesPivotNonLeaf(rowNode: RowNode, colId: string): any[] {
-        const values: any[] = [];
-        rowNode.childrenAfterFilter!.forEach((node: RowNode) => {
-            const value = node.aggData[colId];
-            values.push(value);
-        });
-        return values;
+        return rowNode.childrenAfterFilter!.map((childNode: RowNode) => childNode.aggData[colId]);
     }
 
     private getValuesFromMappedSet(mappedSet: any, keys: string[], valueColumn: Column): any[] {
         let mapPointer = mappedSet;
-        keys.forEach(key => (mapPointer = mapPointer ? mapPointer[key] : null));
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i];
+            mapPointer = mapPointer ? mapPointer[key] : null;
+        }
 
         if (!mapPointer) {
             return [];
         }
 
-        const values: any = [];
-        mapPointer.forEach((rowNode: RowNode) => {
-            const value = this.valueService.getValue(valueColumn, rowNode);
-            values.push(value);
-        });
-
-        return values;
+        return mapPointer.map((rowNode: RowNode) => this.valueService.getValue(valueColumn, rowNode));
     }
 
     private getValuesNormal(rowNode: RowNode, valueColumns: Column[], filteredOnly: boolean): any[][] {

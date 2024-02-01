@@ -334,7 +334,7 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
             var target = resolver.ensureHook(this.target);
             resolver.getHook(this.source).tapAsync('AgEs5CjsResolver', function (request, resolveContext, callback) {
                 const req = request.request;
-                if ((req.startsWith('@ag-grid') || req === 'ag-charts-community') &&
+                if (req.startsWith('@ag-grid') &&
                     !req.includes('css') &&
                     !frameworkRequest(req)) {
 
@@ -363,6 +363,10 @@ exports.onCreateWebpackConfig = ({actions, getConfig}) => {
         resolve: {
             // add src folder as default root for imports
             modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+            alias: {
+                // ensure all requests go to the same ag-charts-community
+                "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts-enterprise/node_modules/ag-charts-community')
+            }
         }
     };
     if (isDevelopment()) {

@@ -1,5 +1,5 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { _Scene } from "ag-charts-enterprise";
+import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { createColumnRects, CreateColumnRectsParams } from "../miniChartHelpers";
 import { ThemeTemplateParameters } from "../../miniChartsContainer";
@@ -20,6 +20,7 @@ export class MiniStackedColumn extends MiniChartWithAxes {
         fills: string[],
         strokes: string[],
         _themeTemplateParameters: ThemeTemplateParameters,
+        _isCustomTheme: boolean,
         data = MiniStackedColumn.data,
         yScaleDomain = [0, 16],
         tooltipName = "stackedColumnTooltip") {

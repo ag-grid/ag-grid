@@ -87,7 +87,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 ### Set configuration
 
 ```js
-var gridOptions = {
+const gridOptions = {
 	columnDefs: [
 		{ headerName: 'Make', field: 'make' },
 		{ headerName: 'Model', field: 'model' },
@@ -105,7 +105,7 @@ var gridOptions = {
 
 ```js
 const eGridDiv = document.querySelector('#myGrid');
-const api = createGrid(eGridDiv, this.gridOptions);
+const api = createGrid(eGridDiv, gridOptions);
 ```
 
 For more information on how to integrate the grid into your project see [Building AG Grid Applications](https://www.ag-grid.com/javascript-data-grid/building/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).

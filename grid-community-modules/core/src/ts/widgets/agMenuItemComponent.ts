@@ -281,9 +281,9 @@ export class AgMenuItemComponent extends BeanStub {
     private onItemSelected(event: MouseEvent | KeyboardEvent): void {
         this.menuItemComp.select?.();
         if (this.params.action) {
-            this.params.action(this.gridOptionsService.addGridCommonParams({
+            this.getFrameworkOverrides().wrapOutgoing(() => this.params.action!(this.gridOptionsService.addGridCommonParams({
                 ...this.contextParams
-            }));
+            })));
         } else {
             this.openSubMenu(event && event.type === 'keydown');
         }

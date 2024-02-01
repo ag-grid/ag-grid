@@ -110,20 +110,9 @@ const Default = () => {
 
             <div className={styles.homepageCustomers}>
                 <div className={classNames(styles.customersInner, 'layout-max-width-small')}>
-                    <p className="text-lg text-secondary">
-                        Trusted by developers at nine out of ten Fortune 500 companies
-                    </p>
-                    <div className={styles.customerLogos}>
-                        <img src="./images/customer-logos/nasa.svg" alt="NASA logo" />
-                        <img src="./images/customer-logos/microsoft.svg" alt="Microsoft logo" />
-                        <img src="./images/customer-logos/ibm.svg" alt="IBM logo" />
-                        <img src="./images/customer-logos/nike.svg" alt="Nike logo" />
-                        <img src="./images/customer-logos/netflix.svg" alt="Netflix logo" />
-                        <img src="./images/customer-logos/samsung.svg" alt="Samsung logo" />
-                        <img src="./images/customer-logos/bank-of-america.svg" alt="Bank of America logo" />
-                        <img src="./images/customer-logos/at-and-t.svg" alt="AT & T logo" />
-                        <img src="./images/customer-logos/fed-ex.svg" alt="FedEx logo" />
-                    </div>
+                    <h2>Used by 90% of the Fortune 500</h2>
+                    <p className='text-tertiary'>Trusted by the finest teams globally, an unmatched experience for developers and users alike.</p>
+                    <div className={styles.customerLogos}></div>
                 </div>
             </div>
 

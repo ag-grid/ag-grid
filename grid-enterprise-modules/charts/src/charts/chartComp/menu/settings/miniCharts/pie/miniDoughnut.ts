@@ -1,5 +1,5 @@
 import { MiniChart } from "../miniChart";
-import { _Scene } from "ag-charts-enterprise";
+import { _Scene } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { ThemeTemplateParameters } from "../../miniChartsContainer";
 
@@ -9,7 +9,7 @@ export class MiniDoughnut extends MiniChart {
     static chartType: ChartType = 'doughnut';
     private readonly sectors: _Scene.Sector[];
 
-    constructor(container: HTMLElement, fills: string[], strokes: string[], _themeTemplateParameters: ThemeTemplateParameters, centerRadiusScaler = 0.6, tooltipName = "doughnutTooltip") {
+    constructor(container: HTMLElement, fills: string[], strokes: string[], _themeTemplateParameters: ThemeTemplateParameters, _isCustomTheme: boolean, centerRadiusScaler = 0.6, tooltipName = "doughnutTooltip") {
         super(container, tooltipName);
 
         const radius = (this.size - this.padding * 2) / 2;
