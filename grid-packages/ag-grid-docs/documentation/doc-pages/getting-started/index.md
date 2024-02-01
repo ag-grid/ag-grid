@@ -408,7 +408,8 @@ The `headerName` provides the title for the header. If missing the title is deri
 Format cell content using a [Value Formatter](../value-formatters/).
 
 <div style="display: flex">
-<snippet style="flex: 3" transform={false} language="jsx">
+<div style="flex: 3">
+<snippet transform={false} language="jsx">
 | const formatNumber = (number) => {
 |    return Math.floor(number).toLocaleString();
 |}
@@ -418,7 +419,10 @@ Format cell content using a [Value Formatter](../value-formatters/).
 |    // ...
 |  ]);
 </snippet>
-<image-caption style="margin-top: 0px; flex: 1" src="getting-started/resources/valueFormatter.png" alt="Value Formatter" toggleDarkMode="false"></image-caption>
+</div>
+<div style="flex: 1">
+<image-caption src="getting-started/resources/valueFormatting.png" alt="Value Formatter" toggleDarkMode="false"></image-caption>
+</div>
 </div>
 
 ### Cell Components
@@ -426,7 +430,8 @@ Format cell content using a [Value Formatter](../value-formatters/).
 Add buttons, checkboxes or images to cells with a [Cell Renderer](../cell-rendering/).
 
 <div style="display: flex">
-<snippet style="flex: 3" transform={false} language="jsx">
+<div style="flex: 3">
+<snippet transform={false} language="jsx">
 | const CustomButtonComponent = (props) => {
 |    return &lt;button onClick={() => window.alert('clicked') }>Push Me!&lt;/button>;
 |  };
@@ -436,7 +441,10 @@ Add buttons, checkboxes or images to cells with a [Cell Renderer](../cell-render
 |    // ...
 |  ]);
 </snippet>
-<image-caption style="flex: 1" src="getting-started/resources/buttonCellRenderer.png" alt="Button Cell Renderer" toggleDarkMode="false"></image-caption>
+</div>
+<div style="flex: 1">
+<image-caption src="getting-started/resources/buttonCellRenderer.png" alt="Button Cell Renderer" toggleDarkMode="false"></image-caption>
+</div>
 </div>
 
 ### Resizing Columns
@@ -462,6 +470,7 @@ allow columns to flex to the grid width.
 [Column Filters](../filtering/) are embedded into each column menu. These are configured using the `filter` attribute.
 
 <div style="display: flex">
+<div style="flex: 3">
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
 |    { field: "make", filter: 'agTextColumnFilter' }, // use the text filter
@@ -469,7 +478,10 @@ allow columns to flex to the grid width.
 |    // ...
 |  ]);
 </snippet>
+</div>
+<div style="flex: 1">
 <image-caption src="getting-started/resources/filter.png" alt="Column Filter" toggleDarkMode="false"></image-caption>
+</div>
 </div>
 
 
@@ -479,13 +491,17 @@ You can also create your own [Custom Filter](../filter-custom/).
 [Floating Filters](../floating-filters/) embed the Column Filter into the header for ease of access.
 
 <div style="display: flex">
+<div style="flex: 3">
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
 |    { field: "make", filter: 'agTextColumnFilter', floatingFilter: true },
 |    // ...
 |  ]);
 </snippet>
+</div>
+<div style="flex: 1">
 <image-caption src="getting-started/resources/floatingFilter.png" alt="Floating Filter" toggleDarkMode="false"></image-caption>
+</div>
 </div>
 
 ### Editing
@@ -493,20 +509,25 @@ You can also create your own [Custom Filter](../filter-custom/).
 Enable editing by setting the `editable` attribute to `true`. This uses the default [Cell Editor](../cell-editing/) for the cell data type.
 
 <div style="display: flex">
+<div style="flex: 3">
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
 |    { field: "make", editable: true },
 |    // ...
 |  ]);
 </snippet>
+</div>
+<div style="flex: 1">
 <image-caption src="getting-started/resources/editing.png" alt="Default Editor" toggleDarkMode="false"></image-caption>
+</div>
 </div>
 
 Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](../provided-cell-editors/) which can be set through this attribute.
 You can also create your own [Custom Editors](../component-cell-editor/).
 
 <div style="display: flex">
-<snippet style="flex: 3" transform={false} language="jsx" style="flex: 3">
+<div style="flex: 3">
+<snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
 |    {
 |        editable: true,
@@ -518,7 +539,10 @@ You can also create your own [Custom Editors](../component-cell-editor/).
 |    // ...
 |  ]);
 </snippet>
+</div>
+<div style="flex: 1">
 <image-caption style="flex: 1" src="getting-started/resources/editingSelect.png" alt="AG Grid Select Editor" toggleDarkMode="false"></image-caption>
+</div>
 </div>
 
 ### Sorting
@@ -526,6 +550,7 @@ You can also create your own [Custom Editors](../component-cell-editor/).
 Data is sorted by clicking the column headers. Configure custom sorting using the `comparator` attribute.
 
 <div style="display: flex">
+<div style="flex: 3">
 <snippet transform={false} language="jsx">
 | //Sorts months into date order
 | const monthComparator = (valueA, valueB) => {
@@ -544,7 +569,10 @@ Data is sorted by clicking the column headers. Configure custom sorting using th
 |   // ...
 |  ]);
 </snippet>
+</div>
+<div style="flex: 1">
 <image-caption src="getting-started/resources/monthsSorted.png" alt="Row Sorting" toggleDarkMode="false"></image-caption>
+</div>
 </div>
 
 ### Selection
@@ -552,6 +580,7 @@ Data is sorted by clicking the column headers. Configure custom sorting using th
 Row selection is enabled using the `rowSelection` grid option. Use the `checkboxSelection` column definition attribute to render checkboxes for selection.
 
 <div style="display: flex">
+<div style="flex: 3">
 <snippet transform={false} language="jsx">
 | const [colDefs, setColDefs] = useState([
 |   { field: "make", checkboxSelection: true },
@@ -560,7 +589,10 @@ Row selection is enabled using the `rowSelection` grid option. Use the `checkbox
 |&lt;AgGridReact rowSelection={'multiple'} />
 |
 </snippet>
+</div>
+<div style="flex: 1">
 <image-caption src="getting-started/resources/checkboxSelection.png" alt="Checkbox Selection" toggleDarkMode="false"></image-caption>
+</div>
 </div>
 
 
@@ -585,9 +617,15 @@ HTML element of the grid.
 |)
 </snippet>
 
-<div>
-    <image-caption style="width: 50%; height: auto" src="getting-started/resources/agThemeQuartz.png" alt="AG Theme Quartz" toggleDarkMode="false"></image-caption>
-    <image-caption style="width: 50%; height: auto" src="getting-started/resources/agThemeQuartzDark.png" alt="AG Theme Quartz Dark" toggleDarkMode="false"></image-caption>
+<div style="display: flex; margin-bottom: 10px;">
+    <image-caption
+        width="calc(50% - 48px)"
+        src="getting-started/resources/agThemeQuartz.png"
+        alt="AG Theme Quartz"
+        toggleDarkMode="false"
+    >
+    </image-caption>
+    <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeQuartzDark.png" alt="AG Theme Quartz Dark" toggleDarkMode="false"></image-caption>
 </div>
 
 <snippet transform={false} language="jsx">
@@ -600,17 +638,28 @@ HTML element of the grid.
 |)
 </snippet>
 
+<div style="display: flex; margin-bottom: 10px;">
+    <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeAlpine.png" alt="AG Theme Quartz" toggleDarkMode="false"></image-caption>
+    <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeAlpineDark.png" alt="AG Theme Quartz Dark" toggleDarkMode="false"></image-caption>
+</div>
+
 ### Customising a Theme
 
 Customise themes using CSS variables.
 
 <snippet transform={false} language="jsx">
 |.ag-theme-quartz {
-|    --ag-foreground-color: rgb(126, 46, 132); /* Changes the color of the grid text */
-|    --ag-background-color: rgb(174 215 252); /* Changes the color of the grid background */
-|    --ag-selected-row-background-color: rgb(0, 255, 0, 0.1); /* Changes the background color of selected rows */
+|    /* Changes the color of the grid text */
+|    --ag-foreground-color: rgb(126, 46, 132);
+|    /* Changes the color of the grid background */
+|    --ag-background-color: rgb(174 215 252);
+|    /* Changes the background color of selected rows */
+|    --ag-selected-row-background-color: rgb(0, 255, 0, 0.1);
 |}
 </snippet>
+
+<image-caption centered="true"  src="getting-started/resources/customisingTheme.png" alt="Customising a Theme with CSS Variables" toggleDarkMode="false"></image-caption>
+
 
 ### Figma
 
@@ -619,7 +668,8 @@ If you are designing within Figma, you can use the [AG Grid Design System](../ag
 ### Cell Style
 
 Define rules to apply styling to cells using `cellClassRules`. This can be used, for example, to set cell background colour based on its value.
-
+<div style="display: flex">
+<div style="flex: 3">
 <snippet transform={false} language="css">
 |.rag-green {
 |  background-color: #33cc3344;
@@ -639,6 +689,11 @@ Define rules to apply styling to cells using `cellClassRules`. This can be used,
 |    // ...
 |]);
 </snippet>
+</div>
+<div style="flex: 1">
+<image-caption src="getting-started/resources/cellClassRules.png" alt="Styling Cells with Cell Class Rules" toggleDarkMode="false"></image-caption>
+</div>
+</div>
 
 ### Row Style
 
@@ -659,6 +714,9 @@ Define rules to apply styling to rows using  and `rowClassRules`. This allows ch
 |&lt;AgGridReact rowClassRules={rowClassRules}  />
 </snippet>
 
+<image-caption centered="true" src="getting-started/resources/rowClassRules.png" alt="Styling Rows with Row Class Rules" toggleDarkMode="false"></image-caption>
+
+
 ### Pagination
 
 Enable [Pagination](../row-pagination/) by setting `pagination` to be true.
@@ -670,6 +728,8 @@ Enable [Pagination](../row-pagination/) by setting `pagination` to be true.
 |    paginationPageSizeSelector={[200, 500, 1000]}
 |/>
 </snippet>
+
+<image-caption centered="true" src="getting-started/resources/pagination.png" alt="Pagination" toggleDarkMode="false"></image-caption>
 
 
 </framework-specific-section>
