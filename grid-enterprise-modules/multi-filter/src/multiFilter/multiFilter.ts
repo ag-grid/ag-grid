@@ -34,6 +34,8 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private filterDefs: IMultiFilterDef[] = [];
     private filters: IFilterComp[] | null = [];
     private guiDestroyFuncs: (() => void)[] = [];
+    // this could be the accordion/sub menu element depending on the display type
+    private filterGuis: HTMLElement[] = [];
     private column: Column;
     private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
     private lastOpenedInContainer?: ContainerType;
@@ -124,10 +126,12 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                 filterGuiPromise = AgPromise.resolve(filter.getGui());
             }
 
-            return filterGuiPromise.then(filterGui => {
+            return filterGuiPromise;
+        })).then((filterGuis) => {
+            filterGuis!.forEach(filterGui => {
                 this.appendChild(filterGui!);
             });
-        })).then(() => {
+            this.filterGuis = filterGuis as HTMLElement[];
             this.lastOpenedInContainer = container;
         });
     }
@@ -143,6 +147,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private destroyChildren() {
         this.guiDestroyFuncs.forEach(func => func());
         this.guiDestroyFuncs.length = 0;
+        this.filterGuis.length = 0;
     }
 
     private insertFilterMenu(filter: IFilterComp, name: string): AgPromise<AgMenuItemComponent> {
@@ -330,19 +335,40 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         }
 
         refreshPromise.then(() => {
-            const { filters } = this.params;
-            const suppressFocus = filters && filters.some(filter => filter.display! && filter.display !== 'inline');
+            const { filterDefs } = this;
+            let hasFocused = false;
+            if (filterDefs) {
+                _.forEachReverse(filterDefs!, (filterDef, index) => {
+                    const isFirst = index === 0;
+                    const suppressFocus = !isFirst || filterDef.display !== 'inline';
+                    const afterGuiAttachedParams = { ...params ?? {}, suppressFocus };
+                    const filter = this.filters?.[index];
+                    if (filter) {
+                        this.executeFunctionIfExistsOnFilter(filter, 'afterGuiAttached', afterGuiAttachedParams);
+                        if (isFirst) {
+                            hasFocused = true;
+                        }
+                    }
+                    if (isFirst && suppressFocus) {
+                        // focus the first filter container instead (accordion/sub menu)
+                        const filterGui = this.filterGuis[index];
+                        if (filterGui) {
+                            filterGui.focus();
+                            hasFocused = true;
+                        }
+                    }
+                });
+            }
 
-            this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
             const eDocument = this.gridOptionsService.getDocument();
             const activeEl = eDocument.activeElement;
 
-            // if suppress focus is true, we might run into two scenarios:
+            // if we haven't focused the first item in the filter, we might run into two scenarios:
             // 1 - we are loading the filter for the first time and the component isn't ready,
             //     which means the document will have focus.
             // 2 - The focus will be somewhere inside the component due to auto focus
             // In both cases we need to force the focus somewhere valid but outside the filter.
-            if (suppressFocus && (activeEl === eDocument.body || this.getGui().contains(activeEl))) {
+            if (!hasFocused && (activeEl === eDocument.body || this.getGui().contains(activeEl))) {
                 // reset focus to the top of the container, and blur
                 this.forceFocusOutOfContainer(true);
             }     
@@ -374,16 +400,20 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         super.destroy();
     }
 
-    private executeFunctionIfExists<T extends IFilterComp>(name: keyof T, ...params: any[]) {
+    private executeFunctionIfExists<T extends IFilterComp>(name: keyof T, ...params: any[]): void {
         // The first filter is always the "dominant" one. By iterating in reverse order we ensure the first filter
         // always gets the last say
         _.forEachReverse(this.filters!, filter => {
-            const func = (filter as T)[name];
-
-            if (typeof func === 'function') {
-                func.apply(filter, params);
-            }
+            this.executeFunctionIfExistsOnFilter(filter as T, name, params);
         });
+    }
+
+    private executeFunctionIfExistsOnFilter<T extends IFilterComp>(filter: T, name: keyof T, ...params: any[]): void {
+        const func = filter[name];
+
+        if (typeof func === 'function') {
+            func.apply(filter, params);
+        }
     }
 
     private createFilter(filterDef: IFilterDef, index: number): AgPromise<IFilterComp> | null {

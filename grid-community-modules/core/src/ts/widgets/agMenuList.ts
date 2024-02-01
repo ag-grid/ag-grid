@@ -10,6 +10,7 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IMenuActionParams } from "../interfaces/iCallbackParams";
 import { BeanStub } from "../context/beanStub";
 import { AgPromise } from "../utils/promise";
+import { stopPropagationForAgGrid } from "../utils/event";
 
 export class AgMenuList extends TabGuardComp {
 
@@ -32,11 +33,13 @@ export class AgMenuList extends TabGuardComp {
     private postConstruct() {
         this.initialiseTabGuard({
             onTabKeyDown: e => this.onTabKeyDown(e),
-            handleKeyDown: e => this.handleKeyDown(e)
+            handleKeyDown: e => this.handleKeyDown(e),
+            onFocusIn: e => this.handleFocusIn(e),
+            onFocusOut: e => this.handleFocusOut(e),
         });
     }
 
-    protected onTabKeyDown(e: KeyboardEvent) {
+    private onTabKeyDown(e: KeyboardEvent) {
         const parent = this.getParentComponent();
         const parentGui = parent && parent.getGui();
         const isManaged = parentGui && parentGui.classList.contains('ag-focus-managed');
@@ -50,7 +53,7 @@ export class AgMenuList extends TabGuardComp {
         }
     }
 
-    protected handleKeyDown(e: KeyboardEvent): void {
+    private handleKeyDown(e: KeyboardEvent): void {
         switch (e.key) {
             case KeyCode.UP:
             case KeyCode.RIGHT:
@@ -60,13 +63,31 @@ export class AgMenuList extends TabGuardComp {
                 this.handleNavKey(e.key);
                 break;
             case KeyCode.ESCAPE:
-                const topMenu = this.findTopMenu();
-
-                if (topMenu) {
-                    this.focusService.focusInto(topMenu.getGui());
+                if (this.closeIfIsChild()) {
+                    stopPropagationForAgGrid(e);
                 }
-
                 break;
+        }
+    }
+
+    private handleFocusIn(e: FocusEvent): void {
+        // if focus is coming from outside the menu list, then re-activate an item
+        if (
+            !this.tabGuardCtrl.isTabGuard(e.relatedTarget as HTMLElement) &&
+            this.getGui().contains(e.relatedTarget as HTMLElement)
+        ) { return; }
+        if (this.activeMenuItem) {
+            this.activeMenuItem.activate();
+        } else {
+            this.activateFirstItem();
+        }
+    }
+
+    private handleFocusOut(e: FocusEvent): void {
+        // if focus is going outside the menu list, deactivate the current item
+        if (!this.activeMenuItem || this.getGui().contains(e.relatedTarget as HTMLElement)) { return; }
+        if (!this.activeMenuItem.isSubMenuOpening()) {
+            this.activeMenuItem.deactivate();
         }
     }
 
@@ -150,24 +171,6 @@ export class AgMenuList extends TabGuardComp {
         return loadTemplate(separatorHtml);
     }
 
-    private findTopMenu(): AgMenuList | undefined {
-        let parent = this.getParentComponent();
-
-        if (!parent && this instanceof AgMenuList) { return this; }
-
-        while (true) {
-            const nextParent = parent && parent.getParentComponent && parent.getParentComponent();
-
-            if (!nextParent || (!(nextParent instanceof AgMenuList || nextParent instanceof AgMenuItemComponent))) {
-                break;
-            }
-
-            parent = nextParent;
-        }
-
-        return parent instanceof AgMenuList ? parent : undefined;
-    }
-
     private handleNavKey(key: string): void {
         switch (key) {
             case KeyCode.UP:
@@ -190,7 +193,7 @@ export class AgMenuList extends TabGuardComp {
         }
     }
 
-    private closeIfIsChild(e?: KeyboardEvent): void {
+    private closeIfIsChild(e?: KeyboardEvent): boolean {
         const parentItem = this.getParentComponent() as BeanStub;
 
         if (parentItem && parentItem instanceof AgMenuItemComponent) {
@@ -198,7 +201,9 @@ export class AgMenuList extends TabGuardComp {
 
             parentItem.closeSubMenu();
             parentItem.getGui().focus();
+            return true;
         }
+        return false;
     }
 
     private openChild(): void {
@@ -220,7 +225,7 @@ export class AgMenuList extends TabGuardComp {
             items.reverse();
         }
 
-        let nextItem: AgMenuItemComponent;
+        let nextItem: AgMenuItemComponent | undefined;
         let foundCurrent = false;
 
         for (let i = 0; i < items.length; i++) {
@@ -235,6 +240,11 @@ export class AgMenuList extends TabGuardComp {
 
             nextItem = item;
             break;
+        }
+
+        if (foundCurrent && !nextItem) {
+            // start again from the beginning (/end)
+            return items[0];
         }
 
         return nextItem! || this.activeMenuItem;

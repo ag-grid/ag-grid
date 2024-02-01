@@ -242,21 +242,28 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         if (e.key === KeyCode.ENTER) {
             this.onEnterKeyDown(e);
         }
+        if (e.key === KeyCode.DOWN && e.altKey) {
+            this.showMenuOnKeyPress(e);
+        }
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
+        if (e.ctrlKey || e.metaKey) {
+            this.showMenuOnKeyPress(e);
+        } else if (this.sortable) {
+            const multiSort = e.shiftKey;
+            this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+        }
+    }
+
+    private showMenuOnKeyPress(e: KeyboardEvent): void {
         /// THIS IS BAD - we are assuming the header is not a user provided comp
         const headerComp = this.comp.getUserCompInstance() as HeaderComp;
         if (!headerComp) { return; }
 
-        if (e.ctrlKey || e.metaKey) {
-            if (this.menuEnabled && headerComp.showMenu) {
-                e.preventDefault();
-                headerComp.showMenu();
-            }
-        } else if (this.sortable) {
-            const multiSort = e.shiftKey;
-            this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+        if (this.menuEnabled && headerComp.showMenu) {
+            e.preventDefault();
+            headerComp.showMenu();
         }
     }
 

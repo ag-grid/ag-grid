@@ -52,6 +52,7 @@ export class AgMenuItemComponent extends BeanStub {
     private isActive = false;
     private hideSubMenu: (() => void) | null;
     private subMenuIsOpen = false;
+    private subMenuIsOpening = false;
     private activateTimeoutId: number;
     private deactivateTimeoutId: number;
     private parentComponent?: Component;
@@ -61,6 +62,7 @@ export class AgMenuItemComponent extends BeanStub {
     private suppressAria: boolean = true;
     private suppressFocus: boolean = true;
     private cssClassPrefix: string;
+    private suppressDeactivateOnFocusOut = false;
 
     public init(params: AgMenuItemComponentParams): AgPromise<void> {
         const { menuItemDef, isAnotherSubMenuOpen, level, childComponent, contextParams } = params;
@@ -124,8 +126,13 @@ export class AgMenuItemComponent extends BeanStub {
 
         if (!this.params.subMenu) { return; }
 
+        this.subMenuIsOpening = true;
+
         const ePopup = loadTemplate(/* html */ `<div class="ag-menu" role="presentation"></div>`);
         let destroySubMenu: () => void;
+        let afterGuiAttached = () => {
+            this.subMenuIsOpening = false;
+        };
 
         if (this.childComponent) {
             const menuPanel = this.createBean(new AgMenuPanel(this.childComponent));
@@ -142,7 +149,10 @@ export class AgMenuItemComponent extends BeanStub {
             ePopup.appendChild(subMenuGui);
 
             if ((this.childComponent as any).afterGuiAttached) {
-                setTimeout(() => (this.childComponent as any).afterGuiAttached!(), 0);
+                afterGuiAttached = () => {
+                    (this.childComponent as any).afterGuiAttached!();
+                    this.subMenuIsOpening = false;
+                };
             }
         } else if (this.params.subMenu) {
             const childMenu = this.createBean(new AgMenuList(this.level + 1, this.contextParams));
@@ -158,7 +168,10 @@ export class AgMenuItemComponent extends BeanStub {
             destroySubMenu = () => this.destroyBean(childMenu);
 
             if (activateFirstItem) {
-                setTimeout(() => childMenu.activateFirstItem(), 0);
+                afterGuiAttached = () => {
+                    childMenu.activateFirstItem();
+                    this.subMenuIsOpening = false;
+                };
             }
         }
 
@@ -174,7 +187,8 @@ export class AgMenuItemComponent extends BeanStub {
             eChild: ePopup,
             positionCallback: positionCallback,
             anchorToElement: eGui,
-            ariaLabel: translate('ariaLabelSubMenu', 'SubMenu')
+            ariaLabel: translate('ariaLabelSubMenu', 'SubMenu'),
+            afterGuiAttached
         });
 
         this.subMenuIsOpen = true;
@@ -208,6 +222,10 @@ export class AgMenuItemComponent extends BeanStub {
 
     public isSubMenuOpen(): boolean {
         return this.subMenuIsOpen;
+    }
+
+    public isSubMenuOpening(): boolean {
+        return this.subMenuIsOpening;
     }
 
     public activate(openSubMenu?: boolean): void {

@@ -454,8 +454,6 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
             title: _.createIconNoSpan('columns', this.gridOptionsService, this.column)!, //createColumnsIcon(),
             titleLabel: TabbedColumnMenu.TAB_COLUMNS.replace('MenuTab', ''),
             bodyPromise: AgPromise.resolve(eWrapperDiv),
-            // afterAttachedCallback: () => columnSelectPanel.toggleResizable(true),
-            // afterDetachedCallback: () => columnSelectPanel.toggleResizable(false),
             name: TabbedColumnMenu.TAB_COLUMNS
         };
 
