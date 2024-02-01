@@ -943,7 +943,7 @@ export class ColumnModel extends BeanStub {
         };
 
         // if doing column virtualisation, then we filter based on the viewport.
-        const filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInRowViewport.bind(this);
+        const filterCallback = this.isColumnVirtualisationSuppressed() ? null : this.isColumnInRowViewport.bind(this);
 
         return this.getDisplayedColumnsForRow(
             rowNode,
@@ -993,9 +993,7 @@ export class ColumnModel extends BeanStub {
 
     private isColumnInRowViewport(col: Column): boolean {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
-        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
-        // tests to validate all the columns.
-        if (col.isAutoHeight() || this.viewportRight === 0) { return true; }
+        if (col.isAutoHeight()) { return true; }
 
         const columnLeft = col.getLeft() || 0;
         const columnRight = columnLeft + col.getActualWidth();
@@ -3671,8 +3669,14 @@ export class ColumnModel extends BeanStub {
         });
     }
 
+    private isColumnVirtualisationSuppressed(){
+        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
+        // tests to validate all the columns.
+        return this.suppressColumnVirtualisation || this.viewportRight === 0;
+    }
+
     private extractViewportColumns(): void {
-        if (this.suppressColumnVirtualisation) {
+        if (this.isColumnVirtualisationSuppressed()) {
             // no virtualisation, so don't filter
             this.viewportColumnsCenter = this.displayedColumnsCenter;
             this.headerViewportColumnsCenter = this.displayedColumnsCenter;
