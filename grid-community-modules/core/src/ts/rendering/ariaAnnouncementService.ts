@@ -24,7 +24,7 @@ export class AriaAnnouncementService extends BeanStub {
         div.classList.add('ag-aria-description-container');
 
         setAriaLive(div, 'polite');
-        setAriaRelevant(div, 'text');
+        setAriaRelevant(div, 'additions text');
         setAriaAtomic(div, true);
 
         this.eGridDiv.appendChild(div);
