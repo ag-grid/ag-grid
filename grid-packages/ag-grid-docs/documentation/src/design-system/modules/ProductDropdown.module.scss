@@ -1,8 +1,13 @@
 @use '../core' as *;
 
 .customMenu {
+    display: none;
     padding-right: $spacing-size-2;
     user-select: none;
+
+    @media screen and (min-width: 440px) {
+        display: block;
+    }
 
     @media screen and (min-width: $breakpoint-hero-small) {
         position: relative;
@@ -49,7 +54,7 @@
 }
 
 .arrow {
-    display: none;
+    display: inline-block;
     border: solid #fff;
     border-width: 0 2px 2px 0;
     padding: 3px;
@@ -57,10 +62,6 @@
     transition: transform 0.3s;
     margin-left: 12px;
     margin-bottom: 2px;
-
-    @media screen and (min-width: $breakpoint-hero-small) {
-        display: inline-block;
-    }
 }
 
 @keyframes fadeInUp {
@@ -96,6 +97,7 @@
     border: 1px solid var(--color-border-primary);
     box-shadow: var(--shadow-sm);
     opacity: 0;
+    z-index: 1;
     transform: translateY(10px) scale(0.95);
     transition:
         opacity 0.15s ease,
