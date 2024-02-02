@@ -82,11 +82,12 @@ const miniChartMapping = {
         nightingale: MiniNightingale,
     },
     statisticalGroup: {
+        boxPlot: MiniBoxPlot,
+        histogram: MiniHistogram,
         rangeBar: MiniRangeBar,
         rangeArea: MiniRangeArea,
-        boxPlot: MiniBoxPlot,
     },
-    cumulativeGroup: {
+    specializedGroup: {
         waterfall: MiniWaterfall,
     },
     combinationGroup: {

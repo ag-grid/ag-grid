@@ -13,6 +13,7 @@
         padding-bottom: 0.4375em;
         padding-left: 2em;
 
+        &::-webkit-search-decoration,
         &::-webkit-search-cancel-button {
             display: none;
         }

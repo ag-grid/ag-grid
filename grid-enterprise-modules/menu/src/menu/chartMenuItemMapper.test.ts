@@ -132,10 +132,10 @@ describe('isValidChartType', () => {
             },
             {
                 name: "statisticalChart",
-                subMenu: [{ name: "rangeBar" }, { name: "rangeArea" }, { name: "boxPlot" }]
+                subMenu: [{ name: "boxPlot" }, { name: "histogramChart" }, { name: "rangeBar" }, { name: "rangeArea" }]
             },
             {
-                name: "cumulativeChart",
+                name: "specializedChart",
                 subMenu: [{ name: "waterfall" }]
             },
             {
