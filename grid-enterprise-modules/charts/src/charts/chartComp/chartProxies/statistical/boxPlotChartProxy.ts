@@ -13,7 +13,7 @@ export class BoxPlotChartProxy extends CartesianChartProxy {
     public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const axes: AgCartesianAxisOptions[] = [
             {
-                type: 'category',
+                type: this.getXAxisType(params),
                 position: isHorizontal(this.chartType) ? 'left' : 'bottom',
             },
             {
@@ -26,8 +26,8 @@ export class BoxPlotChartProxy extends CartesianChartProxy {
     }
 
     protected override getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {
-        // The charts library doesn't perform any statistical analysis within the box plot chart implementation, rather
-        // it expects to be given a set of precomputed quartile values, which it renders directly onto the chart.
+        // The charts library doesn't perform any statistical analysis within the chart implementation, rather it
+        // expects to be given a set of precomputed quartile values, which it renders directly onto the chart.
         // This means that we first need to compute the quartiles for each category/series combination, then once we
         // have the correct values we can pass the precomputed objects through to the charts library.
 
@@ -36,7 +36,12 @@ export class BoxPlotChartProxy extends CartesianChartProxy {
         const categoryKey = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? null : params.category.id;
         const dataGroupedByCategory = partition(
             params.data,
-            (datum) => (categoryKey === null ? null : datum[categoryKey]),
+            (datum) => {
+                if (categoryKey === null) return null;
+                const value = datum[categoryKey];
+                // If the category value is a date, convert it to a timestamp to ensure a stable partition key
+                return (value instanceof Date ? value.getTime() : value);
+            },
         );
 
         // Next we iterate over the categories, and compute the quartile values for each series within that category

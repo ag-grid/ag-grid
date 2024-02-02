@@ -12,7 +12,7 @@ export class RangeBarChartProxy extends CartesianChartProxy {
     public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const axes: AgCartesianAxisOptions[] = [
             {
-                type: 'category',
+                type: this.getXAxisType(params),
                 position: isHorizontal(this.chartType) ? 'left' : 'bottom',
             },
             {
@@ -35,7 +35,12 @@ export class RangeBarChartProxy extends CartesianChartProxy {
         const categoryKey = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? null : params.category.id;
         const dataGroupedByCategory = partition(
             params.data,
-            (datum) => (categoryKey === null ? null : datum[categoryKey]),
+            (datum) => {
+                if (categoryKey === null) return null;
+                const value = datum[categoryKey];
+                // If the category value is a date, convert it to a timestamp to ensure a stable partition key
+                return (value instanceof Date ? value.getTime() : value);
+            },
         );
 
         // Next we iterate over the categories, and compute the min/max values for each series within that category
