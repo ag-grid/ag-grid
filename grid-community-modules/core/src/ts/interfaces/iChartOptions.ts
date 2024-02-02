@@ -127,6 +127,7 @@ export type ChartType =
     | 'rangeBar'
     | 'rangeArea'
     | 'boxPlot'
+    | 'treemap'
     | 'waterfall'
     | 'columnLineCombo'
     | 'areaColumnCombo'
