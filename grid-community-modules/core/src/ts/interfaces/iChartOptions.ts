@@ -124,6 +124,7 @@ export type ChartType =
     | 'radarLine'
     | 'radarArea'
     | 'nightingale'
+    | 'radialBar'
     | 'rangeBar'
     | 'rangeArea'
     | 'boxPlot'
