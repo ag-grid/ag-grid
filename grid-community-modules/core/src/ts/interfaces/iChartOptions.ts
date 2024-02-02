@@ -7,8 +7,8 @@ export interface ChartGroupsDef {
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[],
     histogramGroup?: ('histogram')[],
     polarGroup?: ('radarLine' | 'radarArea' | 'nightingale')[],
-    statisticalGroup?: ('rangeBar' | 'rangeArea' | 'boxPlot')[],
-    cumulativeGroup?: ('waterfall')[],
+    statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
+    specializedGroup?: ('waterfall')[],
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
 }
 
@@ -48,11 +48,12 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
         'nightingale'
     ],
     statisticalGroup: [
+        'boxPlot',
+        'histogram',
         'rangeBar',
         'rangeArea',
-        'boxPlot',
     ],
-    cumulativeGroup: [
+    specializedGroup: [
         'waterfall',
     ],
     combinationGroup: [
@@ -125,9 +126,12 @@ export type ChartType =
     | 'radarArea'
     | 'nightingale'
     | 'radialBar'
+    | 'sunburst'
     | 'rangeBar'
     | 'rangeArea'
     | 'boxPlot'
+    | 'treemap'
+    | 'heatmap'
     | 'waterfall'
     | 'columnLineCombo'
     | 'areaColumnCombo'
