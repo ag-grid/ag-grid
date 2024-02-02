@@ -346,7 +346,7 @@ const AG_GRID_LOCALE_EN = {
     histogramGroup: 'Histogram',
     polarGroup: 'Polar',
     statisticalGroup: 'Statistical',
-    cumulativeGroup: 'Cumulative',
+    specializedGroup: 'Specialized',
     combinationGroup: 'Combination',
     groupedColumnTooltip: 'Grouped',
     stackedColumnTooltip: 'Stacked',
