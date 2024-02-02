@@ -709,6 +709,9 @@ testing with AG Grid in this section.
 </snippet>
 </framework-specific-section>
 
+<framework-specific-section frameworks="angular">
+<p>All the tests above and more can be found in the following <a href="https://github.com/ag-grid/ag-grid-angular-cli-example/tree/latest/src/tests">GitHub Repo</a>.</p>
+</framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 |## Next Up
