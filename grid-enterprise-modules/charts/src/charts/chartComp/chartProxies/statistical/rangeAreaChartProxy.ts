@@ -1,10 +1,10 @@
 import { isHorizontal } from '../../utils/seriesTypeMapper';
 import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';
 import { ChartProxyParams, UpdateParams } from '../chartProxy';
-import { AgCartesianAxisOptions, AgRangeBarSeriesOptions } from 'ag-charts-community';
+import { AgCartesianAxisOptions, AgRangeAreaSeriesOptions } from 'ag-charts-community';
 import { ChartDataModel } from '../../model/chartDataModel';
 
-export class RangeBarChartProxy extends CartesianChartProxy {
+export class RangeAreaChartProxy extends CartesianChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -58,8 +58,8 @@ export class RangeBarChartProxy extends CartesianChartProxy {
         return categoryAggregates;
     }
 
-    public getSeries(params: UpdateParams): AgRangeBarSeriesOptions<any>[] {
-        const series: AgRangeBarSeriesOptions[] = params.fields.map(
+    public getSeries(params: UpdateParams): AgRangeAreaSeriesOptions<any>[] {
+        const series: AgRangeAreaSeriesOptions[] = params.fields.map(
             (field, seriesIndex) =>
                 ({
                     type: this.standaloneChartType,
@@ -75,7 +75,7 @@ export class RangeBarChartProxy extends CartesianChartProxy {
                     // These statistical value fields names refer to generated 'synthetic fields' created in the getData() method
                     yLowKey: `min:${seriesIndex}`,
                     yHighKey: `max:${seriesIndex}`,
-                } as AgRangeBarSeriesOptions)
+                } as AgRangeAreaSeriesOptions)
         );
         return series;
     }
