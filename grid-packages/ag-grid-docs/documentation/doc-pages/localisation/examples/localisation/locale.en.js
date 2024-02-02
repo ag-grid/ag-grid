@@ -229,6 +229,8 @@ const AG_GRID_LOCALE_EN = {
     histogramFrequency: "Frequency",
 
     polarChart: 'Polar',
+    radialColumn: 'Radial Column',
+    radialBar: 'Radial Bar',
     radarLine: 'Radar Line',
     radarArea: 'Radar Area',
     nightingale: 'Nightingale',

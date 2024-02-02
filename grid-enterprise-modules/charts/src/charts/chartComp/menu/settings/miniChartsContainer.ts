@@ -30,6 +30,8 @@ import {
     MiniPie,
     MiniRadarArea,
     MiniRadarLine,
+    MiniRadialBar,
+    MiniRadialColumn,
     MiniRangeBar,
     MiniRangeArea,
     MiniWaterfall,
@@ -77,6 +79,8 @@ const miniChartMapping = {
         histogram: MiniHistogram
     },
     polarGroup: {
+        radialBar: MiniRadialBar,
+        radialColumn: MiniRadialColumn,
         radarLine: MiniRadarLine,
         radarArea: MiniRadarArea,
         nightingale: MiniNightingale,
