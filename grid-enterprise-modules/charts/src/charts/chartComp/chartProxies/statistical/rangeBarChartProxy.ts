@@ -67,20 +67,20 @@ export class RangeBarChartProxy extends CartesianChartProxy {
         const series: AgRangeBarSeriesOptions[] = params.fields.map(
             (field, seriesIndex) =>
                 ({
-                    type: this.standaloneChartType,
+                    type: this.standaloneChartType as AgRangeBarSeriesOptions['type'],
                     direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
                     // xKey/xName refer to category buckets
                     xKey: params.category.id,
                     xName: params.category.name,
                     // yName is used to label the series
-                    yName: field.displayName,
+                    yName: field.displayName ?? undefined,
                     // Custom field labels shown in the tooltip
                     yLowName: 'Min',
                     yHighName: 'Max',
                     // These statistical value fields names refer to generated 'synthetic fields' created in the getData() method
                     yLowKey: `min:${seriesIndex}`,
                     yHighKey: `max:${seriesIndex}`,
-                } as AgRangeBarSeriesOptions)
+                })
         );
         return series;
     }

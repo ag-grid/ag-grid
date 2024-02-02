@@ -76,13 +76,13 @@ export class BoxPlotChartProxy extends CartesianChartProxy {
         const series: AgBoxPlotSeriesOptions[] = params.fields.map(
             (field, seriesIndex) =>
                 ({
-                    type: this.standaloneChartType,
+                    type: this.standaloneChartType as AgBoxPlotSeriesOptions['type'],
                     direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
                     // xKey/xName refer to category buckets
                     xKey: params.category.id,
                     xName: params.category.name,
                     // yName is used to label the series
-                    yName: field.displayName,
+                    yName: field.displayName ?? undefined,
                     // Custom field labels shown in the tooltip
                     minName: 'Min',
                     q1Name: 'Q1',
@@ -95,7 +95,7 @@ export class BoxPlotChartProxy extends CartesianChartProxy {
                     medianKey: `median:${seriesIndex}`,
                     q3Key: `q3:${seriesIndex}`,
                     maxKey: `max:${seriesIndex}`,
-                } as AgBoxPlotSeriesOptions)
+                })
         );
         return series;
     }
