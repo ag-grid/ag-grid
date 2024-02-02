@@ -234,10 +234,11 @@ const AG_GRID_LOCALE_EN = {
     nightingale: 'Nightingale',
 
     statisticalChart: 'Statistical',
-    rangeBar: 'Range Bar',
     boxPlot: 'Box Plot',
+    rangeBar: 'Range Bar',
+    rangeArea: 'Range Area',
 
-    cumulativeChart: 'Cumulative',
+    specializedChart: 'Specialized',
     waterfall: 'Waterfall',
 
     combinationChart: 'Combination',

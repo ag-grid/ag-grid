@@ -104,7 +104,7 @@ export class ChartTranslationService extends BeanStub {
         histogramGroup: 'Histogram',
         polarGroup: 'Polar',
         statisticalGroup: 'Statistical',
-        cumulativeGroup: 'Cumulative',
+        specializedGroup: 'Specialized',
         combinationGroup: 'Combination',
         groupedColumnTooltip: 'Grouped',
         stackedColumnTooltip: 'Stacked',
