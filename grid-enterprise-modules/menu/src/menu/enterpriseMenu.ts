@@ -26,7 +26,8 @@ import {
     AgMenuItemComponent,
     PopupEventParams,
     Component,
-    CloseMenuEvent
+    CloseMenuEvent,
+    MenuService
 } from '@ag-grid-community/core';
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
@@ -51,6 +52,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('menuUtils') private readonly menuUtils: MenuUtils;
+    @Autowired('menuService') private readonly menuService: MenuService;
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseColumnMenu | null;
@@ -158,7 +160,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             positionCallback(menu);
         }
 
-        if (!column?.getMenuParams()?.suppressColumnMenuAnchoring) {
+        if (this.menuService.isColumnMenuAnchoringEnabled(column)) {
             // if user starts showing / hiding columns, or otherwise move the underlying column
             // for this menu, we want to stop tracking the menu with the column position. otherwise
             // the menu would move as the user is using the columns tab inside the menu.
@@ -220,16 +222,15 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ): (EnterpriseColumnMenu & BeanStub) {
-        const menuParams = column ? column.getMenuParams() : this.gridOptionsService.get('defaultColDef')?.menuParams;
-        if (menuParams?.enableNewFormat) {
-            return this.createBean(new ColumnContextMenu(column, eventSource));
-        } else {
+        if (this.menuService.isLegacyMenuEnabled(column)) {
             return this.createBean(new TabbedColumnMenu(column, this.lastSelectedTab, restrictToTabs, eventSource));
+        } else {
+            return this.createBean(new ColumnContextMenu(column, eventSource));
         }
     }
 
     public isMenuEnabled(column: Column): boolean {
-        if (column?.getMenuParams()?.enableNewFormat) {
+        if (!this.menuService.isLegacyMenuEnabled(column)) {
             return true;
         }
         // Determine whether there are any tabs to show in the menu, given that the filter tab may be hidden

@@ -182,7 +182,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
-        if ((!mouseEvent && !touchEvent) || !this.gridOptionsService.get('defaultColDef')?.menuParams?.enableHeaderContextMenu) { return; }
+        if ((!mouseEvent && !touchEvent) || !this.menuService.isHeaderContextMenuEnabled()) { return; }
 
         const { target } = (mouseEvent ?? touch)!;
 

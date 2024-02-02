@@ -8,6 +8,7 @@ import {
     FilterManager,
     IRowModel,
     MenuItemDef,
+    MenuService,
     _
 } from "@ag-grid-community/core";
 import { MenuItemMapper } from "./menuItemMapper";
@@ -18,6 +19,7 @@ export class ColumnMenuFactory extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
+    @Autowired('menuService') private readonly menuService: MenuService;
 
     private static MENU_ITEM_SEPARATOR = 'separator';
 
@@ -70,10 +72,10 @@ export class ColumnMenuFactory extends BeanStub {
     private getDefaultMenuOptions(column?: Column): string[] {
         const result: string[] = [];
 
-        const enableNewFormat = column?.getMenuParams()?.enableNewFormat;
+        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled(column);
 
         if (!column) {
-            if (enableNewFormat) {
+            if (!isLegacyMenuEnabled) {
                 result.push('columnChooser');
             }
             result.push('resetColumns');
@@ -100,16 +102,7 @@ export class ColumnMenuFactory extends BeanStub {
             // secondary columns can always have aggValue, as it means it's a pivot value column
             || !isPrimary;
 
-        if (
-            enableNewFormat &&
-            this.filterManager.isFilterAllowed(column) &&
-            !column.getColDef().floatingFilter
-        ) {
-            result.push('columnFilter');
-            result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
-        }
-
-        if (enableNewFormat && column.isSortable()) {
+        if (!isLegacyMenuEnabled && column.isSortable()) {
             const sort = column.getSort();
             if (sort !== 'asc') {
                 result.push('sortAscending');
@@ -120,6 +113,11 @@ export class ColumnMenuFactory extends BeanStub {
             if (sort) {
                 result.push('sortUnSort');
             }
+            result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
+        }
+
+        if (this.menuService.isFilterMenuItemEnabled(column)) {
+            result.push('columnFilter');
             result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
         }
 
@@ -153,7 +151,7 @@ export class ColumnMenuFactory extends BeanStub {
             }
         }
         result.push(ColumnMenuFactory.MENU_ITEM_SEPARATOR);
-        if (enableNewFormat) {
+        if (!isLegacyMenuEnabled) {
             result.push('columnChooser');
         }
         result.push('resetColumns');

@@ -450,8 +450,7 @@ export {
     ToolPanelClass,
     KeyCreatorParams,
     SortDirection,
-    NestedFieldPaths,
-    MenuParams
+    NestedFieldPaths
 } from "./entities/colDef";
 export {
     DataTypeDefinition,

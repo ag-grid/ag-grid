@@ -233,13 +233,14 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         }
     }
 
-    protected handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, column: Column | ProvidedColumnGroup, menuEnabled: boolean): void {
+    protected handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, column: Column | ProvidedColumnGroup): void {
         const event = mouseEvent ?? touchEvent!;
         if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
-        if (menuEnabled && column.getMenuParams()?.enableHeaderContextMenu) {
-            this.menuService.showHeaderContextMenu(column instanceof Column ? column : undefined, mouseEvent, touchEvent);
+        const columnToUse = column instanceof Column ? column : undefined;
+        if (this.menuService.isHeaderContextMenuEnabled(columnToUse)) {
+            this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
         }
 
         this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CONTEXT_MENU, column);

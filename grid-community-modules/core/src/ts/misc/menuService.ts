@@ -8,6 +8,8 @@ import { RowNode } from "../entities/rowNode";
 import { CtrlsService } from "../ctrlsService";
 import { AnimationFrameService } from "./animationFrameService";
 import { IColumnChooserFactory, ShowColumnChooserParams } from "../interfaces/iColumnChooserFactory";
+import { FilterManager } from "../filter/filterManager";
+import { isIOSUserAgent } from "../utils/browser";
 
 interface BaseShowColumnMenuParams {
     column?: Column,
@@ -61,6 +63,7 @@ export class MenuService extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('columnChooserFactory') private columnChooserFactory: IColumnChooserFactory;
+    @Autowired('filterManager') private filterManager: FilterManager;
 
     private activeMenuFactory: IMenuFactory;
 
@@ -74,11 +77,10 @@ export class MenuService extends BeanStub {
     }
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
-        const menuFactory: IMenuFactory = !params.column.getMenuParams()?.enableNewFormat && this.enterpriseMenuFactory
+        const menuFactory: IMenuFactory = this.enterpriseMenuFactory && this.isLegacyMenuEnabled(params.column)
             ? this.enterpriseMenuFactory
             : this.filterMenuFactory;
         this.showColumnMenuCommon(menuFactory, params, params.containerType, true);
-
     }
 
     public showHeaderContextMenu(column: Column | undefined, mouseEvent?: MouseEvent, touchEvent?: TouchEvent): void {
@@ -114,8 +116,63 @@ export class MenuService extends BeanStub {
         this.columnChooserFactory?.hideActiveColumnChooser();
     }
 
-    public isMenuEnabled(column: Column): boolean {
-        return this.activeMenuFactory.isMenuEnabled(column);
+    public isColumnMenuInHeaderEnabled(column: Column): boolean {
+        return !column.getColDef().suppressMenu && this.activeMenuFactory.isMenuEnabled(column);
+    }
+
+    public isFilterMenuInHeaderEnabled(column: Column): boolean {
+        return !column.getColDef().suppressHeaderFilter && this.filterManager.isFilterAllowed(column);
+    }
+
+    public isHeaderContextMenuEnabled(column?: Column): boolean {
+        return !column?.getColDef().suppressHeaderContextMenu && this.getColumnMenuType(column) === 'new';
+    }
+
+    public isHeaderMenuButtonEnabled(): boolean {
+        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device/
+        // However if suppressMenuHide is set to true the menu will be displayed alwasys, so it's ok
+        // to show it on iPad in this case (as hover isn't needed). If suppressMenuHide
+        // is false (default) user will need to use longpress to display the menu.
+        const menuHides = !this.gridOptionsService.get('suppressMenuHide');
+
+        const onIpadAndMenuHides = isIOSUserAgent() && menuHides;
+
+        return !onIpadAndMenuHides;
+    }
+
+    public isHeaderFilterButtonEnabled(column: Column): boolean {
+        return this.isFilterMenuInHeaderEnabled(column) && !this.isLegacyMenuEnabled(column) && !this.isFloatingFilterButtonDisplayed(column);
+    }
+
+    public isFilterMenuItemEnabled(column: Column): boolean {
+        return this.filterManager.isFilterAllowed(column) && !this.isLegacyMenuEnabled(column) &&
+            !this.isFilterMenuInHeaderEnabled(column) && !this.isFloatingFilterButtonDisplayed(column);
+    }
+
+    public isColumnMenuAnchoringEnabled(column?: Column): boolean {
+        return !this.isLegacyMenuEnabled(column);
+    }
+
+    public areAdditionalColumnMenuItemsEnabled(column?: Column | null): boolean {
+        return this.getColumnMenuType(column) === 'new';
+    }
+
+    public isLegacyMenuEnabled(column?: Column): boolean {
+        return this.getColumnMenuType(column) === 'legacy';
+    }
+
+    public isFloatingFilterButtonEnabled(column: Column): boolean {
+        const colDef = column.getColDef();
+        return !colDef.suppressFloatingFilterButton ?? !colDef.floatingFilterComponentParams?.suppressFilterButton;
+    }
+
+    private getColumnMenuType(column?: Column | null): 'legacy' | 'new' {
+        const colDef = column ? column.getColDef() : this.gridOptionsService.get('defaultColDef');
+        return colDef?.columnMenu ?? 'legacy';
+    }
+
+    private isFloatingFilterButtonDisplayed(column: Column): boolean {
+        return !!column.getColDef().floatingFilter && this.isFloatingFilterButtonEnabled(column);
     }
 
     private showColumnMenuCommon(menuFactory: IMenuFactory, params: ShowColumnMenuParams, containerType: ContainerType, filtersOnly?: boolean): void {

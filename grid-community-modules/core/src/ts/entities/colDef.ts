@@ -58,7 +58,11 @@ export interface AbstractColDef<TData = any, TValue = any> {
      */
     cellAriaRole?: string;
 
-    menuParams?: MenuParams;
+    columnMenu?: 'legacy' | 'new';
+
+    suppressHeaderFilter?: boolean;
+
+    suppressHeaderContextMenu?: boolean;
 }
 
 /** Configuration options for column groups in AG Grid.  */
@@ -352,6 +356,11 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      */
     floatingFilter?: boolean;
+    /**
+     * If `true`, the button in the floating filter that opens the parent filter in a popup will not be displayed.
+     * Only applies if `floatingFilter = true`.
+     */
+    suppressFloatingFilterButton?: boolean;
 
     // *** Column Headers *** //
 
@@ -769,16 +778,6 @@ export interface ColumnChooserParams {
     contractColumnSelection?: boolean;
     /** Custom Columns Panel layout */
     columnLayout?: (ColDef | ColGroupDef)[];
-}
-
-export interface MenuParams {
-    enableNewFormat?: boolean;
-    suppressHeaderFilterActive?: boolean;
-    enableHeaderFilterButton?: boolean;
-    suppressHeaderMenuButton?: boolean;
-    enableHeaderContextMenu?: boolean;
-    enableFloatingFilterActive?: boolean;
-    suppressColumnMenuAnchoring?: boolean
 }
 
 export interface BaseColDefParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {

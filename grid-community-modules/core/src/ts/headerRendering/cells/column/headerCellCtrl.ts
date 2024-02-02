@@ -52,6 +52,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private displayName: string | null;
     private draggable: boolean;
     private menuEnabled: boolean;
+    private openFilterEnabled: boolean;
     private dragSourceElement: HTMLElement | undefined;
 
     private userCompDetails: UserCompDetails;
@@ -198,6 +199,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             displayName: this.displayName!,
             enableSorting: this.column.isSortable(),
             enableMenu: this.menuEnabled,
+            enableFilterButton: this.openFilterEnabled,
             showColumnMenu: (buttonElement: HTMLElement) => {
                 this.menuService.showColumnMenu({
                     column: this.column,
@@ -211,6 +213,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
                     mouseEvent,
                     positionBy: 'mouse'
                 });
+            },
+            showFilter: (buttonElement: HTMLElement) => {
+                this.menuService.showFilterMenu({
+                    column: this.column,
+                    buttonElement: buttonElement,
+                    containerType: 'columnFilter',
+                    positionBy: 'button'
+                })
             },
             progressSort: (multiSort?: boolean) => {
                 this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
@@ -243,32 +253,27 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             this.onEnterKeyDown(e);
         }
         if (e.key === KeyCode.DOWN && e.altKey) {
-            this.showMenuOnKeyPress(e);
+            this.showMenuOnKeyPress(e, false);
         }
     }
 
     private onEnterKeyDown(e: KeyboardEvent): void {
         if (e.ctrlKey || e.metaKey) {
-            this.showMenuOnKeyPress(e);
+            this.showMenuOnKeyPress(e, true);
         } else if (this.sortable) {
             const multiSort = e.shiftKey;
             this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
         }
     }
 
-    private showMenuOnKeyPress(e: KeyboardEvent): void {
-        /// THIS IS BAD - we are assuming the header is not a user provided comp
-        const headerComp = this.comp.getUserCompInstance() as HeaderComp;
-        if (!headerComp) { return; }
+    private showMenuOnKeyPress(e: KeyboardEvent, isFilterShortcut: boolean): void {
+        const headerComp = this.comp.getUserCompInstance();
+        if (!headerComp || !(headerComp instanceof HeaderComp)) { return; }
 
-        if (this.menuEnabled && headerComp.showMenu) {
+        // the header comp knows what features are enabled, so let it handle the shortcut
+        if (headerComp.onMenuKeyboardShortcut(isFilterShortcut)) {
             e.preventDefault();
-            headerComp.showMenu();
         }
-    }
-
-    public isMenuEnabled(): boolean {
-        return this.menuEnabled;
     }
 
     private onFocusIn(e: FocusEvent) {
@@ -382,8 +387,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private updateState(): void {
-        const colDef = this.column.getColDef();
-        this.menuEnabled = this.menuService.isMenuEnabled(this.column) && !colDef.suppressMenu;
+        this.menuEnabled = this.menuService.isColumnMenuInHeaderEnabled(this.column);
+        this.openFilterEnabled = this.menuService.isFilterMenuInHeaderEnabled(this.column);
         this.sortable = this.column.isSortable();
         this.displayName = this.calculateDisplayName();
         this.draggable = this.workOutDraggable();
@@ -743,7 +748,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private addActiveHeaderMouseListeners(): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
         const clickListener = () => this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CLICKED, this.column);
-        const contextMenuListener = (event: MouseEvent) => this.handleContextMenuMouseEvent(event, undefined, this.column, this.menuEnabled);
+        const contextMenuListener = (event: MouseEvent) => this.handleContextMenuMouseEvent(event, undefined, this.column);
 
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);

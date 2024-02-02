@@ -4,7 +4,6 @@ import { IComponent } from "../../../interfaces/iComponent";
 import { AgGridCommon } from "../../../interfaces/iCommon";
 import { SortController } from "../../../sortController";
 import { firstExistingValue } from "../../../utils/array";
-import { isIOSUserAgent } from "../../../utils/browser";
 import { removeFromParent, setDisplayed } from "../../../utils/dom";
 import { exists } from "../../../utils/generic";
 import { createIconNoSpan } from "../../../utils/icon";
@@ -16,7 +15,7 @@ import { SortIndicatorComp } from "./sortIndicatorComp";
 import { ColumnModel } from "../../../columns/columnModel";
 import { Events } from "../../../eventKeys";
 import { SortDirection } from "../../../entities/colDef";
-import { MenuService, ShowColumnMenuParams } from "../../../misc/menuService";
+import { MenuService } from "../../../misc/menuService";
 
 export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column the header is for. */
@@ -37,16 +36,26 @@ export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon
      */
     enableMenu: boolean;
     /**
+     * Whether filter button should be displayed in the header.
+     */
+    enableFilterButton: boolean;
+    /**
      * Callback to request the grid to show the column menu.
-     * Pass in the html element of the column menu to have the
-     *  grid position the menu over the button.
+     * Pass in the html element of the column menu button to have the
+     * grid position the menu over the button.
      */
     showColumnMenu: (source: HTMLElement) => void;
     /**
      * Callback to request the grid to show the column menu.
      * Similar to `showColumnMenu`, but will position the menu next to the provided `mouseEvent`.
      */
-     showColumnMenuAfterMouseClick: (mouseEvent: MouseEvent | Touch) => void;
+    showColumnMenuAfterMouseClick: (mouseEvent: MouseEvent | Touch) => void;
+    /**
+     * Callback to request the grid to show the filter.
+     * Pass in the html element of the filter button to have the
+     * grid position the menu over the button.
+     */
+    showFilter: (source: HTMLElement) => void;
     /**
      * Callback to progress the sort for this column.
      * The grid will decide the next sort direction eg ascending, descending or 'no sort'.
@@ -97,9 +106,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     @Autowired('columnModel')  private readonly  columnModel: ColumnModel;
 
     @RefSelector('eFilter') private eFilter: HTMLElement;
-    @RefSelector('eFilterButton') private eFilterButton: HTMLElement;
+    @RefSelector('eFilterButton') private eFilterButton?: HTMLElement;
     @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
-    @RefSelector('eMenu') private eMenu: HTMLElement;
+    @RefSelector('eMenu') private eMenu?: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('eText') private eText: HTMLElement;
 
@@ -119,6 +128,8 @@ export class HeaderComp extends Component implements IHeaderComp {
     private currentDisplayName: string;
     private currentTemplate: string | null | undefined;
     private currentShowMenu: boolean;
+    private currentShowFilterButton: boolean;
+    private currentShowFilterIcon: boolean;
     private currentSuppressMenuHide: boolean;
     private currentSort: boolean | undefined;
 
@@ -136,6 +147,8 @@ export class HeaderComp extends Component implements IHeaderComp {
         // a changing template is to difficult for what it's worth.
         if (this.workOutTemplate() != this.currentTemplate) { return false; }
         if (this.workOutShowMenu() != this.currentShowMenu) { return false; }
+        if (this.workOutShowFilterButton() != this.currentShowFilterButton) { return false; }
+        if (this.workOutShowFilterIcon() != this.currentShowFilterIcon) { return false; }
         if (this.workOutSort() != this.currentSort) { return false; }
         if (this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) { return false; }
 
@@ -188,24 +201,18 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        const { gridOptionsService, menuService } = this;
+        const { gridOptionsService } = this;
 
         if (gridOptionsService.get('suppressTouch')) { return; }
 
         const touchListener = new TouchListener(this.getGui(), true);
-        const suppressMenuHide = gridOptionsService.get('suppressMenuHide');
+        const suppressMenuHide = this.shouldSuppressMenuHide();
         const tapMenuButton = suppressMenuHide && exists(this.eMenu);
-        const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu, true) : touchListener;
+        const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu!, true) : touchListener;
 
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
-            const showMenuFn = (event: TapEvent | LongTapEvent) => {
-                menuService.showColumnMenu({
-                    column: this.params.column,
-                    mouseEvent: event.touchStart,
-                    positionBy: 'mouse'
-                });
-            };
+            const showMenuFn = (event: TapEvent | LongTapEvent) => this.params.showColumnMenuAfterMouseClick(event.touchStart);
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
 
@@ -214,7 +221,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 const target = event.touchStart.target as HTMLElement;
                 // When suppressMenuHide is true, a tap on the menu icon will bubble up
                 // to the header container, in that case we should not sort
-                if (suppressMenuHide && this.eMenu.contains(target)) { return; }
+                if (suppressMenuHide && this.eMenu?.contains(target)) { return; }
 
                 this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
             };
@@ -232,19 +239,15 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutShowMenu(): boolean {
-        if (this.params.column.getMenuParams()?.suppressHeaderMenuButton) {
-            return false;
-        }
-        // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device/
-        // However if suppressMenuHide is set to true the menu will be displayed alwasys, so it's ok
-        // to show it on iPad in this case (as hover isn't needed). If suppressMenuHide
-        // is false (default) user will need to use longpress to display the menu.
-        const menuHides = !this.gridOptionsService.get('suppressMenuHide');
+        return this.params.enableMenu && this.menuService.isHeaderMenuButtonEnabled();
+    }
 
-        const onIpadAndMenuHides = isIOSUserAgent() && menuHides;
-        const showMenu = this.params.enableMenu && !onIpadAndMenuHides;
+    private workOutShowFilterButton(): boolean {
+        return this.params.enableFilterButton && this.menuService.isHeaderFilterButtonEnabled(this.params.column);
+    }
 
-        return showMenu;
+    private workOutShowFilterIcon(): boolean {
+        return !this.params.enableFilterButton || this.menuService.isLegacyMenuEnabled(this.params.column);
     }
 
     private shouldSuppressMenuHide(): boolean {
@@ -260,26 +263,32 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.currentShowMenu = this.workOutShowMenu();
         if (!this.currentShowMenu) {
             removeFromParent(this.eMenu);
+            this.eMenu = undefined;
             return;
         }
 
-        this.addInIcon('menuAlt', this.eMenu, this.params.column);
+        const isLegacyMenu = this.menuService.isLegacyMenuEnabled(this.params.column)
+        this.addInIcon(isLegacyMenu ? 'menu' : 'menuAlt', this.eMenu, this.params.column);
+        this.eMenu.classList.toggle('ag-header-menu-icon', !isLegacyMenu);
 
         this.currentSuppressMenuHide = this.shouldSuppressMenuHide();
-        this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
+        this.addManagedListener(this.eMenu, 'click', () => this.params.showColumnMenu(this.eMenu!));
         this.eMenu.classList.toggle('ag-header-menu-always-show', this.currentSuppressMenuHide);
     }
 
-    public showMenu(buttonElement?: HTMLElement) {
-        const params: ShowColumnMenuParams = this.currentShowMenu ? {
-            column: this.params.column,
-            buttonElement: buttonElement ?? this.eMenu,
-            positionBy: 'button'
-        } : {
-            column: this.params.column,
-            positionBy: 'auto'
-        };
-        this.menuService.showColumnMenu(params);
+    public onMenuKeyboardShortcut(isFilterShortcut: boolean): boolean {
+        const { column } = this.params;
+        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled(column);
+        if (isFilterShortcut && !isLegacyMenuEnabled) {
+            if (this.menuService.isFilterMenuInHeaderEnabled(column)) {
+                this.params.showFilter(this.eFilterButton ?? this.eMenu ?? this.getGui());
+                return true;
+            }
+        } else if (this.params.enableMenu || (!isLegacyMenuEnabled && this.menuService.isHeaderContextMenuEnabled(column))) {
+            this.params.showColumnMenu(this.eMenu ?? this.eFilterButton ?? this.getGui());
+            return true;
+        }
+        return false;
     }
 
     private workOutSort(): boolean | undefined {
@@ -358,23 +367,22 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private setupFilterIcon(): void {
         if (!this.eFilter) { return; }
-        this.configureFilter(!this.params.column.getMenuParams()?.suppressHeaderFilterActive, this.eFilter, this.onFilterChangedIcon.bind(this));
+        this.currentShowFilterIcon = this.workOutShowFilterIcon();
+        this.configureFilter(this.currentShowFilterIcon, this.eFilter, this.onFilterChangedIcon.bind(this));
     }
 
     private setupFilterButton(): void {
-        const { column } = this.params;
+        if (!this.eFilterButton) { return; }
+        this.currentShowFilterButton = this.workOutShowFilterButton();
         const configured = this.configureFilter(
-            !!column.getMenuParams()?.enableHeaderFilterButton,
+            this.currentShowFilterButton,
             this.eFilterButton,
             this.onFilterChangedButton.bind(this)
         );
         if (configured) {
-            this.addManagedListener(this.eFilterButton, 'click', () => this.menuService.showFilterMenu({
-                column,
-                buttonElement: this.eFilterButton,
-                containerType: 'columnFilter',
-                positionBy: 'button'
-            }));
+            this.addManagedListener(this.eFilterButton, 'click', () => this.params.showFilter(this.eFilterButton!));
+        } else {
+            this.eFilterButton = undefined;
         }
     }
 
@@ -399,6 +407,6 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onFilterChangedButton(): void {
         const filterPresent = this.params.column.isFilterActive();
-        this.eFilterButton.classList.toggle('ag-filter-active', filterPresent);
+        this.eFilterButton!.classList.toggle('ag-filter-active', filterPresent);
     }
 }

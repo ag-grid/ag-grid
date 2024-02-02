@@ -10,6 +10,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
 import { CtrlsService } from '../../../ctrlsService';
 import { setAriaRole } from '../../../utils/aria';
+import { MenuService } from '../../../misc/menuService';
 
 @Bean('filterMenuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -18,6 +19,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('menuService') private menuService: MenuService;
 
     private hidePopup: () => void;
     private tabListener: () => null;
@@ -71,7 +73,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         const afterGuiDetached = () => filterWrapper.filterPromise?.then(filter => filter?.afterGuiDetached?.());
 
-        const anchorToElement = column?.getMenuParams()?.suppressColumnMenuAnchoring ? undefined : (eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui());
+        const anchorToElement = this.menuService.isColumnMenuAnchoringEnabled(column) ? (eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui()) : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             column.setMenuVisible(false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;
