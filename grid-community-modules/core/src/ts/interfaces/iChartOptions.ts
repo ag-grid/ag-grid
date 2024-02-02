@@ -125,6 +125,7 @@ export type ChartType =
     | 'radarLine'
     | 'radarArea'
     | 'nightingale'
+    | 'radialBar'
     | 'sunburst'
     | 'rangeBar'
     | 'rangeArea'
