@@ -124,7 +124,7 @@ const HeaderNav = ({ path, currentFramework }) => {
     return (
         <>
             {isDocsUrl ? (
-                <>
+                <div className={styles.docsNavBtnSearchContainer}>
                     <button
                         id="mobile-docs-nav-button"
                         className={classnames(styles.mobileNavButton, 'button-secondary')}
@@ -140,7 +140,7 @@ const HeaderNav = ({ path, currentFramework }) => {
                     </button>
 
                     <Search currentFramework={currentFramework} />
-                </>
+                </div>
             ) : null}
 
             {IS_SSR && (
@@ -202,7 +202,7 @@ export const SiteHeader = ({ path, currentFramework }) => {
     return (
         <>
             <header className={classnames(styles.header, 'site-header')}>
-                <div className={classnames(styles.headerInner, 'layout-page-max-width')}>
+                <div className={styles.headerInner}>
                     <a
                         href="/"
                         aria-label="Home"

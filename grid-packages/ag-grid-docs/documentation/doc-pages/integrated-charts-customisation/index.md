@@ -112,14 +112,14 @@ These overrides are specific to the [AG Charts Nightingale Series](https://chart
 
 These overrides are specific to the [AG Charts Range Bar Series](https://charts.ag-grid.com/react/range-bar-series/). For full list of overrides see [Range Bar Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-range-bar).
 
-<grid-example title='Box Plot Overrides' name='range-bar-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Box Plot Overrides' name='range-bar-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 
 ### Box Plot Overrides
 
 These overrides are specific to the [AG Charts Box Plot Series](https://charts.ag-grid.com/react/box-plot-series/). For full list of overrides see [Box Plot Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-box-plot).
 
-<grid-example title='Box Plot Overrides' name='box-plot-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Box Plot Overrides' name='box-plot-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Custom Chart Themes
 
