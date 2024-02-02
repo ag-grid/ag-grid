@@ -1,4 +1,4 @@
-import { _Scene, _Theme, _Util } from 'ag-charts-enterprise';
+import { _Scene, _Theme, _Util } from 'ag-charts-community';
 import { ChartType } from '@ag-grid-community/core';
 import { MiniChart } from '../miniChart';
 import { ThemeTemplateParameters } from '../../miniChartsContainer';
