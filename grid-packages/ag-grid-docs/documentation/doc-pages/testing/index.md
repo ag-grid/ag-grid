@@ -454,11 +454,9 @@ testing with AG Grid in this section.
 |     imports: [AgGridAngular],
 |     template: `&lt;ag-grid-angular
 |         [rowData]="rowData"
-|         [columnDefs]="columnDefs"
-|         [modules]="modules">&lt;/ag-grid-angular>`,
+|         [columnDefs]="columnDefs">&lt;/ag-grid-angular>`,
 | })
 | export class TestHostComponent {
-|     modules: Module[] = [ClientSideRowModelModule];
 | 
 |     rowData: any[] = [{ name: 'Test Name', number: 42 }];
 |     columnDefs: ColDef[] = [
@@ -657,6 +655,39 @@ testing with AG Grid in this section.
 |     expect(cellElements[1].textContent).toEqual("100");
 |     expect(cellElements[2].textContent).toEqual("£100");
 | });
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+| ## Testing with Angular Testing Library
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<p>It is also possible to use <a href="https://testing-library.com/docs/angular-testing-library/intro/" target="_blank">Angular Testing Library</a> to test AG Grid. Here is one example showing how to test a row click handler that displays the last clicked row above the grid. </p>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} >
+|&lt;div data-testid="rowClicked">Row Clicked: {{ rowClicked?.make }}&lt;/div>
+|&lt;ag-grid-angular [columnDefs]="columnDefs" [rowData]="rowData" (onRowClicked)="onRowClicked($event)"> &lt;/ag-grid-angular>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} >
+|import { render, screen } from '@testing-library/angular';
+|import userEvent from '@testing-library/user-event';
+|
+|it('Test cell clicked run row handler', async () => {
+|   render(GridWrapperComponent);
+|
+|   const row = await screen.findByText('Ford');
+|
+|   await userEvent.click(row);
+|
+|   const rowClicked = await screen.findByTestId('rowClicked');
+|   expect(rowClicked.textContent).toBe('Row Clicked: Ford');
+|});
 </snippet>
 </framework-specific-section>
 
