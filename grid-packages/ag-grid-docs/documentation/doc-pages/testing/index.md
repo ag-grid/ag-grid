@@ -454,11 +454,9 @@ testing with AG Grid in this section.
 |     imports: [AgGridAngular],
 |     template: `&lt;ag-grid-angular
 |         [rowData]="rowData"
-|         [columnDefs]="columnDefs"
-|         [modules]="modules">&lt;/ag-grid-angular>`,
+|         [columnDefs]="columnDefs">&lt;/ag-grid-angular>`,
 | })
 | export class TestHostComponent {
-|     modules: Module[] = [ClientSideRowModelModule];
 | 
 |     rowData: any[] = [{ name: 'Test Name', number: 42 }];
 |     columnDefs: ColDef[] = [
@@ -661,6 +659,39 @@ testing with AG Grid in this section.
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
+| ## Testing with Angular Testing Library
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<p>It is also possible to use <a href="https://testing-library.com/docs/angular-testing-library/intro/" target="_blank">Angular Testing Library</a> to test AG Grid. Here is one example showing how to test a row click handler that displays the last clicked row above the grid. </p>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} >
+|&lt;div data-testid="rowClicked">Row Clicked: {{ rowClicked?.make }}&lt;/div>
+|&lt;ag-grid-angular [columnDefs]="columnDefs" [rowData]="rowData" (onRowClicked)="onRowClicked($event)"> &lt;/ag-grid-angular>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false} >
+|import { render, screen } from '@testing-library/angular';
+|import userEvent from '@testing-library/user-event';
+|
+|it('Test cell clicked run row handler', async () => {
+|   render(GridWrapperComponent);
+|
+|   const row = await screen.findByText('Ford');
+|
+|   await userEvent.click(row);
+|
+|   const rowClicked = await screen.findByTestId('rowClicked');
+|   expect(rowClicked.textContent).toBe('Row Clicked: Ford');
+|});
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | ## Applying Styles To The Grid When Testing
 |
 | Although not strictly necessary when unit testing the grid, it is still useful to see the grid
@@ -709,295 +740,170 @@ testing with AG Grid in this section.
 </snippet>
 </framework-specific-section>
 
+
 <framework-specific-section frameworks="react">
 |
-| ## Waiting for the Grid to be Initialised
-|
-| Due to the asynchronous nature of React we cannot simply mount the Grid and assume it'll be ready for
-| testing in the next step - we need to wait for the Grid to be ready before testing it.
-|
-| We can do this in one of two ways - wait for the `gridReady` event to be fired, or wait for the
-| Grid API to be set.
-|
-| The first requires a code change and can be tricky to hook into - the latter is unobtrusive and
-| easier to use.
-|
-| We can create a utility function that will wait for the Grid API to be set for a set amount of time/attempts:
+| ## Testing with React Testing Library
 |
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
+<p>In the following examples we will be using <a href="https://testing-library.com/docs/react-testing-library/intro/" target="_blank">React Testing Library</a> to test AG Grid. Each example will share a common App starting point that is defined below. </p>
+</framework-specific-section>
+
+
+<framework-specific-section frameworks="react">
 <snippet transform={false}>
-| export const ensureGridApiHasBeenSet = component => {
-|     return waitForAsyncCondition(() => {
-|         return component.instance().api !== undefined
-|     }, 5)
+| 
+| const App = () => {
+|     const [rowData] = useState([
+|         { make: 'Toyota', model: 'Celica', price: 35000 },
+|         { make: 'Ford', model: 'Mondeo', price: 32000 },
+|         { make: 'Porsche', model: 'Boxster', price: 72000 }
+|     ]);
+|     const [colDefs, setColDefs] = useState&lt;ColDef[]>([
+|         { field: 'make' },
+|         { field: 'model' },
+|         { field: 'price' },
+|     ]);
+| 
+|     return (
+|         &lt;div className="ag-theme-quartz" style={{ height: 400, width: 600 }}>
+|             &lt;AgGridReact
+|                 rowData={rowData}
+|                 columnDefs={colDefs} />
+|         &lt;/div>
+|     );
 | };
-|
-| export const waitForAsyncCondition = (condition, maxAttempts, attempts = 0) => new Promise(function (resolve, reject) {
-|     (function waitForCondition() {
-|         // we need to wait for the gridReady event before we can start interacting with the grid
-|         // in this case we're looking at the api property in our App component, but it could be
-|         // anything (ie a boolean flag)
-|         if (condition()) {
-|             // once our condition has been met we can start the tests
-|             return resolve();
-|         }
-|
-|         attempts++;
-|
-|         if (attempts >= maxAttempts) {
-|             reject("Max timeout waiting for condition")
-|         }
-|
-|         // not set - wait a bit longer
-|         setTimeout(waitForCondition, 10);
-|     })();
-| });
 </snippet>
 </framework-specific-section>
 
-<framework-specific-section frameworks="react">
-| The first function is what we'll use to wait for the Grid API - the 2nd one is more generic and will be
-| useful for waiting for Grid components to be ready (see later).
-|
-| We can use `ensureGridApiHasBeenSet` before our tests are executed, typically in the `beforeEach`
-| hook:
-</framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-| beforeEach((done) => {
-|     component = mount((&lt;GridWithStatefullComponent/>));
-|     agGridReact = component.find(AgGridReact).instance();
-|     // don't start our tests until the grid is ready
-|     ensureGridApiHasBeenSet(component).then(() => done(), () => fail("Grid API not set within expected time limits"));
+| ### Testing Cell Contents
 |
-| });
-|
-| it('stateful component returns a valid component instance', () => {
-|     expect(agGridReact.api).toBeTruthy();
-|
-|     // ..use the Grid API...
-| });
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-| We can now safely test the Grid component safe in the knowledge that it's been fully initialised.
-|
-| ## Waiting for Grid Components to be Instantiated
-|
-| In the same way we need to wait for the Grid to be ready we also need to do something similar for user supplied
-| Grid components.
-|
-| For example, let us suppose a user provides a custom [Editor Component](/component-cell-editor/) and wants
-| to test this within the context of the Grid.
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-| class EditorComponent extends Component {
-|     constructor(props) {
-|         super(props);
-|
-|         this.state = {
-|             value: this.props.value
-|         }
-|     }
-|
-|     render() {
-|         return (
-|             &lt;input type="text"
-|                    value={this.state.value}
-|                    onChange={this.handleChange}
-|                    style={{width: "100%"}} />
-|         )
-|     }
-|
-|     handleChange = (event) => {
-|         this.setState({value: event.target.value});
-|     }
-|
-|     getValue() {
-|         return this.state.value;
-|     }
-|
-|     // for testing
-|     setValue(newValue) {
-|         this.setState({
-|             value: newValue
-|         })
-|     }
-|
-|     isCancelBeforeStart() {
-|         return false;
-|     }
-|
-|     isCancelAfterEnd() {
-|         return false;
-|     };
-| }
-|
-| class GridWithStatefullComponent extends Component {
-|     constructor(props) {
-|         super(props);
-|
-|         this.state = {
-|             columnDefs: [{
-|                 field: "age",
-|                 editable: true,
-|                 cellEditor: EditorComponent
-|             }],
-|             rowData: [{ age: 24 }]
-|         };
-|     }
-|
-|     onGridReady(params) {
-|         this.api = params.api;
-|     }
-|
-|     render() {
-|         return (
-|             &lt;div className="ag-theme-balham">
-|                 &lt;AgGridReact
-|                     columnDefs={this.state.columnDefs}
-|                     onGridReady={this.onGridReady.bind(this)}
-|                     rowData={this.state.rowData} />
-|             &lt;/div>
-|         );
-|     }
-| }
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-| We can now test this Editor Component by using the Grid API to initiate testing, gain access to the
-| created Editor Instance and then invoke methods on it:
+| The following example shows how to validate the grid is displaying the expected values including those cells using a custom cell renderer.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false}>
-| it('cell should be editable and editor component usable', async() => {
-|     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div>Age: 24</div>`);
-|
-|     // we use the API to start and stop editing
-|     // in a real e2e test we could actually double click on the cell etc
-|     agGridReact.api.startEditingCell({
-|         rowIndex: 0,
-|         colKey: 'age'
-|     });
-|
-|     await waitForAsyncCondition(
-|         () => agGridReact.api.getCellEditorInstances() &&
-|               agGridReact.api.getCellEditorInstances().length > 0, 5)
-|               .then(() => null, () => fail("Editor instance not created within expected time"));
-|
-|     const instances = agGridReact.api.getCellEditorInstances();
-|     expect(instances.length).toEqual(1);
-|
-|     const editorComponent = instances[0];
-|     editorComponent.setValue(50);
-|
-|     agGridReact.api.stopEditing();
-|
-|     await waitForAsyncCondition(
-|         () => agGridReact.api.getCellRendererInstances() &&
-|               agGridReact.api.getCellRendererInstances().length > 0, 5)
-|               .then(() => null, () => fail("Renderer instance not created within expected time"));
-|
-|     expect(component.render().find('.ag-cell-value').html()).toEqual(`<div>Age: 50</div>`);
-| });
-</snippet>
-</framework-specific-section>
-
-
-<framework-specific-section frameworks="react">
-| Note that we make use of the `waitForAsyncCondition` utility described above to wait for
-| the Editor Component to be instantiated.
-|
-| We also use the Grid API to initiate and end testing as we're can't readily perform double clicks in a unit
-| testing environment (but could if doing e2e with something like Protractor for example).
-|
-| ## Testing React Hooks with Enzyme
-|
-|By default testing libraries won't return an accessible instance of a hook - in order to get access to methods you'll need
-|to wrap your component with a `forwardRef` and then expose methods you want to test with the `useImperativeHandle` hook.
-|
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform={false} language="jsx">
-|import React, {forwardRef, useImperativeHandle, useState} from 'react';
-|import {AgGridReact} from 'ag-grid-react';
-|
-|export default forwardRef(function (props, ref) {
-|    const columnDefs = [...columns...];
-|    const rowData = [...rowData...];
-|
-|    const [api, setApi] = useState(null);
-|
-|    const onGridReady = (params) => {
-|        setApi(params.api);
-|    };
-|
-|    useImperativeHandle(ref, () => {
-|        return {
-|            getApi() {
-|                return api;
-|            }
-|        }
-|    });
-|
-|    return (
-|        &lt;AgGridReact
-|            columnDefs={columnDefs}
-|            onGridReady={onGridReady}
-|            rowData={rowData}
-|        />
-|    );
-|});
+| // Custom Cell Renderer
+| const BuyCellRenderer = (props: CustomCellRendererProps) => {
+|     const buttonClick = () => props.node.setDataValue('bought', true);
+| 
+|     return (
+|         &lt;>
+|             {props.data?.bought ?
+|                 &lt;span>Bought a {props.data?.make}&lt;/span> :
+|                 &lt;button onClick={buttonClick}>Buy: {props.data?.make}&lt;/button>
+|             }
+|         &lt;/>
+|     );
+| };
+| 
+| // Column Definitions with value formatter and cellRenderer
+| const [colDefs, setColDefs] = useState&lt;ColDef[]>([
+|     { field: 'make' },
+|     { field: 'model' },
+|     { field: 'price', valueFormatter: (params) => "$" + params.value.toLocaleString()},
+|     { field: 'bought', cellRenderer: BuyCellRenderer }
+| ]);
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-|You can then test this hook by accessing it via a `ref`:
+| The code to test the valueFormatter and cellRenderer is as follows.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false}>
-|const ensureGridApiHasBeenSet = async (componentRef) => {
-|    await act(async () => {
-|        await new Promise(function (resolve, reject) {
-|            (function waitForGridReady() {
-|               // access the exposed "getApi" method on our hook
-|                if (componentRef.current.getApi()) {
-|                    if (componentRef.current.getApi().getRowNode(8)) {
-|                        return resolve();
-|                    }
+| test('value formatter and cell renderer', async () => {
+|     // First render the App component we wish to tests
+|     render(&lt;App />);
+| 
+|     // Test the value formatter by searching for the correct price string
+|     expect(screen.getByText('$72,000')).toBeDefined();
+| 
+|     // Now find the expected content of the cell renderer
+|     const porscheButton = await screen.findByText('Buy: Porsche');
+|     expect(porscheButton).toBeDefined();
+| 
+|     // Click the cell renderer to test it changes correctly
+|     act(() => porscheButton.click());
+|     expect(screen.findByText('Bought a Porsche')).toBeDefined();
+| });
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+| ### Clicking Rows
 |
-|                }
-|                setTimeout(waitForGridReady, 10);
-|            })();
-|        })
+| To test clicking rows it is recommend to use `userEvent` from `testing-library/user-event` to trigger row click event handlers. The following test displays the last clicked row above the grid.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
+|&lt;div data-testid="rowClicked">Row Clicked: {rowClicked?.make}&lt;/div>
+|&lt;div className="ag-theme-quartz" style={{ height: 400, width: 600 }}>
+|   &lt;AgGridReact
+|       rowData={rowData}
+|       columnDefs={colDefs}
+|       onRowClicked={onRowClicked} />
+|&lt;/div>
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
+|test('render grid and click a row', async () => {
+|   render(&lt;App />);
 |
-|    });
-|};
+|   const row = await screen.findByText('Ford');
+|   expect(row).toBeDefined();
 |
-|beforeEach(async () => {
-|    const ref = React.createRef()
-|    component = mount(&lt;App ref={ref}/>);
-|    agGridReact = component.find(AgGridReact).instance();
-|    await ensureGridApiHasBeenSet(ref);
+|   await userEvent.click(row);
+|
+|   const rowClicked = await screen.findByTestId('rowClicked');
+|   expect(rowClicked.textContent).toBe('Row Clicked: Ford');
 |});
 </snippet>
 </framework-specific-section>
 
 
 <framework-specific-section frameworks="react">
-|Note that we're accessing exposed `getApi` method via the `ref`:  `componentRef.current.getApi()`.
+| ### Cell Editing
 |
-|A full working example can be found in the following <a href="https://github.com/seanlandsman/ag-grid-react-hook-testing">GitHub Repo</a>.
+| The following example shows how to mimic a user editing a cell's value.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<snippet transform={false}>
+|test('double click cell to edit', async () => {
+|   render(&lt;App />);
+|
+|   const porschePrice = await screen.findByText('$72,000')
+|   expect(porschePrice).toBeDefined();
+|
+|   // double click to enter edit mode       
+|   await userEvent.dblClick(porschePrice);
+|
+|   // Find the input within the cell.
+|   const input: HTMLInputElement = within(porschePrice).getByLabelText('Input Editor');
+|   // Type the new price value
+|   await userEvent.keyboard('100000');
+|
+|   // Press enter to save
+|   fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+|
+|   expect(screen.findByText('$100,000')).toBeDefined();
+|
+|});
+</snippet>
+</framework-specific-section>
+
+
+<framework-specific-section frameworks="react">
+<p>All the tests above and more can be found in the following <a href="https://github.com/ag-grid/ag-grid-react-example/tree/latest/src/tests">GitHub Repo</a>.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">

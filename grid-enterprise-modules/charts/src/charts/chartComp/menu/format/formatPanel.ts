@@ -134,6 +134,7 @@ export class FormatPanel extends Component {
             'radar-area': ['axis'],
             'nightingale': ['axis'],
             'range-bar': ['axis', 'navigator'],
+            'range-area': ['axis', 'navigator'],
             'waterfall': ['axis', 'navigator'],
             'box-plot': ['axis', 'navigator'],
         };
