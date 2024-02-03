@@ -1,15 +1,17 @@
 export interface ChartGroupsDef {
+    // community chart groups
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
     barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[],
     pieGroup?: ('pie' | 'doughnut')[],
     lineGroup?: ('line')[],
     scatterGroup?: ('scatter' | 'bubble')[],
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[],
-    histogramGroup?: ('histogram')[],
+    combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
+
+    // enterprise chart groups
     polarGroup?: ('radarLine' | 'radarArea' | 'nightingale')[],
     statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
     specializedGroup?: ('waterfall')[],
-    combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
 }
 
 export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
@@ -38,9 +40,6 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
         'area',
         'stackedArea',
         'normalizedArea'
-    ],
-    histogramGroup: [
-        'histogram'
     ],
     polarGroup: [
         'radarLine',

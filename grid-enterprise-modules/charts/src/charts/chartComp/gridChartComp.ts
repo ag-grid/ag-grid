@@ -63,6 +63,7 @@ export interface GridChartParams {
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
     crossFilteringResetCallback?: () => void;
+    enterprise: boolean;
 }
 
 export class GridChartComp extends Component {
@@ -121,6 +122,7 @@ export class GridChartComp extends Component {
             unlinkChart: this.params.unlinkChart,
             crossFiltering: this.params.crossFiltering,
             seriesChartTypes: this.params.seriesChartTypes,
+            enterprise: this.params.enterprise
         };
 
         const isRtl = this.gridOptionsService.get('enableRtl');

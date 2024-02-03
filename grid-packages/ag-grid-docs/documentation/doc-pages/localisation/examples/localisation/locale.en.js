@@ -343,7 +343,6 @@ const AG_GRID_LOCALE_EN = {
     lineGroup: 'Line',
     scatterGroup: 'X Y (Scatter)',
     areaGroup: 'Area',
-    histogramGroup: 'Histogram',
     polarGroup: 'Polar',
     statisticalGroup: 'Statistical',
     specializedGroup: 'Specialized',
