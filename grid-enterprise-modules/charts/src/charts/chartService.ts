@@ -22,7 +22,7 @@ import {
     SeriesChartType,
     UpdateChartParams
 } from "@ag-grid-community/core";
-import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION } from "ag-charts-community";
+import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION, _ModuleSupport} from "ag-charts-community";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 import { upgradeChartModel } from "./chartModelMigration";
 import { VERSION as GRID_VERSION } from "../version";
@@ -38,6 +38,7 @@ export class ChartService extends BeanStub implements IChartService {
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     public static CHARTS_VERSION = CHARTS_VERSION;
+    public static ENTERPRISE = _ModuleSupport.enterpriseModule.isEnterprise;
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
     // those in developer provided containers.
@@ -48,6 +49,8 @@ export class ChartService extends BeanStub implements IChartService {
     private crossFilteringContext: CrossFilteringContext = {
         lastSelectedChartId: '',
     };
+
+    public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
 
     public updateChart(params: UpdateChartParams): void {
         if (this.activeChartComps.size === 0) {
@@ -325,7 +328,8 @@ export class ChartService extends BeanStub implements IChartService {
             chartOptionsToRestore,
             chartPaletteToRestore,
             seriesChartTypes,
-            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset())
+            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset()),
+            enterprise: ChartService.ENTERPRISE
         };
 
         const chartComp = new GridChartComp(params);

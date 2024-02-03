@@ -183,6 +183,7 @@ export abstract class ChartProxy {
 
     public destroy({ keepChartInstance = false } = {}): AgChartInstance | undefined {
         if (keepChartInstance) {
+            this.chart.resetAnimations();
             return this.chart;
         }
 

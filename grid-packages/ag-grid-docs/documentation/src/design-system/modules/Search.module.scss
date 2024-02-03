@@ -1,36 +1,15 @@
-// CSS directly lifted from Grid repo
-
 @use '../core' as *;
 
 .searchForm {
-    --max-width: 380px;
-
     position: relative;
-    width: 50%;
     flex-grow: 1;
-    margin-bottom: $spacing-size-2;
 
-    @media screen and (max-width: $breakpoint-site-header-small) {
-        margin-right: $spacing-size-6;
-        margin-left: $spacing-size-6;
-    }
-
-    @media screen and (max-width: $breakpoint-docs-nav-medium) {
-        margin-bottom: $spacing-size-4;
-        margin-left: $spacing-size-6;
+    @media screen and (min-width: $breakpoint-site-header-medium) {
+        width: 380px;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        max-width: var(--max-width);
-        margin: 0 auto;
-    }
-
-    @media screen and (min-width: $breakpoint-site-header-large) {
-        --max-width: 440px;
-
-        position: absolute;
-        left: 50%;
-        width: 100%;
-        margin-left: calc(var(--max-width) / -2);
+        padding-right: $spacing-size-2;
+        padding-left: $spacing-size-2;
     }
 }

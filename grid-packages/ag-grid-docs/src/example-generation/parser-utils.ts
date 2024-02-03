@@ -108,14 +108,14 @@ export function tsCollect(tsTree, tsBindings, collectors, recurse = true) {
     ts.forEachChild(tsTree, (node: ts.Node) => {
 
         collectors.filter(c => {
-            let res = false;
-            try {
-                res = c.matches(node)
-            } catch (error) {
-                return false;
+                let res = false;
+                try {
+                    res = c.matches(node)
+                } catch (error) {
+                    return false;
+                }
+                return res;
             }
-            return res;
-        }
         ).forEach(c => {
             try {
                 c.apply(tsBindings, node)
@@ -162,7 +162,7 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
         if (node.declarations.length > 0) {
             const declaration = node.declarations[0];
             // Don't include api declarations as these are handled separately
-            const isLetApi = declaration.name.getText() === 'gridApi';            
+            const isLetApi = declaration.name.getText() === 'gridApi';
             return !isLetApi && !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
         }
     }
@@ -209,7 +209,7 @@ export function tsNodeIsFunctionCall(node: any): boolean {
 }
 
 export function tsNodeIsGlobalFunctionCall(node: ts.Node) {
-    // Get top level function calls like 
+    // Get top level function calls like
     // setInterval(callback, 500)
     // but don't match things like
     // AgChart.create(options)
@@ -440,7 +440,7 @@ function getLowestExpression(exp: any) {
 }
 
 /**
- * Find all the properties accessed in this node. 
+ * Find all the properties accessed in this node.
  */
 export function findAllAccessedProperties(node) {
     let properties = [];
@@ -480,7 +480,7 @@ export function findAllAccessedProperties(node) {
     }
     else if (ts.isVariableDeclaration(node)) {
         // get lowest identifier as this is the first in the statement
-        // i.e var nextHeader = params.nextHeaderPosition 
+        // i.e var nextHeader = params.nextHeaderPosition
         // we need to recurse down the initializer tree to extract params and not nextHeaderPosition
         let init = node.initializer as any;
         if (init) {
@@ -528,7 +528,7 @@ export function findAllAccessedProperties(node) {
 
 /** Convert import paths to their package equivalent when the docs are in Packages mode
  * i.e import { GridOptions } from '@ag-grid-community/core';
- * to 
+ * to
  * import { GridOptions } from '@ag-grid-community';
  */
 export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
@@ -682,10 +682,10 @@ export function addGenericInterfaceImport(imports: string[], tData: string, bind
 
 export function replaceGridReadyRowData(callback: string, rowDataSetter: string) {
     return callback
-    // replace gridApi.setGridOption('rowData', data) with this.rowData = data
-    .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
-    // replace gridApi.setGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
-    .replace(/gridApi(!?)\.setGridOption\('rowData', data/, `${rowDataSetter} = (data`);
+        // replace gridApi.setGridOption('rowData', data) with this.rowData = data
+        .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
+        // replace gridApi.setGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
+        .replace(/gridApi(!?)\.setGridOption\('rowData', data/, `${rowDataSetter} = (data`);
 }
 
 export function preferParamsApi(code: string): string {

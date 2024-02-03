@@ -20,9 +20,9 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
         const axisLineRadius = (size - combinedPadding) / 2;
         const gridRadii = [
             axisLineRadius,
-            axisLineRadius - size * 0.1,
-            axisLineRadius - size * 0.2,
-            axisLineRadius - size * 0.3,
+            axisLineRadius * 0.8,
+            axisLineRadius * 0.6,
+            axisLineRadius * 0.4,
         ];
 
         const radiusAxisLine = new _Scene.Line();

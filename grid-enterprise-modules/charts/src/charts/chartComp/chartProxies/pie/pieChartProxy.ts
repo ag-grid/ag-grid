@@ -1,5 +1,5 @@
 import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
-import { AgCharts, AgPieSeriesOptions, AgPolarChartOptions, AgPolarSeriesOptions, } from 'ag-charts-community';
+import { AgCharts, AgDonutSeriesOptions, AgPieSeriesOptions, AgPolarChartOptions, AgPolarSeriesOptions, } from 'ag-charts-community';
 
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
@@ -35,7 +35,7 @@ export class PieChartProxy extends ChartProxy {
             offsetAmount: numFields > 1 ? 20 : 40
         };
 
-        const series: AgPieSeriesOptions[] = this.getFields(params).map((f: FieldDefinition) => {
+        const series: (AgPieSeriesOptions | AgDonutSeriesOptions)[] = this.getFields(params).map((f: FieldDefinition) => {
             // options shared by 'pie' and 'doughnut' charts
             const options = {
                 type: this.standaloneChartType as AgPieSeriesOptions['type'],
@@ -55,6 +55,7 @@ export class PieChartProxy extends ChartProxy {
                 // augment shared options with 'doughnut' specific options
                 return {
                     ...options,
+                    type: 'donut',
                     outerRadiusOffset,
                     innerRadiusOffset,
                     ...title,
@@ -83,10 +84,10 @@ export class PieChartProxy extends ChartProxy {
         });
     }
 
-    private extractCrossFilterSeries(series: AgPieSeriesOptions[]) {
+    private extractCrossFilterSeries(series: (AgPieSeriesOptions | AgDonutSeriesOptions)[]) {
         const palette = this.getChartPalette();
 
-        const primaryOptions = (seriesOptions: AgPieSeriesOptions) => {
+        const primaryOptions = (seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions) => {
             return {
                 ...seriesOptions,
                 legendItemKey: seriesOptions.calloutLabelKey,
@@ -102,7 +103,7 @@ export class PieChartProxy extends ChartProxy {
             };
         }
 
-        const filteredOutOptions = (seriesOptions: AgPieSeriesOptions, angleKey: string) => {
+        const filteredOutOptions = (seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions, angleKey: string) => {
             return {
                 ...deepMerge({}, primaryOpts),
                 radiusKey: angleKey + '-filtered-out',

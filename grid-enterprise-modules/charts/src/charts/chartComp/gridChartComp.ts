@@ -33,6 +33,7 @@ import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
 import {NightingaleChartProxy} from "./chartProxies/polar/nightingaleChartProxy";
 import {PieChartProxy} from "./chartProxies/pie/pieChartProxy";
 import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
+import {RangeAreaChartProxy} from "./chartProxies/statistical/rangeAreaChartProxy";
 import {RangeBarChartProxy} from "./chartProxies/statistical/rangeBarChartProxy";
 import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
 import {BoxPlotChartProxy} from "./chartProxies/statistical/boxPlotChartProxy";
@@ -62,6 +63,7 @@ export interface GridChartParams {
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
     crossFilteringResetCallback?: () => void;
+    enterprise: boolean;
 }
 
 export class GridChartComp extends Component {
@@ -120,6 +122,7 @@ export class GridChartComp extends Component {
             unlinkChart: this.params.unlinkChart,
             crossFiltering: this.params.crossFiltering,
             seriesChartTypes: this.params.seriesChartTypes,
+            enterprise: this.params.enterprise
         };
 
         const isRtl = this.gridOptionsService.get('enableRtl');
@@ -260,6 +263,8 @@ export class GridChartComp extends Component {
                 return new NightingaleChartProxy(chartProxyParams);
             case 'rangeBar':
                 return new RangeBarChartProxy(chartProxyParams);
+            case 'rangeArea':
+                return new RangeAreaChartProxy(chartProxyParams);
             case 'boxPlot':
                 return new BoxPlotChartProxy(chartProxyParams);
             case 'waterfall':

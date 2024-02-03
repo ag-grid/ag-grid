@@ -1,15 +1,17 @@
 export interface ChartGroupsDef {
+    // community chart groups
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
     barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[],
     pieGroup?: ('pie' | 'doughnut')[],
     lineGroup?: ('line')[],
     scatterGroup?: ('scatter' | 'bubble')[],
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[],
-    histogramGroup?: ('histogram')[],
-    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale')[],
-    statisticalGroup?: ('rangeBar' | 'rangeArea' | 'boxPlot')[],
-    cumulativeGroup?: ('waterfall')[],
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
+
+    // enterprise chart groups
+    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale')[],
+    statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
+    specializedGroup?: ('waterfall')[],
 }
 
 export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
@@ -39,20 +41,18 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
         'stackedArea',
         'normalizedArea'
     ],
-    histogramGroup: [
-        'histogram'
-    ],
     polarGroup: [
         'radarLine',
         'radarArea',
         'nightingale'
     ],
     statisticalGroup: [
+        'boxPlot',
+        'histogram',
         'rangeBar',
         'rangeArea',
-        'boxPlot',
     ],
-    cumulativeGroup: [
+    specializedGroup: [
         'waterfall',
     ],
     combinationGroup: [
@@ -124,9 +124,14 @@ export type ChartType =
     | 'radarLine'
     | 'radarArea'
     | 'nightingale'
+    | 'radialBar'
+    | 'radialColumn'
+    | 'sunburst'
     | 'rangeBar'
     | 'rangeArea'
     | 'boxPlot'
+    | 'treemap'
+    | 'heatmap'
     | 'waterfall'
     | 'columnLineCombo'
     | 'areaColumnCombo'

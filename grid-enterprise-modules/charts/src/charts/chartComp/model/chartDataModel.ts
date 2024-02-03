@@ -35,6 +35,7 @@ export interface ChartModelParams {
     unlinkChart?: boolean;
     crossFiltering?: boolean;
     seriesChartTypes?: SeriesChartType[];
+    enterprise: boolean;
 }
 
 export class ChartDataModel extends BeanStub {
@@ -74,6 +75,8 @@ export class ChartDataModel extends BeanStub {
 
     public crossFiltering = false;
 
+    public enterprise: boolean;
+
     private grouping = false;
 
     public constructor(params: ChartModelParams) {
@@ -90,6 +93,7 @@ export class ChartDataModel extends BeanStub {
         this.suppressChartRanges = params.suppressChartRanges;
         this.unlinked = !!params.unlinkChart;
         this.crossFiltering = !!params.crossFiltering;
+        this.enterprise = params.enterprise;
     }
 
     @PostConstruct

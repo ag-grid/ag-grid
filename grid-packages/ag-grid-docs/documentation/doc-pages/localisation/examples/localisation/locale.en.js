@@ -234,10 +234,11 @@ const AG_GRID_LOCALE_EN = {
     nightingale: 'Nightingale',
 
     statisticalChart: 'Statistical',
-    rangeBar: 'Range Bar',
     boxPlot: 'Box Plot',
+    rangeBar: 'Range Bar',
+    rangeArea: 'Range Area',
 
-    cumulativeChart: 'Cumulative',
+    specializedChart: 'Specialized',
     waterfall: 'Waterfall',
 
     combinationChart: 'Combination',
@@ -342,10 +343,9 @@ const AG_GRID_LOCALE_EN = {
     lineGroup: 'Line',
     scatterGroup: 'X Y (Scatter)',
     areaGroup: 'Area',
-    histogramGroup: 'Histogram',
     polarGroup: 'Polar',
     statisticalGroup: 'Statistical',
-    cumulativeGroup: 'Cumulative',
+    specializedGroup: 'Specialized',
     combinationGroup: 'Combination',
     groupedColumnTooltip: 'Grouped',
     stackedColumnTooltip: 'Stacked',

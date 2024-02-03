@@ -79,6 +79,7 @@ export class SeriesPanel extends Component {
         'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        'range-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
@@ -247,19 +248,23 @@ export class SeriesPanel extends Component {
             this.activePanels.push(calloutPanelComp);
         }
 
+        this.addWidget(labelPanelComp);
+
+        if (this.seriesType === 'pie') {
+            const sectorParams = initFontPanelParams({
+                labelName: this.chartTranslationService.translate('sectorLabels'),
+                chartOptionsService: this.chartOptionsService,
+                getSelectedSeries: () => this.seriesType,
+                seriesOptionLabelProperty: 'sectorLabel'
+            });
+            const sectorPanelComp = this.createBean(new FontPanel(sectorParams));
+            const positionRatioComp = this.getSectorLabelPositionRatio();
+            sectorPanelComp.addCompToPanel(positionRatioComp);
+
+            this.addWidget(sectorPanelComp);
+        }
+
         if (this.seriesType === 'range-bar') {
-            // Add padding slider
-            const paddingValue = this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType);
-            const paddingSlider = labelPanelComp.createManagedBean(new AgSlider());
-            paddingSlider.setLabel(this.chartTranslationService.translate('padding'))
-                .setMaxValue(getMaxValue(paddingValue, 200))
-                .setValue(`${paddingValue}`)
-                .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType));
-
-            labelPanelComp.prependCompToPanel(paddingSlider);
-            this.activePanels.push(paddingSlider);
-
             // Add label placement dropdown
             const options: Array<ListOption<AgRangeBarSeriesLabelPlacement>> = [
                 { value: 'inside', text: this.translate('inside') },
@@ -276,24 +281,20 @@ export class SeriesPanel extends Component {
                 .setValue(placementValue)
                 .onValueChange((newValue) => this.chartOptionsService.setSeriesOption('label.placement', newValue, this.seriesType));
 
-            labelPanelComp.prependCompToPanel(placementSelect);
+            labelPanelComp.addCompToPanel(placementSelect);
             this.activePanels.push(placementSelect);
-        }
 
-        this.addWidget(labelPanelComp);
+            // Add padding slider
+            const paddingValue = this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType);
+            const paddingSlider = labelPanelComp.createManagedBean(new AgSlider());
+            paddingSlider.setLabel(this.chartTranslationService.translate('padding'))
+                .setMaxValue(getMaxValue(paddingValue, 200))
+                .setValue(`${paddingValue}`)
+                .setTextFieldWidth(45)
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType));
 
-        if (this.seriesType === 'pie') {
-            const sectorParams = initFontPanelParams({
-                labelName: this.chartTranslationService.translate('sectorLabels'),
-                chartOptionsService: this.chartOptionsService,
-                getSelectedSeries: () => this.seriesType,
-                seriesOptionLabelProperty: 'sectorLabel'
-            });
-            const sectorPanelComp = this.createBean(new FontPanel(sectorParams));
-            const positionRatioComp = this.getSectorLabelPositionRatio();
-            sectorPanelComp.addCompToPanel(positionRatioComp);
-
-            this.addWidget(sectorPanelComp);
+            labelPanelComp.addCompToPanel(paddingSlider);
+            this.activePanels.push(paddingSlider);
         }
     }
 
