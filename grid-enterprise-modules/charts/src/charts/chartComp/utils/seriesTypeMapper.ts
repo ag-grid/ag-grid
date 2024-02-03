@@ -14,6 +14,8 @@ export type ChartSeriesType =
     'hierarchy' |
     'treemap' |
     'bubble' |
+    'radial-column' |
+    'radial-bar' |
     'radar-line' |
     'radar-area' |
     'nightingale' |
@@ -38,6 +40,8 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'pie',
     'scatter',
     'bubble',
+    'radial-column',
+    'radial-bar',
     'radar-line',
     'radar-area',
     'nightingale',
@@ -81,6 +85,10 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
             return 'scatter';
         case 'histogram':
             return 'histogram';
+        case 'radialColumn':
+            return 'radial-column';
+        case 'radialBar':
+            return 'radial-bar';
         case 'radarLine':
             return 'radar-line';
         case 'radarArea':

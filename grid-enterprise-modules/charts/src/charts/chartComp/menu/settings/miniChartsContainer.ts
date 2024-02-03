@@ -30,6 +30,8 @@ import {
     MiniPie,
     MiniRadarArea,
     MiniRadarLine,
+    MiniRadialBar,
+    MiniRadialColumn,
     MiniRangeBar,
     MiniRangeArea,
     MiniWaterfall,
@@ -64,7 +66,7 @@ const miniChartMapping = {
     },
     polarGroup: {
         enterprise: true,
-        chartTypes: {radarLine: MiniRadarLine, radarArea: MiniRadarArea, nightingale: MiniNightingale}
+        chartTypes: {radarLine: MiniRadarLine, radarArea: MiniRadarArea, nightingale: MiniNightingale, radialColumn: MiniRadialColumn, radialBar: MiniRadialBar}
     },
     statisticalGroup: {
         enterprise: true,

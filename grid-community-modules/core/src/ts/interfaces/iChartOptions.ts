@@ -9,7 +9,7 @@ export interface ChartGroupsDef {
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
 
     // enterprise chart groups
-    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale')[],
+    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale', 'radialColumn' | 'radialBar')[],
     statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
     specializedGroup?: ('waterfall')[],
 }
@@ -42,6 +42,8 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
         'normalizedArea'
     ],
     polarGroup: [
+        'radialColumn',
+        'radialBar',
         'radarLine',
         'radarArea',
         'nightingale'
@@ -124,6 +126,7 @@ export type ChartType =
     | 'radarLine'
     | 'radarArea'
     | 'nightingale'
+    | 'radialColumn'
     | 'radialBar'
     | 'radialColumn'
     | 'sunburst'

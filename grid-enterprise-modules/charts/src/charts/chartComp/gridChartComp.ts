@@ -30,6 +30,10 @@ import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
 import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
 import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
+import {RadialBarChartProxy} from "./chartProxies/polar/radialBarChartProxy";
+import {RadialColumnChartProxy} from "./chartProxies/polar/radialColumnChartProxy";
+import {RadarLineChartProxy} from "./chartProxies/polar/radarLineChartProxy";
+import {RadarAreaChartProxy} from "./chartProxies/polar/radarAreaChartProxy";
 import {NightingaleChartProxy} from "./chartProxies/polar/nightingaleChartProxy";
 import {PieChartProxy} from "./chartProxies/pie/pieChartProxy";
 import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
@@ -43,8 +47,6 @@ import {ChartCrossFilterService} from "./services/chartCrossFilterService";
 import {CrossFilteringContext} from "../chartService";
 import {ChartOptionsService} from "./services/chartOptionsService";
 import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
-import { RadarLineChartProxy } from './chartProxies/polar/radarLineChartProxy';
-import { RadarAreaChartProxy } from './chartProxies/polar/radarAreaChartProxy';
 
 export interface GridChartParams {
     chartId: string;
@@ -255,6 +257,10 @@ export class GridChartComp extends Component {
                 return new ScatterChartProxy(chartProxyParams);
             case 'histogram':
                 return new HistogramChartProxy(chartProxyParams);
+            case 'radialColumn':
+                return new RadialColumnChartProxy(chartProxyParams);
+            case 'radialBar':
+                return new RadialBarChartProxy(chartProxyParams);
             case 'radarLine':
                 return new RadarLineChartProxy(chartProxyParams);
             case 'radarArea':
