@@ -13,7 +13,7 @@ export class BoxPlotChartProxy extends CartesianChartProxy {
     public getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
         const axes: AgCartesianAxisOptions[] = [
             {
-                type: 'category',
+                type: this.getXAxisType(params),
                 position: isHorizontal(this.chartType) ? 'left' : 'bottom',
             },
             {
@@ -26,8 +26,8 @@ export class BoxPlotChartProxy extends CartesianChartProxy {
     }
 
     protected override getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {
-        // The charts library doesn't perform any statistical analysis within the box plot chart implementation, rather
-        // it expects to be given a set of precomputed quartile values, which it renders directly onto the chart.
+        // The charts library doesn't perform any statistical analysis within the chart implementation, rather it
+        // expects to be given a set of precomputed quartile values, which it renders directly onto the chart.
         // This means that we first need to compute the quartiles for each category/series combination, then once we
         // have the correct values we can pass the precomputed objects through to the charts library.
 
@@ -36,7 +36,12 @@ export class BoxPlotChartProxy extends CartesianChartProxy {
         const categoryKey = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? null : params.category.id;
         const dataGroupedByCategory = partition(
             params.data,
-            (datum) => (categoryKey === null ? null : datum[categoryKey]),
+            (datum) => {
+                if (categoryKey === null) return null;
+                const value = datum[categoryKey];
+                // If the category value is a date, convert it to a timestamp to ensure a stable partition key
+                return (value instanceof Date ? value.getTime() : value);
+            },
         );
 
         // Next we iterate over the categories, and compute the quartile values for each series within that category
@@ -71,13 +76,13 @@ export class BoxPlotChartProxy extends CartesianChartProxy {
         const series: AgBoxPlotSeriesOptions[] = params.fields.map(
             (field, seriesIndex) =>
                 ({
-                    type: this.standaloneChartType,
+                    type: this.standaloneChartType as AgBoxPlotSeriesOptions['type'],
                     direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
                     // xKey/xName refer to category buckets
                     xKey: params.category.id,
                     xName: params.category.name,
                     // yName is used to label the series
-                    yName: field.displayName,
+                    yName: field.displayName ?? undefined,
                     // Custom field labels shown in the tooltip
                     minName: 'Min',
                     q1Name: 'Q1',
@@ -90,7 +95,7 @@ export class BoxPlotChartProxy extends CartesianChartProxy {
                     medianKey: `median:${seriesIndex}`,
                     q3Key: `q3:${seriesIndex}`,
                     maxKey: `max:${seriesIndex}`,
-                } as AgBoxPlotSeriesOptions)
+                })
         );
         return series;
     }

@@ -87,7 +87,8 @@ export class ChartController extends BeanStub {
             aggFunc: this.model.aggFunc,
             seriesChartTypes: undefined,
             suppressChartRanges: false,
-            crossFiltering: false
+            crossFiltering: false,
+            enterprise: this.model.enterprise
         }
 
         let chartModelParams: ChartModelParams = { ...common };
@@ -402,6 +403,8 @@ export class ChartController extends BeanStub {
         const supportedComboSeriesTypes: ChartSeriesType[] = ['line', 'bar', 'area'];
         return this.isComboChart() ? supportedComboSeriesTypes : [getSeriesType(this.getChartType())];
     }
+
+    public isEnterprise = () => this.model.enterprise;
 
     private getCellRanges(): CellRange[] {
         return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(r => r);

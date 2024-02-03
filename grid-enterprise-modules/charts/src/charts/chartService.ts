@@ -38,6 +38,7 @@ export class ChartService extends BeanStub implements IChartService {
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     public static CHARTS_VERSION = CHARTS_VERSION;
+    public static ENTERPRISE = _ModuleSupport.enterpriseModule.isEnterprise;
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
     // those in developer provided containers.
@@ -327,7 +328,8 @@ export class ChartService extends BeanStub implements IChartService {
             chartOptionsToRestore,
             chartPaletteToRestore,
             seriesChartTypes,
-            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset())
+            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset()),
+            enterprise: ChartService.ENTERPRISE
         };
 
         const chartComp = new GridChartComp(params);

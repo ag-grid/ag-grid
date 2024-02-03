@@ -101,7 +101,6 @@ export class ChartTranslationService extends BeanStub {
         lineGroup: 'Line',
         scatterGroup: 'X Y (Scatter)',
         areaGroup: 'Area',
-        histogramGroup: 'Histogram',
         polarGroup: 'Polar',
         statisticalGroup: 'Statistical',
         specializedGroup: 'Specialized',
