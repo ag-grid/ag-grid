@@ -229,11 +229,11 @@ const AG_GRID_LOCALE_EN = {
     histogramFrequency: "Frequency",
 
     polarChart: 'Polar',
-    radialColumn: 'Radial Column',
-    radialBar: 'Radial Bar',
     radarLine: 'Radar Line',
     radarArea: 'Radar Area',
     nightingale: 'Nightingale',
+    radialColumn: 'Radial Column',
+    radialBar: 'Radial Bar',
 
     statisticalChart: 'Statistical',
     boxPlot: 'Box Plot',
@@ -385,7 +385,6 @@ const AG_GRID_LOCALE_EN = {
     chartLinkToolbarTooltip: 'Linked to Grid',
     chartUnlinkToolbarTooltip: 'Unlinked from Grid',
     chartDownloadToolbarTooltip: 'Download Chart',
-    histogramFrequency: "Frequency",
     seriesChartType: 'Series Chart Type',
     seriesType: 'Series Type',
     secondaryAxis: 'Secondary Axis',

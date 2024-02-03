@@ -274,9 +274,8 @@ export type RangeMenuOptionName =
     'rangeLineChart' |
     'rangeXYChart' | 'rangeScatter' | 'rangeBubble' |
     'rangeAreaChart' | 'rangeArea' | 'rangeStackedArea' | 'rangeNormalizedArea' |
-    'rangeHistogramChart' |
-    'rangePolarChart' | 'rangeRadialColumn' | 'rangeRadialBar' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' |
-    'rangeStatisticalChart' | 'rangeRangeBar' | 'rangeRangeArea' | 'rangeBoxPlot' |
+    'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' | 'rangeRadialColumn' | 'rangeRadialBar' |
+    'rangeStatisticalChart' | 'rangeBoxPlot' | 'rangeHistogramChart' |'rangeRangeBar' | 'rangeRangeArea' |
     'rangeSpecializedChart' | 'rangeWaterfall' |
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
@@ -348,11 +347,11 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     name: localeTextFunc('polarChart', 'Polar'),
                     subMenu:
                         [
-                            getMenuItem('radialColumn', 'Radial Column&lrm;', 'radialColumn', 'rangeRadialColumn'),
-                            getMenuItem('radialBar', 'Radial Bar&lrm;', 'radialBar', 'rangeRadialBar'),
                             getMenuItem('radarLine', 'Radar Line&lrm;', 'radarLine', 'rangeRadarLine'),
                             getMenuItem('radarArea', 'Radar Area&lrm;', 'radarArea', 'rangeRadarArea'),
                             getMenuItem('nightingale', 'Nightingale&lrm;', 'nightingale', 'rangeNightingale'),
+                            getMenuItem('radialColumn', 'Radial Column&lrm;', 'radialColumn', 'rangeRadialColumn'),
+                            getMenuItem('radialBar', 'Radial Bar&lrm;', 'radialBar', 'rangeRadialBar'),
                         ],
                     _key: 'rangePolarChart',
                     _enterprise: true,
@@ -427,11 +426,11 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
             },
             polarGroup: {
                 _key: 'rangePolarChart',
-                radialColumn: 'rangeRadialColumn',
-                radialBar: 'rangeRadialBar',
                 radarLine: 'rangeRadarLine',
                 radarArea: 'rangeRadarArea',
                 nightingale: 'rangeNightingale',
+                radialColumn: 'rangeRadialColumn',
+                radialBar: 'rangeRadialBar',
             },
             statisticalGroup: {
                 _key: 'rangeStatisticalChart',
