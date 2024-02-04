@@ -10,7 +10,7 @@ import {
     AgRadialColumnSeriesOptions
 } from 'ag-charts-community';
 
-type PolarSeriesOptions =
+type AgPolarSeriesOptions =
     AgRadarLineSeriesOptions |
     AgRadarAreaSeriesOptions |
     AgNightingaleSeriesOptions |
@@ -30,7 +30,7 @@ export class PolarChartProxy extends ChartProxy {
         ];
     }
 
-    public getSeries(params: UpdateParams): PolarSeriesOptions[] {
+    public getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
         const {fields, category} = params;
         const radialBar = this.standaloneChartType === 'radial-bar';
 
