@@ -130,6 +130,8 @@ export class FormatPanel extends Component {
             'bubble': ['axis', 'navigator'],
             'histogram': ['axis', 'navigator'],
             'cartesian': ['axis', 'navigator'],
+            'radial-column': ['axis'],
+            'radial-bar': ['axis'],
             'radar-line': ['axis'],
             'radar-area': ['axis'],
             'nightingale': ['axis'],

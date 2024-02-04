@@ -9,10 +9,6 @@ export * from "./bar/miniNormalizedBar";
 export * from "./pie/miniPie";
 export * from "./pie/miniDoughnut";
 
-export * from "./polar/miniRadarLine"
-export * from "./polar/miniRadarArea"
-export * from "./polar/miniNightingale"
-
 export * from "./line/miniLine";
 
 export * from "./scatter/miniScatter";
@@ -24,6 +20,8 @@ export * from "./area/miniNormalizedArea";
 
 export * from "./histogram/miniHistogram";
 
+export * from './polar/miniRadialColumn';
+export * from './polar/miniRadialBar';
 export * from './polar/miniRadarLine';
 export * from './polar/miniRadarArea';
 export * from './polar/miniNightingale';

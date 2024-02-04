@@ -30,6 +30,8 @@ import {
     MiniPie,
     MiniRadarArea,
     MiniRadarLine,
+    MiniRadialBar,
+    MiniRadialColumn,
     MiniRangeBar,
     MiniRangeArea,
     MiniWaterfall,
@@ -39,7 +41,7 @@ import {
     MiniStackedColumn,
 } from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
 
-// import {isEnterprise} from "../../../../main";
+// import {enterprise} from "../../../../main";
 
 export type ThemeTemplateParameters = {
     extensions: Map<any, any>;
@@ -48,54 +50,38 @@ export type ThemeTemplateParameters = {
 
 const miniChartMapping = {
     columnGroup: {
-        column: MiniColumn,
-        stackedColumn: MiniStackedColumn,
-        normalizedColumn: MiniNormalizedColumn
+        enterprise: false,
+        chartTypes: {column: MiniColumn, stackedColumn: MiniStackedColumn, normalizedColumn: MiniNormalizedColumn}
     },
     barGroup: {
-        bar: MiniBar,
-        stackedBar: MiniStackedBar,
-        normalizedBar: MiniNormalizedBar
+        enterprise: false,
+        chartTypes: {bar: MiniBar, stackedBar: MiniStackedBar, normalizedBar: MiniNormalizedBar}
     },
-    pieGroup: {
-        pie: MiniPie,
-        doughnut: MiniDoughnut
-    },
-    lineGroup: {
-        line: MiniLine
-    },
-    scatterGroup: {
-        scatter: MiniScatter,
-        bubble: MiniBubble
-    },
+    pieGroup: {enterprise: false, chartTypes: {pie: MiniPie, doughnut: MiniDoughnut}},
+    lineGroup: {enterprise: false, chartTypes: {line: MiniLine}},
+    scatterGroup: {enterprise: false, chartTypes: {scatter: MiniScatter, bubble: MiniBubble}},
     areaGroup: {
-        area: MiniArea,
-        stackedArea: MiniStackedArea,
-        normalizedArea: MiniNormalizedArea
-    },
-    histogramGroup: {
-        histogram: MiniHistogram
+        enterprise: false,
+        chartTypes: {area: MiniArea, stackedArea: MiniStackedArea, normalizedArea: MiniNormalizedArea}
     },
     polarGroup: {
-        radarLine: MiniRadarLine,
-        radarArea: MiniRadarArea,
-        nightingale: MiniNightingale,
+        enterprise: true,
+        chartTypes: {radarLine: MiniRadarLine, radarArea: MiniRadarArea, nightingale: MiniNightingale, radialColumn: MiniRadialColumn, radialBar: MiniRadialBar}
     },
     statisticalGroup: {
-        boxPlot: MiniBoxPlot,
-        histogram: MiniHistogram,
-        rangeBar: MiniRangeBar,
-        rangeArea: MiniRangeArea,
+        enterprise: true,
+        chartTypes: {boxPlot: MiniBoxPlot, histogram: MiniHistogram, rangeBar: MiniRangeBar, rangeArea: MiniRangeArea}
     },
-    specializedGroup: {
-        waterfall: MiniWaterfall,
-    },
+    specializedGroup: {enterprise: true, chartTypes: {waterfall: MiniWaterfall}},
     combinationGroup: {
-        columnLineCombo: MiniColumnLineCombo,
-        areaColumnCombo: MiniAreaColumnCombo,
-        customCombo: MiniCustomCombo
+        enterprise: false,
+        chartTypes: {
+            columnLineCombo: MiniColumnLineCombo,
+            areaColumnCombo: MiniAreaColumnCombo,
+            customCombo: MiniCustomCombo
+        }
     }
-}
+};
 
 export class MiniChartsContainer extends Component {
 
@@ -125,17 +111,12 @@ export class MiniChartsContainer extends Component {
 
     @PostConstruct
     private init() {
-        // console.log("isEnterprise", isEnterprise());
-
-        // hide MiniCustomCombo if no custom combo exists
-        if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
-        }
-
         const eGui = this.getGui();
-
+        const isEnterprise = this.chartController.isEnterprise();
         Object.keys(this.chartGroups).forEach((group: keyof ChartGroupsDef) => {
-
+            if (!isEnterprise && miniChartMapping[group]?.enterprise) {
+                return; // skip enterprise groups if community
+            }
 
             const chartGroupValues = this.chartGroups[group];
             const groupComponent = this.createBean(new AgGroupComponent({
@@ -148,9 +129,9 @@ export class MiniChartsContainer extends Component {
             }));
 
             chartGroupValues!.forEach((chartType: keyof ChartGroupsDef[typeof group]) => {
-                const MiniClass = miniChartMapping[group]?.[chartType] as any;
+                const MiniClass = miniChartMapping[group]?.chartTypes[chartType] as any;
                 if (!MiniClass) {
-                    _.warnOnce(`invalid chartGroupsDef config '${group}${miniChartMapping[group] ? `.${chartType}` : ''}'`);
+                    _.warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
                     return;
                 }
 
@@ -171,6 +152,11 @@ export class MiniChartsContainer extends Component {
 
             eGui.appendChild(groupComponent.getGui());
         });
+
+        // hide MiniCustomCombo if no custom combo exists
+        if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
+        }
 
         this.updateSelectedMiniChart();
     }
