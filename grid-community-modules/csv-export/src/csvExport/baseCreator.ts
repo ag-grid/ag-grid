@@ -9,7 +9,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         this.beans = beans;
     }
 
-    public abstract export(userParams?: P): Promise<string>;
+    protected abstract export(userParams?: P, compress?: boolean): void;
 
     protected abstract getMergedParams(params?: P): P;
 

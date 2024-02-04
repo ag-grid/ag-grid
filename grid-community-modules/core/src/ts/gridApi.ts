@@ -285,10 +285,7 @@ export class GridApi<TData = any> {
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     public getDataAsCsv(params?: CsvExportParams): string | undefined {
         if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
-            const result = this.csvCreator.getDataAsCsv(params);
-            if (typeof result === 'string') {
-                return result;
-            }
+            return this.csvCreator.getDataAsCsv(params);
         }
     }
 
@@ -309,7 +306,7 @@ export class GridApi<TData = any> {
     }
 
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
-    public async getDataAsExcel(params?: ExcelExportParams): Promise<string | Blob | undefined> {
+    public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
         if (this.assertNotExcelMultiSheet('getDataAsExcel', params)) {
             return this.excelCreator.getDataAsExcel(params);
         }
@@ -331,18 +328,16 @@ export class GridApi<TData = any> {
     }
 
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
-    public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> {
+    public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
         if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
             return this.excelCreator.getMultipleSheetsAsExcel(params);
-        } else {
-            return Promise.resolve(undefined);
         }
     }
 
     /** Downloads an Excel export of multiple sheets in one file. */
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
-            return this.excelCreator.exportMultipleSheetsAsExcel(params);
+            this.excelCreator.exportMultipleSheetsAsExcel(params);
         }
     }
 
