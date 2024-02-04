@@ -39,10 +39,10 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         return Object.assign({}, baseParams, params);
     }
 
-    public async export(userParams?: CsvExportParams): Promise<string> {
+    protected export(userParams?: CsvExportParams): void {
         if (this.isExportSuppressed()) {
             console.warn(`AG Grid: Export cancelled. Export is not allowed as per your configuration.`);
-            return '';
+            return;
         }
 
         const mergedParams = this.getMergedParams(userParams);
@@ -51,15 +51,13 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         const packagedFile = new Blob(["\ufeff", data], { type: 'text/plain' });
 
         Downloader.download(this.getFileName(mergedParams.fileName), packagedFile);
-
-        return data;
     }
 
-    public async exportDataAsCsv(params?: CsvExportParams): Promise<string> {
-        return this.export(params);
+    public exportDataAsCsv(params?: CsvExportParams): void {
+        this.export(params);
     }
 
-    public getDataAsCsv(params?: CsvExportParams, skipDefaultParams = false): Promise<string> | string {
+    public getDataAsCsv(params?: CsvExportParams, skipDefaultParams = false): string {
         const mergedParams = skipDefaultParams
             ? Object.assign({}, params)
             : this.getMergedParams(params);
