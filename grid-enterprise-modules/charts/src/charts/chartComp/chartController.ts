@@ -21,7 +21,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
-import { _Theme, AgChartThemePalette } from "ag-charts-community";
+import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
 import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
 import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
@@ -88,7 +88,6 @@ export class ChartController extends BeanStub {
             seriesChartTypes: undefined,
             suppressChartRanges: false,
             crossFiltering: false,
-            enterprise: this.model.enterprise
         }
 
         let chartModelParams: ChartModelParams = { ...common };
@@ -404,7 +403,7 @@ export class ChartController extends BeanStub {
         return this.isComboChart() ? supportedComboSeriesTypes : [getSeriesType(this.getChartType())];
     }
 
-    public isEnterprise = () => this.model.enterprise;
+    public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
 
     private getCellRanges(): CellRange[] {
         return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(r => r);
