@@ -110,14 +110,14 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
 
 function aggSum(params: IAggFuncParams): number | bigint {
     const { values } = params;
-    let result: any = null; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
+    let result: any = undefined; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
 
         if (typeof value === 'number') {
-            if (result === null) {
+            if (result === undefined) {
                 result = value;
             } else {
                 if (AGBigInt) {
@@ -127,7 +127,7 @@ function aggSum(params: IAggFuncParams): number | bigint {
                 }
             }
         } else if (typeof value === 'bigint') {
-            if (result === null) {
+            if (result === undefined) {
                 result = value;
             } else {
                 result = (typeof result === 'bigint' ? result : AGBigInt(result)) + value;
@@ -139,22 +139,22 @@ function aggSum(params: IAggFuncParams): number | bigint {
 }
 
 function aggFirst(params: IAggFuncParams): any {
-    return params.values.length > 0 ? params.values[0] : null;
+    return params.values.length > 0 ? params.values[0] : undefined;
 }
 
 function aggLast(params: IAggFuncParams): any {
-    return params.values.length > 0 ? _.last(params.values) : null;
+    return params.values.length > 0 ? _.last(params.values) : undefined;
 }
 
-function aggMin(params: IAggFuncParams): number | bigint | null {
+function aggMin(params: IAggFuncParams): number | bigint | undefined {
     const { values } = params;
-    let result: number | bigint | null = null;
+    let result: number | bigint | undefined = undefined;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
 
-        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result > value)) {
+        if ((typeof value === 'number' || typeof value === 'bigint') && (result === undefined || result > value)) {
             result = value;
         }
     }
@@ -162,15 +162,15 @@ function aggMin(params: IAggFuncParams): number | bigint | null {
     return result;
 }
 
-function aggMax(params: IAggFuncParams): number | bigint | null {
+function aggMax(params: IAggFuncParams): number | bigint | undefined {
     const { values } = params;
-    let result: number | bigint | null = null;
+    let result: number | bigint | undefined = undefined;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
 
-        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result < value)) {
+        if ((typeof value === 'number' || typeof value === 'bigint') && (result === undefined || result < value)) {
             result = value;
         }
     }
@@ -213,7 +213,7 @@ function aggCount(params: IAggFuncParams) {
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count: number; toString(): string; toNumber(): number; } {
+function aggAvg(params: IAggFuncParams): { value: number | bigint | undefined; count: number; toString(): string; toNumber(): number; } {
     const { values } = params;
     let sum: any = 0; // the logic ensures that we never combine bigint arithmetic with numbers, but TS is hard to please
     let count = 0;
@@ -247,7 +247,7 @@ function aggAvg(params: IAggFuncParams): { value: number | bigint | null; count:
         }
     }
 
-    let value = null;
+    let value = undefined;
 
     // avoid divide by zero error
     if (count > 0) {
