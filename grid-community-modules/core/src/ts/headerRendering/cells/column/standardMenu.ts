@@ -42,11 +42,25 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public showMenuAfterButtonClick(column: Column | undefined, eventSource: HTMLElement, containerType: ContainerType): void {
+        let multiplier = -1;
+        let alignSide: 'left' | 'right' = 'left';
+
+        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled(column);
+        if (!isLegacyMenuEnabled && this.gridOptionsService.get('enableRtl')) {
+            multiplier = 1;
+            alignSide = 'right';
+        }
+        let nudgeX = isLegacyMenuEnabled ? undefined : (4 * multiplier);
+        let nudgeY = isLegacyMenuEnabled ? undefined : 4;
+
         this.showPopup(column, eMenu => {
             this.popupService.positionPopupByComponent({
                 type: containerType,
                 eventSource,
                 ePopup: eMenu,
+                nudgeX,
+                nudgeY,
+                alignSide,
                 keepWithinBounds: true,
                 position: 'under',
                 column,

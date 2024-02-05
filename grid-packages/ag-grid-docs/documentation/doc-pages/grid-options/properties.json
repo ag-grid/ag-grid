@@ -53,7 +53,7 @@
         "getMainMenuItems": {
             "more": {
                 "name": "Column Menu",
-                "url": "/column-menu/#customising-the-general-menu-tab"
+                "url": "/column-menu/#customising-the-menu-items"
             }
         },
         "suppressMenuHide": {

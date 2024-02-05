@@ -91,6 +91,10 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const defaultTab: ColumnMenuTab | undefined = filtersOnly ? 'filterMenuTab' : undefined;
         const restrictToTabs = defaultTab ? [defaultTab] : undefined;
 
+        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled(column);
+        let nudgeX = (isLegacyMenuEnabled ? 9 : 4) * multiplier;
+        let nudgeY = isLegacyMenuEnabled ? -23 : 4;
+
         this.showMenu(column, (menu: EnterpriseColumnMenu) => {
             const ePopup = menu.getGui();
 
@@ -100,8 +104,8 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 eventSource,
                 ePopup,
                 alignSide,
-                nudgeX: 9 * multiplier,
-                nudgeY: -23,
+                nudgeX,
+                nudgeY,
                 position: 'under',
                 keepWithinBounds: true,
             });

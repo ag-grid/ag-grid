@@ -852,10 +852,32 @@
         "meta": {
             "displayName": "Accessories"
         },
-        "showColumnMenuAfterButtonClick": {},
-        "showColumnMenuAfterMouseClick": {},
+        "showColumnChooser": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api"
+            }
+        },
+        "showColumnFilter": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api"
+            }
+        },
+        "showColumnMenu": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api"
+            }
+        },
         "hidePopupMenu": {
             "description": "Hides any visible [context menu](/context-menu/) or [column menu](/column-menu/)."
+        },
+        "hideColumnChooser": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api"
+            }
         },
         "getSideBar": {
             "more": {

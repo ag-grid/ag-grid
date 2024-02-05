@@ -25,7 +25,7 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
      * For example, the provided filters use debounceMs from the parent filter params.
      * */
     filterParams: IFilterParams;
-    /** @deprecated As of v31.1, use `colDef.suppressFloatingFilterButton` instead. */
+    /** @deprecated v31.1 Use `colDef.suppressFloatingFilterButton` instead. */
     suppressFilterButton: boolean;
 
     /**

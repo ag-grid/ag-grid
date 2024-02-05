@@ -239,7 +239,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutShowMenu(): boolean {
-        return this.params.enableMenu && this.menuService.isHeaderMenuButtonEnabled();
+        return this.params.enableMenu && this.menuService.isHeaderMenuButtonEnabled(this.params.column);
     }
 
     private workOutShowFilterButton(): boolean {
@@ -251,7 +251,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private shouldSuppressMenuHide(): boolean {
-        return this.gridOptionsService.get('suppressMenuHide');
+        return this.menuService.isHeaderMenuButtonAlwaysShowEnabled(this.params.column);
     }
 
     private setMenu(): void {
@@ -408,5 +408,12 @@ export class HeaderComp extends Component implements IHeaderComp {
     private onFilterChangedButton(): void {
         const filterPresent = this.params.column.isFilterActive();
         this.eFilterButton!.classList.toggle('ag-filter-active', filterPresent);
+    }
+
+    public getAnchorElementForMenu(isFilter?: boolean): HTMLElement {
+        if (isFilter) {
+            return this.eFilterButton ?? this.eMenu ?? this.getGui();
+        }
+        return this.eMenu ?? this.eFilterButton ?? this.getGui();
     }
 }

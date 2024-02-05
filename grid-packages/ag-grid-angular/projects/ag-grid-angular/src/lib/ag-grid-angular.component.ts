@@ -353,6 +353,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public allowContextMenuWithControlKey: boolean | undefined = undefined;
     /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
+         * If the column has `columnMenu = true`, this will default to `true` instead of `false`.
          * @default false
          */
     @Input() public suppressMenuHide: boolean | undefined = undefined;

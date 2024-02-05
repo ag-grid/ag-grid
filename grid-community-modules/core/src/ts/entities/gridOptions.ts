@@ -185,6 +185,7 @@ export interface GridOptions<TData = any> {
     allowContextMenuWithControlKey?: boolean;
     /**
      * Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
+     * If the column has `columnMenu = true`, this will default to `true` instead of `false`.
      * @default false
      */
     suppressMenuHide?: boolean;

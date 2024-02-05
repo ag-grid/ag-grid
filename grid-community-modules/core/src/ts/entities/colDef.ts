@@ -57,12 +57,6 @@ export interface AbstractColDef<TData = any, TValue = any> {
      * @default 'gridcell'
      */
     cellAriaRole?: string;
-
-    columnMenu?: 'legacy' | 'new';
-
-    suppressHeaderFilter?: boolean;
-
-    suppressHeaderContextMenu?: boolean;
 }
 
 /** Configuration options for column groups in AG Grid.  */
@@ -381,11 +375,17 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     headerComponentParams?: any;
 
     /**
+     * Changes the display type of the column menu.
+     * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
+     * @default 'legacy'
+     */
+    columnMenu?: 'legacy' | 'new';
+    /**
      * Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.
      */
     menuTabs?: ColumnMenuTab[];
-    /** Params used to change the behaviour and appearance of the Columns Chooser/Columns Menu tab. */
+    /** Params used to change the behaviour and appearance of the Column Chooser/Columns Menu tab. */
     columnChooserParams?: ColumnChooserParams;
     /** @deprecated v31.1 Use columnChooserParams instead */
     columnsMenuParams?: ColumnsMenuParams;
@@ -394,7 +394,23 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      */
     suppressMenu?: boolean;
+    /**
+     * Set to `true` to not display the filter button in the column header.
+     * Only applies when `columnMenu = true`.
+     */
+    suppressHeaderFilter?: boolean;
+    /**
+     * Set to `true` to not display the column menu when the column header is right-clicked.
+     * Only applies when `columnMenu = true`.
+     */
+    suppressHeaderContextMenu?: boolean;
+    /**
+     * Customise the list of menu items available in the column menu.
+     */
     mainMenuItems?: (string | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
+    /**
+     * Customise the list of menu items available in the context menu.
+     */
     contextMenuItems?: (string | MenuItemDef<TData>)[] | GetContextMenuItems<TData>;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;

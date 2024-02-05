@@ -168,6 +168,22 @@ The following example demonstrates all of the Provided Filters with `readOnly: t
 
 <grid-example title='Read-only Filter UI' name='filter-api-readonly' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel", "multifilter"] }'></grid-example>
 
+## Launching Filters
+
+How filters are launched can be customised if `colDef.columnMenu = 'new'`.
+
+`colDef.suppressHeaderFilter = true` can be used to disable the button in the header that opens the filter.
+
+The filter can also be launched via `api.showColumnFilter(columnKey)`.
+
+The following example demonstrates launching the filter:
+- The **Athlete** column has a filter button in the header to launch the filter.
+- The **Age** column has a floating filter, so the header button is automatically hidden.
+- The **Country** column has the filter button hidden via `colDef.suppressHeaderFilter`. The filter can still be opened via the API by clicking the `Open Country Filter` button.
+- The **Year** column has a floating filter and the header button is also suppressed, so has a slightly different display style when the filter is active.
+
+<grid-example title='Launching Filters' name='launching-filters' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
 ## Filter Events
 
 Filtering causes the following events to be emitted:

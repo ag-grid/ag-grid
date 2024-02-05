@@ -2,13 +2,19 @@ import {
   GridApi,
   createGrid,
   ColDef,
-  GridOptions
+  GridOptions,
 } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 200 },
-  { field: 'age', filter: true },
-  { field: 'country', filter: true, floatingFilter: true, minWidth: 200 },
+  { field: 'age', menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab'] },
+  { field: 'country', minWidth: 200, menuTabs: ['filterMenuTab', 'columnsMenuTab'] },
+  { field: 'year', menuTabs: ['generalMenuTab'] },
+  { field: 'sport', minWidth: 200, menuTabs: [] },
+  { field: 'gold' },
+  { field: 'silver' },
+  { field: 'bronze' },
+  { field: 'total' },
 ]
 
 let gridApi: GridApi<IOlympicData>;
@@ -16,8 +22,10 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
+    flex: 1,
     minWidth: 100,
-    columnMenu: 'new',
+    filter: true,
+    columnMenu: 'legacy',
   },
 }
 

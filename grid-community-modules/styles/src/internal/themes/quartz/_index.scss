@@ -367,7 +367,7 @@
     }
 
     .ag-filter-active {
-        --ag-quartz-icon-active-color: color-mix(in srgb, transparent, var(--ag-active-color) 10%);
+        --ag-quartz-icon-active-color: color-mix(in srgb, transparent, var(--ag-active-color) 30%);
         border-radius: 1px;
         background-color: var(--ag-quartz-icon-active-color);
         box-shadow: 0 0 0 4px var(--ag-quartz-icon-active-color);

@@ -117,7 +117,7 @@ export class MenuService extends BeanStub {
     }
 
     public isColumnMenuInHeaderEnabled(column: Column): boolean {
-        return !column.getColDef().suppressMenu && this.activeMenuFactory.isMenuEnabled(column);
+        return !column.getColDef().suppressMenu && this.activeMenuFactory.isMenuEnabled(column) && (this.isLegacyMenuEnabled(column) || !!this.enterpriseMenuFactory);
     }
 
     public isFilterMenuInHeaderEnabled(column: Column): boolean {
@@ -128,12 +128,16 @@ export class MenuService extends BeanStub {
         return !column?.getColDef().suppressHeaderContextMenu && this.getColumnMenuType(column) === 'new';
     }
 
-    public isHeaderMenuButtonEnabled(): boolean {
+    public isHeaderMenuButtonAlwaysShowEnabled(column: Column): boolean {
+        return this.isSuppressMenuHide(column);
+    }
+
+    public isHeaderMenuButtonEnabled(column: Column): boolean {
         // we don't show the menu if on an iPad/iPhone, as the user cannot have a pointer device/
         // However if suppressMenuHide is set to true the menu will be displayed alwasys, so it's ok
         // to show it on iPad in this case (as hover isn't needed). If suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
-        const menuHides = !this.gridOptionsService.get('suppressMenuHide');
+        const menuHides = !this.isSuppressMenuHide(column);
 
         const onIpadAndMenuHides = isIOSUserAgent() && menuHides;
 
@@ -175,6 +179,16 @@ export class MenuService extends BeanStub {
         return !!column.getColDef().floatingFilter && this.isFloatingFilterButtonEnabled(column);
     }
 
+    private isSuppressMenuHide(column: Column): boolean {
+        const suppressMenuHide = this.gridOptionsService.get('suppressMenuHide');
+        if (this.isLegacyMenuEnabled(column)) {
+            return suppressMenuHide;
+        } else {
+            // default to true for new
+            return this.gridOptionsService.exists('suppressMenuHide') ? suppressMenuHide : true;
+        }
+    }
+
     private showColumnMenuCommon(menuFactory: IMenuFactory, params: ShowColumnMenuParams, containerType: ContainerType, filtersOnly?: boolean): void {
         const { column, positionBy } = params;
         if (positionBy === 'button') {
@@ -188,8 +202,8 @@ export class MenuService extends BeanStub {
             this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
             // make sure we've finished scrolling into view before displaying the menu
             this.animationFrameService.requestAnimationFrame(() => {
-                const eHeader = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned()).getHtmlElementForColumnHeader(column)!;
-                menuFactory.showMenuAfterButtonClick(column, eHeader, containerType, true);
+                const headerCellCtrl = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned()).getHeaderCtrlForColumn(column)!;
+                menuFactory.showMenuAfterButtonClick(column, headerCellCtrl.getAnchorElementForMenu(filtersOnly), containerType, true);
             });
         }
     }

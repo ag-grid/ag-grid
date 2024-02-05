@@ -48,7 +48,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
-    menuTabs: ['columnsMenuTab']
+    columnMenu: 'new',
   },
 }
 

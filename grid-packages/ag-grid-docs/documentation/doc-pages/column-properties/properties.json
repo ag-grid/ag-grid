@@ -80,6 +80,12 @@
                 "name": "Suppressing the Fill Handle",
                 "url": "/range-selection-fill-handle/#suppressing-the-fill-handle"
             }
+        },
+        "contextMenuItems": {
+            "more": {
+                "name": "Configuring the Context Menu",
+                "url": "/context-menu/#configuring-the-context-menu"
+            }
         }
     },
     "charts": {
@@ -144,14 +150,48 @@
                 "url": "/column-headers/#auto-header-height"
             }
         },
-        "menuTabs": {},
-        "columnChooserParams": {
+        "columnMenu": {
             "more": {
-                "name": "Customising the Columns Menu Tab",
-                "url": "/column-menu/#customising-the-columns-menu-tab"
+                "name": "Column Menu",
+                "url": "/column-menu/"
             }
         },
-        "suppressMenu": {},
+        "menuTabs": {
+            "more": {
+                "name": "Legacy Tabbed Column Menu",
+                "url": "/column-menu/#legacy-tabbed-column-menu"
+            }
+        },
+        "columnChooserParams": {
+            "more": {
+                "name": "Customising the Column Chooser",
+                "url": "/column-menu/#customising-the-column-chooser"
+            }
+        },
+        "mainMenuItems": {
+            "more": {
+                "name": "Customising the Menu Items",
+                "url": "/column-menu/#customising-the-menu-items"
+            }
+        },
+        "suppressMenu": {
+            "more": {
+                "name": "Customising the Column Menu",
+                "url": "/column-menu/#customising-the-column-menu"
+            }
+        },
+        "suppressHeaderFilter": {
+            "more": {
+                "name": "Customising the Column Menu",
+                "url": "/column-menu/#customising-the-column-menu"
+            }
+        },
+        "suppressHeaderContextMenu": {
+            "more": {
+                "name": "Customising the Column Menu",
+                "url": "/column-menu/#customising-the-column-menu"
+            }
+        },
         "suppressHeaderKeyboardEvent": {
             "more": {
                 "name": "Suppress Keyboard Events",

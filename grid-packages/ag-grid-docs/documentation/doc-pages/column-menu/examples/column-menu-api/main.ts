@@ -7,8 +7,14 @@ import {
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 200 },
-  { field: 'age', filter: true },
-  { field: 'country', filter: true, floatingFilter: true, minWidth: 200 },
+  { field: 'age' },
+  { field: 'country', minWidth: 200 },
+  { field: 'year' },
+  { field: 'sport', minWidth: 200 },
+  { field: 'gold' },
+  { field: 'silver' },
+  { field: 'bronze' },
+  { field: 'total' },
 ]
 
 let gridApi: GridApi<IOlympicData>;
@@ -16,9 +22,27 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
+    flex: 1,
     minWidth: 100,
     columnMenu: 'new',
+    filter: true,
   },
+}
+
+function showColumnChooser() {
+  gridApi.showColumnChooser();
+}
+
+function showColumnFilter(colKey) {
+  gridApi.showColumnFilter(colKey);
+}
+
+function showColumnMenu(colKey) {
+  gridApi.showColumnMenu(colKey);
+}
+
+function hideColumnChooser() {
+  gridApi.hideColumnChooser();
 }
 
 // setup the grid after the page has finished loading

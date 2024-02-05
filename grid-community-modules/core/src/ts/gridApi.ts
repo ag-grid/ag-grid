@@ -1307,10 +1307,12 @@ export class GridApi<TData = any> {
         });
     }
 
+    /** Show the column chooser. */
     public showColumnChooser(params?: ColumnChooserParams): void {
         this.menuService.showColumnChooser({ chooserParams: params });
     }
 
+    /** Show the filter for the provided column. */
     public showColumnFilter(colKey: string | Column): void {
         const column = this.columnModel.getGridColumn(colKey);
         if (!column) {
@@ -1324,6 +1326,7 @@ export class GridApi<TData = any> {
         });
     }
 
+    /** Show the column menu for the provided column. */
     public showColumnMenu(colKey: string | Column): void {
         const column = this.columnModel.getGridColumn(colKey);
         if (!column) {
@@ -1341,6 +1344,7 @@ export class GridApi<TData = any> {
         this.menuService.hidePopupMenu();
     }
 
+    /** Hide the column chooser if visible. */
     public hideColumnChooser(): void {
         this.menuService.hideColumnChooser();
     }

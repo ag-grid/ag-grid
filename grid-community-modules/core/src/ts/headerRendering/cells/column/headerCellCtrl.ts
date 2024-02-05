@@ -774,6 +774,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.comp.addOrRemoveCssClass('ag-header-active', active);
     }
 
+    public getAnchorElementForMenu(isFilter?: boolean): HTMLElement {
+        const headerComp = this.comp.getUserCompInstance();
+        if (headerComp instanceof HeaderComp) {
+            return headerComp.getAnchorElementForMenu(isFilter);
+        }
+        return this.getGui();
+    }
+
     protected destroy(): void {
         super.destroy();
 
