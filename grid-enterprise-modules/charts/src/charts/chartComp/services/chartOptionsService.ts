@@ -49,11 +49,11 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getAxisProperty<T = string>(expression: string): T {
-        return _.get(this.getChart().axes?.[0], expression, undefined);
+        return this.getPrimaryAxisProperty(expression);
     }
 
     public setAxisProperty<T = string>(expression: string, value: T) {
-        // update axis options
+        // update axis options for all axes simultaneously
         const chart = this.getChart();
         let chartOptions = {};
         chart.axes?.forEach((axis: any) => {
@@ -64,14 +64,86 @@ export class ChartOptionsService extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
     
+    public getPrimaryAxisProperty<T = string>(expression: string): T {
+        return this.getIndexedAxisProperty(0, expression);
+    }
+
     public getSecondaryAxisProperty<T = string>(expression: string): T {
-        return _.get(this.getChart().axes?.[1], expression, undefined) as T;
+        return this.getIndexedAxisProperty(1, expression);
+    }
+    
+    public getRadiusAxisProperty<T = string>(expression: string): T | undefined {
+        const axisIndex = this.getRadiusAxisIndex();
+        if (axisIndex == undefined) return undefined;
+        return this.getIndexedAxisProperty(axisIndex, expression);
+    }
+
+    public getAngleAxisProperty<T = string>(expression: string): T | undefined {
+        const axisIndex = this.getAngleAxisIndex();
+        if (axisIndex == undefined) return undefined;
+        return this.getIndexedAxisProperty(axisIndex, expression);
+    }
+
+    public setPrimaryAxisProperty<T = string>(expression: string, value: T) {
+        return this.setIndexedAxisProperty(0, expression, value);
     }
 
     public setSecondaryAxisProperty<T = string>(expression: string, value: T) {
+        return this.setIndexedAxisProperty(1, expression, value);
+    }
+
+    public setRadiusAxisProperty<T = string>(expression: string, value: T) {
+        const axisIndex = this.getRadiusAxisIndex();
+        if (axisIndex == undefined) return;
+        return this.setIndexedAxisProperty(axisIndex, expression, value);
+    }
+
+    public setAngleAxisProperty<T = string>(expression: string, value: T) {
+        const axisIndex = this.getAngleAxisIndex();
+        if (axisIndex == undefined) return;
+        return this.setIndexedAxisProperty(axisIndex, expression, value);
+    }
+
+    private getRadiusAxisIndex(): number | undefined {
+        // Locate the first matching angle axis
+        return this.findAxisIndex((axis) => {
+            switch (axis.type) {
+                case 'radius-category':
+                case 'radius-number':
+                    return true;
+                default:
+                    return false;
+            }
+        });
+    }
+
+    private getAngleAxisIndex(): number | undefined {
+        // Locate the first matching angle axis
+        return this.findAxisIndex((axis) => {
+            switch (axis.type) {
+                case 'angle-category':
+                case 'angle-number':
+                    return true;
+                default:
+                    return false;
+            }
+        });
+    }
+
+    private findAxisIndex(predicate: (axis: NonNullable<AgChartActual['axes']>[number]) => boolean): number | undefined {
+        // Locate the first matching axis
+        const index = this.getChart().axes?.findIndex((axis) => predicate(axis));
+        return (index === -1 ? undefined : index);
+    }
+
+    private getIndexedAxisProperty<T>(axisIndex: number, expression: string): T {
+        return _.get(this.getChart().axes?.[axisIndex], expression, undefined) as T;
+    }
+
+    private setIndexedAxisProperty<T>(axisIndex: number, expression: string, value: T) {
         // update axis options
         const chart = this.getChart();
-        const [, axis] = chart.axes ?? [];
+        const axis = chart.axes?.[axisIndex];
         if (!axis) return;
 
         const chartOptions = this.getUpdateAxisOptions<T>(axis, expression, value);
@@ -137,7 +209,7 @@ export class ChartOptionsService extends BeanStub {
             chartSeriesTypes.push('common');
         }
 
-        const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'radius-number'];
+        const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'angle-number', 'radius-category', 'radius-number'];
 
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};

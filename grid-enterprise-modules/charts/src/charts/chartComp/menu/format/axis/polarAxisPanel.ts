@@ -17,6 +17,7 @@ import { ChartOptionsService } from '../../../services/chartOptionsService';
 import { FormatPanelOptions, getMaxValue } from '../formatPanel';
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import { AgAngleSelect } from '../../../../../widgets/agAngleSelect';
+import { isPolar } from '../../../utils/seriesTypeMapper';
 
 export class PolarAxisPanel extends Component {
     public static TEMPLATE /* html */ = `<div>
@@ -88,13 +89,31 @@ export class PolarAxisPanel extends Component {
             switch (this.chartController.getChartType()) {
                 case 'radarLine':
                 case 'radarArea':
+                case 'radialColumn':
                     return true;
                 case 'nightingale':
+                case 'radialBar':
                 default:
                     return false;
             }
         })();
         if (hasConfigurableAxisShape) this.initAxisShape();
+
+        if (isPolar(this.chartController.getChartType())) {
+            const innerRadiusSlider = this.createManagedBean(
+                new AgSlider({
+                    label: this.translate('innerRadius'),
+                    labelWidth: 'flex',
+                })
+            )
+                .setMinValue(0)
+                .setMaxValue(1)
+                .setStep(0.05)
+                .onValueChange((newValue) => this.chartOptionsService.setRadiusAxisProperty('innerRadiusRatio', newValue));
+            const currentValue = this.chartOptionsService.getRadiusAxisProperty('innerRadiusRatio');
+            if (currentValue != undefined) innerRadiusSlider.setValue(currentValue);
+            this.axisGroup.addItem(innerRadiusSlider);
+        }
     }
 
     private initAxisShape() {
@@ -110,8 +129,9 @@ export class PolarAxisPanel extends Component {
             .setLabelWidth('flex')
             .setInputWidth('flex')
             .addOptions(options)
-            .setValue(this.chartOptionsService.getAxisProperty('shape'))
-            .onValueChange((newValue) => this.chartOptionsService.setAxisProperty('shape', newValue));
+            .onValueChange((newValue) => this.chartOptionsService.setAngleAxisProperty('shape', newValue));
+        const currentValue = this.chartOptionsService.getAngleAxisProperty('shape');
+        if (currentValue != undefined) shapeSelect.setValue(currentValue);
 
         this.axisGroup.addItem(shapeSelect);
 

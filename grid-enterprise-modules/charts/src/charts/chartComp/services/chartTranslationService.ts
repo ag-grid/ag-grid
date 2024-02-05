@@ -132,6 +132,7 @@ export class ChartTranslationService extends BeanStub {
         columnLineComboTooltip: 'Column & Line',
         areaColumnComboTooltip: 'Area & Column',
         customComboTooltip: 'Custom Combination',
+        innerRadius: 'Inner Radius',
         whisker: 'Whisker',
         cap: 'Cap',
         capLengthRatio: 'Length Ratio',
