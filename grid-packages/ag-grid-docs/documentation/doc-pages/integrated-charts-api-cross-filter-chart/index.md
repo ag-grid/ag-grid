@@ -60,7 +60,7 @@ different defaults which make sense for cross-filtering.
 
 <api-documentation source='grid-api/api.json' section='charts' names='["createCrossFilterChart"]'></api-documentation>
 
-<br>
+<br />
 
 <interface-documentation interfaceName='CreateCrossFilterChartParams' overrideSrc='integrated-charts-api-cross-filter-chart/resources/cross-filter-api.json' ></interface-documentation>
 

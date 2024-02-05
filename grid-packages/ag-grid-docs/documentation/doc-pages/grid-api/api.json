@@ -1064,16 +1064,6 @@
         "getGridId": {},
         "isAnimationFrameQueueEmpty": {}
     },
-    "rowModels": {
-        "meta": {
-            "displayName": "RowModel",
-            "page": {
-                "name": "Row Model",
-                "url": "/row-models/"
-            }
-        },
-        "getModel": {}
-    },
     "data": {
         "meta": {
             "displayName": "RowModel: Client-Side",

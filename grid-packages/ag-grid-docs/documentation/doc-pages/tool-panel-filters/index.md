@@ -20,7 +20,7 @@ It is possible to remove items from the Filters Tool Panel. Items are suppressed
 
 <interface-documentation interfaceName='ToolPanelFiltersCompParams' exclude='["api", "columnApi"]' config='{"overrideBottomMargin":"1rem"}' ></interface-documentation>
 
-<br>
+<br />
 
 To remove a particular column / filter from the tool panel, set the column property `suppressFiltersToolPanel` to `true`.
 

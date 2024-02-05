@@ -53,7 +53,8 @@ In order to give screen readers the contextual information they require to inter
 
 When inspecting the DOM you'll notice the following roles and properties have been added:
 
-- **role="treegrid"** - marks the enclosing element of the grid.<br>
+- **role="treegrid"** - marks the enclosing element of the grid.
+
     **Note:** You can set any aria property in the panel (role="treegrid") by using the `setGridAriaProperty` method in the [Grid Api](/grid-api/).
     - **aria-rowcount** - announces the number of rows.
     - **aria-colcount** - announces the number of rows.

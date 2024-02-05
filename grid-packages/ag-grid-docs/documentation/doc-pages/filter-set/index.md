@@ -6,7 +6,7 @@ description: "Set Filter works like Excel, providing checkboxes to select values
 
 The Set Filter takes inspiration from Excel's AutoFilter and allows filtering on sets of data.
 
-<image-caption src="filter-set/resources/set-filter.png" alt="Set Filter" width="28rem" centered="true" toggledarkmode="true"></image-caption>
+<image-caption src="filter-set/resources/set-filter.png" alt="Set Filter" centered="true" toggledarkmode="true"></image-caption>
 
 ## Set Filter Sections
 

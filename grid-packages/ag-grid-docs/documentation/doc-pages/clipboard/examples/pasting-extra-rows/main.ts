@@ -30,7 +30,7 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
     data.splice(data.length - 1, 1);
   }
 
-  const lastIndex = params.api!.getModel().getRowCount() - 1;
+  const lastIndex = params.api!.getDisplayedRowCount() - 1;
   const focusedCell = params.api!.getFocusedCell();
   const focusedIndex = focusedCell!.rowIndex;
 
