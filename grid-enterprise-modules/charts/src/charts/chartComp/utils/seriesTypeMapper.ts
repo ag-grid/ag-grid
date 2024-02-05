@@ -74,6 +74,16 @@ export function isPolar(chartType: ChartType): boolean {
     }
 }
 
+export function isRadial(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'radialColumn':
+        case 'radialBar':
+            return true;
+        default:
+            return false;
+    }
+}
+
 export function getSeriesType(chartType: ChartType): ChartSeriesType {
     switch (chartType) {
         case 'bar':

@@ -72,6 +72,12 @@ export class ChartOptionsService extends BeanStub {
         return this.getIndexedAxisProperty(1, expression);
     }
     
+    public getCategoryAxisProperty<T = string>(expression: string): T | undefined {
+        const axisIndex = this.getCategoryAxisIndex();
+        if (axisIndex == undefined) return undefined;
+        return this.getIndexedAxisProperty(axisIndex, expression);
+    }
+
     public getRadiusAxisProperty<T = string>(expression: string): T | undefined {
         const axisIndex = this.getRadiusAxisIndex();
         if (axisIndex == undefined) return undefined;
@@ -92,6 +98,12 @@ export class ChartOptionsService extends BeanStub {
         return this.setIndexedAxisProperty(1, expression, value);
     }
 
+    public setCategoryAxisProperty<T = string>(expression: string, value: T) {
+        const axisIndex = this.getCategoryAxisIndex();
+        if (axisIndex == undefined) return;
+        return this.setIndexedAxisProperty(axisIndex, expression, value);
+    }
+
     public setRadiusAxisProperty<T = string>(expression: string, value: T) {
         const axisIndex = this.getRadiusAxisIndex();
         if (axisIndex == undefined) return;
@@ -102,6 +114,21 @@ export class ChartOptionsService extends BeanStub {
         const axisIndex = this.getAngleAxisIndex();
         if (axisIndex == undefined) return;
         return this.setIndexedAxisProperty(axisIndex, expression, value);
+    }
+
+    private getCategoryAxisIndex(): number | undefined {
+        // Locate the first matching category axis
+        return this.findAxisIndex((axis) => {
+            switch (axis.type) {
+                case 'category':
+                case 'grouped-category':
+                case 'radius-category':
+                case 'angle-category':
+                    return true;
+                default:
+                    return false;
+            }
+        });
     }
 
     private getRadiusAxisIndex(): number | undefined {
