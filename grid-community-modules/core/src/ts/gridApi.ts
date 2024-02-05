@@ -449,9 +449,14 @@ export class GridApi<TData = any> {
      * rows after aggregation has been applied, and the final set of 'to be displayed' rows.
      *
      * @deprecated As of v31.1.0, getModel() is deprecated and will not be available in future versions.
-     * Other gridApi methods can be used instead to achieve the same functionality.
+     * Please use the appropriate grid API methods instead
      */
     public getModel(): IRowModel {
+        warnOnce(
+            'getModel() is deprecated and will be removed in a future release. ' +
+            'Please use the appropriate grid API methods instead.'
+        );
+
         return this.rowModel;
     }
 
