@@ -101,8 +101,7 @@ function onRangeSelectionChanged(event: RangeSelectionChangedEvent) {
 
       for (var rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
         range.columns.forEach((column) => {
-          var rowModel = gridApi.getModel()
-          var rowNode = rowModel.getRow(rowIndex)!
+          var rowNode = gridApi.getDisplayedRowAtIndex(rowIndex)!;
           var value = gridApi.getValue(column, rowNode)
           if (typeof value === 'number') {
             sum += value

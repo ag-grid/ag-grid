@@ -127,7 +127,7 @@ function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: n
 
 function tabToNextCell(params: TabToNextCellParams): (CellPosition | null) {
   const previousCell = params.previousCellPosition
-  const renderedRowCount = params.api!.getModel().getRowCount();
+  const renderedRowCount = params.api!.getDisplayedRowCount();
   const lastRowIndex = previousCell.rowIndex;
 
   let nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
@@ -171,7 +171,7 @@ function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | n
     case KEY_UP:
       // return the cell below
       nextRowIndex = previousCell.rowIndex + 1
-      renderedRowCount = params.api!.getModel().getRowCount()
+      renderedRowCount = params.api!.getDisplayedRowCount();
       if (nextRowIndex >= renderedRowCount) {
         return null
       } // returning null means don't navigate
