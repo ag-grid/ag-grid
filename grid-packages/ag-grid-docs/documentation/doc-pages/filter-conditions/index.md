@@ -8,7 +8,7 @@ Each Simple Filter follows the same layout. The filter consists of one or more F
 
 The only layout difference is the type of input field presented to the user: a text field for Text Filters, a number field for Number Filters, and a date picker field for Date Filters.
 
-<image-caption src="filter-conditions/resources/filter-panel-components.png" alt="Filter Panel Component" width="40rem" centered="true" toggledarkmode="true"></image-caption>
+<image-caption src="filter-conditions/resources/filter-panel-components.png" alt="Filter Panel Component" centered="true" toggledarkmode="true"></image-caption>
 
 ## Filter Options
 
