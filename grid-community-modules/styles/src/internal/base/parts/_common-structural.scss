@@ -1485,7 +1485,7 @@
         @media (max-resolution: 1.5x) {
             // on low-res screens, most custom fonts look awful in vertical-lr mode so use the system font...
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-            // ... and additionally apply a rotation to fis rendering in Firefox
+            // ... and additionally apply a rotation to fix rendering in Firefox
             transform: rotate(0.05deg);
         }
     }
