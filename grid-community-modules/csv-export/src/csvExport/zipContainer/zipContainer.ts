@@ -1,5 +1,10 @@
 import { convertStringToByteArray } from "./convert";
-import { buildFolderEnd, getCompressedHeaderAndContent, getHeaderAndContent } from "./zipContainerHelper";
+import {
+    buildFolderEnd,
+    getCompressedHeaderAndContent,
+    getHeaderAndContent,
+    ZipFileHeaderAndContent,
+} from './zipContainerHelper';
 
 export interface ZipFile {
     path: string;
@@ -53,23 +58,20 @@ export class ZipContainer {
         this.files = [];
     }
 
-    private static async buildCompressedFileStream(): Promise<Uint8Array> {
-        const totalFiles: ZipFile[] = [...this.folders, ...this.files];
-        const len = totalFiles.length;
+    private static packageFiles(
+        files: ZipFileHeaderAndContent[],
+    ) {
         let fileData: Uint8Array = new Uint8Array(0);
         let folderData: Uint8Array = new Uint8Array(0);
-        let lL = 0;
-        let cL = 0;
+        let filesContentAndHeaderLength: number = 0;
+        let folderHeadersLength: number = 0;
 
-        for (const currentFile of totalFiles) {
+        for (const currentFile of files) {
             const {
                 fileHeader,
                 folderHeader,
                 content,
-            } = await getCompressedHeaderAndContent(currentFile, lL);
-
-            lL += fileHeader.length + content.length;
-            cL += folderHeader.length;
+            } = currentFile;
 
             // Append fileHeader to fData
             const dataWithHeader = new Uint8Array(fileData.length + fileHeader.length);
@@ -89,13 +91,21 @@ export class ZipContainer {
             folderDataWithFolderHeader.set(folderData);
             folderDataWithFolderHeader.set(convertStringToByteArray(folderHeader), folderData.length);
             folderData = folderDataWithFolderHeader;
+
+            filesContentAndHeaderLength += fileHeader.length + content.length;
+            folderHeadersLength += folderHeader.length;
         }
 
-        const folderEnd = buildFolderEnd(len, cL, lL);
+        const folderEnd = buildFolderEnd(
+            files.length,
+            folderHeadersLength,
+            filesContentAndHeaderLength,
+        );
 
         // Append folder data and file data
         const folderEndAsUint8Array = convertStringToByteArray(folderEnd);
         const result = new Uint8Array(fileData.length + folderData.length + folderEndAsUint8Array.length);
+
         result.set(fileData);
         result.set(folderData, fileData.length);
         result.set(folderEndAsUint8Array, fileData.length + folderData.length);
@@ -103,53 +113,33 @@ export class ZipContainer {
         return result;
     }
 
-    private static buildFileStream(): Uint8Array {
+    private static async buildCompressedFileStream(): Promise<Uint8Array> {
         const totalFiles: ZipFile[] = [...this.folders, ...this.files];
-        const len = totalFiles.length;
-        let fileData: Uint8Array = new Uint8Array(0);
-        let folderData: Uint8Array = new Uint8Array(0);
+        const readyFiles: ZipFileHeaderAndContent[] = [];
         let lL = 0;
-        let cL = 0;
 
         for (const currentFile of totalFiles) {
-            const {
-                fileHeader,
-                folderHeader,
-                content,
-            } = getHeaderAndContent(currentFile, lL);
-
+            const output = await getCompressedHeaderAndContent(currentFile, lL);
+            const { fileHeader, content } = output;
+            readyFiles.push(output);
             lL += fileHeader.length + content.length;
-            cL += folderHeader.length;
-
-            // Append fileHeader to fData
-            const dataWithHeader = new Uint8Array(fileData.length + fileHeader.length);
-            dataWithHeader.set(fileData);
-            dataWithHeader.set(convertStringToByteArray(fileHeader), fileData.length);
-            fileData = dataWithHeader;
-
-            // Append content to fData
-            const contentAsUint8Array = typeof content === 'string' ? convertStringToByteArray(content) : content;
-            const dataWithContent = new Uint8Array(fileData.length + contentAsUint8Array.length);
-            dataWithContent.set(fileData);
-            dataWithContent.set(contentAsUint8Array, fileData.length);
-            fileData = dataWithContent;
-
-            // Append folder header to foData
-            const folderDataWithFolderHeader = new Uint8Array(folderData.length + folderHeader.length);
-            folderDataWithFolderHeader.set(folderData);
-            folderDataWithFolderHeader.set(convertStringToByteArray(folderHeader), folderData.length);
-            folderData = folderDataWithFolderHeader;
         }
 
-        const folderEnd = buildFolderEnd(len, cL, lL);
+        return this.packageFiles(readyFiles);
+    }
 
-        // Append folder data and file data
-        const folderEndAsUint8Array = convertStringToByteArray(folderEnd);
-        const result = new Uint8Array(fileData.length + folderData.length + folderEndAsUint8Array.length);
-        result.set(fileData);
-        result.set(folderData, fileData.length);
-        result.set(folderEndAsUint8Array, fileData.length + folderData.length);
+    private static buildFileStream(): Uint8Array {
+        const totalFiles: ZipFile[] = [...this.folders, ...this.files];
+        const readyFiles: ZipFileHeaderAndContent[] = [];
+        let lL = 0;
 
-        return result;
+        for (const currentFile of totalFiles) {
+            const readyFile = getHeaderAndContent(currentFile, lL);
+            const { fileHeader, content } = readyFile;
+            readyFiles.push(readyFile);
+            lL += fileHeader.length + content.length;
+        }
+
+        return this.packageFiles(readyFiles);
     }
 }
