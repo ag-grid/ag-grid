@@ -23,6 +23,6 @@ export class CountStatusBarComponent implements IStatusPanelAngularComp {
     }
 
     onGridReady() {
-        this.count = this.params.api.getModel().getRowCount();
+        this.count = this.params.api.getDisplayedRowCount();
     }
 }

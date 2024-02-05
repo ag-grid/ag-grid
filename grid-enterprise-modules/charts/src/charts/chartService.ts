@@ -327,7 +327,7 @@ export class ChartService extends BeanStub implements IChartService {
             chartOptionsToRestore,
             chartPaletteToRestore,
             seriesChartTypes,
-            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset())
+            crossFilteringResetCallback: () => this.activeChartComps.forEach(c => c.crossFilteringReset()),
         };
 
         const chartComp = new GridChartComp(params);

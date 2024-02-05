@@ -1481,6 +1481,16 @@
 
     .ag-side-button-label {
         writing-mode: vertical-lr;
+
+        @media (max-resolution: 1.5x) {
+            // On Windows, on low res screens only, most custom fonts look awful
+            // in vertical-lr mode. Use "Segoe UI" in preference. In practice
+            // this is a Windows-only fix since most non-Windows computers don't
+            // have Segoe UI installed.
+            font-family: "Segoe UI", var(--ag-font-family);
+            // ... and additionally apply a rotation to fix rendering in Firefox
+            transform: rotate(0.05deg);
+        }
     }
 
     // /**

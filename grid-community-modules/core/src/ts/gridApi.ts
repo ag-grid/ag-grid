@@ -337,7 +337,7 @@ export class GridApi<TData = any> {
     /** Downloads an Excel export of multiple sheets in one file. */
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
-            return this.excelCreator.exportMultipleSheetsAsExcel(params);
+            this.excelCreator.exportMultipleSheetsAsExcel(params);
         }
     }
 
@@ -447,6 +447,9 @@ export class GridApi<TData = any> {
      * Returns the row model inside the table.
      * From here you can see the original rows, rows after filter has been applied,
      * rows after aggregation has been applied, and the final set of 'to be displayed' rows.
+     *
+     * @deprecated As of v31.1.0, getModel() is deprecated and will not be available in future versions.
+     * Other gridApi methods can be used instead to achieve the same functionality.
      */
     public getModel(): IRowModel {
         return this.rowModel;

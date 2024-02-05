@@ -30,11 +30,10 @@ import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
 import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
 import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
-import {NightingaleChartProxy} from "./chartProxies/polar/nightingaleChartProxy";
+import {PolarChartProxy} from "./chartProxies/polar/polarChartProxy";
 import {PieChartProxy} from "./chartProxies/pie/pieChartProxy";
 import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
-import {RangeAreaChartProxy} from "./chartProxies/statistical/rangeAreaChartProxy";
-import {RangeBarChartProxy} from "./chartProxies/statistical/rangeBarChartProxy";
+import {RangeChartProxy} from "./chartProxies/statistical/rangeChartProxy";
 import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
 import {BoxPlotChartProxy} from "./chartProxies/statistical/boxPlotChartProxy";
 import {WaterfallChartProxy} from './chartProxies/cartesian/waterfallChartProxy';
@@ -43,8 +42,6 @@ import {ChartCrossFilterService} from "./services/chartCrossFilterService";
 import {CrossFilteringContext} from "../chartService";
 import {ChartOptionsService} from "./services/chartOptionsService";
 import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
-import { RadarLineChartProxy } from './chartProxies/polar/radarLineChartProxy';
-import { RadarAreaChartProxy } from './chartProxies/polar/radarAreaChartProxy';
 
 export interface GridChartParams {
     chartId: string;
@@ -254,15 +251,15 @@ export class GridChartComp extends Component {
             case 'histogram':
                 return new HistogramChartProxy(chartProxyParams);
             case 'radarLine':
-                return new RadarLineChartProxy(chartProxyParams);
             case 'radarArea':
-                return new RadarAreaChartProxy(chartProxyParams);
             case 'nightingale':
-                return new NightingaleChartProxy(chartProxyParams);
+            case 'radialColumn':
+            case 'radialBar':
+                return new PolarChartProxy(chartProxyParams);
             case 'rangeBar':
-                return new RangeBarChartProxy(chartProxyParams);
+                return new RangeChartProxy(chartProxyParams);
             case 'rangeArea':
-                return new RangeAreaChartProxy(chartProxyParams);
+                return new RangeChartProxy(chartProxyParams);
             case 'boxPlot':
                 return new BoxPlotChartProxy(chartProxyParams);
             case 'waterfall':
