@@ -37,3 +37,6 @@ export interface AgChartActual extends AgChartInstance {
     addEventListener(type: 'click', cb: (even: any) => void): void;
     waitForUpdate(): Promise<void>;
 }
+
+export type AgChartAxis = NonNullable<AgChartActual['axes']>[number];
+export type AgChartAxisType = AgChartAxis['type'];

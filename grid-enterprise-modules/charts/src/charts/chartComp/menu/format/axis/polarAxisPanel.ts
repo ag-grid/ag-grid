@@ -330,12 +330,12 @@ export class PolarAxisPanel extends Component {
         const degreesSymbol = String.fromCharCode(176);
 
         const label = `${this.chartTranslationService.translate('radiusAxisPosition')} ${degreesSymbol}`;
-        const value = this.chartOptionsService.getSecondaryAxisProperty<number>('positionAngle');
+        const value = this.chartOptionsService.getRadiusAxisProperty<number>('positionAngle');
         const labelRotationComp = new AgAngleSelect()
             .setLabel(label)
             .setLabelWidth('flex')
             .setValue(value || 0)
-            .onValueChange((newValue) => this.chartOptionsService.setSecondaryAxisProperty('positionAngle', newValue));
+            .onValueChange((newValue) => this.chartOptionsService.setRadiusAxisProperty('positionAngle', newValue));
 
         return this.createManagedBean(labelRotationComp);
     }
