@@ -5,7 +5,8 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test:e2e": "sh ./packAndInstallPackages.sh && ./tests/runTsTests.sh"
+    "test:e2e": "sh ./packAndInstallPackages.sh && ./tests/runTsTests.sh",
+    "test:play": "npx playwright test"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,8 @@
   },
   "homepage": "https://github.com/seanlandsman/ag-grid-modules-test#readme",
   "devDependencies": {
+    "@playwright/test": "^1.41.2",
+    "@types/node": "^20.11.16",
     "typescript": "~4.7.4"
-  },
-  "dependencies": {}
+  }
 }
