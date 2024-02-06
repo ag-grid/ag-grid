@@ -140,7 +140,6 @@ export class ColDefUtil {
         useValueParserForImport: undefined,
         mainMenuItems: undefined,
         contextMenuItems: undefined,
-        columnMenu: undefined,
         suppressFloatingFilterButton: undefined,
         suppressHeaderFilter: undefined,
         suppressHeaderContextMenu: undefined,

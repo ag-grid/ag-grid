@@ -38,14 +38,14 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 mouseEvent,
                 ePopup: eMenu
             });
-        }, containerType, mouseEvent.target as HTMLElement, this.menuService.isLegacyMenuEnabled(column));
+        }, containerType, mouseEvent.target as HTMLElement, this.menuService.isLegacyMenuEnabled());
     }
 
     public showMenuAfterButtonClick(column: Column | undefined, eventSource: HTMLElement, containerType: ContainerType): void {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
-        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled(column);
+        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
         if (!isLegacyMenuEnabled && this.gridOptionsService.get('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
@@ -96,7 +96,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         const afterGuiDetached = () => filterWrapper.filterPromise?.then(filter => filter?.afterGuiDetached?.());
 
-        const anchorToElement = this.menuService.isColumnMenuAnchoringEnabled(column) ? (eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui()) : undefined;
+        const anchorToElement = this.menuService.isColumnMenuAnchoringEnabled() ? (eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui()) : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             column.setMenuVisible(false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;
@@ -115,6 +115,10 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         const translate = this.localeService.getLocaleTextFunc();
 
+        const ariaLabel = isLegacyMenuEnabled && containerType !== 'columnFilter'
+            ? translate('ariaLabelColumnMenu', 'Column Menu')
+            : translate('ariaLabelColumnFilter', 'Column Filter');
+
         const addPopupRes = this.popupService.addPopup({
             modal: true,
             eChild: eMenu,
@@ -122,7 +126,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback,
             positionCallback: () => positionCallback(eMenu),
             anchorToElement,
-            ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
+            ariaLabel
         });
 
         if (addPopupRes) {

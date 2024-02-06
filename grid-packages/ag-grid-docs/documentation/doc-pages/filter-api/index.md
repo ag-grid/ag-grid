@@ -170,7 +170,7 @@ The following example demonstrates all of the Provided Filters with `readOnly: t
 
 ## Launching Filters
 
-How filters are launched can be customised if `colDef.columnMenu = 'new'`.
+How filters are launched can be customised if grid option `columnMenu = 'new'`.
 
 `colDef.suppressHeaderFilter = true` can be used to disable the button in the header that opens the filter.
 

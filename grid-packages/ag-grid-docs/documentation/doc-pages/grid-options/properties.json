@@ -56,6 +56,12 @@
                 "url": "/column-menu/#customising-the-menu-items"
             }
         },
+        "columnMenu": {
+            "more": {
+                "name": "Column Menu",
+                "url": "/column-menu/"
+            }
+        },
         "suppressMenuHide": {
             "more": {
                 "name": "Column Menu",

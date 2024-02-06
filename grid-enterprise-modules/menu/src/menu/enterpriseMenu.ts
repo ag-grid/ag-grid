@@ -91,7 +91,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const defaultTab: ColumnMenuTab | undefined = filtersOnly ? 'filterMenuTab' : undefined;
         const restrictToTabs = defaultTab ? [defaultTab] : undefined;
 
-        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled(column);
+        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
         let nudgeX = (isLegacyMenuEnabled ? 9 : 4) * multiplier;
         let nudgeY = isLegacyMenuEnabled ? -23 : 4;
 
@@ -164,7 +164,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             positionCallback(menu);
         }
 
-        if (this.menuService.isColumnMenuAnchoringEnabled(column)) {
+        if (this.menuService.isColumnMenuAnchoringEnabled()) {
             // if user starts showing / hiding columns, or otherwise move the underlying column
             // for this menu, we want to stop tracking the menu with the column position. otherwise
             // the menu would move as the user is using the columns tab inside the menu.
@@ -226,7 +226,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ): (EnterpriseColumnMenu & BeanStub) {
-        if (this.menuService.isLegacyMenuEnabled(column)) {
+        if (this.menuService.isLegacyMenuEnabled()) {
             return this.createBean(new TabbedColumnMenu(column, this.lastSelectedTab, restrictToTabs, eventSource));
         } else {
             return this.createBean(new ColumnContextMenu(column, eventSource));
@@ -234,7 +234,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public isMenuEnabled(column: Column): boolean {
-        if (!this.menuService.isLegacyMenuEnabled(column)) {
+        if (!this.menuService.isLegacyMenuEnabled()) {
             return true;
         }
         // Determine whether there are any tabs to show in the menu, given that the filter tab may be hidden

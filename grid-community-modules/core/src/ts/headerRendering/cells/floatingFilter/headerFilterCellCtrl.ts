@@ -236,7 +236,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private setupFilterButton(): void {
         this.suppressFilterButton = !this.menuService.isFloatingFilterButtonEnabled(this.column);
-        this.highlightFilterButtonWhenActive = !this.menuService.isLegacyMenuEnabled(this.column);
+        this.highlightFilterButtonWhenActive = !this.menuService.isLegacyMenuEnabled();
     }
 
     private setupUserComp(): void {

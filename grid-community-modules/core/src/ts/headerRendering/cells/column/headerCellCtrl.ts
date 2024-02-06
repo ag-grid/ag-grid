@@ -35,7 +35,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     getUserCompInstance(): IHeader | undefined;
 }
 
-type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll';
+type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Column, ResizeFeature> {
 
@@ -199,7 +199,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             displayName: this.displayName!,
             enableSorting: this.column.isSortable(),
             enableMenu: this.menuEnabled,
-            enableFilterButton: this.openFilterEnabled,
+            enableFilterButton: this.openFilterEnabled && this.menuService.isHeaderFilterButtonEnabled(this.column),
+            enableFilterIcon: !this.openFilterEnabled || this.menuService.isLegacyMenuEnabled(),
             showColumnMenu: (buttonElement: HTMLElement) => {
                 this.menuService.showColumnMenu({
                     column: this.column,
@@ -688,9 +689,18 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private refreshAriaMenu(): void {
         if (this.menuEnabled) {
             const translate = this.localeService.getLocaleTextFunc();
-            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu'));
+            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press ALT DOWN to open column menu'));
         } else {
             this.setAriaDescriptionProperty('menu', null);
+        }
+    }
+
+    private refreshAriaFilterButton(): void {
+        if (this.openFilterEnabled && !this.menuService.isLegacyMenuEnabled()) {
+            const translate = this.localeService.getLocaleTextFunc();
+            this.setAriaDescriptionProperty('filterButton', translate('ariaFilterColumn', 'Press CTRL ENTER to open filter'));
+        } else {
+            this.setAriaDescriptionProperty('filterButton', null);
         }
     }
 
@@ -726,6 +736,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private refreshAria(): void {
         this.refreshAriaSort();
         this.refreshAriaMenu();
+        this.refreshAriaFilterButton();
         this.refreshAriaFiltered();
         this.refreshAriaDescription();
     }

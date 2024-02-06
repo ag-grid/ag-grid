@@ -375,12 +375,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     headerComponentParams?: any;
 
     /**
-     * Changes the display type of the column menu.
-     * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
-     * @default 'legacy'
-     */
-    columnMenu?: 'legacy' | 'new';
-    /**
      * Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.
      */

@@ -72,7 +72,7 @@ export class ColumnMenuFactory extends BeanStub {
     private getDefaultMenuOptions(column?: Column): string[] {
         const result: string[] = [];
 
-        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled(column);
+        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
 
         if (!column) {
             if (!isLegacyMenuEnabled) {

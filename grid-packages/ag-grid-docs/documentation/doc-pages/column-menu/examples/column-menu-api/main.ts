@@ -24,9 +24,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    columnMenu: 'new',
     filter: true,
   },
+  columnMenu: 'new',
 }
 
 function showColumnChooser() {

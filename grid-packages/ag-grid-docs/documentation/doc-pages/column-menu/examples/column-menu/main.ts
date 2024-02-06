@@ -17,8 +17,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     minWidth: 100,
-    columnMenu: 'new',
   },
+  columnMenu: 'new',
 }
 
 // setup the grid after the page has finished loading

@@ -150,12 +150,6 @@
                 "url": "/column-headers/#auto-header-height"
             }
         },
-        "columnMenu": {
-            "more": {
-                "name": "Column Menu",
-                "url": "/column-menu/"
-            }
-        },
         "menuTabs": {
             "more": {
                 "name": "Legacy Tabbed Column Menu",

@@ -18,6 +18,8 @@ The following example shows the new-format column menu:
 
 <grid-example title='Column Menu' name='column-menu' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
 
+The new-format column menu is enabled by setting `columnMenu = 'new'`.
+
 ## Customising the Column Menu
 
 How the column menu is launched from the header can be configured via the following column definition properties.
@@ -84,8 +86,8 @@ The menu item list should be a list with each item either a) a string or b) a `M
 The following is a list of all the default built-in menu items with the rules about when they are shown.
 
 - `sortAscending`: Sort the column in ascending order. Shown when `columnMenu = 'new'` and the column is not already sorted in ascending order.
-- `sortAscending`: Sort the column in ascending order. Shown when `columnMenu = 'new'` and the column is not already sorted in ascending order.
-- `sortAscending`: Sort the column in ascending order. Shown when `columnMenu = 'new'` and the column is not already sorted in ascending order.
+- `sortDescending`: Sort the column in descending order. Shown when `columnMenu = 'new'` and the column is not already sorted in descending order.
+- `sortUnSort`: Clear the sort on the column. Shown when `columnMenu = 'new'` and the column is already sorted.
 - `columnFilter`: Show the column filter. Shown when `columnMenu = 'new'`, a filter is enabled, and the header filter button and floating filter button are not displayed.
 - `columnChooser`: Show the column chooser. Shown when `columnMenu = 'new'`.
 - `pinSubMenu`: Sub-menu for pinning. Always shown.

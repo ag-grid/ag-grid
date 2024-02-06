@@ -184,8 +184,15 @@ export interface GridOptions<TData = any> {
      */
     allowContextMenuWithControlKey?: boolean;
     /**
+     * Changes the display type of the column menu.
+     * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
+     * @default 'legacy'
+     * @initial
+     */
+    columnMenu?: 'legacy' | 'new';
+    /**
      * Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
-     * If the column has `columnMenu = true`, this will default to `true` instead of `false`.
+     * If `columnMenu = true`, this will default to `true` instead of `false`.
      * @default false
      */
     suppressMenuHide?: boolean;

@@ -48,8 +48,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
-    columnMenu: 'new',
   },
+  columnMenu: 'new',
 }
 
 // setup the grid after the page has finished loading
