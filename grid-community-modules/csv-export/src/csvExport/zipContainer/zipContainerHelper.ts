@@ -49,14 +49,11 @@ export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: 
 };
 
 export const getHeaderAndContent = (currentFile: ZipFile, offset: number): ZipFileHeaderAndContent => {
-    const {
-        content,
-        isBase64, // true for images and other base64 encoded files
-    } = currentFile;
+    const { content } = currentFile;
 
     const { content: rawContent } = !content
         ? ({ content: Uint8Array.from([]) })
-        : getDecodedContent(content, isBase64);
+        : getDecodedContent(content);
 
     const headers = getHeaders(
         currentFile,
@@ -79,7 +76,7 @@ const getHeaders = (
     isCompressed: boolean,
     offset: number,
     rawSize: number,
-    rawContent: Uint8Array,
+    rawContent: string | Uint8Array,
     deflatedSize: number | undefined
 ): {
     fileHeader: Uint8Array;
@@ -149,17 +146,24 @@ export const buildFolderEnd = (tLen: number, cLen: number, lLen:number): Uint8Ar
     return Uint8Array.from(str, c => c.charCodeAt(0));
 };
 
-export const getDecodedContent = (content: Uint8Array, isBase64 = false): {
+export const convertStringToByteArray = (str: string): Uint8Array => {
+    const bytes = new Uint8Array(str.length);
+    for (let i = 0; i < str.length; i++) {
+        bytes[i] = str.charCodeAt(i);
+    }
+
+    return bytes;
+}
+
+export const getDecodedContent = (content: string | Uint8Array): {
     size: number;
     content: Uint8Array;
 } => {
-    // isBase64 is true when the content is a base64 string
-    // such with base64 encoded images!
-
-    let contentToUse;
-    if (isBase64) {
-        const decoded = atob(String.fromCharCode(...content).split(';base64,')[1]);
-        contentToUse = new TextEncoder().encode(decoded);
+    let contentToUse: Uint8Array;
+    // base64 content is passed as string
+    if (typeof content ==='string') {
+        const base64String = atob(content.split(';base64,')[1]);
+        contentToUse = convertStringToByteArray(base64String);
     } else {
         contentToUse = content;
     }

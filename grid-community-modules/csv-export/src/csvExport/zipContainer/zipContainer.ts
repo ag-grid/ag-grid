@@ -10,7 +10,7 @@ export interface ZipFile {
     created: Date;
     isBase64: boolean;
     type: 'file' | 'folder';
-    content?: Uint8Array;
+    content?: string | Uint8Array;
 }
 
 export class ZipContainer {
@@ -34,7 +34,7 @@ export class ZipContainer {
         this.files.push({
             path,
             created: new Date(),
-            content: new TextEncoder().encode(content),
+            content: isBase64 ? content : new TextEncoder().encode(content),
             isBase64,
             type: 'file'
         });
@@ -116,12 +116,10 @@ export class ZipContainer {
         let lL = 0;
 
         for (const currentFile of totalFiles) {
-            if (!currentFile.isBase64) {
-                const output = await getDeflatedHeaderAndContent(currentFile, lL);
-                const { fileHeader, content } = output;
-                readyFiles.push(output);
-                lL += fileHeader.length + content.length;
-            }
+            const output = await getDeflatedHeaderAndContent(currentFile, lL);
+            const { fileHeader, content } = output;
+            readyFiles.push(output);
+            lL += fileHeader.length + content.length;
         }
 
         return this.packageFiles(readyFiles);

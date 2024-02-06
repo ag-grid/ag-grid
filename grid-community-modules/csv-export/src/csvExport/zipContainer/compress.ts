@@ -1,5 +1,3 @@
-import { getDecodedContent } from "./zipContainerHelper";
-
 export const compressBlob = async (data: Blob): Promise<{
     size: number;
     content: Blob;
@@ -42,7 +40,7 @@ export const compressBlob = async (data: Blob): Promise<{
     }
 };
 
-export const deflateLocalFile = async (rawContent: Uint8Array): Promise<{
+export const deflateLocalFile = async (rawContent: string | Uint8Array): Promise<{
     size: number;
     content: Uint8Array;
 }> => {
