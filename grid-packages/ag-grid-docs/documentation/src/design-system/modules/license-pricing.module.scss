@@ -579,6 +579,7 @@
     gap: 8px;
     align-items: center;
     margin-left: 8px;
+    justify-content: center;
  }
 
  .chartsToggle {
@@ -646,10 +647,11 @@
   }
   
   .toggleBackground {
+    opacity: 0.5;
     position: absolute;
     top: 30px;
     left: 50%;
-    transform: translate(-50%, -50%); /* Center the background */
+    transform: translate(-50%, -50%);
     #{$selector-darkmode} & { 
         opacity: 0.1;
     }
@@ -657,7 +659,7 @@
   
   .toggleCheckbox {
     position: relative;
-    z-index: 2; /* Ensure it's above the horizontal rule */
+    z-index: 2;
   }
   
   .horizontalRule {
@@ -665,9 +667,15 @@
     top: 50%;
     left: 0;
     width: 100%;
-    border-top: 1px solid #000; /* Adjust the styling as needed */
+    border-top: 1px solid #000; 
   }
   
   .toggleWrapper {
     top: 48px;
+  }
+
+  .newTag {
+    background: color-mix(in srgb, var(--color-bg-brand-solid), var(--color-bg-primary) 90%);
+    color: var(--color-bg-brand-solid);
+    border-radius: 24px;
   }

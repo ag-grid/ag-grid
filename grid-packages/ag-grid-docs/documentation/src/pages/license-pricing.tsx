@@ -118,7 +118,7 @@ export const LicensePricing = () => {
       />
       <label htmlFor="toggle" className={styles.toggleContainer}>
         <div className={styles.gridToggle}><GridActive className={styles.gridActive}/><GridInactive className={styles.gridInactive}/>Grid</div>
-        <div className={styles.chartsToggle}><ChartsActive className={styles.chartsActive}/><ChartsInactive className={styles.chartsInactive}/>Charts</div>
+        <div className={styles.chartsToggle}><ChartsActive className={styles.chartsActive}/><ChartsInactive className={styles.chartsInactive}/>Charts <div className={styles.newTag}>New</div></div>
       </label>
     </div>
     </div>
