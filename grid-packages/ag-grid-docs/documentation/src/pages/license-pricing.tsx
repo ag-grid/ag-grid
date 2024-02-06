@@ -9,9 +9,14 @@ import { trackOnceInfoEmail } from '../utils/analytics';
 import { hostPrefix } from '../utils/consts';
 import SEO from './components/SEO';
 import styles from '@design-system/modules/license-pricing.module.scss';
-import AGGridLogo from '../images/inline-svgs/ag-grid-logo.svg';
-import AGChartsLogo from '../images/inline-svgs/ag-charts-logo.svg';
-import Background from '../images/inline-svgs/grid-pricing-background.svg';
+import GridActive from '../images/inline-svgs/pricing/grid-active.svg';
+import ChartsActive from '../images/inline-svgs/pricing/charts-active.svg';
+import GridInactive from '../images/inline-svgs/pricing/grid-inactive.svg';
+import ChartsInactive from '../images/inline-svgs/pricing/charts-inactive.svg';
+
+import ToggleBackground from '../images/inline-svgs/pricing/toggle-background.svg';
+
+
 import ComparisonTable from '../components/licenses/ComparisonTable';
 
 
@@ -50,6 +55,14 @@ export const LicensePricing = () => {
         };
     });
 
+    // product toggle logic
+
+    const [isChecked, setIsChecked] = useState(false);
+
+    const handleToggle = () => {
+      setIsChecked(!isChecked);
+    };
+
     return (
         <>
             {showFullWidthBar && (
@@ -69,32 +82,48 @@ export const LicensePricing = () => {
                 </div>
             )}
 
-            <Background className={styles.backgroundPricing} />
             <div className={classnames('layout-max-width-small', styles.container)}>
                 <div className={styles.topSection}>
                     <div className={styles.intro}>
                         <div className={styles.introSection}>
-                            <h1>Buy a licence</h1>
+                            <h1 className={styles.pricingHeading}>Pricing</h1>
 
-                            <p className="text-lg">
-                                Email
+                            <p className="text-regular">
+                            Need bulk pricing? We can provide quotes, give bulk pricing, contact us at
                                 <InfoEmailLink
                                     emailSubject="AG Grid Developer license query"
                                     trackingType="headerLink"
                                 >
                                     info@ag-grid.com
                                 </InfoEmailLink>{' '}
-                                and start a conversation. We can provide quotes, give bulk pricing, and answer any sales or
-                                contract-related questions you may have.
+                                for info.
                             </p>
 
-                            <p className={styles.salesEmail}>
+                            {/* <p className={styles.salesEmail}>
                                 <InfoEmailLink isButton withIcon className="button-tertiary" trackingType="headerButton">
                                     info@ag-grid.com
                                 </InfoEmailLink>
-                            </p>
-                        </div>
+                            </p> */}
 
+<div className={styles.switchContainer}>
+<ToggleBackground className={styles.toggleBackground}/>
+<hr className={styles.horizontalRule}/>
+<div className={styles.toggleWrapper}>
+      <input
+        type="checkbox"
+        id="toggle"
+        className={styles.toggleCheckbox}
+        checked={isChecked}
+        onChange={handleToggle}
+      />
+      <label htmlFor="toggle" className={styles.toggleContainer}>
+        <div className={styles.gridToggle}><GridActive className={styles.gridActive}/><GridInactive className={styles.gridInactive}/>Grid</div>
+        <div className={styles.chartsToggle}><ChartsActive className={styles.chartsActive}/><ChartsInactive className={styles.chartsInactive}/>Charts</div>
+      </label>
+    </div>
+    </div>
+
+                        </div>
                         <div className={styles.licensesOuter}>
                             <Licenses />
                         </div>

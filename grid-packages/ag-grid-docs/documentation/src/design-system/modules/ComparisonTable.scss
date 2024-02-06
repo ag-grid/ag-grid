@@ -109,3 +109,22 @@
     color: var(--color-text-tertiary);
     opacity: 0.7;
 }
+
+.category-cell {
+    background: var(--color-bg-secondary);
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
+    padding-left: $spacing-size-3;
+    border-right: none;
+}
+
+.empty-cell {
+    border-top: 1px solid var(--color-border-secondary);
+    background: var(--color-bg-secondary);
+}
+
+.hidden {
+    border-top: 1px solid var(--color-border-secondary);
+    background: var(--color-bg-secondary);
+}

@@ -30,7 +30,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    margin-bottom: $spacing-size-12;
+    margin-bottom: $spacing-size-16;
     p {
      text-align: center;
      text-wrap: balance;
@@ -117,6 +117,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     // gap: $spacing-size-8;
+    padding-top: $spacing-size-20;
 }
 
 
@@ -524,3 +525,144 @@
     opacity: 1;
     transform: translateY(0%);
 }
+
+.pricingHeading {
+    margin-bottom: $spacing-size-3;
+}
+
+/* products toggle */
+
+.toggleCheckbox {
+    display: none;
+  }
+
+  .toggleContainer {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: fit-content;
+    padding: 3px;
+    border: 2px solid var(--color-button-primary-fg);
+    outline: 2px solid var(--color-border-secondary);
+    border-radius: 32px;
+    background: var(--color-bg-primary);
+    font-weight: bold;
+    color: var(--color-button-primary-fg);
+    cursor: pointer;
+    user-select: none;;
+    box-shadow: var(--shadow-sm);;
+    margin-bottom: $spacing-size-4;
+ }
+
+ .toggleContainer::before {
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    left: 0%;
+    border-radius: 32px;
+    background: var(--color-bg-brand-solid);
+    transition: all 0.3s;
+ } 
+
+ .toggleContainer div {
+    padding: 6px;
+    text-align: center;
+    z-index: 1;
+ }
+
+ .gridToggle {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: 8px;
+ }
+
+ .chartsToggle {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: 8px;
+ }
+
+ .toggleCheckbox:checked + .toggleContainer::before {
+    left: 50%;
+ }
+
+ .toggleCheckbox:checked + .toggleContainer .gridToggle {
+    color: var(--color-text-secondary);
+    transition: color 0.3s;  
+    .gridInactive {
+        display: inline;
+    }
+    .gridActive {
+        display: none;
+    }
+ }
+
+ .toggleCheckbox:checked + .toggleContainer .chartsToggle{
+    color: var(--color-button-primary-fg);
+    transition: color 0.3s;
+    .chartsInactive {
+        display: none;
+    }
+
+    .chartsActive {
+        display: inline;
+    }
+
+ }
+ .toggleCheckbox + .toggleContainer .gridToggle{
+    color: var(--color-button-primary-fg);
+    transition: color 0.3s;
+    .gridInactive {
+        display: none;
+    }
+    .gridActive {
+        display: inline;
+    }
+ }
+ .toggleCheckbox + .toggleContainer .chartsToggle{
+    color: var(--color-text-secondary);
+    transition: color 0.3s;
+    .chartsInactive {
+        display: inline;
+    }
+    .chartsActive {
+        display: none;
+    }
+ }
+
+ .switchContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: 42px;
+
+  }
+  
+  .toggleBackground {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the background */
+    
+  }
+  
+  .toggleCheckbox {
+    position: relative;
+    z-index: 2; /* Ensure it's above the horizontal rule */
+  }
+  
+  .horizontalRule {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid #000; /* Adjust the styling as needed */
+  }
+  
+  .toggleWrapper {
+    top: 48px;
+  }
