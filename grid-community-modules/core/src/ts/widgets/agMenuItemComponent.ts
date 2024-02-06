@@ -62,7 +62,7 @@ export class AgMenuItemComponent extends BeanStub {
     private suppressAria: boolean = true;
     private suppressFocus: boolean = true;
     private cssClassPrefix: string;
-    private suppressDeactivateOnFocusOut = false;
+    private eSubMenuGui?: HTMLElement;
 
     public init(params: AgMenuItemComponentParams): AgPromise<void> {
         const { menuItemDef, isAnotherSubMenuOpen, level, childComponent, contextParams } = params;
@@ -129,6 +129,7 @@ export class AgMenuItemComponent extends BeanStub {
         this.subMenuIsOpening = true;
 
         const ePopup = loadTemplate(/* html */ `<div class="ag-menu" role="presentation"></div>`);
+        this.eSubMenuGui = ePopup;
         let destroySubMenu: () => void;
         let afterGuiAttached = () => {
             this.subMenuIsOpening = false;
@@ -202,6 +203,7 @@ export class AgMenuItemComponent extends BeanStub {
             this.setAriaExpanded(false);
             destroySubMenu();
             this.menuItemComp.setExpanded?.(false);
+            this.eSubMenuGui = undefined;
         };
 
         this.menuItemComp.setExpanded?.(true);
@@ -276,6 +278,10 @@ export class AgMenuItemComponent extends BeanStub {
 
     public setParentComponent(component: Component): void {
         this.parentComponent = component;
+    }
+
+    public getSubMenuGui(): HTMLElement | undefined {
+        return this.eSubMenuGui;
     }
 
     private onItemSelected(event: MouseEvent | KeyboardEvent): void {

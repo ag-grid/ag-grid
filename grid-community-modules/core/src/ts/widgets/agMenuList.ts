@@ -72,10 +72,12 @@ export class AgMenuList extends TabGuardComp {
 
     private handleFocusIn(e: FocusEvent): void {
         // if focus is coming from outside the menu list, then re-activate an item
-        if (
-            !this.tabGuardCtrl.isTabGuard(e.relatedTarget as HTMLElement) &&
-            this.getGui().contains(e.relatedTarget as HTMLElement)
-        ) { return; }
+        const oldFocusedElement = e.relatedTarget as HTMLElement;
+        if (!this.tabGuardCtrl.isTabGuard(oldFocusedElement) && (
+            this.getGui().contains(oldFocusedElement) || this.activeMenuItem?.getSubMenuGui()?.contains(oldFocusedElement)
+        )) {
+            return;
+        }
         if (this.activeMenuItem) {
             this.activeMenuItem.activate();
         } else {
@@ -85,7 +87,10 @@ export class AgMenuList extends TabGuardComp {
 
     private handleFocusOut(e: FocusEvent): void {
         // if focus is going outside the menu list, deactivate the current item
-        if (!this.activeMenuItem || this.getGui().contains(e.relatedTarget as HTMLElement)) { return; }
+        const newFocusedElement = e.relatedTarget as HTMLElement;
+        if (!this.activeMenuItem || this.getGui().contains(newFocusedElement) || this.activeMenuItem.getSubMenuGui()?.contains(newFocusedElement)) {
+            return;
+        }
         if (!this.activeMenuItem.isSubMenuOpening()) {
             this.activeMenuItem.deactivate();
         }
