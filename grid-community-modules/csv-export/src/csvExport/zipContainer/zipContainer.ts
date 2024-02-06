@@ -1,7 +1,7 @@
 import { convertStringToByteArray } from "./convert";
 import {
     buildFolderEnd,
-    getCompressedHeaderAndContent,
+    getDeflatedHeaderAndContent,
     getHeaderAndContent,
     ZipFileHeaderAndContent,
 } from './zipContainerHelper';
@@ -119,7 +119,7 @@ export class ZipContainer {
         let lL = 0;
 
         for (const currentFile of totalFiles) {
-            const output = await getCompressedHeaderAndContent(currentFile, lL);
+            const output = await getDeflatedHeaderAndContent(currentFile, lL);
             const { fileHeader, content } = output;
             readyFiles.push(output);
             lL += fileHeader.length + content.length;

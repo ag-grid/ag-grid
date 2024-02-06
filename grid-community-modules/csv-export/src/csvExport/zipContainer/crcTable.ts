@@ -1,4 +1,4 @@
-export const getFromCrc32TableAndByteArray = (content: Uint8Array): number => {
+const getCrcFromCrc32TableAndByteArray = (content: Uint8Array): number => {
     if (!content.length) {
         return 0;
     }
@@ -19,7 +19,7 @@ export const getFromCrc32TableAndByteArray = (content: Uint8Array): number => {
     return crc ^ (-1);
 };
 
-export const getFromCrc32Table = (content: string): number => {
+export const getCrcFromCrc32Table = (content: string): number => {
     if (!content.length) { return 0; }
 
     const size = content.length;
@@ -29,7 +29,7 @@ export const getFromCrc32Table = (content: string): number => {
         iterable[i] = content.charCodeAt(i);
     }
 
-    return getFromCrc32TableAndByteArray(iterable);
+    return getCrcFromCrc32TableAndByteArray(iterable);
 };
 
 // Table for crc calculation from:

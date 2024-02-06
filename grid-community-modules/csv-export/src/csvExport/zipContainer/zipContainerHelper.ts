@@ -1,8 +1,8 @@
 import { _ } from "@ag-grid-community/core"
 import { convertDate, convertDecToHex, convertTime } from "./convert";
 import { ZipFile } from "./zipContainer";
-import { getFromCrc32Table, getFromCrc32TableAndByteArray } from "./crcTable";
-import { compressLocalFile } from "./compress";
+import { getCrcFromCrc32Table } from "./crcTable";
+import { deflateLocalFile } from "./compress";
 
 const { utf8_encode } = _;
 
@@ -24,7 +24,7 @@ export const buildFolderEnd = (tLen: number, cLen: number, lLen:number): string 
         '\x00\x00';
 };
 
-export const getCompressedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ZipFileHeaderAndContent> => {
+export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ZipFileHeaderAndContent> => {
     const {
         content,
         created: creationDate,
@@ -35,32 +35,32 @@ export const getCompressedHeaderAndContent = async (currentFile: ZipFile, offset
         ? ({ size: 0, content: ''})
         : getDecodedContent(content, isBase64);
 
-    let compressedContent: Uint8Array | undefined = undefined;
-    let compressedSize: number | undefined = undefined;
-    let compressionPerformed = false;
+    let deflatedContent: Uint8Array | undefined = undefined;
+    let deflatedSize: number | undefined = undefined;
+    let deflationPerformed = false;
 
-    const shouldAttemptCompression = currentFile.type === 'file' && !currentFile.isBase64 && currentFile.path.indexOf('worksheets') !== -1 && rawContent && size > 0;
-    if (shouldAttemptCompression)  {
-        const result = await compressLocalFile(rawContent, isBase64);
-        compressedContent = result.content;
-        compressedSize = result.size;
-        compressionPerformed = true;
+    const shouldDeflate = currentFile.type === 'file' && !currentFile.isBase64 && rawContent && size > 0;
+    if (shouldDeflate)  {
+        const result = await deflateLocalFile(rawContent, isBase64);
+        deflatedContent = result.content;
+        deflatedSize = result.size;
+        deflationPerformed = true;
     }
 
     const headers = getHeaders(
         currentFile,
-        compressionPerformed,
+        deflationPerformed,
         offset,
         size,
         rawContent,
-        compressedSize,
-        compressedContent,
+        deflatedSize,
+        deflatedContent,
     );
 
     return {
         ...headers,
-        content: compressedContent || rawContent,
-        isCompressed: compressionPerformed,
+        content: deflatedContent || rawContent,
+        isCompressed: deflationPerformed,
     };
 };
 
@@ -68,10 +68,10 @@ const getHeaders = (
     currentFile: ZipFile,
     isCompressed: boolean,
     offset: number,
-    size: number,
+    rawSize: number,
     rawContent: string,
-    compressedSize: number | undefined,
-    compressedContent: Uint8Array | undefined,
+    deflatedSize: number | undefined,
+    deflatedContent: Uint8Array | undefined,
 ): {
     fileHeader: string;
     folderHeader: string;
@@ -85,14 +85,15 @@ const getHeaders = (
 
     const time = convertTime(creationDate);
     const dt = convertDate(creationDate);
-    const crcFlag = compressedContent !== undefined ? getFromCrc32TableAndByteArray(compressedContent) : getFromCrc32Table(rawContent);
-    const sizeToUse = compressedSize !== undefined ? compressedSize : size;
+
+    const crcFlag = getCrcFromCrc32Table(rawContent);
+    const zipSize = deflatedSize !== undefined ? deflatedSize : rawSize;
 
     const utfPath = utf8_encode(path);
     const isUTF8 = utfPath !== path;
     let extraFields = '';
     if (isUTF8) {
-        const uExtraFieldPath = convertDecToHex(1, 1) + convertDecToHex(getFromCrc32Table(utfPath), 4) + utfPath;
+        const uExtraFieldPath = convertDecToHex(1, 1) + convertDecToHex(getCrcFromCrc32Table(utfPath), 4) + utfPath;
         extraFields = "\x75\x70" +  convertDecToHex(uExtraFieldPath.length, 2) + uExtraFieldPath;
     }
 
@@ -102,9 +103,9 @@ const getHeaders = (
         convertDecToHex(compressionMethod, 2) + // The file is Deflated
         convertDecToHex(time, 2) + // last modified time
         convertDecToHex(dt, 2) + // last modified date
-        convertDecToHex(sizeToUse ? crcFlag : 0, 4) +
-        convertDecToHex(compressedSize ?? size, 4) + // compressed size
-        convertDecToHex(size, 4) + // uncompressed size
+        convertDecToHex(zipSize ? crcFlag : 0, 4) +
+        convertDecToHex(deflatedSize ?? rawSize, 4) + // compressed size
+        convertDecToHex(rawSize, 4) + // uncompressed size
         convertDecToHex(utfPath.length, 2) + // file name length
         convertDecToHex(extraFields.length, 2); // extra field length
 
