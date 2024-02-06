@@ -15,9 +15,14 @@ const LICENSE_TYPES = {
     '0102': 'BOTH'
 }
 
+export interface ILicenseManager {
+    setLicenseKey: (key?: string, gridContext?: boolean) => void;
+}
+
 export class LicenseManager {
     private static RELEASE_INFORMATION: string = 'MTcwNTIyNzE3MTAzNg==';
     private static licenseKey: string;
+    private static chartsLicenseManager?: ILicenseManager;
     private watermarkMessage: string | undefined = undefined;
 
     private md5: MD5;
@@ -44,6 +49,8 @@ export class LicenseManager {
             const gridReleaseDate = LicenseManager.getGridReleaseDate();
             const formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
             this.outputIncompatibleVersion(licenseDetails.expiry, formattedReleaseDate);
+        } else if(LicenseManager.chartsLicenseManager && licenseDetails.licenseType !== "BOTH") {
+            this.outputInvalidLicenseKey(licenseDetails.incorrectLicenseType, licenseDetails.licenseType);
         }
     }
 
@@ -114,10 +121,10 @@ export class LicenseManager {
                         if (missingOrEmpty(type)) {
                             valid = false;
                         } else {
+                            licenseType = type;
                             if (type !== LICENSE_TYPES['01'] && type !== LICENSE_TYPES['0102']) {
                                 valid = false;
                                 incorrectLicenseType = true
-                                licenseType = type;
                             } else if (isTrial) {
                                 handleTrial();
                             }
@@ -143,7 +150,8 @@ export class LicenseManager {
             expired,
             version,
             isTrial,
-            trialExpired
+            trialExpired,
+            licenseType
         };
     }
 
@@ -246,8 +254,16 @@ export class LicenseManager {
         return t;
     }
 
+    static setChartsLicenseManager(dependantLicenseManager: ILicenseManager): void {
+        this.chartsLicenseManager = dependantLicenseManager;
+    }
+
     static setLicenseKey(licenseKey: string): void {
         this.licenseKey = licenseKey;
+
+        if(this.chartsLicenseManager) {
+            this.chartsLicenseManager.setLicenseKey(licenseKey, true);
+        }
     }
 
     private static extractBracketedInformation(licenseKey: string): [string | null, boolean | null, string?] {
