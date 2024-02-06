@@ -22,11 +22,25 @@ const gridOptions: GridOptions = {
     'box-plot': {
       series: {
         whisker: {
-          lineDash: [2],
-          lineDashOffset: 1,
+          stroke: '#098a89',
+          strokeWidth: 3,
+          lineDash: [2, 1]
         },
         cap: {
-          lengthRatio: 0.75,
+            lengthRatio: 0.8  // 80% of bar's width (default is 0.5)
+        },
+        tooltip: {
+          renderer: ({ yName, minKey, q1Key, medianKey, q3Key, maxKey, datum, color }) => ({
+            title: yName,
+            content: [
+              `Minimum: ${datum[minKey]}`,
+              `First Quartile: ${datum[q1Key]}`,
+              `Median: ${datum[medianKey]}`,
+              `Third Quartile: ${datum[q3Key]}`,
+              `Maximum: ${datum[maxKey]}`,
+            ].join('<br>'),
+            backgroundColor: color,
+          }),
         },
       },
     },

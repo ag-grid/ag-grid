@@ -5,11 +5,8 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'year', width: 150, chartDataType: 'category' },
-    { field: 'country', width: 150, chartDataType: 'category' },
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze', chartDataType: 'series' },
+    { field: 'financials', width: 150, chartDataType: 'category' },
+    { field: 'amount', chartDataType: 'series' },
   ],
   defaultColDef: {
     flex: 1,
@@ -19,24 +16,28 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   enableCharts: true,
   chartThemeOverrides: {
-    'range-bar': {
+    'waterfall': {
       series: {
-        label: {
-          enabled: true,
-          padding: 10,
-          fontSize: 10,
-          placement: 'inside',
-          formatter: ({ itemId, value }) => {
-            return `${value}${itemId === "low" ? "↓" : "↑"}`;
+        totals: [
+          { totalType: 'subtotal', index: 4, axisLabel: 'Total Revenue' },
+          { totalType: 'subtotal', index: 9, axisLabel: 'Total Expenditure' },
+          { totalType: 'total', index: 9, axisLabel: 'Total Borrowing' },
+        ],
+        item: {
+          positive: {
+              fill: '#4A90E2',
+              stroke: '#4A90E2',
           },
-        },
-        tooltip: {
-          renderer: ({ yName, yLowKey, yHighKey, datum, color }) => ({
-            title: yName,
-            content: `${datum[yLowKey]} - ${datum[yHighKey]}`,
-            backgroundColor: color,
-          }),
-        },
+          negative: {
+              fill: '#FF6B6B',
+              stroke: '#FF6B6B',
+          },
+          total: {
+              name: 'Total / Subtotal',
+              fill: '#404066',
+              stroke: '#404066',
+          },
+      },
       },
     },
   },
@@ -46,12 +47,14 @@ const gridOptions: GridOptions = {
   onFirstDataRendered,
 };
 
+
+
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({
     cellRange: {
-      columns: ['year', 'gold', 'silver', 'bronze'],
+      columns: ['financials', 'amount'],
     },
-    chartType: 'rangeBar',
+    chartType: 'waterfall',
   });
 }
 

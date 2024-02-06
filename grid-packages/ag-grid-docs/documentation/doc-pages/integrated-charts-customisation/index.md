@@ -108,18 +108,41 @@ These overrides are specific to the [AG Charts Nightingale Series](https://chart
 
 <grid-example title='Nightingale Overrides' name='nightingale-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
+### Radial Column Overrides
+
+These overrides are specific to the [AG Charts Radial Column Series](https://charts.ag-grid.com/react/radial-column-series/). For full list of overrides see [Radial Column Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-radial-column).
+
+<grid-example title='Radial Column Overrides' name='radial-column-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+
+### Radial Bar Overrides
+
+These overrides are specific to the [AG Charts Radial Bar Series](https://charts.ag-grid.com/react/radial-bar-series/). For full list of overrides see [Radial Bar Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-radial-bar).
+
+<grid-example title='Radial Bar Overrides' name='radial-bar-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+
 ### Range Bar Overrides
 
 These overrides are specific to the [AG Charts Range Bar Series](https://charts.ag-grid.com/react/range-bar-series/). For full list of overrides see [Range Bar Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-range-bar).
 
-<grid-example title='Box Plot Overrides' name='range-bar-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+<grid-example title='Range Bar Overrides' name='range-bar-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
+### Range Area Overrides
+
+These overrides are specific to the [AG Charts Range Area Series](https://charts.ag-grid.com/react/range-area-series/). For full list of overrides see [Range Area Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-range-area).
+
+<grid-example title='Range Area Overrides' name='range-area-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ### Box Plot Overrides
 
 These overrides are specific to the [AG Charts Box Plot Series](https://charts.ag-grid.com/react/box-plot-series/). For full list of overrides see [Box Plot Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-box-plot).
 
 <grid-example title='Box Plot Overrides' name='box-plot-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+
+### Waterfall Overrides
+
+These overrides are specific to the [AG Charts Waterfall Series](https://charts.ag-grid.com/react/waterfall-series/). For full list of overrides see [Waterfall Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-waterfall).
+
+<grid-example title='Waterfall Overrides' name='waterfall-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Custom Chart Themes
 
