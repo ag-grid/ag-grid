@@ -19,23 +19,17 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   enableCharts: true,
   chartThemeOverrides: {
-    'range-bar': {
+    'range-area': {
       series: {
+        marker: {
+          size: 7,
+        },
         label: {
           enabled: true,
-          padding: 10,
-          fontSize: 10,
-          placement: 'inside',
+          padding: 17,
           formatter: ({ itemId, value }) => {
-            return `${value}${itemId === "low" ? "↓" : "↑"}`;
+            return `${itemId === "low" ? "L" : "H"}: ${value.toFixed(0)}`;
           },
-        },
-        tooltip: {
-          renderer: ({ yName, yLowKey, yHighKey, datum, color }) => ({
-            title: yName,
-            content: `${datum[yLowKey]} - ${datum[yHighKey]}`,
-            backgroundColor: color,
-          }),
         },
       },
     },
@@ -49,9 +43,9 @@ const gridOptions: GridOptions = {
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({
     cellRange: {
-      columns: ['year', 'gold', 'silver', 'bronze'],
+      columns: ['year', 'gold'],
     },
-    chartType: 'rangeBar',
+    chartType: 'rangeArea',
   });
 }
 

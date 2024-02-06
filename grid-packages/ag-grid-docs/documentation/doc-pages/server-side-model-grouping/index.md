@@ -49,7 +49,7 @@ e.g. `['Argentina', '2012']`.
 
 The example below demonstrates server-side Row Grouping. Note the following:
 
-- <b>Country</b> and <b>Sport</b> columns have `rowGroup=true` defined on their column definitions. This tells the grid there are two levels of grouping, one for Country and one for Sport.
+- **Country** and **Sport** columns have `rowGroup=true` defined on their column definitions. This tells the grid there are two levels of grouping, one for Country and one for Sport.
 - The `rowGroupCols` and `groupKeys` properties in the request are used by the server to perform grouping.
 - Open the browser's dev console to view the request supplied to the datasource.
 

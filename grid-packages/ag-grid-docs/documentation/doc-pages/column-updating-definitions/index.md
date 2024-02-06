@@ -73,7 +73,7 @@ All stateful attributes of Column Definitions are as follows:
 
 The **Initial Attribute** will be used only when the **Column is Created**. The **Stateful Attribute** will be used when the **Column is Created or Updated**.
 
-<snippet suppressFrameworkContext=true>
+<snippet suppressFrameworkContext="true">
 const gridOptions = {
     columnDefs: [
         // using initial values, get applied when Column is created
@@ -230,7 +230,7 @@ The current column definitions can be retrieved with `getColumnDefs`:
 Column Groups can be updated in the same way as Columns, you just update the Column Group Definition. For expandable
 groups, to have open / closed state to be maintained, you need to assign `groupId` in the Column Group Definition.
 
-<snippet suppressFrameworkContext=true>
+<snippet suppressFrameworkContext="true">
 const gridOptions = {
     columnDefs: [
         {

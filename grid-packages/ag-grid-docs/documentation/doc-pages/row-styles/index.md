@@ -113,7 +113,7 @@ If you refresh a row, or a cell is updated due to editing, the `rowStyle`, `rowC
 
 The example below demonstrates `rowClassRules`:
 
-- `rowClassRules` are used to apply the class `sick-days-warning` when the number of sick days > 5 and <= 7, and the class `sick-days-breach` is applied when the number of sick days >= 8.
+- `rowClassRules` are used to apply the class `sick-days-warning` when the number of sick days > 5 and \<= 7, and the class `sick-days-breach` is applied when the number of sick days >= 8.
 
 - The grid re-evaluates the rowClassRules when the data is changed. The example
 shows changing the data in the three different ways: `rowNode.setDataValue`, `rowNode.setData` and `api.applyTransaction`. See [Updating Data](/data-update/) for details on these update functions.
