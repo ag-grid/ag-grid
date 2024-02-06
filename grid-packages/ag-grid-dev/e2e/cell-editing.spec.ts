@@ -1,12 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { goToAndWaitForData } from './utils';
-
+import { waitForCells } from './utils';
 
 test('test edit', async ({ page }) => {
-    await goToAndWaitForData(
-        page,
+    await page.goto(
         'https://grid-staging.ag-grid.com/examples/value-parsers/example-parsers/modules/typescript/index.html'
     );
+    await waitForCells(page);
 
     await page.getByRole('gridcell', { name: 'Apple' }).first().dblclick();
     await page.getByLabel('Input Editor').fill('Apple Edit');
