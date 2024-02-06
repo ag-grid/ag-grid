@@ -30,6 +30,8 @@ export * from './statistical/miniRangeBar';
 export * from './statistical/miniRangeArea';
 export * from './statistical/miniBoxPlot';
 
+export * from './hierarchical/miniTreemap';
+
 export * from './cumulative/miniWaterfall';
 
 export * from "./combo/miniColumnLineCombo";

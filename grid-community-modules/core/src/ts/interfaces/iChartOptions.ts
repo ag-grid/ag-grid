@@ -11,6 +11,7 @@ export interface ChartGroupsDef {
     // enterprise chart groups
     polarGroup?: ('radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar')[],
     statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
+    hierarchicalGroup?: ('treemap')[],
     specializedGroup?: ('waterfall')[],
 }
 
@@ -53,6 +54,9 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
         'histogram',
         'rangeBar',
         'rangeArea',
+    ],
+    hierarchicalGroup: [
+        'treemap',
     ],
     specializedGroup: [
         'waterfall',
