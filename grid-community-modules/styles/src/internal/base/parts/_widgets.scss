@@ -362,6 +362,8 @@
     // Popups
     .ag-popup-child:not(.ag-tooltip-custom) {
         box-shadow: var(--ag-popup-shadow);
+        background-color: var(--ag-popup-background-color);
+        border-color: var(--ag-popup-border-color);
     }
 
     ////////////////////////////////////////
@@ -513,7 +515,7 @@
     }
 
     .ag-panel-title-bar {
-        background-color: var(--ag-header-background-color);
+        background-color: var(--ag-popup-background-color);
         color: var(--ag-header-foreground-color);
         height: var(--ag-header-height);
         padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
