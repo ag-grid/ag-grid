@@ -13,23 +13,9 @@ export type ZipFileHeaderAndContent = {
     isCompressed: boolean;
 }
 
-export const buildFolderEnd = (tLen: number, cLen: number, lLen:number): Uint8Array => {
-    const str= 'PK\x05\x06' + // central folder end
-        '\x00\x00' +
-        '\x00\x00' +
-        convertDecToHex(tLen, 2) + // total number of entries in the central folder
-        convertDecToHex(tLen, 2) + // total number of entries in the central folder
-        convertDecToHex(cLen, 4) + // size of the central folder
-        convertDecToHex(lLen, 4) + // central folder start offset
-        '\x00\x00';
-
-    return Uint8Array.from(str, c => c.charCodeAt(0));
-};
-
 export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ZipFileHeaderAndContent> => {
     const {
         content,
-        created: creationDate,
         isBase64, // true for images and other base64 encoded files
     } = currentFile;
 
@@ -55,8 +41,7 @@ export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: 
         offset,
         size,
         rawContent,
-        deflatedSize,
-        deflatedContent,
+        deflatedSize
     );
 
     return {
@@ -66,14 +51,39 @@ export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: 
     };
 };
 
+export const getHeaderAndContent = (currentFile: ZipFile, offset: number): ZipFileHeaderAndContent => {
+    const {
+        content,
+        isBase64, // true for images and other base64 encoded files
+    } = currentFile;
+
+    const { content: rawContent } = !content
+        ? ({ content: Uint8Array.from([]) })
+        : getDecodedContent(content, isBase64);
+
+    const headers = getHeaders(
+        currentFile,
+        false,
+        offset,
+        rawContent.length,
+        rawContent,
+        undefined
+    );
+
+    return {
+        ...headers,
+        content: rawContent,
+        isCompressed: false,
+    };
+};
+
 const getHeaders = (
     currentFile: ZipFile,
     isCompressed: boolean,
     offset: number,
     rawSize: number,
     rawContent: Uint8Array,
-    deflatedSize: number | undefined,
-    deflatedContent: Uint8Array | undefined,
+    deflatedSize: number | undefined
 ): {
     fileHeader: Uint8Array;
     folderHeader: Uint8Array;
@@ -82,7 +92,6 @@ const getHeaders = (
         content,
         path,
         created: creationDate,
-        isBase64, // true for images and other base64 encoded files
     } = currentFile;
 
     const time = convertTime(creationDate);
@@ -130,35 +139,17 @@ const getHeaders = (
     };
 };
 
-export const getHeaderAndContent = (currentFile: ZipFile, offset: number): ZipFileHeaderAndContent => {
-    const {
-        content,
-        created: creationDate,
-        isBase64, // true for images and other base64 encoded files
-    } = currentFile;
+export const buildFolderEnd = (tLen: number, cLen: number, lLen:number): Uint8Array => {
+    const str= 'PK\x05\x06' + // central folder end
+        '\x00\x00' +
+        '\x00\x00' +
+        convertDecToHex(tLen, 2) + // total number of entries in the central folder
+        convertDecToHex(tLen, 2) + // total number of entries in the central folder
+        convertDecToHex(cLen, 4) + // size of the central folder
+        convertDecToHex(lLen, 4) + // central folder start offset
+        '\x00\x00';
 
-    const { size, content: rawContent } = !content
-        ? ({
-            size: 0,
-            content: Uint8Array.from([]),
-        })
-        : getDecodedContent(content, isBase64);
-
-    const headers = getHeaders(
-        currentFile,
-        false,
-        offset,
-        rawContent.length,
-        rawContent,
-        undefined,
-        undefined,
-    );
-
-    return {
-        ...headers,
-        content: rawContent,
-        isCompressed: false,
-    };
+    return Uint8Array.from(str, c => c.charCodeAt(0));
 };
 
 export const getDecodedContent = (content: Uint8Array, isBase64 = false): {

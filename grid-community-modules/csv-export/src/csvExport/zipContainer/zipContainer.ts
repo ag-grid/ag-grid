@@ -40,13 +40,13 @@ export class ZipContainer {
         });
     }
 
-    public static async getCompressedContent(mimeType: string = 'application/zip'): Promise<Blob> {
+    public static async getZipFile(mimeType: string = 'application/zip'): Promise<Blob> {
         const textOutput = await this.buildCompressedFileStream();
         this.clearStream();
         return new Blob([textOutput], { type: mimeType });
     }
 
-    public static getContent(mimeType: string = 'application/zip'): Blob {
+    public static getUncompressedZipFile(mimeType: string = 'application/zip'): Blob {
         const textOutput = this.buildFileStream();
         this.clearStream();
         return new Blob([textOutput], { type: mimeType });
