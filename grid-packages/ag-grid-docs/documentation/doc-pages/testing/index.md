@@ -724,12 +724,6 @@ Here we give some hints on testing AG Grid as part of your application.
 <p>All the tests above and more can be found in the following <a href="https://github.com/ag-grid/ag-grid-angular-cli-example/tree/latest/src/tests">GitHub Repo</a>.</p>
 </framework-specific-section>
 
-<framework-specific-section frameworks="angular">
-|## Next Up
-|
-|Continue to the next section to learn about [Testing Async](/testing-async/).
-</framework-specific-section>
-
 <framework-specific-section frameworks="react">
 | ## Testing with Jest 
 | 
@@ -1153,3 +1147,9 @@ Here we give some hints on testing AG Grid as part of your application.
 <h2> End to End (e2e) Testing with Playwright </h2>
 
 <p><a href="https://playwright.dev/" target="_blank">Playwright</a> is another popular e2e testing framework that can be used to test AG Grid applications. A few examples of how to use Playwright with AG Grid can be found in this <a href="https://github.com/ag-grid/ag-grid/tree/latest/grid-packages/ag-grid-dev/e2e" target="_blank">Github Repo</a>.</p>
+
+<framework-specific-section frameworks="angular">
+|## Next Up
+|
+|Continue to the next section to learn about [Testing Async](/testing-async/).
+</framework-specific-section>
