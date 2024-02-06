@@ -134,23 +134,161 @@ const data = [
 ];
 
 const chartsArray = [
-  // Your chart features will go here
+  {
+    category: 'Charting',
+    features: [
+      {
+        feature: 'Enterprise Integrated Charts',
+        community: false,
+        enterprise: false,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Enterprise AG Charts',
+        community: false,
+        enterprise: false,
+        chartsGrid: true,
+      },
+    ],
+  },
   {
     category: 'Series',
     features: [
       {
         feature: 'Bar',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Line',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Area',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Scatter',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Bubble',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Pie',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Doughnut',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Histogram',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Combination',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Box Plot',
         community: false,
         enterprise: true,
         chartsGrid: true,
-        link: 'https://example.com/bar-charts', 
       },
-      // Add more features here
+      {
+        feature: 'Bullet',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Heatmap',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Nightingale',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Radar Area',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Radar Line',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Radial Bar',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Radial Column',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Range Area',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Range Bar',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Sunburst',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Treemap',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Waterfall',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
     ],
   },
-  // Add more categories here
 ];
-
 
 const ComparisonTable = ({ isChecked }) => {
   const [expandedCategories, setExpandedCategories] = useState(() => {
