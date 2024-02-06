@@ -1,40 +1,38 @@
 ---
-title: "Value Formatters"
+title: "Formatting Values"
 ---
 
-Value formatters allow you to format values for display. This is useful when data is one type (e.g. numeric) but needs to be converted for human reading (e.g. putting in currency symbols and number formatting).
+Providing a Value Formatter to a Column will format values for that Column.
+
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    columnDefs: [
+        // simple currency formatter
+        { field: 'price', valueFormatter: p => '$' + params.value },
+        // simple UPPER CASE formatter
+        { field: 'code', valueFormatter: p => params.value.toUpperCase() }
+    ]
+}
+</snippet>
+
+## Value Formatter Definition
 
 Below shows the column definition properties for value formatters.
 
 <api-documentation source='column-properties/properties.json' section="columns" names='["valueFormatter"]' ></api-documentation>
 
-
-```ts
-// example value formatter, simple currency formatter
-colDef.valueFormatter = params => {
-    return '£' + params.value;
-}
-```
+Be aware that the Value Formatter params won't always have 'data' and 'node' supplied, e.g. the
+params supplied to the Value Formatter in the [Set Filter](../filter-set/).
+As a result favour formatter implementations that rely upon the 'value' argument instead, as this
+will lead to better reuse of your Value Formatters.
 
 <note>
 If using [Cell Data Types](../cell-data-types/), value formatters are set by default to handle the display of each of the different data types.
 </note>
 
-## Value Formatter vs Cell Renderer
 
+If you want more than text formatting, e.g. you need Buttons in the Cell, then use a [Cell Component](/component-cell-renderer/).
 
-A [cell renderer](/component-cell-renderer/) allows you to put whatever HTML you want into a cell. This sounds like value formatters and a cell renderers have cross purposes, so you may be wondering, when do you use each one and not the other?
-
-The answer is that value formatters are for text formatting and cell renderers are for when you want to include HTML markup and potentially functionality to the cell. So for example, if you want to put punctuation into a value, use a value formatter, but if you want to put buttons or HTML links use a cell renderer. It is possible to use a combination of both, in which case the result of the value formatter will be passed to the cell renderer.
-
-<note>
-Be aware that the Value Formatter params won't always have 'data' and 'node' supplied, e.g. the
-params supplied to the Value Formatter in the [Set Filter](../filter-set/).
-As a result favour formatter implementations that rely upon the 'value' argument instead, as this
-will lead to better reuse of your Value Formatters.
-</note>
-
-## Value Formatter Example
 
 The example below shows value formatters in action.
 
@@ -44,7 +42,7 @@ The example below shows value formatters in action.
 
 <grid-example title='Value Formatters' name='value-formatters' type='generated'></grid-example>
 
-## Use Value Formatter for Export
+## Formating for Export
 
 By default, the grid uses the value formatter when performing other grid operations that need values in string format.
 

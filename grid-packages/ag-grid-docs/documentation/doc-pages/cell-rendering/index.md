@@ -1,12 +1,14 @@
 ---
-title: "Cell Rendering"
+title: "Components in Cells"
 ---
 
-By default the grid renders values into the cells as strings. If you want something more complex you use a cell renderer.
+By default the grid renders values into Cells as strings. If you want more complex HTML, such as a Button or Image, you use a Cell Component.
 
-<api-documentation source='column-properties/properties.json' section='styling' names='["cellRenderer"]'></api-documentation>
 
-The cell renderer for a column is set via `colDef.cellRenderer` and can be any of the following types:
+
+## Setting Cell Components
+
+The Cell Component for a Column is set via `colDef.cellRenderer` and can be any of the following types:
 
 <framework-specific-section frameworks="javascript">
 |1. `undefined`: Grid renders the value as a string.
@@ -35,6 +37,8 @@ The cell renderer for a column is set via `colDef.cellRenderer` and can be any o
 |1. `Function`: A function that returns JSX for display.
 </framework-specific-section>
 
+Cell Components can be referenced by string or directly by class. They can be [Provided Cell Renderers](#provided-cell-renderers) (that come with the grid) or [Custom Cell Components](/component-cell-renderer/) (built by you).
+
 The code snippet below demonstrates each of these method types.
 
 <framework-specific-section frameworks="javascript">
@@ -46,12 +50,12 @@ The code snippet below demonstrates each of these method types.
 |             field: 'name',
 |             cellRenderer: undefined,
 |         },
-|         // 2 - String - The name of a cell renderer registered with the grid.
+|         // 2 - String - The name of a Cell Component registered with the grid.
 |         {
 |             field: 'age',
 |             cellRenderer: 'agGroupCellRenderer',
 |         },
-|         // 3 - Class - Provide your own cell renderer component directly without registering.
+|         // 3 - Class - Provide your own Cell Component directly without registering.
 |         {
 |             field: 'sport',
 |             cellRenderer: MyCustomCellRendererClass,
@@ -78,12 +82,12 @@ The code snippet below demonstrates each of these method types.
 |             field: 'name',
 |             cellRenderer: undefined,
 |         },
-|         // 2 - String - The name of a cell renderer registered with the grid.
+|         // 2 - String - The name of a Cell Component registered with the grid.
 |         {
 |             field: 'age',
 |             cellRenderer: 'agGroupCellRenderer',
 |         },
-|         // 3 - Class - Provide your own cell renderer component directly without registering.
+|         // 3 - Class - Provide your own Cell Component directly without registering.
 |         {
 |             field: 'sport',
 |             cellRenderer: MyCustomCellRendererClass,
@@ -110,12 +114,12 @@ The code snippet below demonstrates each of these method types.
 |             field: 'name',
 |             cellRenderer: undefined,
 |         },
-|         // 2 - String - The name of a cell renderer registered with the grid.
+|         // 2 - String - The name of a Cell Component registered with the grid.
 |         {
 |             field: 'age',
 |             cellRenderer: 'agGroupCellRenderer',
 |         },
-|         // 3 - Class - Provide your own cell renderer component directly without registering.
+|         // 3 - Class - Provide your own Cell Component directly without registering.
 |         {
 |             field: 'sport',
 |             cellRenderer: MyCustomCellRendererClass,
@@ -142,7 +146,7 @@ The code snippet below demonstrates each of these method types.
 |             field: 'name',
 |             cellRenderer: undefined,
 |         },
-|         // 2 - String - The name of a cell renderer registered with the grid.
+|         // 2 - String - The name of a Cell Component registered with the grid.
 |         {
 |             field: 'age',
 |             cellRenderer: 'agGroupCellRenderer',
@@ -160,23 +164,10 @@ The code snippet below demonstrates each of these method types.
 </snippet>
 </framework-specific-section>
 
-This remainder of this documentation page goes through the grid provided cell renderer's. To build your own cell renderer see the section [Cell Rendering Components](/component-cell-renderer/).
 
-## No Cell Renderer
+## Dynamic Selection
 
-If you have no requirements for custom cells, then you should use no cell renderer. Having no custom cell renderers will result in the fastest possible grid, as even the simplest cell renderer will result in some extra div's in the DOM
-
-If you just want to do simple formatting of the data (eg currency or date formatting) then you can use `colDef.valueFormatter`.
-
-<api-documentation source='column-properties/properties.json' section='columns' names='["valueFormatter"]'></api-documentation>
-
-## Cell Renderer Components
-
-Cell renderer components can be referenced by string or directly by class. They can be [Provided Cell Renderers](#provided-cell-renderers) (that come with the grid) or [Custom Cell Renderers](/component-cell-renderer/) (built by you).
-
-## Many Renderers One Column
-
-It is also possible to use different renderers for different rows in the same column. To configure this set `colDef.cellRendererSelector` to a function that returns alternative values for `cellRenderer` and `cellRendererParams`.
+The `colDef.cellRendererSelector` function allows setting difference Cell Components for different Rows within a Column.
 
 The `params` passed to `cellRendererSelector` are the same as those passed to the [Cell Renderer Component](/component-cell-renderer/). Typically the selector will use this to check the rows contents and choose a renderer accordingly.
 
@@ -194,17 +185,17 @@ Here is a full example.
 
 <grid-example title='Dynamic Rendering Component' name='dynamic-rendering-component' type='mixed' options='{ "exampleHeight": 335, "extras": ["fontawesome"] }'></grid-example>
 
-## Provided Cell Renderers
+## Provided Cell Components
 
-The grid comes with some provided cell renderers out of the box. These cell renderers cover some common complex cell rendering requirements.
+The grid comes with some Cell Components out of the box. These provided components cover common some common complex cell rendering requirements.
 
-- [Group Cell Renderer](/group-cell-renderer/): For showing group details with expand & collapse functionality when using any of the [Row Grouping](/grouping/), [Master Detail](/master-detail/) or [Tree Data](/tree-data/).
+- [Group Cell Component](/group-cell-renderer/): For showing group details with expand & collapse functionality when using any of the [Row Grouping](/grouping/), [Master Detail](/master-detail/) or [Tree Data](/tree-data/).
 
 - [Show Change Cell Renderers](/change-cell-renderers/): For animating changes when data is changing.
 
 - [Checkbox Cell Renderer](#checkbox-cell-renderer): For displaying boolean values with a checkbox.
 
-### Checkbox Cell Renderer
+## Checkbox Cell Renderer
 
 Simple renderer for boolean values that uses the standard HTML checkbox `input`. The renderer also allows editing.
 

@@ -110,7 +110,7 @@
       },
       {
         "title": "Guides",
-        "items": [
+        "items": [          
           {
             "title": "Tutorial: My First Grid",
             "url": "/deep-dive/",
@@ -129,30 +129,6 @@
             "url": "/react-hooks/",
             "frameworks": [
               "react"
-            ]
-          },
-          {
-            "title": "Vue2 Tutorial",
-            "url": "/vue2/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "vue"
-            ]
-          },
-          {
-            "title": "Unidirectional Data Flow",
-            "url": "/framework-data-flow/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "vue"
-            ]
-          },
-          {
-            "title": "Miscellaneous",
-            "url": "/framework-misc/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "vue"
             ]
           }
         ]
@@ -260,11 +236,6 @@
           {
             "title": "Styling Rows",
             "url": "/row-styles/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Styling Cells",
-            "url": "/cell-styles/",
             "showInCollapsed": true
           },
           {
@@ -473,6 +444,83 @@
     "group": "CORE FEATURES",
     "items": [
       {
+        "title": "Cells",
+        "items": [
+          {
+            "title": "Cell Content",
+            "url": "/cell-content/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Getting Values",
+                "url": "/value-getters/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Formatting Values",
+                "url": "/value-formatters/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Cell Components",
+                "url": "/component-cell-renderer/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "(merge above)",
+                "url": "/cell-rendering/",
+                "showInCollapsed": true
+              },    
+              {
+                "title": "Cell Data Types",
+                "url": "/cell-data-types/",
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
+            "title": "Styling Cells",
+            "url": "/cell-styles/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Highlighting Changes",
+            "url": "/change-cell-renderers/"
+          },
+          {
+            "title": "(merge above)",
+            "url": "/flashing-cells/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Tooltips",
+            "url": "/tooltips/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Advanced",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Expressions",
+                "url": "/cell-expressions/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "View Refresh",
+                "url": "/view-refresh/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Reference Data",
+                "url": "/reference-data/",
+                "showInCollapsed": true
+              }
+            ]
+          }
+        ]
+      },
+      {
         "title": "Columns",
         "items": [
           {
@@ -508,11 +556,6 @@
           {
             "title": "Column Moving",
             "url": "/column-moving/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Cell Data Types",
-            "url": "/cell-data-types/",
             "showInCollapsed": true
           },
           {
@@ -563,6 +606,11 @@
           {
             "title": "Row Animation",
             "url": "/row-animation/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Displayed Rows",
+            "url": "/rendering-api/",
             "showInCollapsed": true
           },
           {
@@ -720,94 +768,6 @@
                 "url": "/range-selection-fill-handle/",
                 "enterprise": true,
                 "showInCollapsed": true
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "title": "Rendering",
-        "items": [
-          {
-            "title": "Cell Content",
-            "url": "/cell-content/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Value Getters",
-                "url": "/value-getters/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Value Formatters",
-                "url": "/value-formatters/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Expressions",
-                "url": "/cell-expressions/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Reference Data",
-                "url": "/reference-data/",
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Cell Rendering",
-            "url": "/cell-rendering/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Group Cell Renderer",
-                "url": "/group-cell-renderer/",
-                "enterprise": true
-              },
-              {
-                "title": "Change Cell Renderers",
-                "url": "/change-cell-renderers/"
-              }
-            ]
-          },
-          {
-            "title": "Rendering API",
-            "url": "/rendering-api/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "View Refresh",
-            "url": "/view-refresh/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Flashing Cells",
-            "url": "/flashing-cells/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Change Detection",
-            "url": "/change-detection/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Tooltips",
-            "url": "/tooltips/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Context",
-            "url": "/context/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "See Also",
-            "url": "",
-            "items": [
-              {
-                "title": "Expressions & Context",
-                "url": "/expressions-and-context/"
               }
             ]
           }
@@ -1125,6 +1085,23 @@
                 "url": "/grouping-unbalanced-groups/",
                 "enterprise": true,
                 "showInCollapsed": false
+              },
+              {
+                "title": "Expand & Collapse Comp",
+                "url": "/group-expand-collapse-comp/",
+                "enterprise": true,
+                "items": [
+                  {
+                    "title": "Provided Group Comp",
+                    "url": "/group-cell-renderer/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Custom Group Comp",
+                    "url": "/group-custom-group-comp/",
+                    "enterprise": true
+                  }                  
+                ]
               }
             ]
           },
@@ -1536,11 +1513,6 @@
             "showInCollapsed": true
           },
           {
-            "title": "Cell Renderer",
-            "url": "/component-cell-renderer/",
-            "showInCollapsed": true
-          },
-          {
             "title": "Cell Editor",
             "url": "/component-cell-editor/",
             "showInCollapsed": true
@@ -1622,21 +1594,28 @@
         ]
       },
       {
-        "title": "",
-        "items": []
+        "title": "Performance",
+        "items": [
+          {
+            "title": "Value Cache",
+            "url": "/value-cache/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Change Detection",
+            "url": "/change-detection/",
+            "showInCollapsed": true
+          }
+        ]
       }
     ]
   },
   {
-    "group": "MISCELLANEOUS",
+    "group": "MISC",
     "items": [
       {
         "title": "Migration",
         "items": [
-          {
-            "title": "Upgrading to AG Grid 31.1",
-            "url": "/upgrading-to-ag-grid-31-1/"
-          },
           {
             "title": "Upgrading to AG Grid 31",
             "url": "/upgrading-to-ag-grid-31/"
@@ -1653,7 +1632,7 @@
       },
       {
         "title": "Other",
-        "items": [         
+        "items": [
           {
             "title": "Testing",
             "url": "/testing/"
@@ -1670,10 +1649,19 @@
             "url": "/security/"
           },
           {
-            "title": "Compatibility",
-            "url": "/angular-compatibility/",
+            "title": "Vue2 Tutorial",
+            "url": "/vue2/",
+            "showInCollapsed": true,
             "frameworks": [
-              "angular"
+              "vue"
+            ]
+          },
+          {
+            "title": "Unidirectional Data Flow",
+            "url": "/framework-data-flow/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
             ]
           },
           {
@@ -1684,8 +1672,28 @@
             ]
           },
           {
+            "title": "Compatibility",
+            "url": "/angular-compatibility/",
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
             "title": "Supported Browsers",
             "url": "/supported-browsers/"
+          },
+          {
+            "title": "Miscellaneous",
+            "url": "/framework-misc/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
+            ]
+          },
+          {
+            "title": "Context",
+            "url": "/context/",
+            "showInCollapsed": true
           }
         ]
       }
