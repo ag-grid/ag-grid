@@ -63,22 +63,6 @@ export class ChartOptionsService extends BeanStub {
         this.updateChart(chartOptions);
         this.raiseChartOptionsChangedEvent();
     }
-    
-    public getSecondaryAxisProperty<T = string>(expression: string): T {
-        return _.get(this.getChart().axes?.[1], expression, undefined) as T;
-    }
-
-    public setSecondaryAxisProperty<T = string>(expression: string, value: T) {
-        // update axis options
-        const chart = this.getChart();
-        const [, axis] = chart.axes ?? [];
-        if (!axis) return;
-
-        const chartOptions = this.getUpdateAxisOptions<T>(axis, expression, value);
-
-        this.updateChart(chartOptions);
-        this.raiseChartOptionsChangedEvent();
-    }
 
     public getLabelRotation(axisType: 'xAxis' | 'yAxis'): number {
         const axis = this.getAxis(axisType);
@@ -137,7 +121,7 @@ export class ChartOptionsService extends BeanStub {
             chartSeriesTypes.push('common');
         }
 
-        const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'radius-number'];
+        const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'angle-number', 'radius-category', 'radius-number'];
 
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};

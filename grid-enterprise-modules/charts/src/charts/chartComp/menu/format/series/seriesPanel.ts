@@ -65,7 +65,7 @@ export class SeriesPanel extends Component {
         'seriesItems': () => this.initSeriesItemsPanel(),
     };
 
-    private seriesWidgetMappings: {[name: string]: string[]} = {
+    private seriesWidgetMappings: { [K in ChartSeriesType]?: string[] } = {
         'column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
@@ -81,7 +81,7 @@ export class SeriesPanel extends Component {
         'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'range-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
         'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
@@ -134,7 +134,7 @@ export class SeriesPanel extends Component {
                 this.initSeriesSelect();
             }
 
-            this.seriesWidgetMappings[this.seriesType].forEach((w) => this.widgetFuncs[w]());
+            (this.seriesWidgetMappings[this.seriesType] ?? []).forEach((w) => this.widgetFuncs[w]());
         })
         .catch(e => console.error(`AG Grid - chart rendering failed`, e));
 

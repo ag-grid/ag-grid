@@ -53,17 +53,14 @@ export abstract class StatisticalChartProxy extends CartesianChartProxy {
                 return 1;
             }
             const categoryValue = datum[categoryKey];
+            if (categoryValue === null || categoryValue === undefined) {
+                return ''; // use a blank category for `null` or `undefined` values
+            }
             return categoryValue instanceof Date ? categoryValue.getTime() : categoryValue;
         }
 
         return data.reduce((acc, datum) => {
             let category = getCategory(datum);
-
-            // skip `null` or `undefined` categories!
-            if (category === null || category === undefined) {
-                return acc;
-            }
-
             const existingCategoryData = acc.get(category);
             if (existingCategoryData) {
                 existingCategoryData.push(datum);
@@ -73,4 +70,5 @@ export abstract class StatisticalChartProxy extends CartesianChartProxy {
             return acc;
         }, new Map<string | null, any[]>());
     }
+
 }
