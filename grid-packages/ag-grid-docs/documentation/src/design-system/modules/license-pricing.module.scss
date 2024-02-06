@@ -681,6 +681,9 @@
   }
   .gradient {
     position: absolute;
-    background: red;
+    top: -70px;
     height: 100px;
+    width: 100vw;
+    background: linear-gradient(transparent, var(--color-bg-brand-solid));
+    opacity: 0.05;
   }
