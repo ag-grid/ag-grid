@@ -7,7 +7,7 @@
     --ag-active-color: #2196f3;
     --ag-background-color: #fff;
     --ag-foreground-color: #181d1f;
-    --ag-border-color: #dddddd;
+    --ag-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 15%);
     --ag-secondary-border-color: var(--ag-border-color);
     --ag-header-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 2%);
     --ag-tooltip-background-color: var(--ag-header-background-color);
@@ -21,6 +21,9 @@
     --ag-advanced-filter-value-pill-color: #85c0e4;
     --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
     --ag-icon-font-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 90%);
+
+    --ag-popup-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 5%);
+    --ag-popup-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 22%);
     
     // derived colours (no color blending - these are shared by dark mode)
     --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 8%);
@@ -85,7 +88,7 @@
     --ag-tab-min-width: 0;
 
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
-    --ag-popup-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    --ag-popup-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.16);
     --ag-side-bar-panel-width: 250px;
 };
 

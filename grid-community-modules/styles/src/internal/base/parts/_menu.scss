@@ -3,6 +3,7 @@
 @mixin output {
     .ag-menu {
         @include ag.card();
+        background-color: var(--ag-popup-background-color);
         padding: 0;
     }
 
