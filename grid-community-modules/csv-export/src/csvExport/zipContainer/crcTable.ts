@@ -19,17 +19,18 @@ const getCrcFromCrc32TableAndByteArray = (content: Uint8Array): number => {
     return crc ^ (-1);
 };
 
-export const getCrcFromCrc32Table = (content: string): number => {
-    if (!content.length) { return 0; }
-
-    const size = content.length;
-    const iterable = new Uint8Array(size);
-
-    for (let i = 0; i < size; i++) {
-        iterable[i] = content.charCodeAt(i);
+export const getCrcFromCrc32Table = (content: string | Uint8Array): number => {
+    if (!content.length) {
+        return 0;
     }
 
-    return getCrcFromCrc32TableAndByteArray(iterable);
+    if (typeof content === 'string') {
+        return getCrcFromCrc32TableAndByteArray(
+            new TextEncoder().encode(content)
+        );
+    }
+
+    return getCrcFromCrc32TableAndByteArray(content);
 };
 
 // Table for crc calculation from:

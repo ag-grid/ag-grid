@@ -1,4 +1,3 @@
-import { convertStringToByteArray } from "./convert";
 import {
     buildFolderEnd,
     getDeflatedHeaderAndContent,
@@ -11,7 +10,7 @@ export interface ZipFile {
     created: Date;
     isBase64: boolean;
     type: 'file' | 'folder';
-    content?: string;
+    content?: Uint8Array;
 }
 
 export class ZipContainer {
@@ -35,7 +34,7 @@ export class ZipContainer {
         this.files.push({
             path,
             created: new Date(),
-            content,
+            content: new TextEncoder().encode(content),
             isBase64,
             type: 'file'
         });
@@ -76,20 +75,19 @@ export class ZipContainer {
             // Append fileHeader to fData
             const dataWithHeader = new Uint8Array(fileData.length + fileHeader.length);
             dataWithHeader.set(fileData);
-            dataWithHeader.set(convertStringToByteArray(fileHeader), fileData.length);
+            dataWithHeader.set(fileHeader, fileData.length);
             fileData = dataWithHeader;
 
             // Append content to fData
-            const contentAsUint8Array = typeof content === 'string' ? convertStringToByteArray(content) : content;
-            const dataWithContent = new Uint8Array(fileData.length + contentAsUint8Array.length);
+            const dataWithContent = new Uint8Array(fileData.length + content.length);
             dataWithContent.set(fileData);
-            dataWithContent.set(contentAsUint8Array, fileData.length);
+            dataWithContent.set(content, fileData.length);
             fileData = dataWithContent;
 
             // Append folder header to foData
             const folderDataWithFolderHeader = new Uint8Array(folderData.length + folderHeader.length);
             folderDataWithFolderHeader.set(folderData);
-            folderDataWithFolderHeader.set(convertStringToByteArray(folderHeader), folderData.length);
+            folderDataWithFolderHeader.set(folderHeader, folderData.length);
             folderData = folderDataWithFolderHeader;
 
             filesContentAndHeaderLength += fileHeader.length + content.length;
@@ -103,12 +101,11 @@ export class ZipContainer {
         );
 
         // Append folder data and file data
-        const folderEndAsUint8Array = convertStringToByteArray(folderEnd);
-        const result = new Uint8Array(fileData.length + folderData.length + folderEndAsUint8Array.length);
+        const result = new Uint8Array(fileData.length + folderData.length + folderEnd.length);
 
         result.set(fileData);
         result.set(folderData, fileData.length);
-        result.set(folderEndAsUint8Array, fileData.length + folderData.length);
+        result.set(folderEnd, fileData.length + folderData.length);
 
         return result;
     }
