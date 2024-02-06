@@ -143,7 +143,7 @@ const License = (props: LicenseData) => {
                             });
                         }}
                     >
-                        {id === 'community' ? 'Start for free' : 'Configure now'}
+                        {id === 'community' ? 'Start for free' : 'Buy now'}
                     </a>
                 </div>
 
