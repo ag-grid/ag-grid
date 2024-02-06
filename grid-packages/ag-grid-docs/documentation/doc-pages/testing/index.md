@@ -91,24 +91,18 @@ Here we give some hints on testing AG Grid as part of your application.
 | These recipes below are suggestions - there are many ways to do End to End testing, what we document
 | below is what we use here at AG Grid.
 |
-| We do not document how to use either `Protractor` and `Jasmine` in depth here - please see either the
 </framework-specific-section>
 
+
 <framework-specific-section frameworks="javascript">
+<p> We do not document how to use either `Protractor` and `Jasmine` in depth here - please see the documentation for either
 <a href="http://www.protractortest.org/#/" target="_blank">Protractor</a> or
-<a href="https://jasmine.github.io/" target="_blank">Jasmine</a> for information around either of these tools.
+<a href="https://jasmine.github.io/" target="_blank">Jasmine</a>.
+</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 | We only describe how these tools can be used to test AG Grid below.
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<note>
-| End to End testing can be fragile. If you change something trivial upstream it can have a big impact
-| on an End to End test, so we recommend using End to End tests in conjunction with unit tests. It's often
-| easier to find and fix a problem at the unit testing stage than it is in the end to end stage.
-</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -1155,3 +1149,7 @@ Here we give some hints on testing AG Grid as part of your application.
 | }
 </snippet>
 </framework-specific-section>
+
+<h2> End to End (e2e) Testing with Playwright </h2>
+
+<p><a href="https://playwright.dev/" target="_blank">Playwright</a> is another popular e2e testing framework that can be used to test AG Grid applications. A few examples of how to use Playwright with AG Grid can be found in this <a href="https://github.com/ag-grid/ag-grid/tree/latest/grid-packages/ag-grid-dev/e2e" target="_blank">Github Repo</a>.</p>
