@@ -552,6 +552,9 @@
     user-select: none;;
     box-shadow: var(--shadow-sm);;
     margin-bottom: $spacing-size-4;
+    #{$selector-darkmode} & {
+        border: 2px solid var(--color-bg-primary);
+    }
  }
 
  .toggleContainer::before {
@@ -647,7 +650,9 @@
     top: 30px;
     left: 50%;
     transform: translate(-50%, -50%); /* Center the background */
-    
+    #{$selector-darkmode} & { 
+        opacity: 0.1;
+    }
   }
   
   .toggleCheckbox {
