@@ -14,22 +14,19 @@ export type ZipFileHeaderAndContent = {
 }
 
 export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ZipFileHeaderAndContent> => {
-    const {
-        content,
-        isBase64, // true for images and other base64 encoded files
-    } = currentFile;
+    const { content } = currentFile;
 
     const { size, content: rawContent } = !content
         ? ({ size: 0, content: Uint8Array.from([])})
-        : getDecodedContent(content, isBase64);
+        : getDecodedContent(content);
 
     let deflatedContent: Uint8Array | undefined = undefined;
     let deflatedSize: number | undefined = undefined;
     let deflationPerformed = false;
 
-    const shouldDeflate = currentFile.type === 'file' && !currentFile.isBase64 && rawContent && size > 0;
+    const shouldDeflate = currentFile.type === 'file' && rawContent && size > 0;
     if (shouldDeflate)  {
-        const result = await deflateLocalFile(rawContent, isBase64);
+        const result = await deflateLocalFile(rawContent);
         deflatedContent = result.content;
         deflatedSize = result.size;
         deflationPerformed = true;

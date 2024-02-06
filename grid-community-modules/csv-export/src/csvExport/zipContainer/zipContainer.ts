@@ -116,10 +116,12 @@ export class ZipContainer {
         let lL = 0;
 
         for (const currentFile of totalFiles) {
-            const output = await getDeflatedHeaderAndContent(currentFile, lL);
-            const { fileHeader, content } = output;
-            readyFiles.push(output);
-            lL += fileHeader.length + content.length;
+            if (!currentFile.isBase64) {
+                const output = await getDeflatedHeaderAndContent(currentFile, lL);
+                const { fileHeader, content } = output;
+                readyFiles.push(output);
+                lL += fileHeader.length + content.length;
+            }
         }
 
         return this.packageFiles(readyFiles);

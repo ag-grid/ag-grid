@@ -42,15 +42,11 @@ export const compressBlob = async (data: Blob): Promise<{
     }
 };
 
-export const deflateLocalFile = async (content: Uint8Array, isBase64: boolean): Promise<{
+export const deflateLocalFile = async (rawContent: Uint8Array): Promise<{
     size: number;
     content: Uint8Array;
 }> => {
-    const {
-        content: rawContent,
-    } = getDecodedContent(content, isBase64);
     const contentAsBlob = new Blob([rawContent]);
-
     const {
         size: compressedSize,
         content: compressedContent
