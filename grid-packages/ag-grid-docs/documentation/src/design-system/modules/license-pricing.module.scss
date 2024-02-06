@@ -580,6 +580,7 @@
     align-items: center;
     margin-left: 8px;
     justify-content: center;
+    cursor: pointer;
  }
 
  .chartsToggle {
@@ -587,6 +588,7 @@
     gap: 8px;
     align-items: center;
     margin-left: 8px;
+    cursor: pointer;
  }
 
  .toggleCheckbox:checked + .toggleContainer::before {
@@ -647,7 +649,7 @@
   }
   
   .toggleBackground {
-    opacity: 0.5;
+    opacity: 0.8;
     position: absolute;
     top: 30px;
     left: 50%;
