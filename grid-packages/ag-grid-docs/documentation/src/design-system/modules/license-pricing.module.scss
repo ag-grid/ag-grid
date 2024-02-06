@@ -676,6 +676,11 @@
 
   .newTag {
     background: color-mix(in srgb, var(--color-bg-brand-solid), var(--color-bg-primary) 90%);
-    color: var(--color-bg-brand-solid);
+    color: var(--color-link);
     border-radius: 24px;
+  }
+  .gradient {
+    position: absolute;
+    background: red;
+    height: 100px;
   }

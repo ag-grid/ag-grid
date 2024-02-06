@@ -106,6 +106,7 @@ export const LicensePricing = () => {
                             </p> */}
 
 <div className={styles.switchContainer}>
+    <div className={styles.gradient}></div>
 <ToggleBackground className={styles.toggleBackground}/>
 <hr className={styles.horizontalRule}/>
 <div className={styles.toggleWrapper}>
