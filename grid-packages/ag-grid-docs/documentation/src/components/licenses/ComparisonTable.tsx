@@ -113,7 +113,7 @@ const ComparisonTable = () => {
         ))}
       </div>
       <div className="data-column">
-        <div className="feature-heading">Community</div>
+        <div className="feature-heading">Community </div>
         {data.map((categoryData) => (
           <React.Fragment key={`heading-${categoryData.category}-community`}>
             <div className={`feature-cell ${expandedCategories[categoryData.category] ? 'hidden' : 'empty-cell'}`}>-</div>

@@ -29,7 +29,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'community',
-        subHeading: 'Community',
+        subHeading: 'AG Grid Community',
         description: 'Free for everyone, including production use',
         priceFullDollars: '0',
         launchPrice: null,
@@ -41,8 +41,8 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'grid',
-        subHeading: 'Enterprise',
-        description: 'All the grid features and support via Zendesk',
+        subHeading: 'AG Grid Enterprise',
+        description: 'All the grid features and dedicated support',
         priceFullDollars: '999',
         launchPrice: null,
         licenseBenefits: ['Community features + more', '1 year of support', '1 year of updates'],
@@ -53,8 +53,8 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.chartsLicense,
         id: 'togther',
-        subHeading: 'Grid + Charts',
-        description: 'Extend to our enterprise grid and charting library',
+        subHeading: 'AG Grid + AG Charts Enterprise',
+        description: 'All grid + chart features and dedicated support',
         licenseBenefits: ['Enterprise grid + chart library', '1 year of support', '1 year of updates'],
         priceFullDollars: '1198',
         launchPrice: null,
