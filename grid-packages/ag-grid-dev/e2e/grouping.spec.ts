@@ -5,7 +5,7 @@ test('group by column', async ({ page }) => {
     const { waitForCells, getHeaderLocator, getRowContents } = agGridTest(page);
 
     await page.goto(
-        'https://grid-staging.ag-grid.com/examples/grouping-group-panel/keep-columns-visible/modules/typescript/index.html'
+        '/examples/grouping-group-panel/keep-columns-visible/modules/typescript/index.html'
     );
     await waitForCells();
 

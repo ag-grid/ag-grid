@@ -1,12 +1,11 @@
 import { Page } from '@playwright/test';
 
-
 /** 
  * Wait for the grid to finish rendering and for the cells to be visible
  */
 export async function waitForCells(page: Page) {
     await page.locator('.ag-overlay').first().waitFor({ state: 'hidden' });
-    await page.locator('.ag-center-cols-viewport .ag-cell').first().waitFor({ state: 'visible' });
+    await page.locator('.ag-cell').first().waitFor({ state: 'visible' });
 }
 
 export type ColumnLocatorOptions = {
@@ -85,7 +84,7 @@ export async function getCellLocatorBy(page: Page, options: CellLocatorOptions) 
 }
 
 /**
- * Returns a test object with helper methods for interacting with the grid
+ * Returns a test object with helper methods for interacting with AG Grid for the given page.
  */
 export function agGridTest(page: Page){
     return {

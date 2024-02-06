@@ -8,7 +8,7 @@ test('test hide/show columns', async ({ page }) => {
     const { waitForCells, getRowContents } = agGridTest(page);
 
     await page.goto(
-        'https://grid-staging.ag-grid.com/examples/column-updating-definitions/add-remove-columns/modules/vanilla/index.html'
+        '/examples/column-updating-definitions/add-remove-columns/modules/vanilla/index.html'
     );
     await waitForCells();
 
@@ -25,7 +25,7 @@ test('test hide/show columns', async ({ page }) => {
 //   const { waitForCells, getRowContents } = agGridTest(page);
 
 //   await page.goto(
-//       'https://grid-staging.ag-grid.com/examples/column-updating-definitions/add-remove-columns/modules/vanilla/index.html'
+//       '/examples/column-updating-definitions/add-remove-columns/modules/vanilla/index.html'
 //   );
 //   await waitForCells();
 //   await page.getByRole('button', { name: 'Exclude Medal Columns' }).click();

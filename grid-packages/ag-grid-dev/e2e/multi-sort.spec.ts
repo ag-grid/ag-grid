@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { getHeaderLocator, waitForCells } from './utils';
 
 test('test multi sort', async ({ page }) => {
-    await page.goto('https://grid-staging.ag-grid.com/examples/row-sorting/multi-column/modules/vanilla/index.html');
+    await page.goto('/examples/row-sorting/multi-column/modules/vanilla/index.html');
     await waitForCells(page);
 
     expect(page.getByText('Athlete 2')).toBeVisible();

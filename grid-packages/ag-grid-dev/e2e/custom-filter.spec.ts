@@ -5,7 +5,7 @@ import { testAllFrameworks } from './example-utils';
 testAllFrameworks(({ framework }) => {
     test('test filtering', async ({ page }) => {
         await page.goto(
-            `https://grid-staging.ag-grid.com/examples/component-filter/custom-filter/modules/${framework}/index.html`
+            `/examples/component-filter/custom-filter/modules/${framework}/index.html`
         );
         await waitForCells(page);
 
