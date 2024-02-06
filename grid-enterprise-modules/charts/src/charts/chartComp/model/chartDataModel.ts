@@ -15,6 +15,7 @@ import { ChartDatasource, ChartDatasourceParams } from "../datasource/chartDatas
 import { ChartTranslationService } from '../services/chartTranslationService';
 import { ChartColumnService } from "../services/chartColumnService";
 import { ComboChartModel } from "./comboChartModel";
+import { isHierarchical } from "../utils/seriesTypeMapper";
 
 export interface ColState {
     column?: Column;
@@ -177,7 +178,7 @@ export class ChartDataModel extends BeanStub {
 
         const params: ChartDatasourceParams = {
             aggFunc: this.aggFunc,
-            dimensionCols: [this.getSelectedDimension()],
+            dimensionCols: this.getSelectedDimensions(),
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             crossFiltering: this.crossFiltering,
@@ -199,9 +200,9 @@ export class ChartDataModel extends BeanStub {
         const isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
 
         // charts only group when the selected category is a group column
-        const colId = this.getSelectedDimension().colId;
+        const colIds = this.getSelectedDimensions().map(({ colId }) => colId);
         const displayedGroupCols = this.chartColumnService.getGroupDisplayColumns();
-        const groupDimensionSelected = displayedGroupCols.map(col => col.getColId()).some(id => id === colId);
+        const groupDimensionSelected = displayedGroupCols.map(col => col.getColId()).some(id => colIds.includes(id));
         return !!isGroupActive && groupDimensionSelected;
     }
 
@@ -209,8 +210,8 @@ export class ChartDataModel extends BeanStub {
         return this.valueColState.filter(cs => cs.selected).map(cs => cs.column!);
     }
 
-    public getSelectedDimension(): ColState {
-        return this.dimensionColState.filter(cs => cs.selected)[0];
+    public getSelectedDimensions(): ColState[] {
+        return this.dimensionColState.filter(cs => cs.selected);
     }
 
     public getColDisplayName(col: Column): string | null {
@@ -283,6 +284,7 @@ export class ChartDataModel extends BeanStub {
         this.dimensionColState = [];
         this.valueColState = [];
 
+        const supportsMultipleDimensions = isHierarchical(this.chartType);
         let hasSelectedDimension = false;
         let order = 1;
 
@@ -297,7 +299,7 @@ export class ChartDataModel extends BeanStub {
                     selected = true;
                 }
             } else {
-                selected = isAutoGroupCol ? true : !hasSelectedDimension && allCols.has(column);
+                selected = isAutoGroupCol ? true : (!hasSelectedDimension || supportsMultipleDimensions) && allCols.has(column);
             }
 
             this.dimensionColState.push({
@@ -385,24 +387,32 @@ export class ChartDataModel extends BeanStub {
         this.dimensionCellRange = undefined;
 
         if (!updatedColState && !this.dimensionColState.length) {
-            // use first dimension column in range by default
+            const supportsMultipleDimensions = isHierarchical(this.chartType);
+            const selectedCols = new Array<Column>();
+            // use first dimension column in range by default, or all dimension columns for hierarchical charts
             dimensionCols.forEach(col => {
-                if (this.dimensionCellRange || !colsInRange.has(col)) { return; }
-                this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, col);
+                if ((selectedCols.length > 0 && !supportsMultipleDimensions) || !colsInRange.has(col)) { return; }
+                selectedCols.push(col);
             });
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedCols);
             return;
         }
 
-        let selectedDimensionColState = updatedColState;
+        let selectedDimensionColStates = updatedColState ? [updatedColState] : [];
         if (this.crossFiltering && this.aggFunc) {
             const aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
-            selectedDimensionColState = this.dimensionColState.filter(cs => cs.colId === aggFuncDimension.getColId())[0];
-        } else if (!selectedDimensionColState || !dimensionCols.has(selectedDimensionColState.column!)) {
-            selectedDimensionColState = this.dimensionColState.filter(cs => cs.selected)[0];
+            selectedDimensionColStates = this.dimensionColState.filter(cs => cs.colId === aggFuncDimension.getColId());
+        } else if (selectedDimensionColStates.length === 0 || selectedDimensionColStates.some(({ column }) => !column || !dimensionCols.has(column))) {
+            selectedDimensionColStates = this.dimensionColState.filter(cs => cs.selected);
         }
 
-        if (selectedDimensionColState && selectedDimensionColState.colId !== ChartDataModel.DEFAULT_CATEGORY) {
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimensionColState.column!);
+        const isDefaultCategory = selectedDimensionColStates.length === 1
+            ? selectedDimensionColStates[0].colId === ChartDataModel.DEFAULT_CATEGORY
+            : false;
+        const selectedColumns = selectedDimensionColStates.map(({ column }) => column)
+            .filter((value): value is NonNullable<typeof value> => value != null);
+        if (selectedColumns.length > 0 && !isDefaultCategory) {
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedColumns);
         }
     }
 
@@ -449,9 +459,12 @@ export class ChartDataModel extends BeanStub {
     }
 
     private syncDimensionCellRange() {
-        const selectedDimension = this.getSelectedDimension();
-        if (selectedDimension && selectedDimension.column) {
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimension.column);
+        const selectedDimensions = this.getSelectedDimensions();
+        if (selectedDimensions.length === 0) return;
+        const columns = selectedDimensions.map(({ column }) => column)
+            .filter((value): value is NonNullable<typeof value> => value != null);
+        if (columns.length > 0) {
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...columns);
         }
     }
 

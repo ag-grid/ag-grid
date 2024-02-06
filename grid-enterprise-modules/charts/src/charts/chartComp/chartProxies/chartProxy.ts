@@ -49,6 +49,11 @@ export interface UpdateParams {
         name: string;
         chartDataType?: string
     };
+    categories: {
+        id: string;
+        name: string;
+        chartDataType?: string
+    }[];
     fields: FieldDefinition[];
     chartId?: string;
     getCrossFilteringContext: () => CrossFilteringContext,

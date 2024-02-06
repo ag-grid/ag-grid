@@ -22,6 +22,7 @@ export type ChartSeriesType =
     'range-bar' |
     'range-area' |
     'box-plot' |
+    'treemap' |
     'waterfall' |
     'common';
 
@@ -48,6 +49,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'range-bar',
     'range-area',
     'box-plot',
+    'treemap',
     'waterfall',
 ];
 
@@ -78,6 +80,15 @@ export function isRadial(chartType: ChartType): boolean {
     switch (chartType) {
         case 'radialColumn':
         case 'radialBar':
+            return true;
+        default:
+            return false;
+    }
+}
+
+export function isHierarchical(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'treemap':
             return true;
         default:
             return false;
@@ -124,6 +135,8 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
             return 'range-area';
         case 'boxPlot':
             return 'box-plot';
+        case 'treemap':
+            return 'treemap';
         case 'pie':
         case 'doughnut':
             return 'pie';

@@ -260,6 +260,8 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
             polarGroup: null,
             // Statistical charts do not currently support pivot mode
             statisticalGroup: null,
+            // Hierarchical charts do not currently support pivot mode
+            hierarchicalGroup: null,
             // Specialized charts do not currently support pivot mode
             specializedGroup: null,
         }
@@ -276,6 +278,7 @@ export type RangeMenuOptionName =
     'rangeAreaChart' | 'rangeArea' | 'rangeStackedArea' | 'rangeNormalizedArea' |
     'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' | 'rangeRadialColumn' | 'rangeRadialBar' |
     'rangeStatisticalChart' | 'rangeBoxPlot' | 'rangeHistogramChart' |'rangeRangeBar' | 'rangeRangeArea' |
+    'rangeHierarchicalChart' | 'rangeTreemap' |
     'rangeSpecializedChart' | 'rangeWaterfall' |
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
@@ -369,6 +372,15 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     _enterprise: true,
                 },
                 {
+                    name: localeTextFunc('hierarchicalChart', 'Hierarchical'),
+                    subMenu:
+                        [
+                            getMenuItem('treemap', 'Treemap&lrm;', 'treemap', 'rangeTreemap'),
+                        ],
+                    _key: 'rangeHierarchicalChart',
+                    _enterprise: true,
+                },
+                {
                     name: localeTextFunc('specializedChart', 'Specialized'),
                     subMenu:
                         [
@@ -438,6 +450,10 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 histogram: 'rangeHistogramChart',
                 rangeBar: 'rangeRangeBar',
                 rangeArea: 'rangeRangeArea',
+            },
+            hierarchicalGroup: {
+                _key: 'rangeHierarchicalChart',
+                treemap: 'rangeTreemap',
             },
             specializedGroup: {
                 _key: 'rangeSpecializedChart',
