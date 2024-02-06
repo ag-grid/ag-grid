@@ -11,7 +11,6 @@ import ChartsGrid from '../../images/inline-svgs/pricing-grid-charts.svg';
 // @ts-ignore
 import styles from '@design-system/modules/Licenses.module.scss';
 
-
 type LicenseData = {
     className: string;
     id: string;
@@ -23,6 +22,7 @@ type LicenseData = {
     learnMoreLink: string;
     Logo: any;
     description: string;
+    tabGroup: string;
 };
 
 const DEV_LICENSE_DATA: LicenseData[] = [
@@ -36,7 +36,8 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         licenseBenefits: ['Free to use', 'Basic grid features', 'Theming and customisation'],
         buyLink: 'https://ag-grid.com/react-data-grid/licensing/',
         learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
-        Logo: GridCommunity
+        Logo: GridCommunity,
+        tabGroup: 'grid'
     },
     {
         className: styles.gridLicense,
@@ -48,7 +49,34 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         licenseBenefits: ['Community features + more', '1 year of support', '1 year of updates'],
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
         learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
-        Logo: GridEnterprise
+        Logo: GridEnterprise,
+        tabGroup: 'grid'
+    },
+    {
+        className: styles.gridLicense,
+        id: 'community',
+        subHeading: 'AG Charts Community',
+        description: 'Free for everyone, including production use',
+        priceFullDollars: '0',
+        launchPrice: null,
+        licenseBenefits: ['Free to use', 'Basic grid features', 'Theming and customisation'],
+        buyLink: 'https://ag-grid.com/react-data-grid/licensing/',
+        learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
+        Logo: GridCommunity,
+        tabGroup: 'charts'
+    },
+    {
+        className: styles.gridLicense,
+        id: 'grid',
+        subHeading: 'AG Charts Enterprise',
+        description: 'All the chart features and dedicated support',
+        priceFullDollars: '199',
+        launchPrice: null,
+        licenseBenefits: ['Community features + more', '1 year of support', '1 year of updates'],
+        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
+        learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
+        Logo: GridEnterprise,
+        tabGroup: 'charts'
     },
     {
         className: styles.chartsLicense,
@@ -60,14 +88,13 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         launchPrice: null,
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
         learnMoreLink: "https://charts.ag-grid.com/javascript/licensing/",
-        Logo: ChartsGrid
+        Logo: ChartsGrid,
+        tabGroup: 'both'
     },
-    
 ];
 
 const makeNonBreaking = (text: string) => {
     const nonBreakingSpace = '\u00A0';
-
     return text.replace(' ', nonBreakingSpace);
 };
 
@@ -84,11 +111,10 @@ const Price = ({ priceFullDollars, launchPrice }) => {
                         </span>
                     </>
                 )}
-                  <p className={styles.developerText}>
-            per developer
+                <p className={styles.developerText}>
+                    per developer
+                </p>
             </p>
-            </p>
-          
         </div>
     );
 };
@@ -99,17 +125,15 @@ const License = (props: LicenseData) => {
     return (
         <>
             <div className={classnames(styles.top, 'top')} id={id}>
-            {/* <Logo className={styles.logo}/> */}
+                {/* <Logo className={styles.logo}/> */}
                 <div className={styles.licenseMeta}>
-                <h2 className="">{subHeading}</h2>
-                <p className="">{description}</p>
-                  
-                    {/* <p className="text-sm"><Icon name="enterprise" /> {subHeading}</p> */}
+                    <h2 className="">{subHeading}</h2>
+                    <p className="">{description}</p>
                 </div>
 
                 <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
                 <div className={styles.licenseActions}>
-                <a
+                    <a
                         className={`${id === 'community' ? 'button-tertiary' : 'button'} ${styles.pricing}`}
                         href={buyLink}
                         target="_blank"
@@ -119,7 +143,7 @@ const License = (props: LicenseData) => {
                             });
                         }}
                     >
-                           {id === 'community' ? 'Start for free' : 'Configure now'}
+                        {id === 'community' ? 'Start for free' : 'Configure now'}
                     </a>
                 </div>
 
@@ -135,14 +159,17 @@ const License = (props: LicenseData) => {
     );
 };
 
-export const Licenses: FunctionComponent = () => {
+export const Licenses: FunctionComponent = ({ isChecked }) => {
+    const filteredData = DEV_LICENSE_DATA.filter(
+        (data) => data.tabGroup === 'both' || (isChecked ? data.tabGroup === 'charts' : data.tabGroup === 'grid')
+    );
+
     return (
         <>
             <div className={styles.emptyColumn}>
-            <div className={styles.pricingText}>Pricing</div>
-                
-                </div> {/* Empty Column */}
-            {DEV_LICENSE_DATA.map((data) => {
+                <div className={styles.pricingText}>Pricing</div>
+            </div> {/* Empty Column */}
+            {filteredData.map((data) => {
                 return (
                     <div key={data.id} className={classnames(styles.license, data.className)}>
                         <License {...data} />

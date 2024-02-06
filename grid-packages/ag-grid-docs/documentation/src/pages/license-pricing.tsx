@@ -125,9 +125,9 @@ export const LicensePricing = () => {
 
                         </div>
                         <div className={styles.licensesOuter}>
-                            <Licenses />
+                        <Licenses isChecked={isChecked} />
                         </div>
-                        <ComparisonTable/>
+                        <ComparisonTable isChecked={isChecked} />
 
                         <div className={styles.videoPrompt}>
                             <a href="#video-explainer" className={styles.thumbnail}>
