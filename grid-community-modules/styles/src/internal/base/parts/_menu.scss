@@ -148,6 +148,10 @@
         @include ag.unthemed-rtl((margin-right: var(--ag-widget-container-horizontal-padding)))
     }
 
+    .ag-filter-menu .ag-set-filter-list {
+        min-width: 200px;
+    }
+
     @include ag.keyboard-focus((ag-filter-virtual-list-item), 1px);
 
     .ag-filter-apply-panel {

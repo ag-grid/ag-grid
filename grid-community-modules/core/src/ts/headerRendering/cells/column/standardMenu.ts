@@ -38,7 +38,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 mouseEvent,
                 ePopup: eMenu
             });
-        }, containerType, mouseEvent.target as HTMLElement);
+        }, containerType, mouseEvent.target as HTMLElement, this.menuService.isLegacyMenuEnabled(column));
     }
 
     public showMenuAfterButtonClick(column: Column | undefined, eventSource: HTMLElement, containerType: ContainerType): void {
@@ -65,10 +65,16 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 position: 'under',
                 column,
             });
-        }, containerType, eventSource);
+        }, containerType, eventSource, isLegacyMenuEnabled);
     }
 
-    private showPopup(column: Column | undefined, positionCallback: (eMenu: HTMLElement) => void, containerType: ContainerType, eventSource: HTMLElement): void {
+    private showPopup(
+        column: Column | undefined,
+        positionCallback: (eMenu: HTMLElement) => void,
+        containerType: ContainerType,
+        eventSource: HTMLElement,
+        isLegacyMenuEnabled: boolean
+    ): void {
         const filterWrapper =  column ? this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU') : undefined;
         if (!filterWrapper || !column) {
             throw new Error('AG Grid - unable to show popup filter, filter instantiation failed');
@@ -78,6 +84,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         setAriaRole(eMenu, 'presentation');
         eMenu.classList.add('ag-menu');
+        if (!isLegacyMenuEnabled) {
+            eMenu.classList.add('ag-filter-menu');
+        }
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
 
