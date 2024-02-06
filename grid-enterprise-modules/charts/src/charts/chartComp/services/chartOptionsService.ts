@@ -121,7 +121,7 @@ export class ChartOptionsService extends BeanStub {
             chartSeriesTypes.push('common');
         }
 
-        const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'radius-number'];
+        const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'angle-number', 'radius-category', 'radius-number'];
 
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};
