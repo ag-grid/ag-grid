@@ -165,12 +165,12 @@ If you have `valueCacheNeverExpires=true`, then the only event that will expire 
 This example is again almost identical to the example above. The difference here is the value cache is turned on but
 to never invalidate. Note the following:
 
-- When the grid initialises, there are 10 value getter calls. The values are getting cached.<p/>
+- When the grid initialises, there are 10 value getter calls. The values are getting cached.
 
 - After you edit a cell, either through the UI or through the API by pressing **'Update One Value'**,
   the value getters are not called again, so the **Total** and **Total x 10** columns are not correctly refreshed.
   The grid already executed the value getters for this column, it will not do it again,
-  it will instead take values from the value cache.<p/>
+  it will instead take values from the value cache.
 
 - To get the total column to update after edits, press **'Expire Value Cache'**
   (calls grid API `expireValueCache()`) and then press **'Aggregate Data & Refresh Cells'**

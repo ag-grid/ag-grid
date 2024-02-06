@@ -7,7 +7,7 @@ This section covers areas of aggregation that don't fit within the other section
 
 ## Default Aggregation Function
 
-When columns are dragged to the <b>Values</b> section of the [Columns Tool Panel](/tool-panel-columns/) they are
+When columns are dragged to the **Values** section of the [Columns Tool Panel](/tool-panel-columns/) they are
 assigned the `sum` aggregation function by default. The default aggregation function can be overridden on a per-column
 basis using the `defaultAggFunc` column property.
 
@@ -27,10 +27,10 @@ const gridOptions = {
 
 The following example demonstrates overriding the default agg function. Note the following:
 
-- The <b>Gold</b> column is configured with `defaultAggFunc` set to `avg`.
-- Drag the <b>Gold</b> column to the <b>Values</b> section of the Columns Tool Panel and note that it is assigned the 'avg' function. 
-- The <b>Silver</b> column is configured to use a custom aggregation function as its default. Drag the <b>Silver</b> column to the <b>Values</b> section and note that it is assigned the function `mySum`.
-- Dragging the <b>Bronze</b> column will use `sum` as the default. 
+- The **Gold** column is configured with `defaultAggFunc` set to `avg`.
+- Drag the **Gold** column to the **Values** section of the Columns Tool Panel and note that it is assigned the 'avg' function. 
+- The **Silver** column is configured to use a custom aggregation function as its default. Drag the **Silver** column to the **Values** section and note that it is assigned the function `mySum`.
+- Dragging the **Bronze** column will use `sum` as the default. 
 
 <grid-example title='Default Aggregation Function' name='default-aggregation-function' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
@@ -59,8 +59,8 @@ const gridOptions = {
 
 The following example demonstrates restricting the aggregation functions. Note the following:
 
-- The <b>Gold</b> column is configured with `allowedAggFuncs` set to `['sum', 'min', 'max']` and only displays these functions in the drop-down list in the <b>Values</b> section column to the of the Columns Tool Panel.
-- The <b>Silver</b> column shows all available agg functions as it hasn't been restricted.
+- The **Gold** column is configured with `allowedAggFuncs` set to `['sum', 'min', 'max']` and only displays these functions in the drop-down list in the **Values** section column to the of the Columns Tool Panel.
+- The **Silver** column shows all available agg functions as it hasn't been restricted.
  
 <grid-example title='Restricting Aggregation Functions' name='restricting-aggregation-functions' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
