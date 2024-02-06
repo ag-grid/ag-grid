@@ -1638,8 +1638,12 @@ export class GridApi<TData = any> {
     // Methods migrated from old ColumnApi
 
     /**
-     * Sets columns to adjust in size to fit the grid horizontally.
-     * Can provide params or a fixed pixel width to control how the columns are resized.
+     * Adjusts the size of columns to fit the available horizontal space.
+     *
+     * Note: it is not recommended to call this method rapidly e.g. in response
+     * to window resize events or as the container size is animated. This can
+     * cause the scrollbar to flicker. Use column flex for smoother results.
+     * 
      * If inferring cell data types with custom column types
      * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
