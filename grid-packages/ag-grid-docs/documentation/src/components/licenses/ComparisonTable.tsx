@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '@design-system/modules/ComparisonTable.scss';
 import { Icon } from '../../components/Icon';
 import {ChevronDown} from 'lucide-react';
@@ -291,22 +291,28 @@ const chartsArray = [
 ];
 
 const ComparisonTable = ({ isChecked }) => {
-  const [expandedCategories, setExpandedCategories] = useState(() => {
-    const initialExpandedCategories = {};
-    data.forEach((categoryData) => {
-      initialExpandedCategories[categoryData.category] = true;
+  const [expandedCategories, setExpandedCategories] = useState({});
+
+  useEffect(() => {
+    // This effect will update the expanded categories whenever isChecked changes
+    const newExpandedCategories = {};
+    const currentData = isChecked ? chartsArray : data;
+    currentData.forEach((categoryData) => {
+      // Set all categories to expanded by default
+      newExpandedCategories[categoryData.category] = true;
     });
-    return initialExpandedCategories;
-  });
+    setExpandedCategories(newExpandedCategories);
+  }, [isChecked]); // Dependency array ensures this effect only runs when isChecked changes
 
   const toggleCategory = (category) => {
+    // This function toggles the expansion of a category when it is clicked
     setExpandedCategories((prevExpanded) => ({
       ...prevExpanded,
       [category]: !prevExpanded[category],
     }));
   };
 
-  // Modify the data array when isChecked is true (Charts toggled)
+  // Decide which data to use based on isChecked
   const chartsData = isChecked ? chartsArray : data;
 
   return (
@@ -324,7 +330,7 @@ const ComparisonTable = ({ isChecked }) => {
             {expandedCategories[categoryData.category] &&
               categoryData.features.map((feature) => (
                 <div className="feature-row" key={feature.feature}>
-                  {feature.community || feature.enterprise || feature.chartsGrid ? (
+                  {feature.link ? (
                     <a href={feature.link} className="feature-link">
                       {feature.feature}
                     </a>
