@@ -6,14 +6,17 @@ import { deflateLocalFile } from "./compress";
 
 const { utf8_encode } = _;
 
-export type ZipFileHeaderAndContent = {
-    fileHeader: Uint8Array;
-    folderHeader: Uint8Array;
+interface ZipFileHeader {
+    localFileHeader: Uint8Array;
+    centralDirectoryHeader: Uint8Array;
+}
+
+export interface ProcessedZipFile extends ZipFileHeader {
     content: Uint8Array;
     isCompressed: boolean;
 }
 
-export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ZipFileHeaderAndContent> => {
+export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: number): Promise<ProcessedZipFile> => {
     const { content } = currentFile;
 
     const { size, content: rawContent } = !content
@@ -48,7 +51,7 @@ export const getDeflatedHeaderAndContent = async (currentFile: ZipFile, offset: 
     };
 };
 
-export const getHeaderAndContent = (currentFile: ZipFile, offset: number): ZipFileHeaderAndContent => {
+export const getHeaderAndContent = (currentFile: ZipFile, offset: number): ProcessedZipFile => {
     const { content } = currentFile;
 
     const { content: rawContent } = !content
@@ -78,10 +81,7 @@ const getHeaders = (
     rawSize: number,
     rawContent: string | Uint8Array,
     deflatedSize: number | undefined
-): {
-    fileHeader: Uint8Array;
-    folderHeader: Uint8Array;
-} => {
+): ZipFileHeader => {
     const {
         content,
         path,
@@ -96,16 +96,17 @@ const getHeaders = (
 
     const utfPath = utf8_encode(path);
     const isUTF8 = utfPath !== path;
+
     let extraFields = '';
     if (isUTF8) {
         const uExtraFieldPath = convertDecToHex(1, 1) + convertDecToHex(getCrcFromCrc32Table(utfPath), 4) + utfPath;
         extraFields = "\x75\x70" +  convertDecToHex(uExtraFieldPath.length, 2) + uExtraFieldPath;
     }
 
-    const compressionMethod = isCompressed ? 8 : 0; // As per ECMA-376 Part 2 specs
-    const header = '\x0A\x00' +
-        (isUTF8 ? '\x00\x08' : '\x00\x00') +
-        convertDecToHex(compressionMethod, 2) + // The file is Deflated
+    const commonHeader =
+        '\x14\x00' + // version needed to extract
+        (isUTF8 ? '\x00\x08' : '\x00\x00') + // Language encoding flag (EFS) (12th bit turned on)
+        convertDecToHex(isCompressed ? 8 : 0, 2) + // As per ECMA-376 Part 2 specs
         convertDecToHex(time, 2) + // last modified time
         convertDecToHex(dt, 2) + // last modified date
         convertDecToHex(zipSize ? crcFlag : 0, 4) +
@@ -114,11 +115,11 @@ const getHeaders = (
         convertDecToHex(utfPath.length, 2) + // file name length
         convertDecToHex(extraFields.length, 2); // extra field length
 
-    const fileHeader = 'PK\x03\x04' + header + utfPath + extraFields;
-    const folderHeader =
+    const localFileHeader = 'PK\x03\x04' + commonHeader + utfPath + extraFields;
+    const centralDirectoryHeader =
         'PK\x01\x02' + // central header
         '\x14\x00' +
-        header + // file header
+        commonHeader + // file header
         '\x00\x00' +
         '\x00\x00' +
         '\x00\x00' +
@@ -128,12 +129,12 @@ const getHeaders = (
         extraFields; // extra field
 
     return {
-        fileHeader: Uint8Array.from(fileHeader, c => c.charCodeAt(0)),
-        folderHeader: Uint8Array.from(folderHeader, c => c.charCodeAt(0)),
+        localFileHeader: Uint8Array.from(localFileHeader, c => c.charCodeAt(0)),
+        centralDirectoryHeader: Uint8Array.from(centralDirectoryHeader, c => c.charCodeAt(0)),
     };
 };
 
-export const buildFolderEnd = (tLen: number, cLen: number, lLen:number): Uint8Array => {
+export const buildCentralDirectoryEnd = (tLen: number, cLen: number, lLen:number): Uint8Array => {
     const str= 'PK\x05\x06' + // central folder end
         '\x00\x00' +
         '\x00\x00' +

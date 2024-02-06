@@ -1,8 +1,9 @@
+import { Downloader } from '../downloader';
 import {
-    buildFolderEnd,
+    buildCentralDirectoryEnd,
     getDeflatedHeaderAndContent,
     getHeaderAndContent,
-    ZipFileHeaderAndContent,
+    ProcessedZipFile,
 } from './zipContainerHelper';
 
 export interface ZipFile {
@@ -58,7 +59,7 @@ export class ZipContainer {
     }
 
     private static packageFiles(
-        files: ZipFileHeaderAndContent[],
+        files: ProcessedZipFile[],
     ) {
         let fileData: Uint8Array = new Uint8Array(0);
         let folderData: Uint8Array = new Uint8Array(0);
@@ -67,15 +68,15 @@ export class ZipContainer {
 
         for (const currentFile of files) {
             const {
-                fileHeader,
-                folderHeader,
+                localFileHeader,
+                centralDirectoryHeader,
                 content,
             } = currentFile;
 
             // Append fileHeader to fData
-            const dataWithHeader = new Uint8Array(fileData.length + fileHeader.length);
+            const dataWithHeader = new Uint8Array(fileData.length + localFileHeader.length);
             dataWithHeader.set(fileData);
-            dataWithHeader.set(fileHeader, fileData.length);
+            dataWithHeader.set(localFileHeader, fileData.length);
             fileData = dataWithHeader;
 
             // Append content to fData
@@ -85,16 +86,16 @@ export class ZipContainer {
             fileData = dataWithContent;
 
             // Append folder header to foData
-            const folderDataWithFolderHeader = new Uint8Array(folderData.length + folderHeader.length);
+            const folderDataWithFolderHeader = new Uint8Array(folderData.length + centralDirectoryHeader.length);
             folderDataWithFolderHeader.set(folderData);
-            folderDataWithFolderHeader.set(folderHeader, folderData.length);
+            folderDataWithFolderHeader.set(centralDirectoryHeader, folderData.length);
             folderData = folderDataWithFolderHeader;
 
-            filesContentAndHeaderLength += fileHeader.length + content.length;
-            folderHeadersLength += folderHeader.length;
+            filesContentAndHeaderLength += localFileHeader.length + content.length;
+            folderHeadersLength += centralDirectoryHeader.length;
         }
 
-        const folderEnd = buildFolderEnd(
+        const folderEnd = buildCentralDirectoryEnd(
             files.length,
             folderHeadersLength,
             filesContentAndHeaderLength,
@@ -112,14 +113,14 @@ export class ZipContainer {
 
     private static async buildCompressedFileStream(): Promise<Uint8Array> {
         const totalFiles: ZipFile[] = [...this.folders, ...this.files];
-        const readyFiles: ZipFileHeaderAndContent[] = [];
+        const readyFiles: ProcessedZipFile[] = [];
         let lL = 0;
 
         for (const currentFile of totalFiles) {
             const output = await getDeflatedHeaderAndContent(currentFile, lL);
-            const { fileHeader, content } = output;
+            const { localFileHeader, content } = output;
             readyFiles.push(output);
-            lL += fileHeader.length + content.length;
+            lL += localFileHeader.length + content.length;
         }
 
         return this.packageFiles(readyFiles);
@@ -127,14 +128,14 @@ export class ZipContainer {
 
     private static buildFileStream(): Uint8Array {
         const totalFiles: ZipFile[] = [...this.folders, ...this.files];
-        const readyFiles: ZipFileHeaderAndContent[] = [];
+        const readyFiles: ProcessedZipFile[] = [];
         let lL = 0;
 
         for (const currentFile of totalFiles) {
             const readyFile = getHeaderAndContent(currentFile, lL);
-            const { fileHeader, content } = readyFile;
+            const { localFileHeader, content } = readyFile;
             readyFiles.push(readyFile);
-            lL += fileHeader.length + content.length;
+            lL += localFileHeader.length + content.length;
         }
 
         return this.packageFiles(readyFiles);
