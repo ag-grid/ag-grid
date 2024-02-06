@@ -2,7 +2,6 @@ import React, { forwardRef, Fragment, useImperativeHandle, useRef, useState } fr
 import { IFloatingFilterParams, NumberFilterModel } from "@ag-grid-community/core";
 
 export interface CustomParams extends IFloatingFilterParams {
-    suppressFilterButton: boolean;
     color: string
 }
 
