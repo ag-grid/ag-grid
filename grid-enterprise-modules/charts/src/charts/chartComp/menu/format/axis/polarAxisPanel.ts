@@ -10,17 +10,33 @@ import {
     PostConstruct,
     RefSelector,
 } from '@ag-grid-community/core';
-import { ChartController } from '../../../chartController';
-import { Font, FontPanel, FontPanelParams } from '../fontPanel';
-import { ChartTranslationService } from '../../../services/chartTranslationService';
-import { ChartOptionsService } from '../../../services/chartOptionsService';
-import { FormatPanelOptions, getMaxValue } from '../formatPanel';
-import { AgColorPicker } from '../../../../../widgets/agColorPicker';
-import { AgAngleSelect } from '../../../../../widgets/agAngleSelect';
-import { isPolar, isRadial } from '../../../utils/seriesTypeMapper';
+import {ChartController} from '../../../chartController';
+import {Font, FontPanel, FontPanelParams} from '../fontPanel';
+import {ChartTranslationService} from '../../../services/chartTranslationService';
+import {ChartOptionsService} from '../../../services/chartOptionsService';
+import {FormatPanelOptions, getMaxValue} from '../formatPanel';
+import {AgColorPicker} from '../../../../../widgets/agColorPicker';
+import {isPolar, isRadial} from '../../../utils/seriesTypeMapper';
+
+interface SliderConfig {
+    label: string;
+    maxValue: number;
+    minValue?: number;
+    step?: number;
+    currentValue: number;
+    onValueChange: (newValue: number) => void;
+}
+
+interface SelectConfig {
+    label: string;
+    options: Array<ListOption>;
+    currentValue?: string;
+    onValueChange: (newValue: string) => void;
+}
 
 export class PolarAxisPanel extends Component {
-    public static TEMPLATE /* html */ = `<div>
+    public static TEMPLATE = /* html */
+        `<div>
             <ag-group-component ref="axisGroup">
                 <ag-color-picker ref="axisColorInput"></ag-color-picker>
                 <ag-slider ref="axisLineWidthSlider"></ag-slider>
@@ -37,8 +53,7 @@ export class PolarAxisPanel extends Component {
     private readonly chartOptionsService: ChartOptionsService;
     private readonly isExpandedOnInit: boolean;
 
-    private activePanels: Component[] = [];
-    private axisLabelUpdateFuncs: Function[] = [];
+    private dynamicComponents: Component[] = [];
 
     constructor({ chartController, chartOptionsService, isExpandedOnInit = false }: FormatPanelOptions) {
         super();
@@ -59,9 +74,6 @@ export class PolarAxisPanel extends Component {
         this.initAxis();
         this.initAxisLabels();
         this.initRadiusAxis();
-
-        const updateAxisLabelRotations = () => this.axisLabelUpdateFuncs.forEach((func) => func());
-        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, updateAxisLabelRotations);
     }
 
     private initAxis() {
@@ -85,57 +97,31 @@ export class PolarAxisPanel extends Component {
             .setValue(`${currentValue}`)
             .onValueChange((newValue) => this.chartOptionsService.setAxisProperty('line.width', newValue));
 
-        const hasConfigurableAxisShape = (() => {
-            switch (this.chartController.getChartType()) {
-                case 'radarLine':
-                case 'radarArea':
-                case 'radialColumn':
-                    return true;
-                case 'nightingale':
-                case 'radialBar':
-                default:
-                    return false;
-            }
-        })();
-        if (hasConfigurableAxisShape) this.initAxisShape();
+        const chartType = this.chartController.getChartType();
+        const hasConfigurableAxisShape = ['radarLine', 'radarArea', 'radialColumn'].includes(chartType);
+        if (hasConfigurableAxisShape) {
+            const options: Array<ListOption> = [
+                { value: 'circle', text: this.translate('circle') },
+                { value: 'polygon', text: this.translate('polygon') },
+            ];
 
-        if (isPolar(this.chartController.getChartType())) {
-            const innerRadiusSlider = this.createManagedBean(
-                new AgSlider({
-                    label: this.translate('innerRadius'),
-                    labelWidth: 'flex',
-                })
-            )
-                .setMinValue(0)
-                .setMaxValue(1)
-                .setStep(0.05)
-                .onValueChange((newValue) => this.chartOptionsService.setRadiusAxisProperty('innerRadiusRatio', newValue));
-            const currentValue = this.chartOptionsService.getRadiusAxisProperty('innerRadiusRatio');
-            if (currentValue != undefined) innerRadiusSlider.setValue(currentValue);
-            this.axisGroup.addItem(innerRadiusSlider);
+            this.axisGroup.addItem(this.initSelect({
+                label: 'shape',
+                options: options,
+                currentValue: this.chartOptionsService.getAxisProperty('shape'),
+                onValueChange: newValue => this.chartOptionsService.setAxisProperty('shape', newValue)
+            }));
         }
-    }
 
-    private initAxisShape() {
-        const options: Array<ListOption> = [
-            { value: 'circle', text: this.translate('circle', 'Circle') },
-            { value: 'polygon', text: this.translate('polygon', 'Polygon') },
-        ];
-
-        const shapeSelect = this.axisGroup.createManagedBean(new AgSelect());
-        shapeSelect
-            .setLabel(this.translate('shape'))
-            .setLabelAlignment('left')
-            .setLabelWidth('flex')
-            .setInputWidth('flex')
-            .addOptions(options)
-            .onValueChange((newValue) => this.chartOptionsService.setAngleAxisProperty('shape', newValue));
-        const currentValue = this.chartOptionsService.getAngleAxisProperty('shape');
-        if (currentValue != undefined) shapeSelect.setValue(currentValue);
-
-        this.axisGroup.addItem(shapeSelect);
-
-        this.activePanels.push(shapeSelect);
+        if (isPolar(chartType)) {
+            const currentValue = this.chartOptionsService.getAxisProperty<number>('innerRadiusRatio');
+            this.axisGroup.addItem(this.initSlider({
+                label: 'innerRadius',
+                maxValue: 1,
+                currentValue: currentValue ?? 0, // Provide a default value if undefined
+                onValueChange: newValue => this.chartOptionsService.setAxisProperty('innerRadiusRatio', newValue)
+            }));
+        }
     }
 
     private initAxisLabels() {
@@ -174,188 +160,109 @@ export class PolarAxisPanel extends Component {
         };
 
         const labelPanelComp = this.createBean(new FontPanel(params));
-
-        // Append additional widgets to the panel
-        // (these will have their lifecycle managed by the FontPanel component)
         const labelOrientationComp = this.createOrientationWidget();
         labelPanelComp.addItemToPanel(labelOrientationComp);
 
-        // Add the panel to the DOM and register it as active
         this.axisGroup.addItem(labelPanelComp);
-        this.activePanels.push(labelPanelComp);
+        this.dynamicComponents.push(labelPanelComp);
+    }
+
+    private createOrientationWidget(): AgSelect {
+        const options: Array<ListOption> = [
+            { value: 'fixed', text: this.translate('fixed') },
+            { value: 'parallel', text: this.translate('parallel') },
+            { value: 'perpendicular', text: this.translate('perpendicular') },
+        ];
+
+        return this.initSelect({
+            label: 'orientation',
+            options: options,
+            currentValue: this.chartOptionsService.getAxisProperty('label.orientation'),
+            onValueChange: newValue => this.chartOptionsService.setAxisProperty('label.orientation', newValue),
+        });
     }
 
     private initRadiusAxis() {
         const chartType = this.chartController.getChartType();
-        if (isRadial(chartType)) {
-            // Create the padding panel
-            const paddingPanelComp = this.createBean(new AgGroupComponent({
-                cssIdentifier: 'charts-format-sub-level',
-                direction: 'vertical',
-                suppressOpenCloseIcons: true,
-                enabled: true,
-                suppressEnabledCheckbox: true,
-                title: this.translate('padding'),
-            }))
-                .hideEnabledCheckbox(true)
-                .hideOpenCloseIcons(true);
+        if (!isRadial(chartType)) return;
 
-            // Append additional widgets to the padding panel
-            {
-                const groupPaddingSlider = paddingPanelComp.createManagedBean(
-                    new AgSlider({
-                        label: this.translate('groupPadding'),
-                        labelWidth: 'flex',
-                    })
-                )
-                    .setMinValue(0)
-                    .setMaxValue(1)
-                    .setStep(0.05)
-                    .onValueChange((newValue) =>
-                        this.chartOptionsService.setCategoryAxisProperty('paddingInner', newValue)
-                    );
-                const currentValue = this.chartOptionsService.getCategoryAxisProperty('paddingInner');
-                if (currentValue != undefined) groupPaddingSlider.setValue(currentValue);
-                paddingPanelComp.addItem(groupPaddingSlider);
-            }
-            {
-                const seriesPaddingSlider = paddingPanelComp.createManagedBean(
-                    new AgSlider({
-                        label: this.translate('seriesPadding'),
-                        labelWidth: 'flex',
-                    })
-                )
-                    .setMinValue(0)
-                    .setMaxValue(1)
-                    .setStep(0.05)
-                    .onValueChange((newValue) =>
-                        this.chartOptionsService.setCategoryAxisProperty('groupPaddingInner', newValue)
-                    );
-                const currentValue = this.chartOptionsService.getCategoryAxisProperty('groupPaddingInner');
-                if (currentValue != undefined) seriesPaddingSlider.setValue(currentValue);
-                paddingPanelComp.addItem(seriesPaddingSlider);
-            }
-            
-            // Add the padding panel to the DOM and register it as active
-            this.axisGroup.addItem(paddingPanelComp);
-            this.activePanels.push(paddingPanelComp);
-        }
-
-        // Create the label panel
-        const labelPanelComp = this.createBean(new AgGroupComponent({
+        const paddingPanelComp = this.createBean(new AgGroupComponent({
             cssIdentifier: 'charts-format-sub-level',
             direction: 'vertical',
             suppressOpenCloseIcons: true,
             enabled: true,
             suppressEnabledCheckbox: true,
-        }))
-            .setTitle(this.translate('radiusAxis'))
-            .hideEnabledCheckbox(true)
-            .hideOpenCloseIcons(true);
+            title: this.translate('padding'),
+        })).hideEnabledCheckbox(true).hideOpenCloseIcons(true);
 
-        // Append additional widgets to the label panel
-        const radiusAxisPosition = this.createRadiusAxisPositionWidget();
-        const labelRotationComp = this.createLabelRotationWidget('labelRotation', 'yAxis');
-        labelPanelComp.addItem(radiusAxisPosition);
-        labelPanelComp.addItem(labelRotationComp);
+        paddingPanelComp.addItem(this.initSlider({
+            label: 'groupPadding',
+            maxValue: 1,
+            currentValue: this.chartOptionsService.getAxisProperty<number>('paddingInner') ?? 0,
+            onValueChange: newValue => this.chartOptionsService.setAxisProperty('paddingInner', newValue)
+        }));
 
-        if (chartType === 'radialBar') {
-            const startAngleRotationComp = this.createRotationWidget('startAngle', {
-                get: () => this.chartOptionsService.getAngleAxisProperty('startAngle'),
-                set: (value: number) => this.chartOptionsService.setAngleAxisProperty('startAngle', value),
-            });
-            const endAngleRotationComp = this.createRotationWidget('endAngle', {
-                get: () => this.chartOptionsService.getAngleAxisProperty('endAngle'),
-                set: (value: number) => this.chartOptionsService.setAngleAxisProperty('endAngle', value),
-            });
-            labelPanelComp.addItem(startAngleRotationComp);
-            labelPanelComp.addItem(endAngleRotationComp);
-        }
+        paddingPanelComp.addItem(this.initSlider({
+            label: 'seriesPadding',
+            maxValue: 1,
+            currentValue: this.chartOptionsService.getAxisProperty<number>('groupPaddingInner') ?? 0,
+            onValueChange: newValue => this.chartOptionsService.setAxisProperty('groupPaddingInner', newValue)
+        }));
 
-        // Add the label panel to the DOM and register it as active
-        this.axisGroup.addItem(labelPanelComp);
-        this.activePanels.push(labelPanelComp);
+        this.axisGroup.addItem(paddingPanelComp);
+        this.dynamicComponents.push(paddingPanelComp);
     }
 
-    private createOrientationWidget(): AgSelect {
-        const options: Array<ListOption> = [
-            { value: 'fixed', text: this.translate('fixed', 'Fixed') },
-            { value: 'parallel', text: this.translate('parallel', 'Parallel') },
-            { value: 'perpendicular', text: this.translate('perpendicular', 'Perpendicular') },
-        ];
-        return this.createBean(new AgSelect())
-            .setLabel(this.translate('orientation'))
+    private initSlider(config: SliderConfig): AgSlider {
+        const { label, maxValue, minValue = 0, step = 0.05, currentValue, onValueChange } = config;
+        const slider = this.createManagedBean(new AgSlider());
+        slider
+            .setLabel(this.translate(label))
+            .setLabelWidth('flex')
+            .setMinValue(minValue)
+            .setMaxValue(maxValue)
+            .setStep(step)
+            .setValue(`${currentValue}`)
+            .onValueChange(onValueChange);
+
+        this.dynamicComponents.push(slider);
+        return slider;
+    }
+
+    private initSelect(config: SelectConfig): AgSelect {
+        const { label, options, currentValue, onValueChange } = config;
+        const select = this.createManagedBean(new AgSelect());
+        select
+            .setLabel(this.translate(label))
             .setLabelAlignment('left')
             .setLabelWidth('flex')
             .setInputWidth('flex')
-            .addOptions(options) // AgSelect bean must be instantiated before adding options
-            .setValue(this.chartOptionsService.getAxisProperty('label.orientation'))
-            .onValueChange((newValue) => this.chartOptionsService.setAxisProperty('label.orientation', newValue));
+            .addOptions(options)
 
-    }
+        if (currentValue !== undefined) {
+            select.setValue(currentValue);
+        }
 
-    private createLabelRotationWidget(labelKey: string, axisType: 'xAxis' | 'yAxis'): AgAngleSelect {
-        const labelRotationComp = this.createRotationWidget(labelKey, {
-            get: () => this.chartOptionsService.getLabelRotation(axisType),
-            set: (value) => this.chartOptionsService.setLabelRotation(axisType, value),
-        });
+        select.onValueChange(onValueChange);
 
-        // the axis rotation needs to be updated when the default category changes in the data panel
-        this.axisLabelUpdateFuncs.push(() => {
-            const value = this.chartOptionsService.getLabelRotation(axisType);
-            labelRotationComp.setValue(value || 0);
-        });
-
-        return labelRotationComp;
-    }
-
-    private createRotationWidget(labelKey: string, accessors: {
-        get: () => number | undefined;
-        set: (value: number) => void;
-    }): AgAngleSelect {
-        const { get: getValue, set: setValue } = accessors;
-        const degreesSymbol = String.fromCharCode(176);
-
-        const label = `${this.chartTranslationService.translate(labelKey)} ${degreesSymbol}`;
-        const labelRotationComp = new AgAngleSelect()
-            .setLabel(label)
-            .setLabelWidth('flex')
-            .setValue(getValue() ?? 0)
-            .onValueChange((value) => setValue((value + 360) % 360));
-
-        return this.createBean(labelRotationComp);
-    }
-
-    private createRadiusAxisPositionWidget(): AgAngleSelect {
-        const degreesSymbol = String.fromCharCode(176);
-
-        const label = `${this.chartTranslationService.translate('radiusAxisPosition')} ${degreesSymbol}`;
-        const value = this.chartOptionsService.getRadiusAxisProperty<number>('positionAngle');
-        const labelRotationComp = new AgAngleSelect()
-            .setLabel(label)
-            .setLabelWidth('flex')
-            .setValue(value || 0)
-            .onValueChange((newValue) => this.chartOptionsService.setRadiusAxisProperty('positionAngle', newValue));
-
-        return this.createManagedBean(labelRotationComp);
+        this.dynamicComponents.push(select);
+        return select;
     }
 
     private translate(key: string, defaultText?: string) {
         return this.chartTranslationService.translate(key, defaultText);
     }
 
-    private destroyActivePanels(): void {
-        this.activePanels.forEach((panel) => {
-            _.removeFromParent(panel.getGui());
-            this.destroyBean(panel);
+    private destroyDynamicComponents(): void {
+        this.dynamicComponents.forEach(component => {
+            _.removeFromParent(component.getGui());
+            this.destroyBean(component);
         });
-        // Clean up stale references to destroyed child components
-        this.activePanels = [];
-        this.axisLabelUpdateFuncs = [];
+        this.dynamicComponents = [];
     }
 
     protected destroy(): void {
-        this.destroyActivePanels();
+        this.destroyDynamicComponents();
         super.destroy();
     }
 }
