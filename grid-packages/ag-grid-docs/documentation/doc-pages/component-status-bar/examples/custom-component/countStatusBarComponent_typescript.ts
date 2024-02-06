@@ -34,7 +34,7 @@ export class CountStatusBarComponent implements IStatusPanelComp {
     }
 
     onGridReady() {
-        this.eCount.innerText = this.params.api.getModel().getRowCount() + ''
+        this.eCount.innerText = this.params.api.getDisplayedRowCount() + ''
     }
 }
 

@@ -22,7 +22,7 @@ A chart model that represent all the state information about the rendered charts
 
 <api-documentation source='grid-api/api.json' section='charts' names='["getChartModels"]'></api-documentation>
 
-<br>
+<br />
 
 <interface-documentation interfaceName="ChartModel"></interface-documentation>
 

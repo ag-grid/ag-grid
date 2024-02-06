@@ -1,22 +1,24 @@
 export interface ChartGroupsDef {
+    // community chart groups
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
     barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[],
     pieGroup?: ('pie' | 'doughnut')[],
     lineGroup?: ('line')[],
     scatterGroup?: ('scatter' | 'bubble')[],
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[],
-    histogramGroup?: ('histogram')[],
-    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale')[],
-    statisticalGroup?: ('rangeBar' | 'rangeArea' | 'boxPlot')[],
-    cumulativeGroup?: ('waterfall')[],
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
+
+    // enterprise chart groups
+    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar')[],
+    statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
+    specializedGroup?: ('waterfall')[],
 }
 
 export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     columnGroup: [
         'column',
         'stackedColumn',
-        'normalizedColumn'
+        'normalizedColumn',
     ],
     barGroup: [
         'bar',
@@ -25,40 +27,40 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     ],
     pieGroup: [
         'pie',
-        'doughnut'
+        'doughnut',
     ],
     lineGroup: [
-        'line'
+        'line',
     ],
     scatterGroup: [
         'scatter',
-        'bubble'
+        'bubble',
     ],
     areaGroup: [
         'area',
         'stackedArea',
-        'normalizedArea'
-    ],
-    histogramGroup: [
-        'histogram'
+        'normalizedArea',
     ],
     polarGroup: [
         'radarLine',
         'radarArea',
-        'nightingale'
+        'nightingale',
+        'radialColumn',
+        'radialBar',
     ],
     statisticalGroup: [
+        'boxPlot',
+        'histogram',
         'rangeBar',
         'rangeArea',
-        'boxPlot',
     ],
-    cumulativeGroup: [
+    specializedGroup: [
         'waterfall',
     ],
     combinationGroup: [
         'columnLineCombo',
         'areaColumnCombo',
-        'customCombo'
+        'customCombo',
     ]
 }
 
@@ -124,9 +126,14 @@ export type ChartType =
     | 'radarLine'
     | 'radarArea'
     | 'nightingale'
+    | 'radialColumn'
+    | 'radialBar'
+    | 'sunburst'
     | 'rangeBar'
     | 'rangeArea'
     | 'boxPlot'
+    | 'treemap'
+    | 'heatmap'
     | 'waterfall'
     | 'columnLineCombo'
     | 'areaColumnCombo'

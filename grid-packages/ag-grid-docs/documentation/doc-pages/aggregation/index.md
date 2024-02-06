@@ -53,7 +53,7 @@ Aggregations can be configured using the following column property:
 
 <api-documentation source='column-properties/properties.json' section='grouping' names='["aggFunc", "defaultAggFunc", "allowedAggFuncs"]'></api-documentation>
 
-<br>
+<br />
 
 Aggregation functions can be registered with the grid using the following grid option:
 

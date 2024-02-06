@@ -1,13 +1,47 @@
-import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
-import { AgBaseSeriesOptions, AgPolarAxisOptions, AgPolarChartOptions, AgCharts } from 'ag-charts-community';
+import {ChartProxy, ChartProxyParams, UpdateParams} from '../chartProxy';
+import {
+    AgCharts,
+    AgNightingaleSeriesOptions,
+    AgPolarAxisOptions,
+    AgPolarChartOptions,
+    AgRadarAreaSeriesOptions,
+    AgRadarLineSeriesOptions,
+    AgRadialBarSeriesOptions,
+    AgRadialColumnSeriesOptions
+} from 'ag-charts-community';
 
-export abstract class PolarChartProxy extends ChartProxy {
-    protected constructor(params: ChartProxyParams) {
+type AgPolarSeriesOptions =
+    AgRadarLineSeriesOptions |
+    AgRadarAreaSeriesOptions |
+    AgNightingaleSeriesOptions |
+    AgRadialBarSeriesOptions |
+    AgRadialColumnSeriesOptions;
+
+export class PolarChartProxy extends ChartProxy {
+    public constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    abstract getAxes(params: UpdateParams): AgPolarAxisOptions[];
-    abstract getSeries(params: UpdateParams): AgBaseSeriesOptions<any>[];
+    public getAxes(_: UpdateParams): AgPolarAxisOptions[] {
+        const radialBar = this.standaloneChartType === 'radial-bar';
+        return [
+            {type: radialBar ? 'angle-number' : 'angle-category'},
+            {type: radialBar ? 'radius-category' : 'radius-number'},
+        ];
+    }
+
+    public getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
+        const {fields, category} = params;
+        const radialBar = this.standaloneChartType === 'radial-bar';
+
+        return fields.map(f => ({
+            type: this.standaloneChartType as AgRadarAreaSeriesOptions['type'],
+            angleKey: radialBar ? f.colId : category.id,
+            angleName: radialBar ? (f.displayName ?? undefined) : category.name,
+            radiusKey: radialBar ? params.category.id : f.colId,
+            radiusName: radialBar ? params.category.name : (f.displayName ?? undefined),
+        }));
+    }
 
     public update(params: UpdateParams): void {
         const axes = this.getAxes(params);
@@ -29,5 +63,9 @@ export abstract class PolarChartProxy extends ChartProxy {
 
     private getDataTransformedData(params: UpdateParams, isCategoryAxis: boolean) {
         return this.transformData(params.data, params.category.id, isCategoryAxis);
+    }
+
+    public crossFilteringReset(): void {
+        // cross filtering is not currently supported in polar charts
     }
 }

@@ -14,6 +14,8 @@ export type ChartSeriesType =
     'hierarchy' |
     'treemap' |
     'bubble' |
+    'radial-column' |
+    'radial-bar' |
     'radar-line' |
     'radar-area' |
     'nightingale' |
@@ -38,6 +40,8 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'pie',
     'scatter',
     'bubble',
+    'radial-column',
+    'radial-bar',
     'radar-line',
     'radar-area',
     'nightingale',
@@ -55,6 +59,29 @@ export function isHorizontal(chartType: ChartType): boolean {
 const stackedChartTypes = new Set(['stackedColumn', 'normalizedColumn', 'stackedBar', 'normalizedBar']);
 export function isStacked(chartType: ChartType): boolean {
     return stackedChartTypes.has(chartType);
+}
+
+export function isPolar(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'radialColumn':
+        case 'radialBar':
+        case 'radarLine':
+        case 'radarArea':
+        case 'nightingale':
+            return true;
+        default:
+            return false;
+    }
+}
+
+export function isRadial(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'radialColumn':
+        case 'radialBar':
+            return true;
+        default:
+            return false;
+    }
 }
 
 export function getSeriesType(chartType: ChartType): ChartSeriesType {
@@ -81,6 +108,10 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
             return 'scatter';
         case 'histogram':
             return 'histogram';
+        case 'radialColumn':
+            return 'radial-column';
+        case 'radialBar':
+            return 'radial-bar';
         case 'radarLine':
             return 'radar-line';
         case 'radarArea':
@@ -108,6 +139,8 @@ export function isPolarChartSeriesType(seriesType: ChartSeriesType): seriesType 
         case 'radar-line':
         case 'radar-area':
         case 'nightingale':
+        case 'radial-column':
+        case 'radial-bar':
             return true;
         default:
             return false;

@@ -88,7 +88,7 @@ The below table gives a summary of the components, where they are configured and
 | Component                     | Where                     | Attribute | 
 | ----------------------------- | ------------------------- | ------------------------ | 
 | Cell Renderer                 | Column Definition         | cellRenderer<br/>cellRendererParams<br/>cellRendererSelector         | 
-| Cell Editor                   | Column Definition         | cellEditor<br>cellEditorParams<br/>cellEditorSelector| 
+| Cell Editor                   | Column Definition         | cellEditor<br />cellEditorParams<br/>cellEditorSelector| 
 | Filter                        | Column Definition         | filter<br/>filterParams              | 
 | Floating Filter               | Column Definition         | floatingFilter<br/>floatingFilterParams       | 
 | Header Component              | Column Definition         | headerComponent<br/>headerComponentParams               | 

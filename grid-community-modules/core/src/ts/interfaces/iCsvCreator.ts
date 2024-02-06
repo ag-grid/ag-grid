@@ -2,5 +2,5 @@ import { CsvExportParams } from "./exportParams";
 
 export interface ICsvCreator {
     getDataAsCsv(params?: CsvExportParams, skipDefaultParams?: boolean): string;
-    exportDataAsCsv(params?: CsvExportParams): string;
+    exportDataAsCsv(params?: CsvExportParams): void;
 }

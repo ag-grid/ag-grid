@@ -69,6 +69,7 @@ export interface ChartModel {
 }
 
 export interface IChartService {
+    isEnterprise(): boolean;
     getChartModels(): ChartModel[];
     getChartRef(chartId: string): ChartRef | undefined;
     createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
