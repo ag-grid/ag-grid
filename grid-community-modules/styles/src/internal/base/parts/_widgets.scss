@@ -362,8 +362,6 @@
     // Popups
     .ag-popup-child:not(.ag-tooltip-custom) {
         box-shadow: var(--ag-popup-shadow);
-        background-color: var(--ag-popup-background-color);
-        border-color: var(--ag-popup-border-color);
     }
 
     ////////////////////////////////////////
@@ -512,6 +510,7 @@
 
     .ag-panel {
         background-color: var(--ag-background-color);
+        border-color: var(--ag-popup-border-color);
     }
 
     .ag-panel-title-bar {
