@@ -495,6 +495,9 @@
 }
 
 .toggleCheckbox:checked + .toggleContainer .gridToggle {
+        margin-left: 0;
+    padding-left: 0;
+    border-radius: 32px;
     color: var(--color-text-secondary);
     transition: color 0.3s;
     .gridInactive {
@@ -503,9 +506,17 @@
     .gridActive {
         display: none;
     }
+
+
+}
+
+.toggleCheckbox:checked + .toggleContainer .gridToggle:hover{
+background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 15%);
+transition: all 0.3s ease-in;
 }
 
 .toggleCheckbox:checked + .toggleContainer .chartsToggle {
+    border-radius: 32px;
     color: var(--color-button-primary-fg);
     transition: color 0.3s;
     .chartsInactive {
@@ -517,6 +528,8 @@
     }
 }
 .toggleCheckbox + .toggleContainer .gridToggle {
+    margin-left: 0;
+    padding-left: 0;
     color: var(--color-button-primary-fg);
     transition: color 0.3s;
     .gridInactive {
@@ -527,6 +540,7 @@
     }
 }
 .toggleCheckbox + .toggleContainer .chartsToggle {
+    border-radius: 32px;
     color: var(--color-text-secondary);
     transition: color 0.3s;
     .chartsInactive {
@@ -535,6 +549,11 @@
     .chartsActive {
         display: none;
     }
+}
+
+.toggleCheckbox:not(:checked) + .toggleContainer .chartsToggle:hover {
+    background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 15%);
+    transition: all 0.3s ease-in;
 }
 
 .switchContainer {
