@@ -160,7 +160,7 @@ p.name {
     color: var(--color-text-tertiary);
 
     ul li:where(:not(:last-child)) {
-        margin-bottom: $spacing-size-3;
+        margin-bottom: $spacing-size-3 !important;
     }
 
     a {

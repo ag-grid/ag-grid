@@ -104,6 +104,9 @@
     width: 24px;
     border-radius: 24px;
     padding: $spacing-size-1;
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-util-brand-700), var(--color-bg-primary) 85%);
+    }
 }
  .disabled {
     font-weight: var(--text-regular);
@@ -133,4 +136,14 @@
 
 .feature-row {
     padding-left: $spacing-size-3;
+  }
+
+  .category-cell {
+    position: sticky;
+    top: 119px;
+  }
+
+  .hidden {
+    position: sticky;
+    top: 119px;
   }
