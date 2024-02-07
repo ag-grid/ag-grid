@@ -41,7 +41,8 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     private getDataTransformedData(params: UpdateParams, isCategoryAxis: boolean) {
-        return this.transformData(params.data, params.category.id, isCategoryAxis);
+        const [category] = params.categories;
+        return this.transformData(params.data, category.id, isCategoryAxis);
     }
 
     protected getXAxisType(params: UpdateParams) {
@@ -54,11 +55,12 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     private static isTimeAxis(params: UpdateParams): boolean {
-        if (params.category && params.category.chartDataType) {
-            return params.category.chartDataType === 'time';
+        const [category] = params.categories;
+        if (category && category.chartDataType) {
+            return category.chartDataType === 'time';
         }
         const testDatum = params.data[0];
-        return (testDatum && testDatum[params.category.id]) instanceof Date;
+        return (testDatum && testDatum[category.id]) instanceof Date;
     }
 
     public crossFilteringReset(): void {
@@ -76,6 +78,8 @@ export abstract class CartesianChartProxy extends ChartProxy {
     }
 
     protected extractLineAreaCrossFilterSeries(series: (AgLineSeriesOptions | AgAreaSeriesOptions)[], params: UpdateParams) {
+        const [category] = params.categories;
+
         const getYKey = (yKey: string) => {
             if (this.standaloneChartType === 'area') {
                 const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
@@ -96,10 +100,10 @@ export abstract class CartesianChartProxy extends ChartProxy {
             };
             s.marker = {
                 formatter: (p: any) => {
-                    const category = p.datum[params.category.id];
+                    const value = p.datum[category.id];
                     return {
                         fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 14 : this.crossFilteringPointSelected(category) ? 8 : 0,
+                        size: p.highlighted ? 14 : this.crossFilteringPointSelected(value) ? 8 : 0,
                     };
                 }
             };
@@ -116,15 +120,16 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     private getCrossFilterData(params: UpdateParams): any[] {
         this.crossFilteringAllPoints.clear();
+        const [category] = params.categories;
         const colId = params.fields[0].colId;
         const filteredOutColId = `${colId}-filtered-out`;
         const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
 
         return params.data.map(d => {
-            const category = d[params.category.id];
-            this.crossFilteringAllPoints.add(category);
+            const value = d[category.id];
+            this.crossFilteringAllPoints.add(value);
 
-            const pointSelected = this.crossFilteringPointSelected(category);
+            const pointSelected = this.crossFilteringPointSelected(value);
             if (this.standaloneChartType === 'area' && lastSelectedChartId === params.chartId) {
                 d[`${colId}-total`] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
             }

@@ -23,12 +23,13 @@ export class WaterfallChartProxy extends CartesianChartProxy {
     }
 
     public getSeries(params: UpdateParams): AgWaterfallSeriesOptions[] {
+        const [category] = params.categories;
         const [firstField] = params.fields;
         const firstSeries: AgWaterfallSeriesOptions = {
             type: this.standaloneChartType as 'waterfall',
             direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
-            xKey: params.category.id,
-            xName: params.category.name,
+            xKey: category.id,
+            xName: category.name,
             yKey: firstField.colId,
             yName: firstField.displayName ?? undefined
         };

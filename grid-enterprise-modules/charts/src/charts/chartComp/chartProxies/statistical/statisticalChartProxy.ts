@@ -23,7 +23,8 @@ export abstract class StatisticalChartProxy extends CartesianChartProxy {
     }
 
     protected computeSeriesStatistics(params: UpdateParams, computeStatsFn: (values: number[]) => any): any[] {
-        const {category, data, fields} = params;
+        const {data, fields} = params;
+        const [category] = params.categories;
         const categoryKey = category.id || ChartDataModel.DEFAULT_CATEGORY;
         const groupedData = this.groupDataByCategory(categoryKey, data);
 

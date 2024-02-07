@@ -8,12 +8,13 @@ export class RangeChartProxy extends StatisticalChartProxy {
     }
 
     public getSeries(params: UpdateParams): AgRangeAreaSeriesOptions<any>[] {
+        const [category] = params.categories;
         return params.fields.map(
             (field, seriesIndex) => ({
                 type: this.standaloneChartType as AgRangeAreaSeriesOptions['type'],
                 // xKey/xName refer to category buckets
-                xKey: params.category.id,
-                xName: params.category.name,
+                xKey: category.id,
+                xName: category.name,
                 // yName is used to label the series
                 yName: field.displayName ?? undefined,
                 // custom field labels shown in the tooltip
