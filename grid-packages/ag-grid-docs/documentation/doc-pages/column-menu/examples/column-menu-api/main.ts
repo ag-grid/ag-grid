@@ -2,7 +2,8 @@ import {
   GridApi,
   createGrid,
   ColDef,
-  GridOptions
+  GridOptions,
+  ColumnMenuVisibleChangedEvent
 } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
@@ -27,6 +28,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: true,
   },
   columnMenu: 'new',
+  onColumnMenuVisibleChanged: (event: ColumnMenuVisibleChangedEvent) => {
+    console.log('columnMenuVisibleChanged', event);
+  },
 }
 
 function showColumnChooser() {

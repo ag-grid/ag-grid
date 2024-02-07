@@ -214,6 +214,9 @@ export class Events {
 
     public static EVENT_STATE_UPDATED: 'stateUpdated' = 'stateUpdated';
 
+    /** The visibility of the column menu has changed. */
+    public static EVENT_COLUMN_MENU_VISIBLE_CHANGED: 'columnMenuVisibleChanged' = 'columnMenuVisibleChanged';
+
     /*****************************  INTERNAL EVENTS: START ******************************************* */
 
     /** Please remember to add to ComponentUtil.EXCLUDED_INTERNAL_EVENTS to not have these events exposed to framework components. */

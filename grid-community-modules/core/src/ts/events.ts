@@ -569,6 +569,28 @@ export interface ColumnHeaderContextMenuEvent<TData = any, TContext = any> exten
     column: Column | ProvidedColumnGroup;
 }
 
+export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** True if now visible; false if now hidden. */
+    visible: boolean;
+    /** True if switching between tabs. False if showing/hiding. Only applies to legacy tabbed menu. */
+    switchingTab: boolean;
+    /**
+     * Currently displayed menu/tab.
+     * If filter launched from floating filter, will be `'floatingFilter'`.
+     * If using AG Grid Enterprise and `columnMenu = 'legacy'`,
+     * will be the tab `'generalMenuTab'`, `'filterMenuTab'` or `'columnsMenuTab'`.
+     * If using AG Grid Community and `columnMenu = 'legacy'`, will be `'columnMenu'`.
+     * If using `columnMenu = 'new'`, will be `'columnMenu'` for the column menu,
+     * `'columnFilter'` for the column filter, and `'columnChooser'` for the column chooser.
+     */
+    key: 'generalMenuTab' | 'filterMenuTab' | 'columnsMenuTab' | 'columnMenu' | 'columnFilter' | 'floatingFilter' | 'columnChooser';
+    /**
+     * Column the menu is opened for. Will be `null` if not launched from a column
+     * (e.g. column chooser from the API, or column menu via right-click on an empty header).
+     */
+    column: Column | null;
+}
+
 /**------------*/
 
 /** ROW EVENTS */
