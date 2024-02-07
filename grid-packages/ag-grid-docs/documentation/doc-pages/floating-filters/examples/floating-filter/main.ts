@@ -64,15 +64,15 @@ const columnDefs: ColDef[] = [
     field: 'silver',
     filter: 'agNumberColumnFilter',
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
     },
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'bronze',
     filter: 'agNumberColumnFilter',
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
     },
+    suppressFloatingFilterButton: true,
   },
   { field: 'total', filter: false },
 ]

@@ -20,12 +20,7 @@ const gridOptions: GridOptions = {
   chartThemeOverrides: {
     'treemap': {
       series: {
-        colorKey: 'change',
-        colorName: 'Change',
         colorRange: ['#43A047', '#FF5722'],
-        sizeKey: 'total',
-        sizeName: 'Total',
-        labelKey: 'title',
         group: {
           label: {
             fontSize: 18,

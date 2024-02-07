@@ -153,16 +153,10 @@ export class ChartController extends BeanStub {
         const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
         const data = this.getChartData();
         const selectedDimensions = this.getSelectedDimensions();
-        const [selectedDimension] = selectedDimensions;
 
         return {
             data,
             grouping: this.isGrouping(),
-            category: {
-                id: selectedDimension.colId,
-                name: selectedDimension.displayName!,
-                chartDataType: this.model.getChartDataType(selectedDimension.colId)
-            },
             categories: selectedDimensions.map((selectedDimension) => ({
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName!,

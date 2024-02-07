@@ -59,9 +59,7 @@ const columnDefs: ColDef[] = [
         }
       },
     } as IDateFilterParams,
-    floatingFilterComponentParams: {
-      suppressFilterButton: true,
-    },
+    suppressFloatingFilterButton: true,
   },
   { field: 'sport' },
   {
@@ -69,36 +67,36 @@ const columnDefs: ColDef[] = [
     floatingFilterComponent: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 7,
-      suppressFilterButton: true,
     } as CustomFloatingParams,
     filter: CustomNumberFilter,
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'silver',
     floatingFilterComponent: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 3,
-      suppressFilterButton: true,
     } as CustomFloatingParams,
     filter: CustomNumberFilter,
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'bronze',
     floatingFilterComponent: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 2,
-      suppressFilterButton: true,
     } as CustomFloatingParams,
     filter: CustomNumberFilter,
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'total',
     floatingFilterComponent: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 5,
-      suppressFilterButton: true,
     } as CustomFloatingParams,
     filter: CustomNumberFilter,
+    suppressFloatingFilterButton: true,
   },
 ]
 

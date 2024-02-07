@@ -27,8 +27,8 @@ Elements that float above the user interface are called cards or popups. Interna
 Menus such as the column menu and context menu are cards and so respond to the instructions above for rounded corners and shadows. Additionally:
 
 - the minimum width of the [Column Menu](/column-menu/) can be set by the following variables. If the content is larger the menu will expand to fit.
-    - `--ag-menu-min-width` controls the non-tabbed menu used in AG Grid Community.
-    - `--ag-tab-min-width` controls the tabbed menu used in AG Grid Enterprise.
+    - `--ag-menu-min-width` controls the filter menu used in AG Grid Community.
+    - `--ag-tab-min-width` controls the legacy tabbed menu used in AG Grid Enterprise.
 
 - the `ag-tabs` and `ag-tabs-header` classes can be used to style the body and header of tabbed menus. There are many more classes that can target specific elements in the menu, use your browser developer tools to find them.
 - the `ag-menu` class can be used to style the body of all menus - tabbed and non-tabbed.

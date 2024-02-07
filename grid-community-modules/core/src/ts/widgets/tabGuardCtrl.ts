@@ -221,4 +221,7 @@ export class TabGuardCtrl extends BeanStub {
         });
     }
 
+    public isTabGuard(element: HTMLElement): boolean {
+        return element === this.eTopGuard || element === this.eBottomGuard;
+    }
 }

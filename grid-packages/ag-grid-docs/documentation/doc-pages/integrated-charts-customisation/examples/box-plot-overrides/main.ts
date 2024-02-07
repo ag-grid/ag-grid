@@ -1,5 +1,5 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
-import {getData} from "./data";
+import {getData} from './data';
 
 let gridApi: GridApi;
 
@@ -24,13 +24,13 @@ const gridOptions: GridOptions = {
         whisker: {
           stroke: '#098a89',
           strokeWidth: 3,
-          lineDash: [2, 1]
+          lineDash: [2, 1],
         },
         cap: {
-            lengthRatio: 0.8  // 80% of bar's width (default is 0.5)
+          lengthRatio: 0.8, // 80% of bar's width (default is 0.5)
         },
         tooltip: {
-          renderer: ({ yName, minKey, q1Key, medianKey, q3Key, maxKey, datum, color }) => ({
+          renderer: ({ yName, minKey, q1Key, medianKey, q3Key, maxKey, datum, color }: any) => ({
             title: yName,
             content: [
               `Minimum: ${datum[minKey]}`,
@@ -45,7 +45,7 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  onGridReady : (params: GridReadyEvent) => {
+  onGridReady: (params: GridReadyEvent) => {
     getData().then(rowData => params.api.setGridOption('rowData', rowData));
   },
   onFirstDataRendered,

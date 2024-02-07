@@ -2,7 +2,11 @@ import { Component } from "../../widgets/component";
 import { Autowired, PostConstruct } from "../../context/context";
 import { LocaleService } from "../../localeService";
 import { GridOptionsService } from "../../gridOptionsService";
-import { AgSelect, Events, PaginationChangedEvent, PaginationProxy, WithoutGridCommon} from "../../main";
+import { AgSelect } from "../../widgets/agSelect";
+import { Events } from "../../eventKeys";
+import { PaginationChangedEvent } from "../../events";
+import { PaginationProxy } from "../../pagination/paginationProxy";
+import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { clearElement } from "../../utils/dom";
 import { warnOnce } from "../../utils/function";
 

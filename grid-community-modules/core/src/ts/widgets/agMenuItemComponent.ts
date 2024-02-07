@@ -14,6 +14,8 @@ import { TooltipFeature } from './tooltipFeature';
 import { Beans } from '../rendering/beans';
 import { IMenuConfigParams, IMenuItemComp,  MenuItemDef } from '../interfaces/menuItem';
 import { IComponent } from '../interfaces/iComponent';
+import { WithoutGridCommon } from '../interfaces/iCommon';
+import { IMenuActionParams } from '../interfaces/iCallbackParams';
 
 export interface CloseMenuEvent extends AgEvent {
     event?: MouseEvent | KeyboardEvent;
@@ -28,6 +30,7 @@ interface AgMenuItemComponentParams {
     isAnotherSubMenuOpen: () => boolean;
     level: number;
     childComponent?: IComponent<any>;
+    contextParams: WithoutGridCommon<IMenuActionParams>;
 }
 
 export class AgMenuItemComponent extends BeanStub {
@@ -44,10 +47,12 @@ export class AgMenuItemComponent extends BeanStub {
     private isAnotherSubMenuOpen: () => boolean;
     private level: number;
     private childComponent?: IComponent<any>;
+    private contextParams: WithoutGridCommon<IMenuActionParams>;
     private menuItemComp: IMenuItemComp;
     private isActive = false;
     private hideSubMenu: (() => void) | null;
     private subMenuIsOpen = false;
+    private subMenuIsOpening = false;
     private activateTimeoutId: number;
     private deactivateTimeoutId: number;
     private parentComponent?: Component;
@@ -57,13 +62,15 @@ export class AgMenuItemComponent extends BeanStub {
     private suppressAria: boolean = true;
     private suppressFocus: boolean = true;
     private cssClassPrefix: string;
+    private eSubMenuGui?: HTMLElement;
 
     public init(params: AgMenuItemComponentParams): AgPromise<void> {
-        const { menuItemDef, isAnotherSubMenuOpen, level, childComponent } = params;
+        const { menuItemDef, isAnotherSubMenuOpen, level, childComponent, contextParams } = params;
         this.params = params.menuItemDef;
         this.level = level;
         this.isAnotherSubMenuOpen = isAnotherSubMenuOpen;
         this.childComponent = childComponent;
+        this.contextParams = contextParams;
         this.cssClassPrefix = this.params.menuItemParams?.cssClassPrefix ?? 'ag-menu-option';
         const compDetails = this.userComponentFactory.getMenuItemCompDetails(this.params, {
             ...menuItemDef,
@@ -119,8 +126,14 @@ export class AgMenuItemComponent extends BeanStub {
 
         if (!this.params.subMenu) { return; }
 
+        this.subMenuIsOpening = true;
+
         const ePopup = loadTemplate(/* html */ `<div class="ag-menu" role="presentation"></div>`);
+        this.eSubMenuGui = ePopup;
         let destroySubMenu: () => void;
+        let afterGuiAttached = () => {
+            this.subMenuIsOpening = false;
+        };
 
         if (this.childComponent) {
             const menuPanel = this.createBean(new AgMenuPanel(this.childComponent));
@@ -137,10 +150,13 @@ export class AgMenuItemComponent extends BeanStub {
             ePopup.appendChild(subMenuGui);
 
             if ((this.childComponent as any).afterGuiAttached) {
-                setTimeout(() => (this.childComponent as any).afterGuiAttached!(), 0);
+                afterGuiAttached = () => {
+                    (this.childComponent as any).afterGuiAttached!();
+                    this.subMenuIsOpening = false;
+                };
             }
         } else if (this.params.subMenu) {
-            const childMenu = this.createBean(new AgMenuList(this.level + 1));
+            const childMenu = this.createBean(new AgMenuList(this.level + 1, this.contextParams));
 
             childMenu.setParentComponent(this as any);
             childMenu.addMenuItems(this.params.subMenu);
@@ -153,7 +169,10 @@ export class AgMenuItemComponent extends BeanStub {
             destroySubMenu = () => this.destroyBean(childMenu);
 
             if (activateFirstItem) {
-                setTimeout(() => childMenu.activateFirstItem(), 0);
+                afterGuiAttached = () => {
+                    childMenu.activateFirstItem();
+                    this.subMenuIsOpening = false;
+                };
             }
         }
 
@@ -169,7 +188,8 @@ export class AgMenuItemComponent extends BeanStub {
             eChild: ePopup,
             positionCallback: positionCallback,
             anchorToElement: eGui,
-            ariaLabel: translate('ariaLabelSubMenu', 'SubMenu')
+            ariaLabel: translate('ariaLabelSubMenu', 'SubMenu'),
+            afterGuiAttached
         });
 
         this.subMenuIsOpen = true;
@@ -183,6 +203,7 @@ export class AgMenuItemComponent extends BeanStub {
             this.setAriaExpanded(false);
             destroySubMenu();
             this.menuItemComp.setExpanded?.(false);
+            this.eSubMenuGui = undefined;
         };
 
         this.menuItemComp.setExpanded?.(true);
@@ -203,6 +224,10 @@ export class AgMenuItemComponent extends BeanStub {
 
     public isSubMenuOpen(): boolean {
         return this.subMenuIsOpen;
+    }
+
+    public isSubMenuOpening(): boolean {
+        return this.subMenuIsOpening;
     }
 
     public activate(openSubMenu?: boolean): void {
@@ -255,10 +280,16 @@ export class AgMenuItemComponent extends BeanStub {
         this.parentComponent = component;
     }
 
+    public getSubMenuGui(): HTMLElement | undefined {
+        return this.eSubMenuGui;
+    }
+
     private onItemSelected(event: MouseEvent | KeyboardEvent): void {
         this.menuItemComp.select?.();
         if (this.params.action) {
-            this.getFrameworkOverrides().wrapOutgoing(() => this.params.action!());
+            this.getFrameworkOverrides().wrapOutgoing(() => this.params.action!(this.gridOptionsService.addGridCommonParams({
+                ...this.contextParams
+            })));
         } else {
             this.openSubMenu(event && event.type === 'keydown');
         }

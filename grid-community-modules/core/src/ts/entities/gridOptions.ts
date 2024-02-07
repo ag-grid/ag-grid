@@ -184,7 +184,15 @@ export interface GridOptions<TData = any> {
      */
     allowContextMenuWithControlKey?: boolean;
     /**
+     * Changes the display type of the column menu.
+     * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
+     * @default 'legacy'
+     * @initial
+     */
+    columnMenu?: 'legacy' | 'new';
+    /**
      * Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
+     * If `columnMenu = true`, this will default to `true` instead of `false`.
      * @default false
      */
     suppressMenuHide?: boolean;
@@ -1571,7 +1579,7 @@ export interface GridOptions<TData = any> {
      * For customising the main 'column header' menu.
      * @initial
      */
-    getMainMenuItems?: GetMainMenuItems;
+    getMainMenuItems?: GetMainMenuItems<TData>;
     /**
      * Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
@@ -2248,15 +2256,15 @@ export interface RowClassParams<TData = any, TContext = any> extends AgGridCommo
     rowIndex: number;
 }
 
-export interface GetContextMenuItems<TData = any> {
-    (params: GetContextMenuItemsParams<TData>): (string | MenuItemDef)[];
+export interface GetContextMenuItems<TData = any, TContext = any> {
+    (params: GetContextMenuItemsParams<TData, TContext>): (string | MenuItemDef<TData, TContext>)[];
 }
 export interface GetChartToolbarItems {
     (params: GetChartToolbarItemsParams): ChartMenuOptions[];
 }
 
-export interface GetMainMenuItems {
-    (params: GetMainMenuItemsParams): (string | MenuItemDef)[];
+export interface GetMainMenuItems<TData = any, TContext = any> {
+    (params: GetMainMenuItemsParams<TData, TContext>): (string | MenuItemDef<TData, TContext>)[];
 }
 
 export interface GetRowNodeIdFunc<TData = any> {

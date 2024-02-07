@@ -463,11 +463,11 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         // tool panel is scrollable, so don't need to size
         if (!this.positionableFeature || containerType === 'toolPanel') { return; }
 
-        const isFloatingFilter = containerType === 'floatingFilter';
+        const isResizable = containerType === 'floatingFilter' || containerType === 'columnFilter';
 
         const { positionableFeature, gridOptionsService } = this;
 
-        if (isFloatingFilter) {
+        if (isResizable) {
             positionableFeature.restoreLastSize();
             positionableFeature.setResizable(
                 gridOptionsService.get('enableRtl')

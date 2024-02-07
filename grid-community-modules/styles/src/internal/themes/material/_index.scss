@@ -212,4 +212,8 @@
     .ag-advanced-filter-builder-button-label {
         text-transform: uppercase;
     }
+
+    .ag-filter-active .ag-icon-filter {
+        color: var(--ag-material-accent-color);
+    }
 }

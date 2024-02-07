@@ -352,7 +352,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public allowContextMenuWithControlKey: boolean | undefined = undefined;
+    /** Changes the display type of the column menu.
+         * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
+         * @default 'legacy'
+         * @initial
+         */
+    @Input() public columnMenu: 'legacy' | 'new' | undefined = undefined;
     /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
+         * If `columnMenu = true`, this will default to `true` instead of `false`.
          * @default false
          */
     @Input() public suppressMenuHide: boolean | undefined = undefined;
@@ -1391,7 +1398,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** For customising the main 'column header' menu.
          * @initial
          */
-    @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
+    @Input() public getMainMenuItems: GetMainMenuItems<TData> | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
          */
     @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;

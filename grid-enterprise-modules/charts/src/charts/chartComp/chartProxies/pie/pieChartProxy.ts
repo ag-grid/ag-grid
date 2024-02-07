@@ -16,7 +16,8 @@ export class PieChartProxy extends ChartProxy {
     }
 
     public update(params: UpdateParams): void {
-        const { data, category } = params;
+        const { data } = params;
+        const [category] = params.categories;
 
         const options: AgPolarChartOptions = {
             ...this.getCommonChartOptions(params.updatedOverrides),
@@ -28,6 +29,7 @@ export class PieChartProxy extends ChartProxy {
     }
 
     private getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
+        const [category] = params.categories;
         const numFields = params.fields.length;
 
         const offset = {
@@ -42,8 +44,8 @@ export class PieChartProxy extends ChartProxy {
                 angleKey: f.colId,
                 angleName: f.displayName!,
                 sectorLabelKey: f.colId,
-                calloutLabelName: params.category.name,
-                calloutLabelKey: params.category.id,
+                calloutLabelName: category.name,
+                calloutLabelKey: category.id,
             }
 
             if (this.chartType === 'doughnut') {

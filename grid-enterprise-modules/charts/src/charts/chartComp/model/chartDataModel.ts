@@ -394,7 +394,9 @@ export class ChartDataModel extends BeanStub {
                 if ((selectedCols.length > 0 && !supportsMultipleDimensions) || !colsInRange.has(col)) { return; }
                 selectedCols.push(col);
             });
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedCols);
+            if (selectedCols.length > 0) {
+                this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedCols);
+            }
             return;
         }
 
@@ -461,10 +463,10 @@ export class ChartDataModel extends BeanStub {
     private syncDimensionCellRange() {
         const selectedDimensions = this.getSelectedDimensions();
         if (selectedDimensions.length === 0) return;
-        const columns = selectedDimensions.map(({ column }) => column)
+        const selectedCols = selectedDimensions.map(({ column }) => column)
             .filter((value): value is NonNullable<typeof value> => value != null);
-        if (columns.length > 0) {
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...columns);
+        if (selectedCols.length > 0) {
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedCols);
         }
     }
 

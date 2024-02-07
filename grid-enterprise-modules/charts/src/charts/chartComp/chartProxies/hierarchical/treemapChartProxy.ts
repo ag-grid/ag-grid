@@ -1,35 +1,30 @@
-import {ChartProxy, ChartProxyParams, UpdateParams} from '../chartProxy';
-import {
-    AgCharts,
-    AgTreemapSeriesOptions,
-    AgHierarchyChartOptions,
-} from 'ag-charts-community';
+import { AgTreemapSeriesOptions } from 'ag-charts-community';
+import { HierarchicalChartProxy } from './hierarchicalChartProxy';
+import { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 
-export class TreemapChartProxy extends ChartProxy {
+export class TreemapChartProxy extends HierarchicalChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    public getSeries(params: UpdateParams): AgTreemapSeriesOptions[] {
-        const {fields} = params;
-        return fields.map(f => ({
-            type: this.standaloneChartType as AgTreemapSeriesOptions['type'],
-        }));
-    }
-
-    public update(params: UpdateParams): void {
-        const options: AgHierarchyChartOptions = {
-            ...this.getCommonChartOptions(params.updatedOverrides),
-            data: this.getData(params),
-            series: this.getSeries(params),
-        };
-
-        AgCharts.update(this.getChartRef(), options);
-    }
-
-    private getData(params: UpdateParams): any[] {
-        const categoryKeys = params.categories.map(({ id }) => id);
-        return createCategoryHierarchy(params.data, categoryKeys);
+    protected override getSeries(params: UpdateParams, labelKey: string): AgTreemapSeriesOptions[] {
+        const { fields } = params;
+        // Treemap charts support up to two input series, corresponding to size and color respectively
+        const [sizeField, colorField] = fields as [FieldDefinition | undefined, FieldDefinition | undefined];
+        if (!sizeField) return [];
+        // Combine the size and color series into a single composite series
+        return [
+            {
+                type: this.standaloneChartType as AgTreemapSeriesOptions['type'],
+                // The label key is generated internally by the hierarchy processing and is not user-configurable
+                labelKey,
+                // Size and color fields are inferred from the range data
+                sizeKey: sizeField.colId,
+                sizeName: sizeField.displayName ?? undefined,
+                colorKey: colorField?.colId,
+                colorName: colorField?.displayName ?? undefined,
+            },
+        ];
     }
 
     protected override transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {
@@ -38,35 +33,7 @@ export class TreemapChartProxy extends ChartProxy {
         return data;
     }
 
-    public crossFilteringReset(): void {
+    public override crossFilteringReset(): void {
         // cross filtering is not currently supported in treemap charts
     }
-}
-
-
-interface CategoryGroup<T extends object, K extends keyof T> {
-    title: T[K];
-    children: Array<CategoryGroup<T, K>> | Array<T>;
-};
-
-function createCategoryHierarchy<T extends object, K extends keyof T>(data: T[], keys: Array<K>): Array<CategoryGroup<T, K>> | Array<T> {
-    if (keys.length === 0) return data;
-    const [key, ...remainingKeys] = keys;
-    if (remainingKeys.length === 0) return data.map((item) => ({ title: item[key], ...item }));
-    const groupedData = partition(data, (item) => item[key]);
-    return Array.from(groupedData.entries()).map(([title, items]) => ({
-        title,
-        children: createCategoryHierarchy(items, remainingKeys)
-    }));
-}
-
-function partition<T, K>(items: T[], selector: (item: T) => K): Map<K, T[]> {
-    return items.reduce(
-        (groupedItems, item) => {
-            const key = selector(item);
-            const existingItems = groupedItems.get(key);
-            return groupedItems.set(key, existingItems ? [...existingItems, item] : [item]);
-        },
-        new Map<K, T[]>(),
-    )
 }
