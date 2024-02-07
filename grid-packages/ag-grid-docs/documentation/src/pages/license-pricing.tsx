@@ -237,33 +237,6 @@ export const LicensePricing = () => {
                     </div>
                 </div>
 
-                <div className={styles.videoExplainer} id="video-explainer">
-                    <div>
-                        <h3 className="text-2xlive">Questions about our licenses? </h3>
-                        <p>
-                            Watch our short video for an in-depth look at exactly how the license works. Learn which license
-                            is right for you, how many licenses you need for your team, and exactly when you need a
-                            deployment license.
-                        </p>
-                        <p>
-                            If you have any other questions, or want to investigate volume pricing please{' '}
-                            <InfoEmailLink
-                                emailSubject="AG Grid Developer license query"
-                                trackingType="questionsGetInContact"
-                            >
-                                get in contact
-                            </InfoEmailLink>
-                            .
-                        </p>
-                    </div>
-
-                    <iframe
-                        src="https://www.youtube.com/embed/xacx_attYuo"
-                        title="YouTube video player"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    ></iframe>
-                </div>
                 <div className={styles.contactSales}>
                     <p className="text-secondary">
                         For any enquires about bulk pricing, questions on which license is right for you, or any other

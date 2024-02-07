@@ -263,7 +263,6 @@
 
 .bulkLicenses,
 .communityEnterprise,
-.videoExplainer,
 .licensesInDetail {
     margin-bottom: $spacing-size-24;
 }
@@ -320,40 +319,6 @@
     height: 2.5em;
     margin: -1.15em 0.33em -1em 0;
     fill: var(--color-fg-primary);
-}
-
-.videoExplainer {
-    display: grid;
-
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        grid-template-columns: 2fr 1fr;
-        grid-auto-flow: dense;
-        gap: $spacing-size-6;
-    }
-
-    div {
-        margin-bottom: $spacing-size-8;
-
-        @media screen and (min-width: $breakpoint-pricing-large) {
-            grid-column: 2;
-        }
-    }
-
-    h3 {
-        font-weight: var(--text-bold);
-        line-height: var(--text-lh-tight);
-
-        @media screen and (min-width: $breakpoint-pricing-large) {
-            margin-top: -$spacing-size-2;
-        }
-    }
-
-    iframe {
-        width: 100%;
-        aspect-ratio: 16/9;
-        border-radius: var(--radius-md);
-        border: none;
-    }
 }
 
 .licensesInDetail {
