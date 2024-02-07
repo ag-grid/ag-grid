@@ -1,5 +1,5 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
-import {getData} from "./data";
+import {getData} from './data';
 
 let gridApi: GridApi;
 
@@ -16,36 +16,31 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   enableCharts: true,
   chartThemeOverrides: {
-    'waterfall': {
+    waterfall: {
       series: {
-        totals: [
-          { totalType: 'subtotal', index: 4, axisLabel: 'Total Revenue' },
-          { totalType: 'subtotal', index: 9, axisLabel: 'Total Expenditure' },
-          { totalType: 'total', index: 9, axisLabel: 'Total Borrowing' },
-        ],
         item: {
           positive: {
-              fill: '#4A90E2',
-              stroke: '#4A90E2',
+            fill: '#4A90E2',
+            stroke: '#4A90E2',
           },
           negative: {
-              fill: '#FF6B6B',
-              stroke: '#FF6B6B',
+            fill: '#FF6B6B',
+            stroke: '#FF6B6B',
           },
           total: {
-              name: 'Total / Subtotal',
-              fill: '#404066',
-              stroke: '#404066',
+            name: 'Total / Subtotal',
+            fill: '#404066',
+            stroke: '#404066',
           },
-      },
+        },
       },
     },
   },
-  onGridReady : (params: GridReadyEvent) => {
-    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  onGridReady: (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData))
   },
   onFirstDataRendered,
-};
+}
 
 
 
