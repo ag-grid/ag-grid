@@ -27,7 +27,11 @@ import {
     PopupEventParams,
     Component,
     CloseMenuEvent,
-    MenuService
+    MenuService,
+    AgGridEvent,
+    ColumnMenuVisibleChangedEvent,
+    Events,
+    WithoutGridCommon
 } from '@ag-grid-community/core';
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
@@ -76,6 +80,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (defaultTab) {
                 menu.showTab?.(defaultTab);
             }
+            this.dispatchVisibleChangedEvent(true, false, column, defaultTab);
         }, containerType, defaultTab, undefined, mouseEvent.target as HTMLElement);
     }
 
@@ -113,6 +118,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (defaultTab) {
                 menu.showTab?.(defaultTab);
             }
+            this.dispatchVisibleChangedEvent(true, false, column, defaultTab);
         }, containerType, defaultTab, restrictToTabs, eventSource);
     }
 
@@ -149,6 +155,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             closeOnEsc: true,
             closedCallback: (e?: Event) => { // menu closed callback
                 closedFuncs.forEach(f => f(e));
+                this.dispatchVisibleChangedEvent(false, false, column, defaultTab);
             },
             afterGuiAttached: params => menu.afterGuiAttached(Object.assign({}, { container: containerType }, params)),
             // if defaultTab is not present, positionCallback will be called
@@ -175,8 +182,10 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             }
         }
 
-        menu.addEventListener(TabbedColumnMenu.EVENT_TAB_SELECTED, (event: any) => {
+        menu.addEventListener(TabbedColumnMenu.EVENT_TAB_SELECTED, (event: AgGridEvent & { key: string }) => {
+            this.dispatchVisibleChangedEvent(false, true, column);
             this.lastSelectedTab = event.key;
+            this.dispatchVisibleChangedEvent(true, true, column);
         });
 
         column?.setMenuVisible(true, 'contextMenu');
@@ -231,6 +240,17 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         } else {
             return this.createBean(new ColumnContextMenu(column, eventSource));
         }
+    }
+
+    private dispatchVisibleChangedEvent(visible: boolean, switchingTab: boolean, column?: Column, defaultTab?: string): void {
+        const event: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
+            type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
+            visible,
+            switchingTab,
+            key: (this.lastSelectedTab ?? defaultTab ?? (this.menuService.isLegacyMenuEnabled() ? TabbedColumnMenu.TAB_GENERAL : 'columnMenu')) as any,
+            column: column ?? null
+        }
+        this.eventService.dispatchEvent(event)
     }
 
     public isMenuEnabled(column: Column): boolean {
