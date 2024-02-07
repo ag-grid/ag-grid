@@ -95,10 +95,7 @@ Here we give some hints on testing AG Grid as part of your application.
 
 
 <framework-specific-section frameworks="javascript">
-<p> We do not document how to use either `Protractor` and `Jasmine` in depth here - please see the documentation for either
-<a href="http://www.protractortest.org/#/" target="_blank">Protractor</a> or
-<a href="https://jasmine.github.io/" target="_blank">Jasmine</a>.
-</p>
+<p> We do not document how to use either `Protractor` and `Jasmine` in depth here - please see the documentation for either <a href="http://www.protractortest.org/#/" target="_blank">Protractor</a> or <a href="https://jasmine.github.io/" target="_blank">Jasmine</a>.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
