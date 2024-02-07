@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import styles from '@design-system/modules/SocialProof.module.scss';
-import { quotesData } from './quotes/QuotesData';
+import { quotesData } from './quotes/quotesData';
 
 const CellsIllustration = () => {
   return (

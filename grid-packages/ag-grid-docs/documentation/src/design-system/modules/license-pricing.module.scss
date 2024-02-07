@@ -603,6 +603,9 @@ transition: all 0.3s ease-in;
     height: 100px;
     width: 100vw;
     background: linear-gradient(transparent, var(--color-bg-brand-solid));
+    #{$selector-darkmode} & {
+        background: linear-gradient(transparent, var(--color-fg-primary));
+    }
     opacity: 0.05;
 }
 
