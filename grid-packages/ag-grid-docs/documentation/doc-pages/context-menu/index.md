@@ -17,9 +17,16 @@ the keyboard shortcut as a hint to the user.
 
 ## Configuring the Context Menu
 
-You can customise the context menu by providing a `getContextMenuItems()` callback. Each time the context menu is to be shown, the callback is called to retrieve the menu items. This allows the client application to display a menu individually customised to each cell.
+You can customise the context menu in one of two ways:
 
-The result of `getContextMenuItems(params)` should be a list with each item either a) a string or b) a `MenuItemDef`. Use 'string' to pick from built in menu items and use `MenuItemDef` descriptions for your own menu items.
+1. Set `colDef.contextMenuItems`. This can either be a list of menu items, or a callback which is passed the list of default menu items.
+2. Set the grid option `getContextMenuItems()`. This callback will be passed the list of default menu items as well as the column.
+
+Note that `colDef.contextMenuItems` will take priority over `getContextMenuItems()`.
+
+The menu item list should be a list with each item either a) a string or b) a `MenuItemDef` description. Use 'string' to pick from built-in menu items (listed below) and use `MenuItemDef` descriptions for your own menu items.
+
+<api-documentation source='column-properties/properties.json' section='columns' names='["contextMenuItems"]'></api-documentation>
 
 <api-documentation source='grid-options/properties.json' section='accessories' names='["getContextMenuItems"]' ></api-documentation>
 

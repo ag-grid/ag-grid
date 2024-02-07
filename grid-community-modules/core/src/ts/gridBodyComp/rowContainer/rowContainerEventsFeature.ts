@@ -5,7 +5,6 @@ import { MouseEventService } from "./../mouseEventService";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { ValueService } from "../../valueService/valueService";
 import { Column } from "../../entities/column";
-import { IContextMenuFactory } from "../../interfaces/iContextMenuFactory";
 import { isIOSUserAgent } from "../../utils/browser";
 import { LongTapEvent, TouchListener } from "../../widgets/touchListener";
 import { CtrlsService } from "../../ctrlsService";
@@ -25,12 +24,13 @@ import { IRangeService } from "../../interfaces/IRangeService";
 import { IClipboardService } from "../../interfaces/iClipboardService";
 import { CellCtrl } from "../../rendering/cell/cellCtrl";
 import { RowPinnedType } from "../../interfaces/iRowNode";
+import { MenuService, ShowContextMenuParams } from "../../misc/menuService";
 
 export class RowContainerEventsFeature extends BeanStub {
 
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('valueService') private valueService: ValueService;
-    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
+    @Autowired('menuService') private menuService: MenuService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('focusService') private focusService: FocusService;
@@ -83,7 +83,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const cellCtrl = this.mouseEventService.getRenderedCellForEvent(mouseEvent)!;
 
         if (eventName === "contextmenu") {
-            this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellCtrl);
+            this.handleContextMenuMouseEvent(mouseEvent, undefined, rowComp, cellCtrl);
         } else {
             if (cellCtrl) {
                 cellCtrl.onMouseEvent(eventName, mouseEvent);
@@ -103,7 +103,7 @@ export class RowContainerEventsFeature extends BeanStub {
             const rowComp = this.getRowForEvent(event.touchEvent);
             const cellComp = this.mouseEventService.getRenderedCellForEvent(event.touchEvent)!;
 
-            this.handleContextMenuMouseEvent(null, event.touchEvent, rowComp, cellComp);
+            this.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
         };
 
         this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
@@ -125,14 +125,14 @@ export class RowContainerEventsFeature extends BeanStub {
         return null;
     }
 
-    private handleContextMenuMouseEvent(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowComp: RowCtrl | null, cellCtrl: CellCtrl) {
+    private handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, rowComp: RowCtrl | null, cellCtrl: CellCtrl) {
         const rowNode = rowComp ? rowComp.getRowNode() : null;
         const column = cellCtrl ? cellCtrl.getColumn() : null;
         let value = null;
 
         if (column) {
             const event = mouseEvent ? mouseEvent : touchEvent;
-            cellCtrl.dispatchCellContextMenuEvent(event);
+            cellCtrl.dispatchCellContextMenuEvent(event ?? null);
             value = this.valueService.getValue(column, rowNode);
         }
 
@@ -140,9 +140,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
 
-        if (this.contextMenuFactory) {
-            this.contextMenuFactory.onContextMenu(mouseEvent, touchEvent, rowNode, column, value, anchorToElement);
-        }
+        this.menuService.showContextMenu({ mouseEvent, touchEvent, rowNode, column, value, anchorToElement } as ShowContextMenuParams);
     }
 
     private getControlsForEventTarget(target: EventTarget | null): { cellCtrl: CellCtrl | null, rowCtrl: RowCtrl | null } {

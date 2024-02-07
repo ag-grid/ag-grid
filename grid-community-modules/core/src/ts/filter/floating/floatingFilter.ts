@@ -25,9 +25,7 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
      * For example, the provided filters use debounceMs from the parent filter params.
      * */
     filterParams: IFilterParams;
-    /**
-     * Boolean flag to indicate if the button in the floating filter that opens the parent filter in a popup should be displayed.
-     */
+    /** @deprecated v31.1 Use `colDef.suppressFloatingFilterButton` instead. */
     suppressFilterButton: boolean;
 
     /**

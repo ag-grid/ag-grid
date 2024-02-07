@@ -181,6 +181,7 @@ export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
 export { AlignedGrid } from "./interfaces/iAlignedGrid";
 export { ExpansionService } from "./misc/expansionService";
+export { MenuService } from "./misc/menuService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from "./interfaces/iCellEditor";
@@ -385,6 +386,7 @@ export { IServerSideSelectionState, IServerSideGroupSelectionState } from "./int
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
+export { IColumnChooserFactory, ShowColumnChooserParams } from "./interfaces/iColumnChooserFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
 export { RowPosition, RowPositionUtils } from "./entities/rowPositionUtils";
 export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
@@ -440,6 +442,7 @@ export {
     HeaderCheckboxSelectionCallback,
     HeaderLocation,
     ColumnsMenuParams,
+    ColumnChooserParams,
     ColumnMenuTab,
     HeaderClassParams,
     HeaderClass,
@@ -447,7 +450,7 @@ export {
     ToolPanelClass,
     KeyCreatorParams,
     SortDirection,
-    NestedFieldPaths,
+    NestedFieldPaths
 } from "./entities/colDef";
 export {
     DataTypeDefinition,
@@ -521,7 +524,8 @@ export {
     PostSortRowsParams,
     GetLocaleTextParams,
     GetGroupAggFilteringParams,
-    GetGroupIncludeFooterParams
+    GetGroupIncludeFooterParams,
+    IMenuActionParams
 } from "./interfaces/iCallbackParams";
 export {
     WithoutGridCommon

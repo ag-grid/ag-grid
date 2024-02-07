@@ -106,6 +106,7 @@ import { ValidationService } from "./validation/validationService";
 import { ApiEventService } from "./misc/apiEventService";
 import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp";
 import { AriaAnnouncementService } from "./rendering/ariaAnnouncementService";
+import { MenuService } from "./misc/menuService";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -368,8 +369,6 @@ export class GridCoreCreator {
             { componentName: 'AgPageSizeSelector', componentClass: PageSizeSelectorComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
             { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
-            { componentName: 'AgPanel', componentClass: AgPanel },
-            { componentName: 'AgDialog', componentClass: AgDialog },
             { componentName: 'AgRowContainer', componentClass: RowContainerComp },
             { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
             { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp },
@@ -424,7 +423,7 @@ export class GridCoreCreator {
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
             PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService,
             QuickFilterService, SyncService, OverlayService, StateService, ExpansionService,
-            ApiEventService, AriaAnnouncementService
+            ApiEventService, AriaAnnouncementService, MenuService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

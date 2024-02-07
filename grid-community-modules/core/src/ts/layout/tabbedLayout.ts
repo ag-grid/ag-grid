@@ -3,7 +3,6 @@ import { RefSelector } from '../widgets/componentAnnotations';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { clearElement } from '../utils/dom';
 import { setAriaLabel, setAriaRole } from '../utils/aria';
-import { callIfPresent } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
 import { PostConstruct, Autowired } from '../context/context';
 import { FocusService } from '../focusService';
@@ -177,12 +176,10 @@ export class TabbedLayout extends TabGuardComp {
     private showItemWrapper(wrapper: TabbedItemWrapper): void {
         const { tabbedItem, eHeaderButton } = wrapper;
 
-        if (this.params.onItemClicked) {
-            this.params.onItemClicked({ item: tabbedItem });
-        }
+        this.params.onItemClicked?.({ item: tabbedItem });
 
         if (this.activeItem === wrapper) {
-            callIfPresent(this.params.onActiveItemClicked!);
+            this.params.onActiveItemClicked?.()
             return;
         }
 
@@ -232,8 +229,8 @@ export interface TabbedLayoutParams {
     items: TabbedItem[];
     cssClass?: string;
     keepScrollPosition?: boolean;
-    onItemClicked?: Function;
-    onActiveItemClicked?: Function;
+    onItemClicked?: (event: { item: TabbedItem }) => void;
+    onActiveItemClicked?: () => void;
 }
 
 export interface TabbedItem {
