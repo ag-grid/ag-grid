@@ -32,8 +32,8 @@
     flex-direction: column;
     margin-bottom: $spacing-size-16;
     p {
-     text-align: center;
-     text-wrap: balance;
+        text-align: center;
+        text-wrap: balance;
     }
     border-bottom: 1px solid var(--color-border-secondary);
 }
@@ -42,7 +42,6 @@
     width: 100%;
     margin-bottom: $spacing-size-8;
     text-align: center;
-    
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         margin-top: 36px;
@@ -119,7 +118,6 @@
     // gap: $spacing-size-8;
     padding-top: $spacing-size-20;
 }
-
 
 .buyTogether {
     --card-color: var(--color-bg-primary);
@@ -277,23 +275,6 @@
     p {
         max-width: 48em;
         margin: 0 auto $spacing-size-2;
-    }
-}
-
-.ukraineNotice {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $spacing-size-4;
-    max-width: 48em;
-    margin: $spacing-size-16 auto $spacing-size-24;
-
-    @media screen and (min-width: $breakpoint-alert-flag-small) {
-        flex-direction: row;
-    }
-
-    img {
-        width: 80px;
     }
 }
 
@@ -470,15 +451,15 @@
 }
 
 .backgroundPricing {
-   display: flex;
-   justify-content: center;
-   width: 100vw;
-   margin-top: -7px;
-   opacity: 0.15;
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    margin-top: -7px;
+    opacity: 0.15;
 
-   #{$selector-darkmode} & {
-    opacity: 1;
-   }
+    #{$selector-darkmode} & {
+        opacity: 1;
+    }
 }
 
 .fullWidthBar {
@@ -534,9 +515,9 @@
 
 .toggleCheckbox {
     display: none;
-  }
+}
 
-  .toggleContainer {
+.toggleContainer {
     position: relative;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -549,15 +530,15 @@
     font-weight: bold;
     color: var(--color-button-primary-fg);
     cursor: pointer;
-    user-select: none;;
-    box-shadow: var(--shadow-sm);;
+    user-select: none;
+    box-shadow: var(--shadow-sm);
     margin-bottom: $spacing-size-4;
     #{$selector-darkmode} & {
         border: 2px solid var(--color-bg-primary);
     }
- }
+}
 
- .toggleContainer::before {
+.toggleContainer::before {
     content: '';
     position: absolute;
     width: 50%;
@@ -566,47 +547,47 @@
     border-radius: 32px;
     background: var(--color-bg-brand-solid);
     transition: all 0.3s;
- } 
+}
 
- .toggleContainer div {
+.toggleContainer div {
     padding: 6px;
     text-align: center;
     z-index: 1;
- }
+}
 
- .gridToggle {
+.gridToggle {
     display: flex;
     gap: 8px;
     align-items: center;
     margin-left: 8px;
     justify-content: center;
     cursor: pointer;
- }
+}
 
- .chartsToggle {
+.chartsToggle {
     display: flex;
     gap: 8px;
     align-items: center;
     margin-left: 8px;
     cursor: pointer;
- }
+}
 
- .toggleCheckbox:checked + .toggleContainer::before {
+.toggleCheckbox:checked + .toggleContainer::before {
     left: 50%;
- }
+}
 
- .toggleCheckbox:checked + .toggleContainer .gridToggle {
+.toggleCheckbox:checked + .toggleContainer .gridToggle {
     color: var(--color-text-secondary);
-    transition: color 0.3s;  
+    transition: color 0.3s;
     .gridInactive {
         display: inline;
     }
     .gridActive {
         display: none;
     }
- }
+}
 
- .toggleCheckbox:checked + .toggleContainer .chartsToggle{
+.toggleCheckbox:checked + .toggleContainer .chartsToggle {
     color: var(--color-button-primary-fg);
     transition: color 0.3s;
     .chartsInactive {
@@ -616,9 +597,8 @@
     .chartsActive {
         display: inline;
     }
-
- }
- .toggleCheckbox + .toggleContainer .gridToggle{
+}
+.toggleCheckbox + .toggleContainer .gridToggle {
     color: var(--color-button-primary-fg);
     transition: color 0.3s;
     .gridInactive {
@@ -627,8 +607,8 @@
     .gridActive {
         display: inline;
     }
- }
- .toggleCheckbox + .toggleContainer .chartsToggle{
+}
+.toggleCheckbox + .toggleContainer .chartsToggle {
     color: var(--color-text-secondary);
     transition: color 0.3s;
     .chartsInactive {
@@ -637,55 +617,54 @@
     .chartsActive {
         display: none;
     }
- }
+}
 
- .switchContainer {
+.switchContainer {
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
     top: 42px;
+}
 
-  }
-  
-  .toggleBackground {
+.toggleBackground {
     opacity: 0.8;
     position: absolute;
     top: 30px;
     left: 50%;
     transform: translate(-50%, -50%);
-    #{$selector-darkmode} & { 
+    #{$selector-darkmode} & {
         opacity: 0.1;
     }
-  }
-  
-  .toggleCheckbox {
+}
+
+.toggleCheckbox {
     position: relative;
     z-index: 2;
-  }
-  
-  .horizontalRule {
+}
+
+.horizontalRule {
     position: absolute;
     top: 50%;
     left: 0;
     width: 100%;
-    border-top: 1px solid #000; 
-  }
-  
-  .toggleWrapper {
-    top: 48px;
-  }
+    border-top: 1px solid #000;
+}
 
-  .newTag {
+.toggleWrapper {
+    top: 48px;
+}
+
+.newTag {
     background: color-mix(in srgb, var(--color-bg-brand-solid), var(--color-bg-primary) 90%);
     color: var(--color-link);
     border-radius: 24px;
-  }
-  .gradient {
+}
+.gradient {
     position: absolute;
     top: -70px;
     height: 100px;
     width: 100vw;
     background: linear-gradient(transparent, var(--color-bg-brand-solid));
     opacity: 0.05;
-  }
+}

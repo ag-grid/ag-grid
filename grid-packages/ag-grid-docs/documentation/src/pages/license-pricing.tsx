@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import ukraineFlagSVG from 'images/ukraine-flag.svg';
 import { Icon } from '../components/Icon';
 import { InfoEmailLink } from '../components/InfoEmailLink';
 import { Licenses } from '../components/licenses/Licenses';
@@ -236,16 +235,6 @@ export const LicensePricing = () => {
                             See all AG Charts Enterprise features
                         </a>
                     </div>
-                </div>
-
-                <div className={styles.ukraineNotice}>
-                    <img src={ukraineFlagSVG} alt="flag of Ukraine" />
-
-                    <p className="text-secondary text-sm">
-                        In light of current events in Ukraine we are choosing to express our disappointment in the breakdown
-                        of diplomacy, and its effects on the people of Ukraine, the global economy and community by not
-                        licensing software to companies or individuals registered or residing in the Russian Federation.
-                    </p>
                 </div>
 
                 <div className={styles.videoExplainer} id="video-explainer">
