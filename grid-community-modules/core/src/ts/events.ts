@@ -208,6 +208,7 @@ export interface GridPreDestroyedEvent<TData = any, TContext = any> extends AgGr
     state: GridState;
 }
 
+export interface ColumnContainerWidthChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 export interface DisplayedColumnsWidthChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 export interface ColumnHoverChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 export interface BodyHeightChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented

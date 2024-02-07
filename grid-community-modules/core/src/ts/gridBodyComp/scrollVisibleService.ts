@@ -20,11 +20,6 @@ export class ScrollVisibleService extends BeanStub {
     private horizontalScrollShowing: boolean;
     private verticalScrollShowing: boolean;
 
-    constructor() {
-        super();
-        this.update = debounce(this.update, 10);
-    }
-
     @PostConstruct
     private postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
