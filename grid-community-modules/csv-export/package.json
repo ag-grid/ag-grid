@@ -61,7 +61,8 @@
     "ts-jest": "^29.1.0",
     "web-streams-polyfill": "^3.3.2",
     "blob-polyfill": "^7.0.20220408",
-    "compression-streams-polyfill": "^0.1.7"
+    "compression-streams-polyfill": "^0.1.7",
+    "text-encoding-polyfill": "^0.6.7"
   },
   "publishConfig": {
     "access": "public"
