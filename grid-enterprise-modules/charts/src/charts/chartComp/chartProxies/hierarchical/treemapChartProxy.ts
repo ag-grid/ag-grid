@@ -1,23 +1,13 @@
-import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
-import { AgCharts, AgTreemapSeriesOptions, AgHierarchyChartOptions } from 'ag-charts-community';
-import { CATEGORY_LABEL_KEY, createCategoryHierarchy } from './hierarchicalChartUtils';
+import { AgTreemapSeriesOptions } from 'ag-charts-community';
+import { HierarchicalChartProxy } from './hierarchicalChartProxy';
+import { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 
-export class TreemapChartProxy extends ChartProxy {
+export class TreemapChartProxy extends HierarchicalChartProxy {
     public constructor(params: ChartProxyParams) {
         super(params);
     }
 
-    public override update(params: UpdateParams): void {
-        const options: AgHierarchyChartOptions = {
-            ...this.getCommonChartOptions(params.updatedOverrides),
-            series: this.getSeries(params),
-            data: this.getData(params),
-        };
-
-        AgCharts.update(this.getChartRef(), options);
-    }
-
-    private getSeries(params: UpdateParams): AgTreemapSeriesOptions[] {
+    protected override getSeries(params: UpdateParams, labelKey: string): AgTreemapSeriesOptions[] {
         const { fields } = params;
         // Treemap charts support up to two input series, corresponding to size and color respectively
         const [sizeField, colorField] = fields as [FieldDefinition | undefined, FieldDefinition | undefined];
@@ -27,7 +17,7 @@ export class TreemapChartProxy extends ChartProxy {
             {
                 type: this.standaloneChartType as AgTreemapSeriesOptions['type'],
                 // The label key is generated internally by the hierarchy processing and is not user-configurable
-                labelKey: CATEGORY_LABEL_KEY,
+                labelKey,
                 // Size and color fields are inferred from the range data
                 sizeKey: sizeField.colId,
                 sizeName: sizeField.displayName ?? undefined,
@@ -35,11 +25,6 @@ export class TreemapChartProxy extends ChartProxy {
                 colorName: colorField?.displayName ?? undefined,
             },
         ];
-    }
-
-    private getData(params: UpdateParams): any[] {
-        const categoryKeys = params.categories.map(({ id }) => id);
-        return createCategoryHierarchy(params.data, categoryKeys);
     }
 
     protected override transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {
