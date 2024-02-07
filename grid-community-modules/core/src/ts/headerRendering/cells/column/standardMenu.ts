@@ -11,6 +11,9 @@ import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
 import { CtrlsService } from '../../../ctrlsService';
 import { setAriaRole } from '../../../utils/aria';
 import { MenuService } from '../../../misc/menuService';
+import { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { ColumnMenuVisibleChangedEvent } from '../../../events';
+import { Events } from '../../../eventKeys';
 
 @Bean('filterMenuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
@@ -111,6 +114,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 if (focusableEl) { focusableEl.focus(); }
             }
             afterGuiDetached();
+            this.dispatchVisibleChangedEvent(false, containerType, column);
         };
 
         const translate = this.localeService.getLocaleTextFunc();
@@ -144,6 +148,8 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         });
 
         column.setMenuVisible(true, 'contextMenu');
+
+        this.dispatchVisibleChangedEvent(true, containerType, column);
     }
 
     private trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
@@ -156,6 +162,17 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         e.preventDefault();
 
         this.focusService.focusInto(menu, e.shiftKey);
+    }
+
+    private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: Column): void {
+        const displayedEvent: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
+            type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
+            visible,
+            switchingTab: false,
+            key: containerType as 'columnMenu' | 'columnFilter' | 'floatingFilter',
+            column: column ?? null
+        }
+        this.eventService.dispatchEvent(displayedEvent)
     }
 
     public isMenuEnabled(column: Column): boolean {

@@ -179,12 +179,21 @@ The following example demonstrates providing custom column layouts in the column
 
 <grid-example title='Customising Columns Layout' name='customising-columns-layout' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
 
+## Column Menu API / Events
 
-## Column Menu API
+The `gridApi` has the following methods that can be used to interact with the column menu:
 
 <api-documentation source='grid-api/api.json' section='accessories' names='["showColumnChooser", "showColumnFilter", "showColumnMenu", "hidePopupMenu", "hideColumnChooser"]'></api-documentation>
 
-The following example demonstrates the column menu API by clicking the buttons outside the grid:
+<br />
+
+The following column menu event is emitted by the grid:
+
+<api-documentation source='grid-events/events.json' section='accessories' names='["columnMenuVisibleChanged"]'></api-documentation>
+
+<br />
+
+The following example demonstrates the column menu API and events (by clicking the buttons outside the grid):
 
 <grid-example title='Column Menu API' name='column-menu-api' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
 
