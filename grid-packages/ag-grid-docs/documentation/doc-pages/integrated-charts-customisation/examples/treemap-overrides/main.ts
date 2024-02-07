@@ -1,6 +1,5 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
 import {getData} from "./data";
-import type { AgTreemapSeriesThemeableOptions } from 'ag-charts-community';
 
 let gridApi: GridApi;
 
@@ -21,12 +20,7 @@ const gridOptions: GridOptions = {
   chartThemeOverrides: {
     'treemap': {
       series: {
-        colorKey: 'change',
-        colorName: 'Change',
         colorRange: ['#43A047', '#FF5722'],
-        sizeKey: 'total',
-        sizeName: 'Total',
-        labelKey: 'title',
         group: {
           label: {
             fontSize: 18,
@@ -43,7 +37,7 @@ const gridOptions: GridOptions = {
             formatter: (params) => `£${params.value.toFixed(1)}bn`,
           },
         },
-      } as AgTreemapSeriesThemeableOptions,
+      },
     },
   },
   onGridReady : (params: GridReadyEvent) => {

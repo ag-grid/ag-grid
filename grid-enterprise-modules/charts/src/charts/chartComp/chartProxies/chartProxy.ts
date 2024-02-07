@@ -44,11 +44,6 @@ export interface FieldDefinition {
 export interface UpdateParams {
     data: any[];
     grouping: boolean;
-    category: {
-        id: string;
-        name: string;
-        chartDataType?: string
-    };
     categories: {
         id: string;
         name: string;
