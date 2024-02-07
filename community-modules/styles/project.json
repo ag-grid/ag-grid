@@ -1,15 +1,20 @@
 {
   "name": "@ag-grid-community/styles",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "community-modules/styles/src",
+  "sourceRoot": "community-modules/styles",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "nx:noop",
+      "executor": "@nx:noop",
       "dependsOn": ["build:styles"]
     },
     "build:styles": {
-      "executor": "nx:noop"
+      "options": {
+        "options": {
+          "cwd": "community-modules/styles",
+          "command": "npm run build:sass"
+        }
+      }
     }
   },
   "tags": []
