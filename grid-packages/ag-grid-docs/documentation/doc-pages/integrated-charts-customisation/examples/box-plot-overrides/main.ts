@@ -1,5 +1,6 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
 import {getData} from "./data";
+import type { AgBoxPlotSeriesThemeableOptions } from 'ag-charts-community';
 
 let gridApi: GridApi;
 
@@ -43,7 +44,7 @@ const gridOptions: GridOptions = {
           }),
         },
       },
-    },
+    } as AgBoxPlotSeriesThemeableOptions,
   },
   onGridReady : (params: GridReadyEvent) => {
     getData().then(rowData => params.api.setGridOption('rowData', rowData));

@@ -1,5 +1,6 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
 import {getData} from "./data";
+import type { AgTreemapSeriesThemeableOptions } from 'ag-charts-community';
 
 let gridApi: GridApi;
 
@@ -42,7 +43,7 @@ const gridOptions: GridOptions = {
             formatter: (params) => `£${params.value.toFixed(1)}bn`,
           },
         },
-      },
+      } as AgTreemapSeriesThemeableOptions,
     },
   },
   onGridReady : (params: GridReadyEvent) => {
