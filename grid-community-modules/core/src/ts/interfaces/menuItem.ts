@@ -1,7 +1,8 @@
+import { IMenuActionParams } from "./iCallbackParams";
 import { AgGridCommon } from "./iCommon";
 import { IComponent } from "./iComponent";
 
-export interface MenuItemLeafDef {
+export interface MenuItemLeafDef<TData = any, TContext = any> {
     /**
      * Name of the menu item */
     name: string;
@@ -13,7 +14,7 @@ export interface MenuItemLeafDef {
     shortcut?: string;
     /**
      * Function that gets executed when item is chosen */
-    action?: () => void;
+    action?: (params: IMenuActionParams<TData, TContext>) => void;
     /**
      * Set to true to provide a check beside the option */
     checked?: boolean;
@@ -34,10 +35,10 @@ export interface MenuItemLeafDef {
     suppressCloseOnSelect?: boolean;
 }
 
-export interface MenuItemDef extends MenuItemLeafDef {
+export interface MenuItemDef<TData = any, TContext = any> extends MenuItemLeafDef<TData, TContext> {
     /**
      * If this item is a sub menu, contains a list of menu item definitions */
-    subMenu?: (MenuItemDef | string)[];
+    subMenu?: (MenuItemDef<TData, TContext> | string)[];
     /**
      * Provide a custom menu item component.
      * See [Menu Item Component](https://www.ag-grid.com/javascript-data-grid/component-menu-item/#implementing-a-menu-item-component) for framework specific implementation details.

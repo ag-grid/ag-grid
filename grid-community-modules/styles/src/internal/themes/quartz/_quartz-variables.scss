@@ -108,13 +108,14 @@
     --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
     --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
     --ag-selected-row-background-color: var(--ag-row-hover-color);
+    --ag-popup-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 8%);
 
     --ag-advanced-filter-join-pill-color: #7a3a37;
     --ag-advanced-filter-column-pill-color: #355f2d;
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
 
-    --ag-popup-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+    --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.16);
 
     color-scheme: dark;
 }

@@ -166,6 +166,11 @@ const AG_GRID_LOCALE_EN = {
     export: 'Export',
     csvExport: 'CSV Export',
     excelExport: 'Excel Export',
+    columnFilter: 'Column Filter',
+    columnChooser: 'Choose Columns',
+    sortAscending: 'Sort Ascending',
+    sortDescending: 'Sort Descending',
+    sortUnSort: 'Clear Sort',
 
     // Enterprise Menu Aggregation and Status Bar
     sum: 'Sum',
@@ -239,6 +244,9 @@ const AG_GRID_LOCALE_EN = {
     boxPlot: 'Box Plot',
     rangeBar: 'Range Bar',
     rangeArea: 'Range Area',
+
+    hierarchicalChart: 'Hierarchical',
+    treemap: 'Treemap',
 
     specializedChart: 'Specialized',
     waterfall: 'Waterfall',
@@ -347,6 +355,7 @@ const AG_GRID_LOCALE_EN = {
     areaGroup: 'Area',
     polarGroup: 'Polar',
     statisticalGroup: 'Statistical',
+    hierarchicalGroup: 'Hierarchical',
     specializedGroup: 'Specialized',
     combinationGroup: 'Combination',
     groupedColumnTooltip: 'Grouped',
@@ -372,6 +381,7 @@ const AG_GRID_LOCALE_EN = {
     rangeBarTooltip: 'Range Bar',
     rangeAreaTooltip: 'Range Area',
     boxPlotTooltip: 'Box Plot',
+    treemapTooltip: 'Treemap',
     waterfallTooltip: 'Waterfall',
     columnLineComboTooltip: 'Column & Line',
     areaColumnComboTooltip: 'Area & Column',
@@ -426,7 +436,8 @@ const AG_GRID_LOCALE_EN = {
     ariaHidden: 'hidden',
     ariaIndeterminate:'indeterminate',
     ariaInputEditor: 'Input Editor',
-    ariaMenuColumn: 'Press CTRL ENTER to open column menu',
+    ariaMenuColumn: 'Press ALT DOWN to open column menu',
+    ariaFilterColumn: 'Press CTRL ENTER to open filter',
     ariaRowDeselect: 'Press SPACE to deselect this row',
     ariaRowSelectAll: 'Press Space to toggle all rows selection',
     ariaRowToggleSelection: 'Press Space to toggle row selection',
@@ -454,6 +465,7 @@ const AG_GRID_LOCALE_EN = {
 
     // ARIA Labels for Dialogs
     ariaLabelColumnMenu: 'Column Menu',
+    ariaLabelColumnFilter: 'Column Filter',
     ariaLabelCellEditor: 'Cell Editor',
     ariaLabelDialog: 'Dialog',
     ariaLabelSelectField: 'Select Field',

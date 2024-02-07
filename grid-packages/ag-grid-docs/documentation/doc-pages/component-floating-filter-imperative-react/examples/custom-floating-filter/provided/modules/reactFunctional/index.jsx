@@ -24,9 +24,9 @@ const GridExample = () => {
             suppressMenu: true,
             floatingFilterComponent: NumberFloatingFilterComponent,
             floatingFilterComponentParams: {
-                suppressFilterButton: true,
                 color: 'gold',
             },
+            suppressFloatingFilterButton: true,
         },
         {
             field: 'silver',
@@ -34,9 +34,9 @@ const GridExample = () => {
             suppressMenu: true,
             floatingFilterComponent: NumberFloatingFilterComponent,
             floatingFilterComponentParams: {
-                suppressFilterButton: true,
                 color: 'silver',
             },
+            suppressFloatingFilterButton: true,
         },
         {
             field: 'bronze',
@@ -44,9 +44,9 @@ const GridExample = () => {
             suppressMenu: true,
             floatingFilterComponent: NumberFloatingFilterComponent,
             floatingFilterComponentParams: {
-                suppressFilterButton: true,
                 color: '#CD7F32',
             },
+            suppressFloatingFilterButton: true,
         },
         {
             field: 'total',
@@ -54,9 +54,9 @@ const GridExample = () => {
             suppressMenu: true,
             floatingFilterComponent: NumberFloatingFilterComponent,
             floatingFilterComponentParams: {
-                suppressFilterButton: true,
                 color: 'unset',
             },
+            suppressFloatingFilterButton: true,
         },
     ]);
     const defaultColDef = useMemo(() => {

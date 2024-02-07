@@ -9,7 +9,7 @@ const columnDefs: ColGroupDef[] = [
         headerName: 'Name',
         field: 'athlete',
         minWidth: 200,
-        columnsMenuParams: {
+        columnChooserParams: {
           // hides the Column Filter section
           suppressColumnFilter: true,
 
@@ -23,7 +23,7 @@ const columnDefs: ColGroupDef[] = [
       {
         field: 'age',
         minWidth: 200,
-        columnsMenuParams: {
+        columnChooserParams: {
           // contracts all column groups
           contractColumnSelection: true,
         },
@@ -43,12 +43,12 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
-    menuTabs: ['columnsMenuTab'],
-    columnsMenuParams: {
+    columnChooserParams: {
       // suppresses updating the layout of columns as they are rearranged in the grid
       suppressSyncLayoutWithGrid: true,
     },
   },
+  columnMenu: 'new',
 }
 
 // setup the grid after the page has finished loading

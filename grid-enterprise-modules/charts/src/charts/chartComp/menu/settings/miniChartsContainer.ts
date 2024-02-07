@@ -39,6 +39,7 @@ import {
     MiniStackedArea,
     MiniStackedBar,
     MiniStackedColumn,
+    MiniTreemap,
 } from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
 
 // import {enterprise} from "../../../../main";
@@ -71,6 +72,10 @@ const miniChartMapping = {
     statisticalGroup: {
         enterprise: true,
         chartTypes: {boxPlot: MiniBoxPlot, histogram: MiniHistogram, rangeBar: MiniRangeBar, rangeArea: MiniRangeArea}
+    },
+    hierarchicalGroup: {
+        enterprise: true,
+        chartTypes: {treemap: MiniTreemap}
     },
     specializedGroup: {enterprise: true, chartTypes: {waterfall: MiniWaterfall}},
     combinationGroup: {

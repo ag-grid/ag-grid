@@ -15,8 +15,8 @@ const columnDefs: ColDef[] = [
     floatingFilterComponent: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 7,
-      suppressFilterButton: true,
     },
+    suppressFloatingFilterButton: true,
     suppressMenu: false,
   },
   {
@@ -26,8 +26,8 @@ const columnDefs: ColDef[] = [
     floatingFilterComponent: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 5,
-      suppressFilterButton: true,
     },
+    suppressFloatingFilterButton: true,
     suppressMenu: false,
   },
   {
@@ -37,8 +37,8 @@ const columnDefs: ColDef[] = [
     floatingFilterComponent: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 10,
-      suppressFilterButton: true,
     },
+    suppressFloatingFilterButton: true,
     suppressMenu: false,
   },
 ]

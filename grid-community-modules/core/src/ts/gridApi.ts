@@ -5,7 +5,7 @@ import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/con
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { CellPosition } from "./entities/cellPositionUtils";
-import { ColDef, ColGroupDef, HeaderLocation, IAggFunc } from "./entities/colDef";
+import { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from "./entities/colDef";
 import { Column, ColumnPinnedType } from "./entities/column";
 import {
     ChartRef,
@@ -68,7 +68,6 @@ import {
 import { ClientSideRowModelStep, IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
-import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { IDatasource } from "./interfaces/iDatasource";
 import {
@@ -80,7 +79,6 @@ import {
 import { FilterModel, IFilter } from "./interfaces/iFilter";
 import { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
-import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
 import { IRowModel, RowModelType } from "./interfaces/iRowModel";
 import { IServerSideDatasource } from "./interfaces/iServerSideDatasource";
@@ -139,6 +137,7 @@ import { ApiEventService } from "./misc/apiEventService";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 import { WithoutGridCommon } from "./interfaces/iCommon";
+import { MenuService } from "./misc/menuService";
 
 export interface DetailGridInfo {
     /**
@@ -193,8 +192,7 @@ export class GridApi<TData = any> {
     @Optional('rangeService') private rangeService: IRangeService;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
-    @Autowired('menuFactory') private menuFactory: IMenuFactory;
-    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
+    @Autowired('menuService') private menuService: MenuService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('statusBarService') private statusBarService: IStatusBarService;
@@ -1288,38 +1286,75 @@ export class GridApi<TData = any> {
         this.assertClipboard('pasteFromClipboard', () => this.clipboardService.pasteFromClipboard());
     }
 
-    /** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */
+    /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
         // use grid column so works with pivot mode
-        const column = this.columnModel.getGridColumn(colKey);
-        this.menuFactory.showMenuAfterButtonClick(column, buttonElement, 'columnMenu');
+        const column = this.columnModel.getGridColumn(colKey)!;
+        this.menuService.showColumnMenu({
+            column,
+            buttonElement,
+            positionBy: 'button'
+        });
     }
 
-    /** Shows the column menu after and positions it relative to the mouse event. Use in conjunction with your own header template. */
+    /** @deprecated v31.1 Use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere. */
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
         // use grid column so works with pivot mode
         let column = this.columnModel.getGridColumn(colKey);
-
         if (!column) {
             column = this.columnModel.getPrimaryColumn(colKey);
         }
-
         if (!column) {
             console.error(`AG Grid: column '${colKey}' not found`);
             return;
         }
+        this.menuService.showColumnMenu({
+            column,
+            mouseEvent,
+            positionBy: 'mouse'
+        });
+    }
 
-        this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
+    /** Show the column chooser. */
+    public showColumnChooser(params?: ColumnChooserParams): void {
+        this.menuService.showColumnChooser({ chooserParams: params });
+    }
+
+    /** Show the filter for the provided column. */
+    public showColumnFilter(colKey: string | Column): void {
+        const column = this.columnModel.getGridColumn(colKey);
+        if (!column) {
+            console.error(`AG Grid: column '${colKey}' not found`);
+            return;
+        }
+        this.menuService.showFilterMenu({
+            column,
+            containerType: 'columnFilter',
+            positionBy: 'auto'
+        });
+    }
+
+    /** Show the column menu for the provided column. */
+    public showColumnMenu(colKey: string | Column): void {
+        const column = this.columnModel.getGridColumn(colKey);
+        if (!column) {
+            console.error(`AG Grid: column '${colKey}' not found`);
+            return;
+        }
+        this.menuService.showColumnMenu({
+            column,
+            positionBy: 'auto'
+        });
     }
 
     /** Hides any visible context menu or column menu. */
     public hidePopupMenu(): void {
-        // hide the context menu if in enterprise
-        if (this.contextMenuFactory) {
-            this.contextMenuFactory.hideActiveMenu();
-        }
-        // and hide the column menu always
-        this.menuFactory.hideActiveMenu();
+        this.menuService.hidePopupMenu();
+    }
+
+    /** Hide the column chooser if visible. */
+    public hideColumnChooser(): void {
+        this.menuService.hideColumnChooser();
     }
 
     /** Navigates the grid focus to the next cell, as if tabbing. */

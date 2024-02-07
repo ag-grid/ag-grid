@@ -9,9 +9,9 @@ const columnDefs: ColDef[] = [
     suppressMenu: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
       color: 'gold',
     },
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'silver',
@@ -19,9 +19,9 @@ const columnDefs: ColDef[] = [
     suppressMenu: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
       color: 'silver',
     },
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'bronze',
@@ -29,9 +29,9 @@ const columnDefs: ColDef[] = [
     suppressMenu: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
       color: '#CD7F32',
     },
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'total',
@@ -39,9 +39,9 @@ const columnDefs: ColDef[] = [
     suppressMenu: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
       color: 'unset',
     },
+    suppressFloatingFilterButton: true,
   },
 ]
 
