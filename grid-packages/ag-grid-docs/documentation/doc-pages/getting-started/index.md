@@ -661,6 +661,50 @@ HTML element of the grid.
 
 </framework-specific-section>
 
+<framework-specific-section frameworks="angular">
+
+<snippet transform={false} language="jsx">
+|import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
+| // ...
+|  template: `&lt;div style="height: 100%; box-sizing: border-box;">
+|    &lt;ag-grid-angular
+|      // ...
+|      [class]="themeClass"
+|    >&lt;/ag-grid-angular>
+|  &lt;/div>`,
+| // ...
+| public themeClass: string = "ag-theme-quartz";
+</snippet>
+
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+
+<snippet transform={false} language="jsx">
+|import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
+|
+|const VueExample = {
+|  template: `
+|        &lt;div style="height: 100%">
+|            &lt;div style="height: 100%; box-sizing: border-box;">
+|                &lt;ag-grid-vue
+|                // ...
+|                :class="themeClass">&lt;/ag-grid-vue>
+|            &lt;/div>
+|        &lt;/div>
+|    `,
+|// ...
+|  data: function () {
+|    return {
+|      // ...
+|      themeClass: "ag-theme-quartz",
+|    };
+|  },
+| // ...
+</snippet>
+
+</framework-specific-section>
+
 <div style="display: flex; margin-bottom: 10px;">
     <image-caption
         width="calc(50% - 48px)"
@@ -693,6 +737,52 @@ HTML element of the grid.
 |&lt;div id="myGrid" class="ag-theme-alpine" style="height: 500px">&lt;/div>
 </snippet>
 </framework-specific-section>
+
+
+<framework-specific-section frameworks="angular">
+
+<snippet transform={false} language="jsx">
+|import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme
+| // ...
+|  template: `&lt;div style="height: 100%; box-sizing: border-box;">
+|    &lt;ag-grid-angular
+|      // ...
+|      [class]="themeClass"
+|    >&lt;/ag-grid-angular>
+|  &lt;/div>`,
+| // ...
+| public themeClass: string = "ag-theme-alpine";
+</snippet>
+
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+
+<snippet transform={false} language="jsx">
+|import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme
+|
+|const VueExample = {
+|  template: `
+|        &lt;div style="height: 100%">
+|            &lt;div style="height: 100%; box-sizing: border-box;">
+|                &lt;ag-grid-vue
+|                // ...
+|                :class="themeClass">&lt;/ag-grid-vue>
+|            &lt;/div>
+|        &lt;/div>
+|    `,
+|// ...
+|  data: function () {
+|    return {
+|      // ...
+|      themeClass: "ag-theme-alpine",
+|    };
+|  },
+| // ...
+</snippet>
+
+</framework-specific-section>
+
 
 <div style="display: flex; margin-bottom: 10px;">
     <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeAlpine.png" alt="AG Theme Quartz" toggleDarkMode="false"></image-caption>
