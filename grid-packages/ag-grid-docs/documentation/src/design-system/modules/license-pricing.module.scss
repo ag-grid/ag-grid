@@ -341,19 +341,15 @@
 }
 
 .contactSales {
-    margin-bottom: $spacing-size-20;
     text-align: center;
 
     p {
-        max-width: 740px;
-        margin-right: auto;
-        margin-bottom: $spacing-size-2;
-        margin-left: auto;
+        max-width: 800px;
+        margin: $spacing-size-2 auto $spacing-size-10;
     }
 
-    a {
-        font-size: var(--text-fs-lg);
-        display: inline-block;
+    p a {
+        text-decoration: underline;
     }
 }
 

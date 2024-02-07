@@ -140,14 +140,20 @@ export const LicensePricing = () => {
                 </div>
 
                 <div className={styles.contactSales}>
-                    <p className="text-secondary">
-                        For any enquires about bulk pricing, questions on which license is right for you, or any other
-                        license related questions please contact our friendly sales team.{' '}
+                    <h3 className='text-2xl'>Need help?</h3>
+
+                    <p className="text-secondary text-lg">
+                        Email{' '}
+                        <InfoEmailLink emailSubject="AG Grid Developer license query" trackingType="headerLink">
+                            info@ag-grid.com
+                        </InfoEmailLink>
+                        {' '} and start a conversation. We can provide quotes, give bulk pricing, and
+                        answer any sales or contract-related questions you may have.
                     </p>
 
                     <InfoEmailLink
                         emailSubject="AG Grid Developer license query"
-                        className="text-xl"
+                        className="button"
                         trackingType="footer"
                     >
                         info@ag-grid.com
