@@ -11,7 +11,7 @@ export interface ChartGroupsDef {
     // enterprise chart groups
     polarGroup?: ('radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar')[],
     statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
-    hierarchicalGroup?: ('treemap')[],
+    hierarchicalGroup?: ('treemap' | 'sunburst')[],
     specializedGroup?: ('waterfall')[],
 }
 
@@ -57,6 +57,7 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     ],
     hierarchicalGroup: [
         'treemap',
+        'sunburst',
     ],
     specializedGroup: [
         'waterfall',
@@ -137,6 +138,7 @@ export type ChartType =
     | 'rangeArea'
     | 'boxPlot'
     | 'treemap'
+    | 'sunburst'
     | 'heatmap'
     | 'waterfall'
     | 'columnLineCombo'

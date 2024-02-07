@@ -12,7 +12,6 @@ export type ChartSeriesType =
     'polar' |
     'pie' |
     'hierarchy' |
-    'treemap' |
     'bubble' |
     'radial-column' |
     'radial-bar' |
@@ -23,6 +22,7 @@ export type ChartSeriesType =
     'range-area' |
     'box-plot' |
     'treemap' |
+    'sunburst' |
     'waterfall' |
     'common';
 
@@ -50,6 +50,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'range-area',
     'box-plot',
     'treemap',
+    'sunburst',
     'waterfall',
 ];
 
@@ -89,6 +90,7 @@ export function isRadial(chartType: ChartType): boolean {
 export function isHierarchical(chartType: ChartType): boolean {
     switch (chartType) {
         case 'treemap':
+        case 'sunburst':
             return true;
         default:
             return false;
@@ -137,6 +139,8 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
             return 'box-plot';
         case 'treemap':
             return 'treemap';
+        case 'sunburst':
+            return 'sunburst';
         case 'pie':
         case 'doughnut':
             return 'pie';
