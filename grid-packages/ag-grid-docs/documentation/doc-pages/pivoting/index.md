@@ -323,7 +323,7 @@ will cause the value column labels to be skipped, instead using the pivot keys f
 The example below demonstrates hiding repeated column labels. Note the following:
 
 - The `removePivotHeaderRowWhenSingleValueColumn` grid option is enabled.
-- As <b>Gold</b> is the only value column, the `'sum(Gold)'` columns labels are hidden.
+- As **Gold** is the only value column, the `'sum(Gold)'` columns labels are hidden.
 - If more than one value column is used, the option is disabled and the row showing all the value column labels is displayed.
 
 <grid-example title='Hiding Repeated Column Labels' name='hidden-single-value-column-header' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>

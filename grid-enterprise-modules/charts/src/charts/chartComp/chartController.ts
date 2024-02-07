@@ -21,7 +21,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
-import { _Theme, AgChartThemePalette } from "ag-charts-community";
+import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
 import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
 import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
@@ -88,7 +88,6 @@ export class ChartController extends BeanStub {
             seriesChartTypes: undefined,
             suppressChartRanges: false,
             crossFiltering: false,
-            enterprise: this.model.enterprise
         }
 
         let chartModelParams: ChartModelParams = { ...common };
@@ -153,16 +152,16 @@ export class ChartController extends BeanStub {
         const selectedCols = this.getSelectedValueColState();
         const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
         const data = this.getChartData();
-        const selectedDimension = this.getSelectedDimension();
+        const selectedDimensions = this.getSelectedDimensions();
 
         return {
             data,
             grouping: this.isGrouping(),
-            category: {
+            categories: selectedDimensions.map((selectedDimension) => ({
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName!,
                 chartDataType: this.model.getChartDataType(selectedDimension.colId)
-            },
+            })),
             fields,
             chartId: this.getChartId(),
             getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }), //this.params.crossFilteringContext, //TODO
@@ -281,8 +280,8 @@ export class ChartController extends BeanStub {
         return this.getValueColState().filter(cs => cs.selected);
     }
 
-    public getSelectedDimension(): ColState {
-        return this.model.getSelectedDimension();
+    public getSelectedDimensions(): ColState[] {
+        return this.model.getSelectedDimensions();
     }
 
     private displayNameMapper(col: ColState): ColState {
@@ -404,7 +403,7 @@ export class ChartController extends BeanStub {
         return this.isComboChart() ? supportedComboSeriesTypes : [getSeriesType(this.getChartType())];
     }
 
-    public isEnterprise = () => this.model.enterprise;
+    public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
 
     private getCellRanges(): CellRange[] {
         return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(r => r);

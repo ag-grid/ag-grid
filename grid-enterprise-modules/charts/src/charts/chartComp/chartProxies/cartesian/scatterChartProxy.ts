@@ -29,9 +29,10 @@ export class ScatterChartProxy extends CartesianChartProxy {
     }
 
     public getSeries(params: UpdateParams): (AgScatterSeriesOptions | AgBubbleSeriesOptions)[] {
+        const [category] = params.categories;
         const paired = this.isPaired();
         const seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);
-        const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
+        const labelFieldDefinition = category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : category;
 
         const series = seriesDefinitions.map(seriesDefinition => {
             if (seriesDefinition?.sizeField) {

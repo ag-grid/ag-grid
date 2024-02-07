@@ -44,11 +44,11 @@ export interface FieldDefinition {
 export interface UpdateParams {
     data: any[];
     grouping: boolean;
-    category: {
+    categories: {
         id: string;
         name: string;
         chartDataType?: string
-    };
+    }[];
     fields: FieldDefinition[];
     chartId?: string;
     getCrossFilteringContext: () => CrossFilteringContext,

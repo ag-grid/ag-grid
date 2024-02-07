@@ -6,4 +6,4 @@ export { Downloader } from './csvExport/downloader';
 export { GridSerializer, RowType } from './csvExport/gridSerializer';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './csvExport/interfaces';
 export { XmlFactory } from './csvExport/xmlFactory';
-export { ZipContainer } from './csvExport/zipContainer';
+export { ZipContainer } from './csvExport/zipContainer/zipContainer';

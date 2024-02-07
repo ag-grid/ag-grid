@@ -6,8 +6,12 @@ const agGridVersion = "^" + require('../../grid-community-modules/core/package.j
 const agGridEnterpriseVersion = "^" + require('../../grid-enterprise-modules/core/package.json').version;
 const agGridReactVersion = "^" + require('../../grid-community-modules/react/package.json').version;
 const agGridAngularVersion = "^" + require('../../grid-community-modules/angular/package.json').version;
-
 const getGenericInterface = require('./documentation/shared-types/generators')
+
+// whether integrated charts includes ag-charts-enterprise or just ag-charts-community
+// also need to update grid-packages/ag-grid-docs/documentation/src/utils/consts.js if this value is changed
+// and grid-packages/ag-grid-docs/example-generator-documentation.js
+const integratedChartsUsesChartsEnterprise = true;
 
 window.Date = Date;
 global.window = window;
@@ -663,7 +667,7 @@ function addPackageJson(type, framework, importType, basePath) {
                 addDependency('ag-grid-react', agGridReactVersion);
             }
             addDependency('ag-grid-community', agGridVersion);
-            addDependency('ag-grid-enterprise', agGridEnterpriseVersion);
+            addDependency(`ag-grid-enterprise${integratedChartsUsesChartsEnterprise ? '-charts-enterprise' : ''}`, agGridEnterpriseVersion);
         }
     }
 

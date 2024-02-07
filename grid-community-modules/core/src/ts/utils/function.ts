@@ -134,8 +134,4 @@ export function compose(...fns: Function[]) {
     return (arg: any) => fns.reduce((composed, f) => f(composed), arg);
 }
 
-export function callIfPresent(func: Function): void {
-    if (func) { func(); }
-}
-
 export const noop = () => { return; };

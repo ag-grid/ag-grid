@@ -119,6 +119,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     getLocaleText: true,
     getRowId: true,
     reactiveCustomComponents: true,
+    columnMenu: true,
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
@@ -137,7 +138,7 @@ export class PropertyKeys {
     public static STRING_PROPERTIES: KeysOfType<string>[] = [
         'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate', 'gridId', 'quickFilterText', 'rowModelType', 'editType', 'domLayout', 
         'clipboardDelimiter', 'rowGroupPanelShow', 'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
-        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator',
+        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator', 'columnMenu',
     ];
 
     public static OBJECT_PROPERTIES: KeysLike<object | HTMLElement>[] = [

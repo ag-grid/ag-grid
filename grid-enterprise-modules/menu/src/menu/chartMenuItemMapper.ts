@@ -260,6 +260,8 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
             polarGroup: null,
             // Statistical charts do not currently support pivot mode
             statisticalGroup: null,
+            // Hierarchical charts do not currently support pivot mode
+            hierarchicalGroup: null,
             // Specialized charts do not currently support pivot mode
             specializedGroup: null,
         }
@@ -274,9 +276,9 @@ export type RangeMenuOptionName =
     'rangeLineChart' |
     'rangeXYChart' | 'rangeScatter' | 'rangeBubble' |
     'rangeAreaChart' | 'rangeArea' | 'rangeStackedArea' | 'rangeNormalizedArea' |
-    'rangeHistogramChart' |
-    'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' |
-    'rangeStatisticalChart' | 'rangeRangeBar' | 'rangeRangeArea' | 'rangeBoxPlot' |
+    'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' | 'rangeRadialColumn' | 'rangeRadialBar' |
+    'rangeStatisticalChart' | 'rangeBoxPlot' | 'rangeHistogramChart' |'rangeRangeBar' | 'rangeRangeArea' |
+    'rangeHierarchicalChart' | 'rangeTreemap' |
     'rangeSpecializedChart' | 'rangeWaterfall' |
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
@@ -351,6 +353,8 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                             getMenuItem('radarLine', 'Radar Line&lrm;', 'radarLine', 'rangeRadarLine'),
                             getMenuItem('radarArea', 'Radar Area&lrm;', 'radarArea', 'rangeRadarArea'),
                             getMenuItem('nightingale', 'Nightingale&lrm;', 'nightingale', 'rangeNightingale'),
+                            getMenuItem('radialColumn', 'Radial Column&lrm;', 'radialColumn', 'rangeRadialColumn'),
+                            getMenuItem('radialBar', 'Radial Bar&lrm;', 'radialBar', 'rangeRadialBar'),
                         ],
                     _key: 'rangePolarChart',
                     _enterprise: true,
@@ -365,6 +369,15 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                             getMenuItem('rangeArea', 'Range Area&lrm;', 'rangeArea', 'rangeRangeArea'),
                         ],
                     _key: 'rangeStatisticalChart',
+                    _enterprise: true,
+                },
+                {
+                    name: localeTextFunc('hierarchicalChart', 'Hierarchical'),
+                    subMenu:
+                        [
+                            getMenuItem('treemap', 'Treemap&lrm;', 'treemap', 'rangeTreemap'),
+                        ],
+                    _key: 'rangeHierarchicalChart',
                     _enterprise: true,
                 },
                 {
@@ -428,6 +441,8 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 radarLine: 'rangeRadarLine',
                 radarArea: 'rangeRadarArea',
                 nightingale: 'rangeNightingale',
+                radialColumn: 'rangeRadialColumn',
+                radialBar: 'rangeRadialBar',
             },
             statisticalGroup: {
                 _key: 'rangeStatisticalChart',
@@ -435,6 +450,10 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                 histogram: 'rangeHistogramChart',
                 rangeBar: 'rangeRangeBar',
                 rangeArea: 'rangeRangeArea',
+            },
+            hierarchicalGroup: {
+                _key: 'rangeHierarchicalChart',
+                treemap: 'rangeTreemap',
             },
             specializedGroup: {
                 _key: 'rangeSpecializedChart',

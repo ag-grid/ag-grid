@@ -26,6 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       menuIcon: 'fa-bars',
       template: `<div class="ag-cell-label-container" role="presentation">
                     <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>
+                    <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button"></span>
                     <div ref="eLabel" class="ag-header-cell-label" role="presentation">
                         <span ref="eSortOrder" class="ag-header-icon ag-sort-order ag-hidden"></span>
                         <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon ag-hidden"></span>

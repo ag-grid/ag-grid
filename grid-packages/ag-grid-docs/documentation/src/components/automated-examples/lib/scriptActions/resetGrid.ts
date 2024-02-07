@@ -27,7 +27,7 @@ export function resetGrid({ gridApi, scrollRow, scrollColumn }: Params) {
     // Send escape to clear context menu
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
 
-    const rowCount = gridApi?.getModel().getRowCount() || 0;
+    const rowCount = gridApi?.getDisplayedRowCount() || 0;
     if (rowCount > 0) {
         if (scrollColumn !== undefined) {
             const allColumns = gridApi!.getColumns();

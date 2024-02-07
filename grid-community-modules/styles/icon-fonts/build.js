@@ -65,6 +65,7 @@ const nameToCodepoint = {
     "down": 0xf135,
     "plus": 0xf136,
     "minus": 0xf137,
+    "menu-alt": 0xf138,
 }
 
 

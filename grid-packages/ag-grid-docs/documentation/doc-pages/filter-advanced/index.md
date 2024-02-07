@@ -113,7 +113,7 @@ The available options are as follows:
 | >                       | `greaterThan`         | `number`, `date`, `dateString`                              |
 | >=                      | `greaterThanOrEqual`  | `number`, `date`, `dateString`                              |
 | <                       | `lessThan`            | `number`, `date`, `dateString`                              |
-| <=                      | `lessThanOrEqual`     | `number`, `date`, `dateString`                              |
+| \<=                      | `lessThanOrEqual`     | `number`, `date`, `dateString`                              |
 | is true                 | `true`                | `boolean`                                                   |
 | is false                | `false`               | `boolean`                                                   |
 

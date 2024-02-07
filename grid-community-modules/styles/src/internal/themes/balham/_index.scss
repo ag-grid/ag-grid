@@ -143,4 +143,8 @@
         border: 1px solid var(--ag-secondary-border-color);
         border-right: none;
     }
+
+    .ag-filter-active .ag-icon-filter {
+        color: var(--ag-balham-active-color);
+    }
 }

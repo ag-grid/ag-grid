@@ -65,7 +65,7 @@ export class SeriesPanel extends Component {
         'seriesItems': () => this.initSeriesItemsPanel(),
     };
 
-    private seriesWidgetMappings: {[name: string]: string[]} = {
+    private seriesWidgetMappings: { [K in ChartSeriesType]?: string[] } = {
         'column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
@@ -74,12 +74,15 @@ export class SeriesPanel extends Component {
         'bubble': ['tooltips', 'markers', 'labels'],
         'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
         'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
         'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
-        'range-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
+        'treemap': ['tooltips'],
         'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
@@ -132,7 +135,7 @@ export class SeriesPanel extends Component {
                 this.initSeriesSelect();
             }
 
-            this.seriesWidgetMappings[this.seriesType].forEach((w) => this.widgetFuncs[w]());
+            (this.seriesWidgetMappings[this.seriesType] ?? []).forEach((w) => this.widgetFuncs[w]());
         })
         .catch(e => console.error(`AG Grid - chart rendering failed`, e));
 
@@ -396,11 +399,14 @@ export class SeriesPanel extends Component {
                 ['line', {value: 'line', text: this.translate('line', 'Line')}],
                 ['scatter', {value: 'scatter', text: this.translate('scatter', 'Scatter')}],
                 ['histogram', {value: 'histogram', text: this.translate('histogram', 'Histogram')}],
+                ['radial-column', {value: 'radial-column', text: this.translate('radialColumn', 'Radial Column')}],
+                ['radial-bar', {value: 'radial-bar', text: this.translate('radialBar', 'Radial Bar')}],
                 ['radar-line', {value: 'radar-line', text: this.translate('radarLine', 'Radar Line')}],
                 ['radar-area', {value: 'radar-area', text: this.translate('radarArea', 'Radar Area')}],
                 ['nightingale', {value: 'nightingale', text: this.translate('nightingale', 'Nightingale')}],
                 ['range-bar', {value: 'range-bar', text: this.translate('rangeBar', 'Range Bar')}],
                 ['range-area', {value: 'range-area', text: this.translate('rangeArea', 'Range Area')}],
+                ['treemap', {value: 'treemap', text: this.translate('treemap', 'Treemap')}],
                 ['waterfall', {value: 'waterfall', text: this.translate('waterfall', 'Waterfall')}],
                 ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],

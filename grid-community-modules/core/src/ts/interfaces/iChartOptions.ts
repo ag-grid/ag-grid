@@ -9,8 +9,9 @@ export interface ChartGroupsDef {
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[]
 
     // enterprise chart groups
-    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale')[],
+    polarGroup?: ('radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar')[],
     statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
+    hierarchicalGroup?: ('treemap')[],
     specializedGroup?: ('waterfall')[],
 }
 
@@ -18,7 +19,7 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     columnGroup: [
         'column',
         'stackedColumn',
-        'normalizedColumn'
+        'normalizedColumn',
     ],
     barGroup: [
         'bar',
@@ -27,24 +28,26 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     ],
     pieGroup: [
         'pie',
-        'doughnut'
+        'doughnut',
     ],
     lineGroup: [
-        'line'
+        'line',
     ],
     scatterGroup: [
         'scatter',
-        'bubble'
+        'bubble',
     ],
     areaGroup: [
         'area',
         'stackedArea',
-        'normalizedArea'
+        'normalizedArea',
     ],
     polarGroup: [
         'radarLine',
         'radarArea',
-        'nightingale'
+        'nightingale',
+        'radialColumn',
+        'radialBar',
     ],
     statisticalGroup: [
         'boxPlot',
@@ -52,13 +55,16 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
         'rangeBar',
         'rangeArea',
     ],
+    hierarchicalGroup: [
+        'treemap',
+    ],
     specializedGroup: [
         'waterfall',
     ],
     combinationGroup: [
         'columnLineCombo',
         'areaColumnCombo',
-        'customCombo'
+        'customCombo',
     ]
 }
 
@@ -124,8 +130,8 @@ export type ChartType =
     | 'radarLine'
     | 'radarArea'
     | 'nightingale'
-    | 'radialBar'
     | 'radialColumn'
+    | 'radialBar'
     | 'sunburst'
     | 'rangeBar'
     | 'rangeArea'

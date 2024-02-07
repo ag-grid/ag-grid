@@ -21,8 +21,8 @@ export class CenterWidthFeature extends BeanStub {
         const listener = this.setWidth.bind(this);
         this.addManagedPropertyListener('domLayout', listener);
 
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_LEFT_PINNED_WIDTH_CHANGED, listener);
 
         if (this.addSpacer) {

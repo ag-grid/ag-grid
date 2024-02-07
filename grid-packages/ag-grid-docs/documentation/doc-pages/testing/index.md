@@ -2,10 +2,7 @@
 title: "Testing AG Grid"
 ---
 
-<framework-specific-section frameworks="javascript">
-We will walk through how you can use `Jest' for unit testing, and `Protractor` and `Jasmine` to do Unit & End to End (e2e)
-testing with AG Grid in this section.
-</framework-specific-section>
+Here we give some hints on testing AG Grid as part of your application.
 
 <framework-specific-section frameworks="javascript">
 | ## Testing with Jest 
@@ -32,41 +29,60 @@ testing with AG Grid in this section.
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-| ## Unit Testing with Jasmine - Waiting for the API
+| ## Testing with DOM Testing Library
 |
-| In order to unit test your application you need to ensure that the Grid API is available - the
-| best way to do this is to set a flag when the Grid's `gridReady` event fires, but this requires an application code change.
-|
-| An alternative is to use a utility function that polls until the API has been set on the `GridOptions`:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-<snippet transform={false}>
-| function waitForGridApiToBeAvailable(gridOptions, success) {
-|     // recursive without a terminating condition,
-|     // but jasmines default test timeout will kill it (jasmine.DEFAULT_TIMEOUT_INTERVAL)
-|     if (gridOptions.api) {
-|         success()
-|     } else {
-|         setTimeout(function () {
-|           waitForGridApiToBeAvailable(gridOptions, success);
-|         }, 500);
-|     }
-| }
-</snippet> 
+<p>In the following example we test a simple configuration of AG Grid with the <a href="https://testing-library.com/docs/dom-testing-library/intro/" target="_blank">DOM Testing Library</a>. </p>
 </framework-specific-section>
 
-<framework-specific-section frameworks="javascript">
-| Once the API is ready, we can then invoke Grid `API` methods:
-</framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 <snippet transform="{false}">
-| it('select all button selects all rows', () => {
-|     selectAllRows();  // selectAllRows is a global function created in the application code
-|     expect(gridOptionsUnderTest.api.getSelectedNodes().length).toEqual(3);
-| });
+|import { getByText } from '@testing-library/dom';
+|import '@testing-library/jest-dom';
+|
+|import { createGrid, GridOptions } from 'ag-grid-community';
+|
+|function createAgGrid() {
+|    const div = document.createElement('div');
+|
+|    const gridOptions: GridOptions = {
+|        columnDefs: [
+|            { headerName: 'Make', field: 'make' },
+|            { headerName: 'Model', field: 'model' },
+|            { field: 'price', valueFormatter: (params) => '$' + params.value.toLocaleString() },
+|        ],
+|        rowData: [
+|            { make: 'Toyota', model: 'Celica', price: 35000 },
+|            { make: 'Ford', model: 'Mondeo', price: 32000 },
+|            { make: 'Porsche', model: 'Boxster', price: 72000 },
+|        ],
+|    };
+|
+|    const api = createGrid(div, gridOptions);
+|
+|    return { div, api };
+|}
+|
+|test('examples of some things', async () => {
+|    const { div, api } = createAgGrid();
+|
+|    // Get a cell value
+|    expect(getByText(div, 'Ford')).toHaveTextContent('Ford');
+|
+|    // Test the value formatter by searching for the correct price string
+|    expect(getByText(div, '$72,000')).toBeDefined();
+|
+|    // Test via the api even though this is not a recommended approach
+|    expect(api.getDisplayedRowCount()).toBe(3);
+|});
 </snippet> 
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+<p>The test above can be found in the following <a href="https://github.com/ag-grid/ag-grid-dev">GitHub Repo</a>.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -75,24 +91,18 @@ testing with AG Grid in this section.
 | These recipes below are suggestions - there are many ways to do End to End testing, what we document
 | below is what we use here at AG Grid.
 |
-| We do not document how to use either `Protractor` and `Jasmine` in depth here - please see either the
 </framework-specific-section>
 
+
 <framework-specific-section frameworks="javascript">
+<p> We do not document how to use either `Protractor` and `Jasmine` in depth here - please see the documentation for either
 <a href="http://www.protractortest.org/#/" target="_blank">Protractor</a> or
-<a href="https://jasmine.github.io/" target="_blank">Jasmine</a> for information around either of these tools.
+<a href="https://jasmine.github.io/" target="_blank">Jasmine</a>.
+</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 | We only describe how these tools can be used to test AG Grid below.
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<note>
-| End to End testing can be fragile. If you change something trivial upstream it can have a big impact
-| on an End to End test, so we recommend using End to End tests in conjunction with unit tests. It's often
-| easier to find and fix a problem at the unit testing stage than it is in the end to end stage.
-</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -398,6 +408,7 @@ testing with AG Grid in this section.
 |     });
 </snippet>
 </framework-specific-section>
+
 
 <framework-specific-section frameworks="angular">
 | ### Using Jest with Angular (for example with an Nx/Angular project)
@@ -713,12 +724,6 @@ testing with AG Grid in this section.
 <p>All the tests above and more can be found in the following <a href="https://github.com/ag-grid/ag-grid-angular-cli-example/tree/latest/src/tests">GitHub Repo</a>.</p>
 </framework-specific-section>
 
-<framework-specific-section frameworks="angular">
-|## Next Up
-|
-|Continue to the next section to learn about [Testing Async](/testing-async/).
-</framework-specific-section>
-
 <framework-specific-section frameworks="react">
 | ## Testing with Jest 
 | 
@@ -916,7 +921,7 @@ testing with AG Grid in this section.
 <framework-specific-section frameworks="vue">
 | ## Waiting for the Grid to be Initialised
 |
-| Due to the asynchronous nature of React we cannot simply mount the Grid and assume it'll be ready
+| Due to the asynchronous nature of AG Grid we cannot simply mount the Grid and assume it'll be ready
 | for testing in the next step - we need to wait for the Grid to be ready before testing it.
 |
 | We can do this in one of two ways - wait for the `gridReady` event to be fired, or wait for the Grid API to be set.
@@ -963,6 +968,15 @@ testing with AG Grid in this section.
 | });
 </snippet>
 </framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+| ### Vue Testing Library
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<p>An alternative approach would be to use the <a href="https://testing-library.com/docs/vue-testing-library/intro" target="_blank">Vue Testing Library</a> to test AG Grid. This comes with built in support for handling asynchronous behaviour which you may find easier to work with.</p>
+</framework-specific-section>
+
 
 <framework-specific-section frameworks="vue">
 |
@@ -1128,4 +1142,14 @@ testing with AG Grid in this section.
 |   transformIgnorePatterns: ["/node_modules/(?!@ag-grid-community/vue)"],
 | }
 </snippet>
+</framework-specific-section>
+
+<h2> End to End (e2e) Testing with Playwright </h2>
+
+<p><a href="https://playwright.dev/" target="_blank">Playwright</a> is another popular e2e testing framework that can be used to test AG Grid applications. A few examples of how to use Playwright with AG Grid can be found in this <a href="https://github.com/ag-grid/ag-grid/tree/latest/grid-packages/ag-grid-dev/e2e" target="_blank">Github Repo</a>.</p>
+
+<framework-specific-section frameworks="angular">
+|## Next Up
+|
+|Continue to the next section to learn about [Testing Async](/testing-async/).
 </framework-specific-section>

@@ -1,7 +1,6 @@
 import { IFloatingFilterComp, IFloatingFilterParams } from "@ag-grid-community/core";
 
 export interface CustomParams {
-    suppressFilterButton: boolean;
     color: string
 }
 

@@ -773,7 +773,6 @@ const ExampleInner = ({darkMode}) => {
             // debug: true,
             // suppressMultiRangeSelection: true,
             rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
-            suppressMenuHide: isSmall,
             pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
             // suppressExpandablePivotGroups: true,
             // pivotColumnGroupTotals: 'before',
@@ -897,6 +896,7 @@ const ExampleInner = ({darkMode}) => {
             aggFuncs: {
                 zero: () => 0,
             },
+            columnMenu: 'new',
             getBusinessKeyForNode: (node) => (node.data ? node.data.name : ''),
             initialGroupOrderComparator: ({ nodeA, nodeB }) => {
                 if (nodeA.key < nodeB.key) {

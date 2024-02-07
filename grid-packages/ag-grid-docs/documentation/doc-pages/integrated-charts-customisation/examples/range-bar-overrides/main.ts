@@ -21,17 +21,14 @@ const gridOptions: GridOptions = {
   chartThemeOverrides: {
     'range-bar': {
       series: {
-        fillOpacity: 0.7,
-        strokeWidth: 2,
-        strokeOpacity: 0.7,
         label: {
           enabled: true,
-          placement: 'outside',
-          fontStyle: 'italic',
-          fontWeight: 'bold',
-          fontSize: 12,
-          fontFamily: 'Arial, sans-serif',
-          color: 'gray',
+          padding: 10,
+          fontSize: 10,
+          placement: 'inside',
+          formatter: ({ itemId, value }) => {
+            return `${value}${itemId === "low" ? "↓" : "↑"}`;
+          },
         },
         tooltip: {
           renderer: ({ yName, yLowKey, yHighKey, datum, color }) => ({

@@ -36,7 +36,7 @@ The default sparkline tooltip has the following template:
     </div>
 ```
 
-The tooltip will show the Y value of the hovered item in the __Content__ section of the tooltip, and the X value (if it exists) is displayed in the __Title__ section of the tooltip. Both of these sections are inline <span> elements.
+The tooltip will show the Y value of the hovered item in the __Content__ section of the tooltip, and the X value (if it exists) is displayed in the __Title__ section of the tooltip. Both of these sections are inline `<span>` elements.
 
 See the screenshots below for illustrations of these two cases.
 

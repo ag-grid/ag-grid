@@ -38,6 +38,7 @@ const ICONS = [
     'loading',
     'maximize',
     'menu',
+    'menu-alt',
     'minimize',
     'minus',
     'next',

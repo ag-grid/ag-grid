@@ -31,3 +31,13 @@ You can disable viewport zooming by setting the following tag at the top level p
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 ```
 
+## Column Menu Touch Configuration
+
+On non-touch devices, the column menu icon in the header is hidden by default (for the legacy column menu), and appears on mouseover. On touch devices, this mouseover behaviour is not possible. 
+
+The column menu can still be displayed via tap and hold on the column header as described above. However there is no visual indicator to the user that a menu exists. This can be resolved by setting the grid option `suppressMenuHide = true`. Note that when this is enabled, the default tap and hold behaviour will no longer apply, and the column menu icon must be tapped instead.
+
+This is demonstrated in the following example:
+
+<grid-example title='Column Menu' name='column-menu' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
+

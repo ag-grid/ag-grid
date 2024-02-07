@@ -12,7 +12,7 @@ When enabled, ranges can be selected in the following ways:
 
 - **Mouse Drag:** Click the mouse down on a cell and drag and release the mouse over another cell. A range will be created between the two cells and clear any existing ranges.
 
-- **Ctrl & Mouse Drag:** Holding <kbd>^ Ctrl</kbd> key while creating a range using mouse drag <b>outside an existing range</b> will create a new range selection and keep any existing ranges.
+- **Ctrl & Mouse Drag:** Holding <kbd>^ Ctrl</kbd> key while creating a range using mouse drag **outside an existing range** will create a new range selection and keep any existing ranges.
 
 - **Shift & Click:** Clicking on one cell to focus that cell, then holding down <kbd>⇧ Shift</kbd> while clicking another cell, will create a range between both cells.
 
@@ -24,7 +24,7 @@ When enabled, ranges can be selected in the following ways:
 
 It is possible to deselect part of existing ranges in the following ways:
 
-- **Ctrl & Mouse Drag:** Holding <kbd>^ Ctrl</kbd> and dragging a range starting <b>within an existing range</b> will cause any cells covered by the new range to be deselected.
+- **Ctrl & Mouse Drag:** Holding <kbd>^ Ctrl</kbd> and dragging a range starting **within an existing range** will cause any cells covered by the new range to be deselected.
 
 - **Ctrl & Click:**  Holding <kbd>^ Ctrl</kbd> and clicking a cell will deselect just that cell.
 

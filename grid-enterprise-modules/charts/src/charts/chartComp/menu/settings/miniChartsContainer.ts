@@ -30,6 +30,8 @@ import {
     MiniPie,
     MiniRadarArea,
     MiniRadarLine,
+    MiniRadialBar,
+    MiniRadialColumn,
     MiniRangeBar,
     MiniRangeArea,
     MiniWaterfall,
@@ -37,6 +39,7 @@ import {
     MiniStackedArea,
     MiniStackedBar,
     MiniStackedColumn,
+    MiniTreemap,
 } from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
 
 // import {enterprise} from "../../../../main";
@@ -64,11 +67,15 @@ const miniChartMapping = {
     },
     polarGroup: {
         enterprise: true,
-        chartTypes: {radarLine: MiniRadarLine, radarArea: MiniRadarArea, nightingale: MiniNightingale}
+        chartTypes: {radarLine: MiniRadarLine, radarArea: MiniRadarArea, nightingale: MiniNightingale, radialColumn: MiniRadialColumn, radialBar: MiniRadialBar}
     },
     statisticalGroup: {
         enterprise: true,
         chartTypes: {boxPlot: MiniBoxPlot, histogram: MiniHistogram, rangeBar: MiniRangeBar, rangeArea: MiniRangeArea}
+    },
+    hierarchicalGroup: {
+        enterprise: true,
+        chartTypes: {treemap: MiniTreemap}
     },
     specializedGroup: {enterprise: true, chartTypes: {waterfall: MiniWaterfall}},
     combinationGroup: {

@@ -7,7 +7,7 @@ The grid comes with some cell editors provided out of the box. These cell editor
 - [Text Cell Editor](/provided-cell-editors-text/)
 - [Large Text Cell Editor](/provided-cell-editors-large-text/)
 - [Select Cell Editor](/provided-cell-editors-select/)
-- [Rich Select Cell Editor](/provided-cell-editors-rich-select/) <enterprise-icon>
+- [Rich Select Cell Editor](/provided-cell-editors-rich-select/) <enterprise-icon />
 
 There are also some additional cell editors that are generally used with [Cell Data Types](/cell-data-types/):
 

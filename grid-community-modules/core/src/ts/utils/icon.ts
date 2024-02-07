@@ -76,6 +76,7 @@ export const iconNameClassMap: { [key: string]: string; } = {
     groupLoading: 'loading',
     // button to launch enterprise column menu
     menu: 'menu',
+    menuAlt: 'menu-alt',
     // filter tool panel tab
     filter: 'filter',
     // column tool panel tab

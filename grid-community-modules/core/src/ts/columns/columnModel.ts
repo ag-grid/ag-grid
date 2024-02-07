@@ -26,7 +26,8 @@ import {
     Events,
     GridColumnsChangedEvent,
     NewColumnsLoadedEvent,
-    VirtualColumnsChangedEvent
+    VirtualColumnsChangedEvent,
+    ColumnContainerWidthChanged
 } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
@@ -1710,6 +1711,14 @@ export class ColumnModel extends BeanStub {
             this.bodyWidth = newBodyWidth;
             this.leftWidth = newLeftWidth;
             this.rightWidth = newRightWidth;
+
+            // this event is fired to allow the grid viewport to resize before the
+            // scrollbar tries to update its visibility.
+            const evt: WithoutGridCommon<ColumnContainerWidthChanged> = {
+                type: Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED,
+            };
+            this.eventService.dispatchEvent(evt);
+
             // when this fires, it is picked up by the gridPanel, which ends up in
             // gridPanel calling setWidthAndScrollPosition(), which in turn calls setViewportPosition()
             const event: WithoutGridCommon<DisplayedColumnsWidthChangedEvent> = {
