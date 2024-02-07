@@ -347,7 +347,7 @@ Rows and Columns are set as `ag-grid-vue` component attributes. Styling is appli
 
 Below is a live example of the application running. Click `</> Code` to see the code.
 
-<grid-example title='Quick Start Example' name='quick-start-example' type='mixed' options='{ "exampleHeight": 350 }'></grid-example>
+<grid-example title='Quick Start Example' name='quick-start-example' type='mixed' options='{ "exampleHeight": 176 }'></grid-example>
 
 <note>To live-edit the code, open the example in CodeSandbox or Plunkr using the buttons to the lower-right.</note>
 
@@ -377,8 +377,6 @@ const gridOptions = {
 
 Format cell content using a [Value Formatter](../value-formatters/).
 
-<div style="display: flex">
-<div style="min-width: 0;flex: 3">
 <snippet>
 const gridOptions = {
     columnDefs: [
@@ -386,11 +384,6 @@ const gridOptions = {
     ],
 };
 </snippet>
-</div>
-<div style="min-width: 0;flex: 1">
-<image-caption src="getting-started/resources/valueFormatting.png" alt="Value Formatter" toggleDarkMode="false"></image-caption>
-</div>
-</div>
 
 ### Cell Components
 
@@ -398,8 +391,6 @@ Add buttons, checkboxes or images to cells with a [Cell Renderer](../cell-render
 
 <framework-specific-section frameworks="react">
 
-<div style="display: flex">
-<div style="min-width: 0;flex: 3">
 <snippet transform={false} language="jsx">
 | const CustomButtonComponent = (props) => {
 |    return &lt;button onClick={() => window.alert('clicked') }>Push Me!&lt;/button>;
@@ -410,11 +401,7 @@ Add buttons, checkboxes or images to cells with a [Cell Renderer](../cell-render
 |    // ...
 |  ]);
 </snippet>
-</div>
-<div style="min-width: 0;flex: 1">
-<image-caption src="getting-started/resources/buttonCellRenderer.png" alt="Button Cell Renderer" toggleDarkMode="false"></image-caption>
-</div>
-</div>
+
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -532,14 +519,14 @@ const gridOptions = {
 
 <div style="height:15px;"></div>
 
+<grid-example title='Showing Data Example' name='showing-data-example' type='mixed' options='{ "exampleHeight": 176 }'></grid-example>
+
 ## Working with Data
 
 ### Filtering
 
 [Column Filters](../filtering/) are embedded into each column menu. These are configured using the `filter` attribute.
 
-<div style="display: flex">
-<div style="min-width: 0;flex: 3">
 <snippet>
 const gridOptions = {
     columnDefs: [
@@ -548,19 +535,12 @@ const gridOptions = {
     ],
 };
 </snippet>
-</div>
-<div style="min-width: 0;flex: 1">
-<image-caption src="getting-started/resources/filter.png" alt="Column Filter" toggleDarkMode="false"></image-caption>
-</div>
-</div>
 
 There are 5 [Provided Filters](../filtering/) which can be set through this attribute.
 You can also create your own [Custom Filter](../filter-custom/).
 
 [Floating Filters](../floating-filters/) embed the Column Filter into the header for ease of access.
 
-<div style="display: flex">
-<div style="min-width: 0;flex: 3">
 <snippet>
 const gridOptions = {
     columnDefs: [
@@ -568,18 +548,11 @@ const gridOptions = {
     ],
 };
 </snippet>
-</div>
-<div style="min-width: 0;flex: 1">
-<image-caption src="getting-started/resources/floatingFilter.png" alt="Floating Filter" toggleDarkMode="false"></image-caption>
-</div>
-</div>
 
 ### Editing
 
-Enable editing by setting the `editable` attribute to `true`. This uses the default [Cell Editor](../cell-editing/) for the cell data type.
+Enable editing by setting the `editable` attribute to `true`.
 
-<div style="display: flex">
-<div style="min-width: 0;flex: 3">
 <snippet>
 const gridOptions = {
     columnDefs: [
@@ -587,17 +560,10 @@ const gridOptions = {
     ],
 };
 </snippet>
-</div>
-<div style="min-width: 0;flex: 1">
-<image-caption src="getting-started/resources/editing.png" alt="Default Editor" toggleDarkMode="false"></image-caption>
-</div>
-</div>
 
 Set the cell editor type using the `cellEditor` attribute. There are 7 [Provided Cell Editors](../provided-cell-editors/) which can be set through this attribute.
 You can also create your own [Custom Editors](../component-cell-editor/).
 
-<div style="display: flex">
-<div style="min-width: 0;flex: 3">
 <snippet>
 const gridOptions = {
     columnDefs: [
@@ -612,18 +578,11 @@ const gridOptions = {
     ],
 };
 </snippet>
-</div>
-<div style="min-width: 0;flex: 1">
-<image-caption style="min-width: 0;flex: 1" src="getting-started/resources/editingSelect.png" alt="AG Grid Select Editor" toggleDarkMode="false"></image-caption>
-</div>
-</div>
 
 ### Sorting
 
 Data is sorted by clicking the column headers. Configure custom sorting using the `comparator` attribute.
 
-<div style="display: flex">
-<div style="min-width: 0;flex: 3">
 <snippet>
 const gridOptions = {
     columnDefs: [{
@@ -641,18 +600,11 @@ const gridOptions = {
     }],
 }
 </snippet>
-</div>
-<div style="min-width: 0;flex: 1">
-<image-caption src="getting-started/resources/monthsSorted.png" alt="Row Sorting" toggleDarkMode="false"></image-caption>
-</div>
-</div>
 
 ### Selection
 
-Row selection is enabled using the `rowSelection` grid option. Use the `checkboxSelection` column definition attribute to render checkboxes for selection.
+Row selection is enabled using the `rowSelection` attribute. Use the `checkboxSelection` column definition attribute to render checkboxes for selection.
 
-<div style="display: flex">
-<div style="min-width: 0;flex: 3">
 <snippet>
 const gridOptions = {
     // Column Definitions: Defines the columns to be displayed.
@@ -662,20 +614,28 @@ const gridOptions = {
     rowSelection: 'multiple',
 };
 </snippet>
-</div>
-<div style="min-width: 0;flex: 1">
-<image-caption src="getting-started/resources/checkboxSelection.png" alt="Checkbox Selection" toggleDarkMode="false"></image-caption>
-</div>
-</div>
 
-<div style="height:15px;"></div>
+### Pagination
+
+Enable [Pagination](../row-pagination/) by setting `pagination` to be true.
+
+<snippet>
+const gridOptions = {
+    pagination: true,
+    paginationPageSize: 500,
+    paginationPageSizeSelector: [200, 500, 1000],
+};
+</snippet>
+
+<grid-example title='Working With Data Example' name='working-with-data-example' type='mixed' options='{ "exampleHeight": 500 }'></grid-example>
+
 
 ## Themes & Style
 
 ### Themes
 
 [Grid Themes](../themes/) define how the grid looks (colors, font, spacing etc).
-The gird comes with [Provided Themes](../themes/#provided-themes) such as Quartz and Alpine.
+The grid comes with [Provided Themes](../themes/#provided-themes) such as Quartz and Alpine.
 To use a theme you need to 1) import the themes CSS and 2) apply the theme to the parent
 HTML element of the grid.
 
@@ -690,6 +650,17 @@ HTML element of the grid.
 |)
 </snippet>
 
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+
+<snippet transform={false} language="html">
+|&lt;!-- Your grid container -->
+|&lt;div id="myGrid" class="ag-theme-quartz" style="height: 500px">&lt;/div>
+</snippet>
+
+</framework-specific-section>
+
 <div style="display: flex; margin-bottom: 10px;">
     <image-caption
         width="calc(50% - 48px)"
@@ -701,6 +672,8 @@ HTML element of the grid.
     <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeQuartzDark.png" alt="AG Theme Quartz Dark" toggleDarkMode="false"></image-caption>
 </div>
 
+<framework-specific-section frameworks="react">
+
 <snippet transform={false} language="jsx">
 |import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme
 | ...
@@ -711,24 +684,20 @@ HTML element of the grid.
 |)
 </snippet>
 
-<div style="display: flex; margin-bottom: 10px;">
-    <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeAlpine.png" alt="AG Theme Quartz" toggleDarkMode="false"></image-caption>
-    <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeAlpineDark.png" alt="AG Theme Quartz Dark" toggleDarkMode="false"></image-caption>
-</div>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 
 <snippet transform={false} language="html">
 |&lt;!-- Your grid container -->
-|&lt;div id="myGrid" class="ag-theme-quartz" style="height: 500px">&lt;/div>
-</snippet>
-
-<snippet transform={false} language="html">
-|&lt;!-- Your grid container -->
 |&lt;div id="myGrid" class="ag-theme-alpine" style="height: 500px">&lt;/div>
 </snippet>
 </framework-specific-section>
+
+<div style="display: flex; margin-bottom: 10px;">
+    <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeAlpine.png" alt="AG Theme Quartz" toggleDarkMode="false"></image-caption>
+    <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeAlpineDark.png" alt="AG Theme Quartz Dark" toggleDarkMode="false"></image-caption>
+</div>
 
 ### Customising a Theme
 
@@ -801,20 +770,6 @@ const gridOptions = {
 </snippet>
 
 <image-caption centered="true" src="getting-started/resources/rowClassRules.png" alt="Styling Rows with Row Class Rules" toggleDarkMode="false"></image-caption>
-
-### Pagination
-
-Enable [Pagination](../row-pagination/) by setting `pagination` to be true.
-
-<snippet>
-const gridOptions = {
-    pagination: true,
-    paginationPageSize: 500,
-    paginationPageSizeSelector: [200, 500, 1000],
-};
-</snippet>
-
-<image-caption centered="true" src="getting-started/resources/pagination.png" alt="Pagination" toggleDarkMode="false"></image-caption>
 
 ## Next Steps
 

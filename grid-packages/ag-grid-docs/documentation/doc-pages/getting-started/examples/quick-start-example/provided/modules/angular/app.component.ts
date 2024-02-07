@@ -23,7 +23,7 @@ interface IRow {
   <div class="content">
     <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
     <ag-grid-angular
-      style="width: 100%; height: 350px;"
+      style="width: 100%; height: 176px;"
       [class]="themeClass"
       [rowData]="rowData"
       [columnDefs]="colDefs"
