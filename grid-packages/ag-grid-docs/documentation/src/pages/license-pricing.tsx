@@ -64,23 +64,23 @@ export const LicensePricing = () => {
     const faqs = [
         {
             "question": "What does a Single Application Development License include?",
-            "answer": "This license allows using AG Grid Enterprise and/or AG Charts in one internal application forever. It comes with a year of updates, support, and requires all front-end developers to be licensed. It's tied to one application name and can't be transferred."
+            "answer": "Licenses AG Grid/Charts for one internal app perpetually. Includes 1-year updates, support, and covers all JS developers. Tied to one app name, not transferable."
         },
         {
             "question": "How is a Multiple Application License different from a Single Application License?",
-            "answer": "The Multiple Application License covers unlimited internal applications indefinitely with AG Grid and/or AG Charts. It includes a year of updates and support. All JavaScript developers must be included. Unlike the Single Application License, it's not limited to one application."
+            "answer": "Covers unlimited internal apps with AG Grid/Charts forever. Includes 1-year updates and support. Requires all JS developers to be licensed, not just for one app."
         },
         {
             "question": "What is required for deploying customer-facing applications?",
-            "answer": "Customer-facing apps need a Deployment License Add-on along with a Developer License. This permits sublicensing AG Grid/Charts for one app in one production environment forever, plus a year of updates and support."
+            "answer": "Needs a Deployment License Add-on plus Developer License. Allows sublicensing AG Grid/Charts for one app in one production environment forever, with 1-year updates/support."
         },
         {
             "question": "Does the Deployment License cover multiple servers or environments?",
-            "answer": "The Deployment License covers one production environment, regardless of server count. Failovers don't need extra licenses. Separate deployments for the same app need individual licenses."
+            "answer": "Covers one production environment, regardless of server count. Failovers included, but separate deployments need their own licenses."
         },
         {
             "question": "How does licensing work for multi-tenant deployments?",
-            "answer": "Multi-tenant deployments are covered by one Deployment License, as all tenants are served by the same application instance. This applies to different URLs under one application."
+            "answer": "One Deployment License needed for multi-tenant setups, serving multiple customers under one application instance."
         }
     ]
     

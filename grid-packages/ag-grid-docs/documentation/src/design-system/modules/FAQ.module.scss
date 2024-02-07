@@ -7,11 +7,13 @@ line-height: var(--text-lh-xl);
 font-weight: var(--text-semibold);
 cursor: pointer;
 user-select: none;
+display: flex;
+justify-content: space-between;
 }
 
 .faqItem {
     padding-top: $spacing-size-8;
-    padding-bottom: $spacing-size-8;
+    padding-bottom: $spacing-size-6;
     border-bottom: 1px solid var(--color-border-secondary);
     color: var(--color-text-primary);
 }
@@ -22,4 +24,29 @@ user-select: none;
     font-size: 17px;
     line-height: var(--text-lh-2xl);
     opacity: 0.8;
+
 }
+
+.chevronDown { // This class should be applied to the ChevronDown icon directly
+    transition: transform 0.3s ease;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.faqItem {
+    padding-top: $spacing-size-8;
+    padding-bottom: $spacing-size-6;
+    border-bottom: 1px solid var(--color-border-secondary);
+    color: var(--color-text-primary);
+    .answer {
+      overflow: hidden;
+      transition: max-height 1s ease;
+      max-height: 0;
+      &.open {
+        max-height: 1000px; // Adjust this value as per your content's maximum height
+      }
+    }
+  }

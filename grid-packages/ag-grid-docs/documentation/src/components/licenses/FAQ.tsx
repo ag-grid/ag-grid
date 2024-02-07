@@ -1,22 +1,30 @@
 import React, { useState } from 'react';
 import styles from '@design-system/modules/FAQ.module.scss';
+import {ChevronDown} from 'lucide-react';
+
 
 // Single FAQ item component
 const FAQItem = ({ question, answer }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  // Function to toggle the FAQ item's open state
-  const toggleOpen = () => setIsOpen(!isOpen);
-
-  return (
-    <div className={styles.faqItem}>
-      <div className={styles.question} onClick={toggleOpen}>
-        {question}
+    const [isOpen, setIsOpen] = useState(false);
+  
+    // Function to toggle the FAQ item's open state
+    const toggleOpen = () => setIsOpen(!isOpen);
+  
+    return (
+      <div className={styles.faqItem}>
+        <div className={styles.question} onClick={toggleOpen}>
+          {question}
+          <ChevronDown className={`${styles.chevronDown} ${isOpen ? styles.chevronOpen : ''}`} />
+        </div>
+        <div
+          className={`${styles.answer} ${isOpen ? styles.open : ''}`}
+          style={{ maxHeight: isOpen ? '1000px' : '0' }}
+        >
+          <div className={styles.answerContent}>{answer}</div>
+        </div>
       </div>
-      {isOpen && <div className={styles.answer}>{answer}</div>}
-    </div>
-  );
-};
+    );
+  };
 
 // FAQ component to display a list of FAQs
 const FAQ = ({ faqs }) => {
