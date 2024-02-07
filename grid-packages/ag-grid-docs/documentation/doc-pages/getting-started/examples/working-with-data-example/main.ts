@@ -1,4 +1,4 @@
-import { createGrid, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid, GridApi, GridOptions } from "@ag-grid-community/core";
 
 let gridApi: GridApi;
 
