@@ -209,6 +209,12 @@
                 "name": "Select Everything on the Current Page",
                 "url": "/row-selection/#select-only-the-current-page"
             }
+        },
+        "suppressFloatingFilterButton": {
+            "more": {
+                "name": "Floating Filters",
+                "url": "/floating-filters/"
+            }
         }
     },
     "accessibility": {
