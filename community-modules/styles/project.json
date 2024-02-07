@@ -5,7 +5,7 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx:noop",
+      "executor": "nx:noop",
       "dependsOn": ["build:styles"]
     },
     "build:styles": {
