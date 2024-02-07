@@ -150,6 +150,12 @@ These overrides are specific to the [AG Charts Treemap Series](https://charts.ag
 
 <grid-example title='Treemap Overrides' name='treemap-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "rowgrouping", "charts-enterprise"] }'></grid-example>
 
+### Sunburst Overrides
+
+These overrides are specific to the [AG Charts Sunburst Series](https://charts.ag-grid.com/react/sunburst-series/). For full list of overrides see [Sunburst Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-sunburst).
+
+<grid-example title='Sunburst Overrides' name='sunburst-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "rowgrouping", "charts-enterprise"] }'></grid-example>
+
 ## Custom Chart Themes
 
 Custom [AG Charts Themes](https://charts.ag-grid.com/react/themes/) can also be supplied to the grid via the `customChartThemes` grid option.

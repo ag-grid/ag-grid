@@ -247,6 +247,7 @@ const AG_GRID_LOCALE_EN = {
 
     hierarchicalChart: 'Hierarchical',
     treemap: 'Treemap',
+    sunburst: 'Sunburst',
 
     specializedChart: 'Specialized',
     waterfall: 'Waterfall',
@@ -382,6 +383,7 @@ const AG_GRID_LOCALE_EN = {
     rangeAreaTooltip: 'Range Area',
     boxPlotTooltip: 'Box Plot',
     treemapTooltip: 'Treemap',
+    sunburstTooltip: 'Sunburst',
     waterfallTooltip: 'Waterfall',
     columnLineComboTooltip: 'Column & Line',
     areaColumnComboTooltip: 'Area & Column',
