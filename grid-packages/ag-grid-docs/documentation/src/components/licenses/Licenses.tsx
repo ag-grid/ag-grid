@@ -111,9 +111,9 @@ const Price = ({ priceFullDollars, launchPrice }) => {
                         </span>
                     </>
                 )}
-                <p className={styles.developerText}>
+                <span className={styles.developerText}>
                     per developer
-                </p>
+                </span>
             </p>
         </div>
     );

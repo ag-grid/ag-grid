@@ -7,6 +7,7 @@ import ChartsActive from '../images/inline-svgs/pricing/charts-active.svg';
 import ChartsInactive from '../images/inline-svgs/pricing/charts-inactive.svg';
 import GridActive from '../images/inline-svgs/pricing/grid-active.svg';
 import GridInactive from '../images/inline-svgs/pricing/grid-inactive.svg';
+import SocialProof from '../components/SocialProof';
 import { trackOnceInfoEmail } from '../utils/analytics';
 import SEO from './components/SEO';
 import ToggleBackground from '../images/inline-svgs/pricing/toggle-background.svg';
@@ -178,6 +179,8 @@ export const LicensePricing = () => {
                        
                     </div>
                 </div>
+
+                <SocialProof />
 
                 <div className={styles.contactSales}>
                     <h3 className='text-2xl'>Need help?</h3>
