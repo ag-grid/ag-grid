@@ -206,8 +206,8 @@ It is vitally important that you do not mix packages and modules in the same app
 
 <snippet transform={false}> 
 "dependencies": {
-    "ag-grid-community": "~@AG_GRID_VERSION@" <- a package dependency
-    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@"  <- a module dependency
+    "ag-grid-community": "~@AG_GRID_VERSION@" // a package dependency
+    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@" // a module dependency
     //...other dependencies...
 }
 </snippet>

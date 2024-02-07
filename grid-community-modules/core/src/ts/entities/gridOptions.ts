@@ -89,6 +89,7 @@ import {
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderClickedEvent,
     ColumnHeaderContextMenuEvent,
+    ColumnMenuVisibleChangedEvent
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -1805,6 +1806,10 @@ export interface GridOptions<TData = any> {
      * The tool panel size has been changed.
      */
     onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>): void;
+    /**
+     * The column menu visibility has changed. Fires twice if switching between tabs - once with the old tab and once with the new tab.
+     */
+    onColumnMenuVisibleChanged?(event: ColumnMenuVisibleChangedEvent<TData>): void;
 
     // *** Clipboard *** //
     /**

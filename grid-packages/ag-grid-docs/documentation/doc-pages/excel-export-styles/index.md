@@ -110,7 +110,7 @@ You can define custom styles to apply to specific column headers when exported t
 
 ## Example: Styling Row Groups
 
-By default, row groups are exported with the names of each node in the hierarchy combined together, like <span style="white-space: nowrap">"-> Parent -> Child"</span>. If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining `autoGroupColumnDef.cellClass` and `processRowGroupCallback`:
+By default, row groups are exported with the names of each node in the hierarchy combined together, like "-&#8288;>&nbsp;Parent&nbsp;-&#8288;>&nbsp;Child". If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining `autoGroupColumnDef.cellClass` and `processRowGroupCallback`:
 
 ```ts
 processRowGroupCallback(params: ProcessRowGroupForExportParams): string {

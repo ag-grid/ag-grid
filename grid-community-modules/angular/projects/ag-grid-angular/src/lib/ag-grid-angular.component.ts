@@ -54,6 +54,7 @@ import {
     ColumnHeaderContextMenuEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
+    ColumnMenuVisibleChangedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
     ColumnPivotChangeRequestEvent,
@@ -1546,6 +1547,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** The tool panel size has been changed.
          */
     @Output() public toolPanelSizeChanged: EventEmitter<ToolPanelSizeChangedEvent<TData>> = new EventEmitter<ToolPanelSizeChangedEvent<TData>>();
+    /** The column menu visibility has changed. Fires twice if switching between tabs - once with the old tab and once with the new tab.
+         */
+    @Output() public columnMenuVisibleChanged: EventEmitter<ColumnMenuVisibleChangedEvent<TData>> = new EventEmitter<ColumnMenuVisibleChangedEvent<TData>>();
     /** Cut operation has started.
          */
     @Output() public cutStart: EventEmitter<CutStartEvent<TData>> = new EventEmitter<CutStartEvent<TData>>();

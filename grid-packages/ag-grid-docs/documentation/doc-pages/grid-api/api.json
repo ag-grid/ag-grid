@@ -855,19 +855,19 @@
         "showColumnChooser": {
             "more": {
                 "name": "Column Menu API",
-                "url": "/column-menu/#column-menu-api"
+                "url": "/column-menu/#column-menu-api--events"
             }
         },
         "showColumnFilter": {
             "more": {
                 "name": "Column Menu API",
-                "url": "/column-menu/#column-menu-api"
+                "url": "/column-menu/#column-menu-api--events"
             }
         },
         "showColumnMenu": {
             "more": {
                 "name": "Column Menu API",
-                "url": "/column-menu/#column-menu-api"
+                "url": "/column-menu/#column-menu-api--events"
             }
         },
         "hidePopupMenu": {
@@ -876,7 +876,7 @@
         "hideColumnChooser": {
             "more": {
                 "name": "Column Menu API",
-                "url": "/column-menu/#column-menu-api"
+                "url": "/column-menu/#column-menu-api--events"
             }
         },
         "getSideBar": {
