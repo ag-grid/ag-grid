@@ -1,0 +1,116 @@
+{
+  "name": "all",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "utilities/all/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "dependsOn": ["^build"]
+    },
+    "build:styles": {
+      "executor": "nx:noop",
+      "dependsOn": ["^build:styles"]
+    },
+    "lint": {
+      "executor": "nx:noop",
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "dependsOn": ["^lint"],
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "test": {
+      "executor": "nx:noop",
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "dependsOn": ["^test"],
+      "configurations": {
+        "update": {}
+      }
+    },
+    "pack": {
+      "executor": "nx:noop",
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "dependsOn": ["^pack"],
+      "configurations": {
+        "production": {}
+      }
+    },
+    "pack:extract": {
+      "executor": "nx:noop",
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "dependsOn": ["^pack:extract"],
+      "configurations": {
+        "production": {}
+      }
+    },
+    "pack:verify": {
+      "executor": "nx:noop",
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "dependsOn": ["^pack:verify"],
+      "configurations": {
+        "production": {}
+      }
+    },
+    "dev:setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "commands": [
+          "nx run-many -t build:types",
+          "if (test \"${BUILD_BATCH}\" != \"0\") ; then nx build ag-charts-website:generate-examples --batch ; fi",
+          "if (test \"${BUILD_BATCH}\" != \"0\") ; then nx build ag-charts-website:generate-thumbnails --batch ; fi"
+        ]
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["dev:setup"],
+      "options": {
+        "parallel": true,
+        "commands": [
+          "while true ; do nx watch -p ag-charts-community,ag-charts-enterprise -- {projectRoot}/dev.sh \\${NX_PROJECT_NAME} ; done",
+          "while (test \"${BUILD_FWS}\" == \"1\") ; do nx watch -p ag-charts-angular,ag-charts-react,ag-charts-vue,ag-charts-vue3 -- {projectRoot}/dev.sh \\${NX_PROJECT_NAME} ; done",
+          "while true ; do nx watch -p ag-charts-website-* -- nx build \\${NX_PROJECT_NAME}:generate; done",
+          "nx run ag-charts-website:dev"
+        ]
+      },
+      "configurations": {
+        "windows": {
+          "commands": [
+            {
+              "command": "nx run ag-charts-website:dev --configuration watch"
+            }
+          ]
+        }
+      }
+    },
+    "format-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "nx format:check --all"
+          }
+        ]
+      }
+    },
+    "blt": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build", "lint", "format-check"],
+      "options": {
+        "commands": ["nx run-many -t test --parallel 1"]
+      }
+    },
+    "clean": { "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/'" }
+  },
+  "implicitDependencies": [
+    "@ag-grid-community/core",
+    "@ag-grid-community/client-side-row-model",
+    "@ag-grid-community/styles",
+    "@ag-grid-enterprise/core",
+    "@ag-grid-enterprise/status-bar"
+  ],
+  "tags": []
+}

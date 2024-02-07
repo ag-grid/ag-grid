@@ -75,9 +75,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/all-modules/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/all-modules/styles" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/all-modules/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/core/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/core/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/core/typings" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/ag-grid/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue-legacy/lib" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue-legacy/dist" />
@@ -92,14 +89,10 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/polymer/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/infinite-row-model/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/infinite-row-model/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/client-side-row-model/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/client-side-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/angular/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/angular/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/csv-export/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/csv-export/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/status-bar/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/status-bar/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/row-grouping/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/row-grouping/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/range-selection/node_modules.nosync" />
@@ -107,8 +100,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/all-modules/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/all-modules/styles" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/all-modules/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/core/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/master-detail/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/master-detail/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/sparklines/dist" />
@@ -145,6 +136,15 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/core/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/core/typings" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/core/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/client-side-row-model/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/client-side-row-model/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/core/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/core/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/status-bar/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/status-bar/node_modules.nosync" />
     </content>
     <content url="file://$MODULE_DIR$/grid-community-modules/react/dev" />
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
