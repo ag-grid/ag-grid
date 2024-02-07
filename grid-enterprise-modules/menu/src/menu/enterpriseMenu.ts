@@ -493,7 +493,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
 
     constructor(private readonly column: Column | undefined, private readonly sourceElement?: HTMLElement) {
         super(/* html */`
-            <div ref="eColumnMenu" role="presentation" class="ag-menu"></div>
+            <div ref="eColumnMenu" role="presentation" class="ag-menu ag-column-menu"></div>
         `);
     }
 

@@ -167,7 +167,7 @@ export class MenuService extends BeanStub {
 
     public isFloatingFilterButtonEnabled(column: Column): boolean {
         const colDef = column.getColDef();
-        return !colDef.suppressFloatingFilterButton ?? !colDef.floatingFilterComponentParams?.suppressFilterButton;
+        return colDef.suppressFloatingFilterButton == null ? !colDef.floatingFilterComponentParams?.suppressFilterButton : !colDef.suppressFloatingFilterButton;
     }
 
     private getColumnMenuType(): 'legacy' | 'new' {

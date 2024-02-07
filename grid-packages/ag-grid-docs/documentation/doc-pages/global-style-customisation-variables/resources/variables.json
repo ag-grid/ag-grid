@@ -410,7 +410,7 @@
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-menu-min-width": {
-      "description": "Minimum width of a menu that is not tabbed",
+      "description": "Minimum width of the filter menu",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-side-bar-panel-width": {
