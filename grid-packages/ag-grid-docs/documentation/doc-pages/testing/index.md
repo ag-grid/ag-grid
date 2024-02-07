@@ -82,7 +82,7 @@ Here we give some hints on testing AG Grid as part of your application.
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-<p>The test above can be found in the following <a href="https://github.com/ag-grid/ag-grid-dev">GitHub Repo</a>.</p>
+<p>The test above can be found in the following <a href="https://github.com/ag-grid/ag-grid-dev" target="_blank">GitHub Repo</a>.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -447,7 +447,7 @@ Here we give some hints on testing AG Grid as part of your application.
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<p>We will walk through how you can use testing AG Grid as part of your Angular application, using default build tools provided when using the <a href="https://cli.angular.io/">Angular CLI</a>.</p>
+<p>We will walk through how you can use testing AG Grid as part of your Angular application, using default build tools provided when using the <a href="https://cli.angular.io/" target="_blank">Angular CLI</a>.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -721,7 +721,7 @@ Here we give some hints on testing AG Grid as part of your application.
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<p>All the tests above and more can be found in the following <a href="https://github.com/ag-grid/ag-grid-angular-cli-example/tree/latest/src/tests">GitHub Repo</a>.</p>
+<p>All the tests above and more can be found in the following <a href="https://github.com/ag-grid/ag-grid-angular-cli-example/tree/latest/src/tests" target="_blank">GitHub Repo</a>.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -911,11 +911,11 @@ Here we give some hints on testing AG Grid as part of your application.
 
 
 <framework-specific-section frameworks="react">
-<p>All the tests above and more can be found in the following <a href="https://github.com/ag-grid/ag-grid-react-example/tree/latest/src/tests">GitHub Repo</a>.</p>
+<p>All the tests above and more can be found in the following <a href="https://github.com/ag-grid/ag-grid-react-example/tree/latest/src/tests" target="_blank">GitHub Repo</a>.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<p>We will walk through how you can use testing AG Grid as part of your Vue application, using default build tools provided when using the <a href="https://cli.vuejs.org/">Vue CLI</a> utility.</p>
+<p>We will walk through how you can use testing AG Grid as part of your Vue application, using default build tools provided when using the <a href="https://cli.vuejs.org/" target="_blank">Vue CLI</a> utility.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
