@@ -83,6 +83,7 @@ export class SeriesPanel extends Component {
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
         'treemap': ['tooltips'],
+        'sunburst': ['tooltips'],
         'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
@@ -407,6 +408,7 @@ export class SeriesPanel extends Component {
                 ['range-bar', {value: 'range-bar', text: this.translate('rangeBar', 'Range Bar')}],
                 ['range-area', {value: 'range-area', text: this.translate('rangeArea', 'Range Area')}],
                 ['treemap', {value: 'treemap', text: this.translate('treemap', 'Treemap')}],
+                ['sunburst', {value: 'sunburst', text: this.translate('sunburst', 'Sunburst')}],
                 ['waterfall', {value: 'waterfall', text: this.translate('waterfall', 'Waterfall')}],
                 ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
