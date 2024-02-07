@@ -137,6 +137,10 @@
     height: $spacing-size-12;
     border-radius: 50%;
     outline: 2px solid var(--color-util-brand-300);
+    #{$selector-darkmode} & {
+        outline: 2px solid var(--color-border-primary);
+    }
+
     outline-offset: 4px;
 }
 
