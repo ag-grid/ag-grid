@@ -36,6 +36,11 @@ const links = [
         docsLink: true,
     },
     {
+        name: 'Community',
+        url: '/community',
+        docsLink: false,
+    },
+    {
         name: 'Pricing',
         url: '/license-pricing',
         docsLink: false,

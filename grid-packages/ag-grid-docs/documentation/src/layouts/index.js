@@ -11,6 +11,7 @@ import favIcons from '../images/favicons';
 import styles from '@design-system/modules/GridIndex.module.scss';
 import menuData from '../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../doc-pages/licensing/api-menu.json';
+import communityMenuData from '../../doc-pages/licensing/community-menu.json'
 import { getCurrentFramework } from '../utils/local-storage';
 
 /**
@@ -58,7 +59,8 @@ export const Layout = ({
 
     // select appropriate menu data based on the path (now that there are Documentation and API headers)
     const isApiMenu = isPathInApiMenu(path, apiMenuData);
-    const selectedMenuData = isApiMenu ? apiMenuData : menuData;
+    const isCommunityMenu = path.startsWith("/community/");
+    const selectedMenuData = isCommunityMenu ? communityMenuData : isApiMenu ? apiMenuData : menuData;
 
     return (
         <GlobalContextProvider>
@@ -78,8 +80,9 @@ export const Layout = ({
                                   currentPage={pageName}
                                   path={path}
                                   menuData={selectedMenuData}
-                                  expandAllGroups={isApiMenu}
-                                  hideChevrons={isApiMenu}/>
+                                  expandAllGroups={isApiMenu || isCommunityMenu}
+                                  hideChevrons={isApiMenu || isCommunityMenu}
+                                  isCommunityMenu={isCommunityMenu}/>
                         }
                         <main is="div">{children}</main>
                     </div>

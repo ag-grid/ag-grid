@@ -121,7 +121,7 @@ const MenuSection = ({title, items, currentFramework, activeParentItems, toggleA
             { title &&
                 <button onClick={handleToggle} tabIndex="0" className={buttonClasses} aria-expanded={isActive}
                         aria-controls={`#${elementId}`}>
-                    {!hideChevrons && title && <Icon name="chevronRight" svgClasses={iconClasses}/>}
+                    {!hideChevrons && title && <Icon name="chevronRight" svgClasses={iconClasses} />}
                     {title}
                 </button>
             }
