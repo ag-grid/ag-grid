@@ -467,11 +467,6 @@
                 "showInCollapsed": true
               },
               {
-                "title": "(merge above)",
-                "url": "/cell-rendering/",
-                "showInCollapsed": true
-              },    
-              {
                 "title": "Cell Data Types",
                 "url": "/cell-data-types/",
                 "showInCollapsed": true

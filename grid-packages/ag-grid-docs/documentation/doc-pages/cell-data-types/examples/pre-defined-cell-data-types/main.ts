@@ -3,6 +3,7 @@ import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 interface IOlympicDataTypes extends IOlympicData {
   dateObject: Date;
   hasGold: boolean;
+  hasSilver: boolean;
   countryObject: {
     name: string;
   };
@@ -15,6 +16,7 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
     { field: 'athlete' },
     { field: 'age', minWidth: 100 },
     { field: 'hasGold', minWidth: 100, headerName: 'Gold' },
+    { field: 'hasSilver', minWidth: 100, headerName: 'Silver', cellRendererParams: {disabled: true} },
     { field: 'dateObject', headerName: 'Date' },
     { field: 'date', headerName: 'Date (String)' },
     { field: 'countryObject', headerName: 'Country' },
@@ -58,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
           name: rowData.country,
         },
         hasGold: rowData.gold > 0,
+        hasSilver: rowData.silver > 0,
       };
     })))
 })

@@ -1,12 +1,11 @@
 <framework-specific-section frameworks="vue">
-|## Cell Renderer Function
+|## Cell Component Function
 |
-|Instead of using a Vue component, it's possible to use a simple function for a cell renderer.
+|Instead of using a Vue component, it's possible to use a function for a Cell Component.
 |
-|This is probably most useful if you have a simple String value to render and want to avoid the overhead of an actual Vue
-|component.
+|This is useful if you have a String value to render and want to avoid the overhead of a Vue component.
 |
-|In the example below we're outputting a simple string value that depends on the cell value:
+|In the example below we're outputting a string value that depends on the cell value:
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
@@ -35,12 +34,12 @@
 |          ]
 |      }
 |  }
-|  //...other properties & methods
+|  //...
 |}
 |&lt;/script>
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-|It is also possible to write a JavaScript-based cell renderer function - refer to the [docs here](../../javascript-data-grid/component-cell-renderer/#cell-renderer-function) for more information
+|It is also possible to write a JavaScript-based Cell Component - refer to the [docs here](../../javascript-data-grid/component-cell-renderer/#cell-renderer-function) for more information
 </framework-specific-section>

@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="angular">
-|The interface for the cell renderer component is as follows:
+|The interface for the Cell Component is as follows:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -17,5 +17,5 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-The interface for the cell renderer parameters is as follows:
+The `props` (interface ICellRendererParams) passed to the Cell Component are as follows:
 </framework-specific-section>

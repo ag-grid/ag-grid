@@ -1,12 +1,12 @@
 <framework-specific-section frameworks="javascript">
-|The interface for the cell renderer component is as follows:
+|The interface for the Cell Component is as follows:
 |
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false} language="ts">
 |interface ICellRendererComp {
-|    // Optional - Params for rendering. The same params that are passed to the cellRenderer function.
+|    // Optional - Params for rendering.
 |    init?(params: ICellRendererParams): void;
 |
 |    // Mandatory - Return the DOM element of the component, this is what the grid puts into the cell
@@ -25,5 +25,5 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-|The interface for the cell renderer parameters is as follows:
+The `props` (interface ICellRendererParams) passed to the Cell Component are as follows:
 </framework-specific-section>
