@@ -60,26 +60,26 @@ export const LicensePricing = () => {
 
     // Handles questions and answers for FAQ section
 
-    const faqs =[
+    const faqs = [
         {
             "question": "What does a Single Application Development License include?",
-            "answer": "A Single Application Development License allows embedding AG Grid Enterprise and/or AG Charts Enterprise into one application for internal use in perpetuity. It includes a 1-year subscription to new versions, support, and maintenance. All concurrent front-end JavaScript developers working on the application must be included in the license count. The license is bound to an application name and cannot be reused for other applications."
+            "answer": "This license allows using AG Grid Enterprise and/or AG Charts in one internal application forever. It comes with a year of updates, support, and requires all front-end developers to be licensed. It's tied to one application name and can't be transferred."
         },
         {
             "question": "How is a Multiple Application License different from a Single Application License?",
-            "answer": "A Multiple Application Development License permits the embedding of AG Grid Enterprise and/or AG Charts Enterprise in an unlimited number of applications for internal use in perpetuity, unlike the Single Application License which is limited to one application. It also includes a 1-year subscription to new versions, support, and maintenance, with all concurrent front-end JavaScript developers working across the licensed applications needing to be counted."
+            "answer": "The Multiple Application License covers unlimited internal applications indefinitely with AG Grid and/or AG Charts. It includes a year of updates and support. All JavaScript developers must be included. Unlike the Single Application License, it's not limited to one application."
         },
         {
             "question": "What is required for deploying customer-facing applications?",
-            "answer": "For customer-facing applications, a Deployment License Add-on is required in addition to a Developer License. This add-on allows licensed developers to sublicense AG Grid and/or AG Charts for one application in one production environment in perpetuity and includes a 1-year subscription to new versions, support, and maintenance."
+            "answer": "Customer-facing apps need a Deployment License Add-on along with a Developer License. This permits sublicensing AG Grid/Charts for one app in one production environment forever, plus a year of updates and support."
         },
         {
             "question": "Does the Deployment License cover multiple servers or environments?",
-            "answer": "The Deployment License covers one production environment for one project, regardless of the number of servers or virtual containers. Production failover deployments do not require a separate license as they are considered part of the overall application production deployment. However, different instances of the same application not in a cluster for failover or load balancing are considered independent deployments and need a separate Deployment License for each instance."
+            "answer": "The Deployment License covers one production environment, regardless of server count. Failovers don't need extra licenses. Separate deployments for the same app need individual licenses."
         },
         {
             "question": "How does licensing work for multi-tenant deployments?",
-            "answer": "Multi-tenant deployments, where one application instance serves many customers over different URLs, are considered one deployment. This is because each tenant is serviced by the same application instance. Therefore, only one Deployment License is required for the entire multi-tenant deployment."
+            "answer": "Multi-tenant deployments are covered by one Deployment License, as all tenants are served by the same application instance. This applies to different URLs under one application."
         }
     ]
     
