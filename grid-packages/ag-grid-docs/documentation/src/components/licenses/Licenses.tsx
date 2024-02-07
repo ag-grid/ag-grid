@@ -167,7 +167,7 @@ export const Licenses: FunctionComponent = ({ isChecked }) => {
     return (
         <>
             <div className={styles.emptyColumn}>
-                <div className={styles.pricingText}>Pricing</div>
+                <div className={styles.pricingText}>Our products</div>
             </div> {/* Empty Column */}
             {filteredData.map((data) => {
                 return (

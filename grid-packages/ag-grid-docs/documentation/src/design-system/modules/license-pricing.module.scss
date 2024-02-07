@@ -462,7 +462,8 @@
     left: 0%;
     border-radius: 32px;
     background: var(--color-bg-brand-solid);
-    transition: all 0.3s;
+    transition: all 0.2s;
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
 }
 
 .toggleContainer div {
@@ -583,4 +584,8 @@
     width: 100vw;
     background: linear-gradient(transparent, var(--color-bg-brand-solid));
     opacity: 0.05;
+}
+
+.videoPrompt {
+    margin-bottom: $spacing-size-12;
 }

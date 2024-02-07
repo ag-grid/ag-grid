@@ -9,10 +9,10 @@ import GridActive from '../images/inline-svgs/pricing/grid-active.svg';
 import GridInactive from '../images/inline-svgs/pricing/grid-inactive.svg';
 import { trackOnceInfoEmail } from '../utils/analytics';
 import SEO from './components/SEO';
-
 import ToggleBackground from '../images/inline-svgs/pricing/toggle-background.svg';
-
 import ComparisonTable from '../components/licenses/ComparisonTable';
+
+import FAQ from '../components/licenses/FAQ';
 
 export const LicensePricing = () => {
     const [showFullWidthBar, setShowFullWidthBar] = useState(false);
@@ -49,7 +49,7 @@ export const LicensePricing = () => {
         };
     });
 
-    // product toggle logic
+    // Handles charts/grid toggle logic
 
     const [isChecked, setIsChecked] = useState(false);
 
@@ -57,12 +57,38 @@ export const LicensePricing = () => {
         setIsChecked(!isChecked);
     };
 
+
+    // Handles questions and answers for FAQ section
+
+    const faqs =[
+        {
+            "question": "What does a Single Application Development License include?",
+            "answer": "A Single Application Development License allows embedding AG Grid Enterprise and/or AG Charts Enterprise into one application for internal use in perpetuity. It includes a 1-year subscription to new versions, support, and maintenance. All concurrent front-end JavaScript developers working on the application must be included in the license count. The license is bound to an application name and cannot be reused for other applications."
+        },
+        {
+            "question": "How is a Multiple Application License different from a Single Application License?",
+            "answer": "A Multiple Application Development License permits the embedding of AG Grid Enterprise and/or AG Charts Enterprise in an unlimited number of applications for internal use in perpetuity, unlike the Single Application License which is limited to one application. It also includes a 1-year subscription to new versions, support, and maintenance, with all concurrent front-end JavaScript developers working across the licensed applications needing to be counted."
+        },
+        {
+            "question": "What is required for deploying customer-facing applications?",
+            "answer": "For customer-facing applications, a Deployment License Add-on is required in addition to a Developer License. This add-on allows licensed developers to sublicense AG Grid and/or AG Charts for one application in one production environment in perpetuity and includes a 1-year subscription to new versions, support, and maintenance."
+        },
+        {
+            "question": "Does the Deployment License cover multiple servers or environments?",
+            "answer": "The Deployment License covers one production environment for one project, regardless of the number of servers or virtual containers. Production failover deployments do not require a separate license as they are considered part of the overall application production deployment. However, different instances of the same application not in a cluster for failover or load balancing are considered independent deployments and need a separate Deployment License for each instance."
+        },
+        {
+            "question": "How does licensing work for multi-tenant deployments?",
+            "answer": "Multi-tenant deployments, where one application instance serves many customers over different URLs, are considered one deployment. This is because each tenant is serviced by the same application instance. Therefore, only one Deployment License is required for the entire multi-tenant deployment."
+        }
+    ]
+    
     return (
         <>
             {showFullWidthBar && (
                 <div className={styles.fullWidthBar}>
                     <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
-                        <div className={styles.fullWidthBarLeft}>Pricing</div>
+                        <div className={styles.fullWidthBarLeft}> </div>
                         <div className={styles.fullWidthBarItem}>Community</div>
                         <div className={styles.fullWidthBarItem}>Enterprise</div>
                         <div className={styles.fullWidthBarItem}>Grid + Charts</div>
@@ -136,6 +162,20 @@ export const LicensePricing = () => {
                                 </p>
                             </div>
                         </div>
+
+                        <div className={styles.contactSales}>
+                           
+                        <h3 className='text-2xl'>Frequently asked questions</h3>
+
+                            <p className="text-regular">
+                            Here are some of the most commonly asked questions our customers ask us at AG Grid
+                            </p>
+                            </div>
+
+
+                        <FAQ faqs={faqs} />
+
+                       
                     </div>
                 </div>
 
