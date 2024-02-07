@@ -1,5 +1,5 @@
 import { _, Autowired, Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
-import {LicenseManager} from "./shared/licenseManager";
+import {ILicenseManager, LicenseManager} from "./shared/licenseManager";
 
 @Bean('licenseManager')
 export class GridLicenseManager extends BeanStub {
@@ -25,5 +25,9 @@ export class GridLicenseManager extends BeanStub {
 
     static setLicenseKey(licenseKey: string): void {
         LicenseManager.setLicenseKey(licenseKey);
+    }
+
+    static setChartsLicenseManager(chartsLicenseManager: ILicenseManager) {
+        LicenseManager.setChartsLicenseManager(chartsLicenseManager);
     }
 }

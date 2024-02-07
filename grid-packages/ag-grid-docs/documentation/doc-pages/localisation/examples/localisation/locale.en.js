@@ -240,6 +240,9 @@ const AG_GRID_LOCALE_EN = {
     rangeBar: 'Range Bar',
     rangeArea: 'Range Area',
 
+    hierarchicalChart: 'Hierarchical',
+    treemap: 'Treemap',
+
     specializedChart: 'Specialized',
     waterfall: 'Waterfall',
 
@@ -347,6 +350,7 @@ const AG_GRID_LOCALE_EN = {
     areaGroup: 'Area',
     polarGroup: 'Polar',
     statisticalGroup: 'Statistical',
+    hierarchicalGroup: 'Hierarchical',
     specializedGroup: 'Specialized',
     combinationGroup: 'Combination',
     groupedColumnTooltip: 'Grouped',
@@ -364,11 +368,15 @@ const AG_GRID_LOCALE_EN = {
     scatterTooltip: 'Scatter',
     bubbleTooltip: 'Bubble',
     histogramTooltip: 'Histogram',
+    radialColumnTooltip: 'Radial Column',
+    radialBarTooltip: 'Radial Bar',
     radarLineTooltip: 'Radar Line',
     radarAreaTooltip: 'Radar Area',
     nightingaleTooltip: 'Nightingale',
     rangeBarTooltip: 'Range Bar',
+    rangeAreaTooltip: 'Range Area',
     boxPlotTooltip: 'Box Plot',
+    treemapTooltip: 'Treemap',
     waterfallTooltip: 'Waterfall',
     columnLineComboTooltip: 'Column & Line',
     areaColumnComboTooltip: 'Area & Column',

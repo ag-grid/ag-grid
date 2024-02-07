@@ -152,7 +152,8 @@ export class ChartController extends BeanStub {
         const selectedCols = this.getSelectedValueColState();
         const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
         const data = this.getChartData();
-        const selectedDimension = this.getSelectedDimension();
+        const selectedDimensions = this.getSelectedDimensions();
+        const [selectedDimension] = selectedDimensions;
 
         return {
             data,
@@ -162,6 +163,11 @@ export class ChartController extends BeanStub {
                 name: selectedDimension.displayName!,
                 chartDataType: this.model.getChartDataType(selectedDimension.colId)
             },
+            categories: selectedDimensions.map((selectedDimension) => ({
+                id: selectedDimension.colId,
+                name: selectedDimension.displayName!,
+                chartDataType: this.model.getChartDataType(selectedDimension.colId)
+            })),
             fields,
             chartId: this.getChartId(),
             getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }), //this.params.crossFilteringContext, //TODO
@@ -280,8 +286,8 @@ export class ChartController extends BeanStub {
         return this.getValueColState().filter(cs => cs.selected);
     }
 
-    public getSelectedDimension(): ColState {
-        return this.model.getSelectedDimension();
+    public getSelectedDimensions(): ColState[] {
+        return this.model.getSelectedDimensions();
     }
 
     private displayNameMapper(col: ColState): ColState {

@@ -82,6 +82,7 @@ export class SeriesPanel extends Component {
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
+        'treemap': ['tooltips'],
         'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
@@ -405,6 +406,7 @@ export class SeriesPanel extends Component {
                 ['nightingale', {value: 'nightingale', text: this.translate('nightingale', 'Nightingale')}],
                 ['range-bar', {value: 'range-bar', text: this.translate('rangeBar', 'Range Bar')}],
                 ['range-area', {value: 'range-area', text: this.translate('rangeArea', 'Range Area')}],
+                ['treemap', {value: 'treemap', text: this.translate('treemap', 'Treemap')}],
                 ['waterfall', {value: 'waterfall', text: this.translate('waterfall', 'Waterfall')}],
                 ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],

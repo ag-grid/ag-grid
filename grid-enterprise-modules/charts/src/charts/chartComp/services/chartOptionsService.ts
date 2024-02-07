@@ -53,15 +53,32 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public setAxisProperty<T = string>(expression: string, value: T) {
-        // update axis options
         const chart = this.getChart();
         let chartOptions = {};
-        chart.axes?.forEach((axis: any) => {
-            chartOptions = deepMerge(chartOptions, this.getUpdateAxisOptions<T>(axis, expression, value));
+
+        const relevantAxes = chart.axes?.filter((axis: any) => {
+            const parts = expression.split('.');
+            let current = axis;
+            for (const part of parts) {
+                if (!(part in current)) {
+                    return false;
+                }
+                current = current[part];
+            }
+            return true;
         });
 
-        this.updateChart(chartOptions);
-        this.raiseChartOptionsChangedEvent();
+        relevantAxes?.forEach((axis: any) => {
+            const updateOptions = this.getUpdateAxisOptions<T>(axis, expression, value);
+            if (updateOptions) {
+                chartOptions = deepMerge(chartOptions, updateOptions);
+            }
+        });
+
+        if (Object.keys(chartOptions).length > 0) {
+            this.updateChart(chartOptions);
+            this.raiseChartOptionsChangedEvent();
+        }
     }
 
     public getLabelRotation(axisType: 'xAxis' | 'yAxis'): number {

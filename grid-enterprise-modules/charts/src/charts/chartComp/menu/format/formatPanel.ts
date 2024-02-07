@@ -137,6 +137,7 @@ export class FormatPanel extends Component {
             'nightingale': ['axis'],
             'range-bar': ['axis', 'navigator'],
             'range-area': ['axis', 'navigator'],
+            'treemap': ['navigator'],
             'waterfall': ['axis', 'navigator'],
             'box-plot': ['axis', 'navigator'],
         };
