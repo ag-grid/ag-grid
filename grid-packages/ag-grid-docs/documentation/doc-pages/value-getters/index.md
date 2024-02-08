@@ -8,8 +8,8 @@ from the Column Definition.
 ## Field
 
 The Column Definition `field` property maps values from the row data object to the Column's Cells.
-Dot notation can be used for embedded objects.
 
+Dot notation (e.g. `medals.gold`) is supported for embedded objects. Suppress dot notation with the grid propery `suppressFieldDotNotation=true` if the data has dots in the field names.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -32,9 +32,6 @@ const gridOptions = {
 
 <grid-example title='Nested Row Data Example' name='column-fields' type='generated'></grid-example>
 
-### Suppress Field Dot Notation
-
-Suppress dot notation with the grid propery `suppressFieldDotNotation=true` if the data has dots in the field names.
 
 ## Header Names
 
