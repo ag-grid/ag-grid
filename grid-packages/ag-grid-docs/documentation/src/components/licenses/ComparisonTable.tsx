@@ -9,7 +9,7 @@ const data = [
     category: 'Charting',
     features: [
       {
-        feature: 'Community Integrated Charts',
+        feature: 'Integrated Community Charts',
         community: false,
         enterprise: true,
         chartsGrid: true,
@@ -146,7 +146,7 @@ const chartsArray = [
     category: 'Grid',
     features: [
       {
-        feature: 'Community Integrated Charts',
+        feature: 'Integrated Community Charts',
         community: false,
         enterprise: true,
         chartsGrid: true,
