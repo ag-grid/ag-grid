@@ -383,10 +383,10 @@
         &::after {
             content: "";
             position: absolute;
-            width: 5px;
-            height: 5px;
-            top: 0;
-            right: 0;
+            width: 6px;
+            height: 6px;
+            top: -1px;
+            right: -1px;
             border-radius: 50%;
             background-color: var(--ag-active-color);
         }
