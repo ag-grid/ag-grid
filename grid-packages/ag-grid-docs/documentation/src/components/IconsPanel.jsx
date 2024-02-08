@@ -71,7 +71,7 @@ const capitalizeName = (name) => `${name.slice(0, 1).toUpperCase()}${name.slice(
 const IconsList = ({ theme }) => (
     <>
         {ICONS.map((icon) => (
-            <div key={styles.iconName} className={styles.iconItem}>
+            <div key={icon} className={styles.iconItem}>
                 <img src={withPrefix(`/theme-icons/${theme}/${icon}.svg`)} alt={icon} title={icon}></img>
                 <p className={styles.iconName}>{icon}</p>
             </div>
