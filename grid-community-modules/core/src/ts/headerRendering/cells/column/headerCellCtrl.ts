@@ -26,10 +26,10 @@ import { HorizontalDirection } from "../../../constants/direction";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 import { WithoutGridCommon } from "../../../interfaces/iCommon";
 import { ColumnHeaderMouseOverEvent, ColumnHeaderMouseLeaveEvent } from "../../../events";
+import { AriaAnnouncementService } from "../../../rendering/ariaAnnouncementService";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
-    setAriaDescription(description?: string): void;
     setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
@@ -44,6 +44,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
+    @Autowired('ariaAnnouncementService') private readonly ariaAnnouncementService: AriaAnnouncementService;
 
     private refreshFunctions: (() => void)[] = [];
     private selectAllFeature: SelectAllFeature;
@@ -281,6 +282,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
             const rowIndex = this.getRowIndex();
             this.focusService.setFocusedHeader(rowIndex, this.column);
+            this.announceAriaDescription();
         }
 
         this.setActiveHeader(true);
@@ -722,15 +724,17 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         }
     }
 
-    public refreshAriaDescription(): void {
+    public announceAriaDescription(): void {
+        const eDocument = this.beans.gridOptionsService.getDocument();
+        if (!this.eGui.contains(eDocument.activeElement)) { return; }
         const ariaDescription = 
             Array.from(this.ariaDescriptionProperties.keys())
                 // always announce the filter description first
                 .sort((a: string, b: string) => a === 'filter' ? - 1 : (b.charCodeAt(0) - a.charCodeAt(0)))
                 .map((key: HeaderAriaDescriptionKey) => this.ariaDescriptionProperties.get(key))
-                .join('. ')
+                .join('. ');
 
-        this.comp.setAriaDescription(ariaDescription ?? undefined);
+        this.ariaAnnouncementService.announceValue(ariaDescription);
     }
 
     private refreshAria(): void {
@@ -738,7 +742,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.refreshAriaMenu();
         this.refreshAriaFilterButton();
         this.refreshAriaFiltered();
-        this.refreshAriaDescription();
     }
 
     private addColumnHoverListener(): void {

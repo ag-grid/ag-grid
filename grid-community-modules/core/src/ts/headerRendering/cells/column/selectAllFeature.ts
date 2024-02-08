@@ -123,7 +123,7 @@ export class SelectAllFeature extends BeanStub {
         }
 
         this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
-        this.headerCellCtrl.refreshAriaDescription();
+        this.headerCellCtrl.announceAriaDescription();
     }
 
     private checkSelectionType(feature: string): boolean {
