@@ -59,6 +59,11 @@ export class HeatmapChartProxy extends ChartProxy {
     protected override getChartThemeDefaults(): AgChartThemeOverrides | undefined {
         return {
             heatmap: {
+                gradientLegend: {
+                    gradient: {
+                        preferredLength: 200,
+                    },
+                },
                 series: {
                     tooltip: {
                         renderer: renderHeatmapTooltip,
