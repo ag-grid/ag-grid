@@ -11,7 +11,7 @@ import SocialProof from '../components/SocialProof';
 import { trackOnceInfoEmail } from '../utils/analytics';
 import SEO from './components/SEO';
 import ToggleBackground from '../images/inline-svgs/pricing/toggle-background.svg';
-import ComparisonTable from '../components/licenses/ComparisonTable';
+import { ComparisonTable } from '../components/comparison-table/ComparisonTable';
 
 import FAQ from '../components/licenses/FAQ';
 
@@ -83,6 +83,30 @@ export const LicensePricing = () => {
             "answer": "One Deployment License needed for multi-tenant setups, serving multiple customers under one application instance."
         }
     ]
+
+    const dummyCompTableData = [
+        {
+            name: 'Community Integrated Charts',
+            link: 'https://example.com/column-groups',
+            community: false,
+            enterprise: true,
+            chartsGrid: true,
+        },
+        {
+            name: 'Integrated Enterprise Charts',
+            link: 'https://example.com/column-groups',
+            community: false,
+            enterprise: false,
+            chartsGrid: true,
+        },
+        {
+            name: 'AG Charts Enterprise ',
+            link: 'https://example.com/column-spanning',
+            community: false,
+            enterprise: false,
+            chartsGrid: true,
+        },
+    ];
     
     return (
         <>
@@ -143,7 +167,21 @@ export const LicensePricing = () => {
                         <div className={styles.licensesOuter}>
                             <Licenses isChecked={isChecked} />
                         </div>
-                        <ComparisonTable isChecked={isChecked} />
+
+                        <ComparisonTable
+                            data={dummyCompTableData}
+                            columns={{
+                                'name': '',
+                                'community': '',
+                                'enterprise': '',
+                                'chartsGrid': '',
+                              }}
+                              cellRenderer={{
+                                'community': "featuresTickCross",
+                                'enterprise': "featuresTickCross",
+                                'chartsGrid': "featuresTickCross",
+                            }}
+                        />
 
                         <div className={styles.videoPrompt}>
                             <a href="#video-explainer" className={styles.thumbnail}>
@@ -165,33 +203,29 @@ export const LicensePricing = () => {
                         </div>
 
                         <div className={styles.contactSales}>
-                           
-                        <h3 className='text-2xl'>Frequently asked questions</h3>
+                            <h3 className="text-2xl">Frequently asked questions</h3>
 
                             <p className="text-regular">
-                            Here are some of the most commonly asked questions our customers ask us at AG Grid
+                                Here are some of the most commonly asked questions our customers ask us at AG Grid
                             </p>
-                            </div>
-
+                        </div>
 
                         <FAQ faqs={faqs} />
-
-                       
                     </div>
                 </div>
 
                 <SocialProof />
 
                 <div className={styles.contactSales}>
-                    <h3 className='text-2xl'>Need help?</h3>
+                    <h3 className="text-2xl">Need help?</h3>
 
                     <p className="text-secondary text-lg">
                         Email{' '}
                         <InfoEmailLink emailSubject="AG Grid Developer license query" trackingType="headerLink">
                             info@ag-grid.com
-                        </InfoEmailLink>
-                        {' '} and start a conversation. We can provide quotes, give bulk pricing, and
-                        answer any sales or contract-related questions you may have.
+                        </InfoEmailLink>{' '}
+                        and start a conversation. We can provide quotes, give bulk pricing, and answer any sales or
+                        contract-related questions you may have.
                     </p>
 
                     <InfoEmailLink
