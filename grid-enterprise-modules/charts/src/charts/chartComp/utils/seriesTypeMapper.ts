@@ -99,6 +99,17 @@ export function isHierarchical(chartType: ChartType): boolean {
     }
 }
 
+export function hasGradientLegend(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'treemap':
+        case 'sunburst':
+        case 'heatmap':
+            return true;
+        default:
+            return false;
+    }
+}
+
 export function getSeriesType(chartType: ChartType): ChartSeriesType {
     switch (chartType) {
         case 'bar':
@@ -152,18 +163,5 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
             return 'waterfall';
         default:
             return 'cartesian';
-    }
-}
-
-export function isPolarChartSeriesType(seriesType: ChartSeriesType): seriesType is PolarChartSeriesType {
-    switch (seriesType) {
-        case 'radar-line':
-        case 'radar-area':
-        case 'nightingale':
-        case 'radial-column':
-        case 'radial-bar':
-            return true;
-        default:
-            return false;
     }
 }
