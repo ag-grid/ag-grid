@@ -369,6 +369,7 @@
     .ag-chart-menu-icon,
     .ag-chart-menu-close {
         --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+        
         &:hover {
             border-radius: 1px;
             background-color: var(--ag-quartz-icon-hover-color);
@@ -378,7 +379,13 @@
     }
 
     .ag-filter-active {
+        --ag-quartz-icon-active-color: color-mix(in srgb, transparent, var(--ag-active-color) 14%);
+        --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 28%);
+        
         position: relative;
+        border-radius: 1px;
+        background-color: var(--ag-quartz-icon-active-color);
+        box-shadow: 0 0 0 4px var(--ag-quartz-icon-active-color);
 
         &::after {
             content: "";
