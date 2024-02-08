@@ -1,5 +1,6 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
 import {getData} from './data';
+import { AgHeatmapSeriesThemeableOptions } from 'ag-charts-community';
 
 let gridApi: GridApi;
 
@@ -33,11 +34,11 @@ const gridOptions: GridOptions = {
         label: {
           enabled: true,
           formatter: ({ datum, colorKey }) => {
-            const value = datum[colorKey];
+            const value = datum[colorKey!];
             return `${value.toFixed(0)}°C`;
           },
         },
-      },
+      } as AgHeatmapSeriesThemeableOptions,
     },
   },
   onGridReady : (params: GridReadyEvent) => {

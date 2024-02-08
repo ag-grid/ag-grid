@@ -1,4 +1,4 @@
-import { AgTreemapSeriesOptions } from 'ag-charts-community';
+import { AgChartThemeOverrides, AgTreemapSeriesOptions } from 'ag-charts-community';
 import { HierarchicalChartProxy } from './hierarchicalChartProxy';
 import { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 
@@ -24,6 +24,18 @@ export class TreemapChartProxy extends HierarchicalChartProxy {
                 colorName: colorField?.displayName ?? undefined,
             },
         ];
+    }
+    
+    protected override getChartThemeDefaults(): AgChartThemeOverrides | undefined {
+        return {
+            treemap: {
+                gradientLegend: {
+                    gradient: {
+                        preferredLength: 200,
+                    },
+                },
+            },
+        };
     }
 
     protected override transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {

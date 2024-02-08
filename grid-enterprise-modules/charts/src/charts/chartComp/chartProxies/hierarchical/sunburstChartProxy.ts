@@ -1,4 +1,4 @@
-import { AgSunburstSeriesOptions } from 'ag-charts-community';
+import { AgChartThemeOverrides, AgSunburstSeriesOptions } from 'ag-charts-community';
 import { HierarchicalChartProxy } from './hierarchicalChartProxy';
 import { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 
@@ -24,6 +24,18 @@ export class SunburstChartProxy extends HierarchicalChartProxy {
                 colorName: colorField?.displayName ?? undefined,
             },
         ];
+    }
+
+    protected override getChartThemeDefaults(): AgChartThemeOverrides | undefined {
+        return {
+            sunburst: {
+                gradientLegend: {
+                    gradient: {
+                        preferredLength: 200,
+                    },
+                },
+            },
+        };
     }
 
     protected override transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {
