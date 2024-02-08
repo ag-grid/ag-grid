@@ -262,14 +262,18 @@ export class ChartDataModel extends BeanStub {
 
     private getRowIndexes(): { startRow: number; endRow: number; } {
         let startRow = 0, endRow = 0;
-        const { rangeService, valueCellRange } = this;
+        const { rangeService, valueCellRange, dimensionCellRange } = this;
 
-        if (rangeService && valueCellRange) {
-            startRow = rangeService.getRangeStartRow(valueCellRange).rowIndex;
+        // Not all chart types require a value series (e.g. hierarchical charts),
+        // so fall back to using the dimension cell range for inferring row indices
+        const cellRange = valueCellRange || dimensionCellRange;
+
+        if (rangeService && cellRange) {
+            startRow = rangeService.getRangeStartRow(cellRange).rowIndex;
 
             // when the last row the cell range is a pinned 'bottom' row, the `endRow` index is set to -1 which results
             // in the ChartDatasource processing all non pinned rows from the `startRow` index.
-            const endRowPosition = rangeService.getRangeEndRow(valueCellRange);
+            const endRowPosition = rangeService.getRangeEndRow(cellRange);
             endRow = endRowPosition.rowPinned === 'bottom' ? -1 : endRowPosition.rowIndex;
         }
 
