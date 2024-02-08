@@ -84,6 +84,7 @@ export class SeriesPanel extends Component {
         'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
         'treemap': ['tooltips'],
         'sunburst': ['tooltips'],
+        'heatmap': ['tooltips'],
         'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
     }
 

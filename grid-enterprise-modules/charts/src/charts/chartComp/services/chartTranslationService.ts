@@ -131,6 +131,7 @@ export class ChartTranslationService extends BeanStub {
         boxPlotTooltip: 'Box Plot',
         treemapTooltip: 'Treemap',
         sunburstTooltip: 'Sunburst',
+        heatmapTooltip: 'Heatmap',
         waterfallTooltip: 'Waterfall',
         columnLineComboTooltip: 'Column & Line',
         areaColumnComboTooltip: 'Area & Column',

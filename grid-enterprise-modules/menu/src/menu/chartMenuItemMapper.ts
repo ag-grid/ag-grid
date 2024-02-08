@@ -279,7 +279,7 @@ export type RangeMenuOptionName =
     'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' | 'rangeRadialColumn' | 'rangeRadialBar' |
     'rangeStatisticalChart' | 'rangeBoxPlot' | 'rangeHistogramChart' |'rangeRangeBar' | 'rangeRangeArea' |
     'rangeHierarchicalChart' | 'rangeTreemap' | 'rangeSunburst' |
-    'rangeSpecializedChart' | 'rangeWaterfall' |
+    'rangeSpecializedChart' | 'rangeWaterfall' | 'rangeHeatmap' |
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
@@ -385,6 +385,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     name: localeTextFunc('specializedChart', 'Specialized'),
                     subMenu:
                         [
+                            getMenuItem('heatmap', 'Heatmap&lrm;', 'heatmap', 'rangeHeatmap'),
                             getMenuItem('waterfall', 'Waterfall&lrm;', 'waterfall', 'rangeWaterfall'),
                         ],
                     _key: 'rangeSpecializedChart',
@@ -459,6 +460,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
             },
             specializedGroup: {
                 _key: 'rangeSpecializedChart',
+                heatmap: 'rangeHeatmap',
                 waterfall: 'rangeWaterfall',
             },
             combinationGroup: {
