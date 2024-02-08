@@ -22,7 +22,13 @@ const CommunityPage = () => {
                     A collection of utilities for and extensions to AG Grid, built and supported by our community
                 </span>
                 <div className={styles.pageSections} style={{ marginTop: '25px' }}>
-
+                    <ul>
+                        <li>
+                            <a href="https://github.com/kpmck/cypress-ag-grid">Cypress plugin</a>
+                            <a href="https://github.com/MichaelKim/ag-grid-svelte">Laravel Server Side Adapter</a>
+                            <a href="https://github.com/LSEG/ag-grid-playwright">Playwright Plugin</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

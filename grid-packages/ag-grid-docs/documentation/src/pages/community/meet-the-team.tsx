@@ -24,9 +24,6 @@ const AboutUs = () => {
                 <div className={styles.pageSections} style={{ marginTop: '25px' }}>
                     <h2>About AG Grid</h2>
                     <section>
-                        <div>
-                            <img src="../../images/team/xmas-team-photo.jpg" width={"250px"} alt="Peter Reynolds, Developer" />
-                        </div>
                         <article>
                             <p>
                                 Born out of frustration with existing solutions, <strong>AG Grid</strong> evolved from a

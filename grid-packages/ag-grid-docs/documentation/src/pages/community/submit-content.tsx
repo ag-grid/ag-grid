@@ -22,7 +22,7 @@ const CommunityPage = () => {
                     Are you a developer or creator who works with AG Grid and want to share your work with our community? Submit our application form to have your content featured here.
                 </span>
                 <div className={styles.pageSections} style={{ marginTop: '25px' }}>
-
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdMGmY5mLLQnCh85mfyB_s_jkCNFp8ocP2I3pzk2YPwqoUdfA/viewform?embedded=true" className='iframe' width="100%" height="1000vh" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
                 </div>
             </div>
         </div>
