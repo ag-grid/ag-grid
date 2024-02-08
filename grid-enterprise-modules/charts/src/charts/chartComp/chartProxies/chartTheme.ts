@@ -75,6 +75,22 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
     return theme;
 }
 
+export function applyThemeOverrides(
+    baseTheme: AgChartTheme,
+    overrides: Array<AgChartThemeOverrides | null | undefined>
+): AgChartTheme {
+    return overrides.reduce(
+        (baseTheme, overrides) => {
+            if (!overrides) return baseTheme;
+            return {
+                baseTheme: baseTheme as any,
+                overrides,
+            };
+        },
+        baseTheme,
+    );
+}
+
 function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThemePalette) {
     const arrayCompare = (arrA: any[], arrB: any[]) => {
         if (arrA.length !== arrB.length) return false;
