@@ -37,7 +37,7 @@ The following example demonstrates different ways of customising the column menu
 - The **Year** column has a floating filter and the header filter button suppressed.
 - The **Sport** column has no filter and the menu suppressed on right-click.
 - The **Gold** column has no filter and the menu button suppressed, but still available via right-click
-- The **Silver** column has a filter and the menu button suppressed, but still available via right-click.
+- The **Silver** column has a filter (with the header filter button suppressed), and the menu button suppressed but still available via right-click.
 - The **Bronze** column has a floating filter and the menu button suppressed, but still available via right-click.
 - The **Total** column has the menu button, header filter button and right-click menu suppressed.
 
