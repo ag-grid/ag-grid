@@ -1,9 +1,13 @@
-import { AgChartTheme } from '@ag-grid-community/core';
-import { AgCharts, AgCartesianChartOptions, AgHeatmapSeriesOptions, AgChartThemeOverrides, AgChartOptions } from 'ag-charts-community';
+import {
+    AgCharts,
+    AgCartesianChartOptions,
+    AgHeatmapSeriesOptions,
+    AgChartThemeOverrides,
+    AgHeatmapSeriesTooltipRendererParams,
+    AgTooltipRendererResult,
+} from 'ag-charts-community';
 import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
 import { flatMap } from '../../utils/array';
-import { deepMerge } from '../../utils/object';
-import { toTooltipHtml } from 'ag-charts-community/dist/types/src/integrated-charts-scene';
 
 export const HEATMAP_SERIES_KEY = 'AG-GRID-DEFAULT-HEATMAP-SERIES-KEY';
 export const HEATMAP_VALUE_KEY = 'AG-GRID-DEFAULT-HEATMAP-VALUE-KEY';
@@ -38,24 +42,6 @@ export class HeatmapChartProxy extends ChartProxy {
                 // In future releases we may want to consider inferring the series label from column groupings etc
                 xName: undefined,
                 colorName: undefined,
-                // By default, the tooltip will display the non-human-friendly xKey and colorKey values, so
-                // we need to override this to provide a sensible default tooltip
-                tooltip: {
-                    renderer: ({ xKey, yKey, colorKey, yName, seriesId, datum }) => {
-                        const item = datum[seriesId];
-                        const table: Array<{ label: string, value: string | undefined }> = [
-                            { label: yName, value: item[yKey] },
-                            { label: item[xKey], value: colorKey && item[colorKey] },
-                        ];
-                        const html = table
-                            .map(({ label, value }) => `<b>${sanitizeHtml(String(label))}:</b> ${sanitizeHtml(String(value))}`)
-                            .join('<br>');
-                        return {
-                            title: '',
-                            content: html,
-                        };
-                    },
-                }
             },
         ];
     }
@@ -70,6 +56,18 @@ export class HeatmapChartProxy extends ChartProxy {
         );
     }
 
+    protected override getChartThemeDefaults(): AgChartThemeOverrides | undefined {
+        return {
+            heatmap: {
+                series: {
+                    tooltip: {
+                        renderer: renderHeatmapTooltip,
+                    },
+                },
+            },
+        };
+    }
+
     protected override transformData(data: any[], categoryKey: string, categoryAxis?: boolean): any[] {
         // Ignore the base implementation as it assumes only a single category axis
         // (this method is never actually invoked)
@@ -79,6 +77,22 @@ export class HeatmapChartProxy extends ChartProxy {
     public override crossFilteringReset(): void {
         // cross filtering is not currently supported in heatmap charts
     }
+}
+
+function renderHeatmapTooltip(params: AgHeatmapSeriesTooltipRendererParams): string | AgTooltipRendererResult {
+    const { xKey, yKey, colorKey, yName, seriesId, datum } = params;
+    const item = datum[seriesId];
+    const table: Array<{ label: string; value: string | undefined }> = [
+        { label: yName, value: item[yKey] },
+        { label: item[xKey], value: colorKey && item[colorKey] },
+    ];
+    const html = table
+        .map(({ label, value }) => `<b>${sanitizeHtml(String(label))}:</b> ${sanitizeHtml(String(value))}`)
+        .join('<br>');
+    return {
+        title: '',
+        content: html,
+    };
 }
 
 function sanitizeHtml(input: string): string {
