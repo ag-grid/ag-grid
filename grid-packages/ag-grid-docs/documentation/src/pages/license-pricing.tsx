@@ -12,6 +12,7 @@ import { trackOnceInfoEmail } from '../utils/analytics';
 import SEO from './components/SEO';
 import ToggleBackground from '../images/inline-svgs/pricing/toggle-background.svg';
 import { ComparisonTable } from '../components/comparison-table/ComparisonTable';
+import featuresData from '../../doc-pages/licensing/featuresMatrix.json'
 
 import FAQ from '../components/licenses/FAQ';
 
@@ -83,30 +84,6 @@ export const LicensePricing = () => {
             "answer": "One Deployment License needed for multi-tenant setups, serving multiple customers under one application instance."
         }
     ]
-
-    const dummyCompTableData = [
-        {
-            name: 'Community Integrated Charts',
-            link: 'https://example.com/column-groups',
-            community: false,
-            enterprise: true,
-            chartsGrid: true,
-        },
-        {
-            name: 'Integrated Enterprise Charts',
-            link: 'https://example.com/column-groups',
-            community: false,
-            enterprise: false,
-            chartsGrid: true,
-        },
-        {
-            name: 'AG Charts Enterprise ',
-            link: 'https://example.com/column-spanning',
-            community: false,
-            enterprise: false,
-            chartsGrid: true,
-        },
-    ];
     
     return (
         <>
@@ -169,7 +146,7 @@ export const LicensePricing = () => {
                         </div>
 
                         <ComparisonTable
-                            data={dummyCompTableData}
+                            data={featuresData}
                             columns={{
                                 'name': '',
                                 'community': '',
