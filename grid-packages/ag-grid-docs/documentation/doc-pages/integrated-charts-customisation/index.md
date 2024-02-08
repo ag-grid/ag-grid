@@ -144,6 +144,12 @@ These overrides are specific to the [AG Charts Waterfall Series](https://charts.
 
 <grid-example title='Waterfall Overrides' name='waterfall-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
+### Heatmap Overrides
+
+These overrides are specific to the [AG Charts Heatmap Series](https://charts.ag-grid.com/react/heatmap-series/). For full list of overrides see [Heatmap Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-heatmap).
+
+<grid-example title='Heatmap Overrides' name='heatmap-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "rowgrouping", "charts-enterprise"] }'></grid-example>
+
 ### Treemap Overrides
 
 These overrides are specific to the [AG Charts Treemap Series](https://charts.ag-grid.com/react/treemap-series/). For full list of overrides see [Treemap Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides-treemap).
