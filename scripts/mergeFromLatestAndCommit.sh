@@ -2,6 +2,8 @@
 
 ./scripts/release/git-merge-latest.sh
 
+git checkout HEAD -- scripts/mergeFromLatestAndCommit.sh
+
 CONFLICTS=$(git ls-files -u | wc -l)
 if [ "$CONFLICTS" -gt 0 ] ; then
    echo "There is a merge conflict. Aborting"
