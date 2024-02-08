@@ -325,7 +325,7 @@ const ComparisonTable = ({ isChecked }) => {
               onClick={() => toggleCategory(categoryData.category)}
             >
               {categoryData.category}
-              <ChevronDown />
+              {/* <ChevronDown /> */}
             </div>
             {expandedCategories[categoryData.category] &&
               categoryData.features.map((feature) => (
