@@ -35,7 +35,7 @@ import {
 } from '@ag-grid-community/core';
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
-import { MenuUtils } from './menuUtils';
+import { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -130,7 +130,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ): void {
-        const { menu, eMenuGui, currentHeaderPosition, currentColumnIndex, anchorToElement } = this.getMenuParams(column, restrictToTabs, eventSource);
+        const { menu, eMenuGui, anchorToElement, restoreFocusParams } = this.getMenuParams(column, restrictToTabs, eventSource);
         const closedFuncs: ((e?: Event) => void)[] = [];
 
         if (column) {
@@ -140,7 +140,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                     const eComp = menu.getGui();
                     this.destroyBean(menu);
                     column?.setMenuVisible(false, 'contextMenu');
-                    this.menuUtils.restoreFocusOnClose(column, eComp, currentHeaderPosition, currentColumnIndex, eventSource, e);
+                    this.menuUtils.restoreFocusOnClose(restoreFocusParams, eComp, e);
                 }
             );
         }
@@ -220,25 +220,31 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ) {
-        const menu = this.createMenu(column, restrictToTabs, eventSource);
+        const restoreFocusParams = {
+            column,
+            headerPosition: this.focusService.getFocusedHeader(),
+            columnIndex: this.columnModel.getAllDisplayedColumns().indexOf(column!),
+            eventSource
+        };
+        const menu = this.createMenu(column, restoreFocusParams, restrictToTabs, eventSource);
         return {
             menu,
             eMenuGui: menu.getGui(),
-            currentHeaderPosition: this.focusService.getFocusedHeader(),
-            currentColumnIndex: this.columnModel.getAllDisplayedColumns().indexOf(column!),
-            anchorToElement: eventSource || this.ctrlsService.getGridBodyCtrl().getGui()
+            anchorToElement: eventSource || this.ctrlsService.getGridBodyCtrl().getGui(),
+            restoreFocusParams
         }
     }
 
     private createMenu(
         column: Column | undefined,
+        restoreFocusParams: MenuRestoreFocusParams,
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ): (EnterpriseColumnMenu & BeanStub) {
         if (this.menuService.isLegacyMenuEnabled()) {
-            return this.createBean(new TabbedColumnMenu(column, this.lastSelectedTab, restrictToTabs, eventSource));
+            return this.createBean(new TabbedColumnMenu(column, restoreFocusParams, this.lastSelectedTab, restrictToTabs, eventSource));
         } else {
-            return this.createBean(new ColumnContextMenu(column, eventSource));
+            return this.createBean(new ColumnContextMenu(column, restoreFocusParams, eventSource));
         }
     }
 
@@ -300,6 +306,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
 
     constructor(
         private readonly column: Column | undefined,
+        private readonly restoreFocusParams: MenuRestoreFocusParams,
         private readonly initialSelection: string,
         private readonly restrictTo?: ColumnMenuTab[],
         private readonly sourceElement?: HTMLElement
@@ -427,7 +434,7 @@ class TabbedColumnMenu extends BeanStub implements EnterpriseColumnMenu {
     }
 
     private onHidePopup(event?: CloseMenuEvent): void {
-        this.menuUtils.closePopupAndRestoreFocusOnSelect(this.hidePopupFunc, event);
+        this.menuUtils.closePopupAndRestoreFocusOnSelect(this.hidePopupFunc, this.restoreFocusParams, event);
     }
 
     private createFilterPanel(): TabbedItem {
@@ -511,7 +518,11 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     private hidePopupFunc: (popupParams?: PopupEventParams) => void;
     private mainMenuList: AgMenuList;
 
-    constructor(private readonly column: Column | undefined, private readonly sourceElement?: HTMLElement) {
+    constructor(
+        private readonly column: Column | undefined,
+        private readonly restoreFocusParams: MenuRestoreFocusParams,
+        private readonly sourceElement?: HTMLElement
+    ) {
         super(/* html */`
             <div ref="eColumnMenu" role="presentation" class="ag-menu ag-column-menu"></div>
         `);
@@ -525,7 +536,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     }
 
     private onHidePopup(event?: CloseMenuEvent): void {
-        this.menuUtils.closePopupAndRestoreFocusOnSelect(this.hidePopupFunc, event);
+        this.menuUtils.closePopupAndRestoreFocusOnSelect(this.hidePopupFunc, this.restoreFocusParams, event);
     }
 
     public afterGuiAttached({ hidePopup }: IAfterGuiAttachedParams): void {
