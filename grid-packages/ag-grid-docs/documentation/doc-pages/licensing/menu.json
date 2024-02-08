@@ -483,11 +483,6 @@
             "url": "/change-cell-renderers/"
           },
           {
-            "title": "(merge above)",
-            "url": "/flashing-cells/",
-            "showInCollapsed": true
-          },
-          {
             "title": "Tooltips",
             "url": "/tooltips/",
             "showInCollapsed": true

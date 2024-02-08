@@ -2,7 +2,7 @@
 title: "Formatting Values"
 ---
 
-Providing a Value Formatter to a Column will format values for that Column.
+Use a Value Formatter to provide text formatting of values.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
