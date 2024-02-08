@@ -176,10 +176,8 @@ export class AgMenuItemComponent extends BeanStub {
             }
         }
 
-        const eGui = this.getGui();
-
         const positionCallback = this.popupService.positionPopupForMenu.bind(this.popupService,
-            { eventSource: eGui, ePopup });
+            { eventSource: this.eGui, ePopup });
 
         const translate = this.localeService.getLocaleTextFunc();
 
@@ -187,7 +185,7 @@ export class AgMenuItemComponent extends BeanStub {
             modal: true,
             eChild: ePopup,
             positionCallback: positionCallback,
-            anchorToElement: eGui,
+            anchorToElement: this.eGui,
             ariaLabel: translate('ariaLabelSubMenu', 'SubMenu'),
             afterGuiAttached
         });

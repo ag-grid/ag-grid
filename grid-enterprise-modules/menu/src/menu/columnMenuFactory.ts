@@ -24,7 +24,7 @@ export class ColumnMenuFactory extends BeanStub {
     private static MENU_ITEM_SEPARATOR = 'separator';
 
     public createMenu(parent: BeanStub, column: Column | undefined, sourceElement: () => HTMLElement): AgMenuList {
-        const menuList = parent.createManagedBean(new AgMenuList(1, {
+        const menuList = parent.createManagedBean(new AgMenuList(0, {
             column: column ?? null,
             node: null,
             value: null
