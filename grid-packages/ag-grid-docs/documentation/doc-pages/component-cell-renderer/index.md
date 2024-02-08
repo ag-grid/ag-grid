@@ -4,33 +4,40 @@ title: "Cell Components"
 
 <framework-specific-section frameworks="javascript">
 |Custom HTML / DOM inside Cells is achieved using Cell Components.
+|Create Custom Cell Components to have any HTML markup
+|in a cell. The grid comes with some Provided Cell Components for common grid tasks.
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
 |Custom HTML / DOM inside Cells is achieved using Cell Components.
+|Create Custom Cell Components to have any HTML markup
+|in a cell. The grid comes with some Provided Cell Components for common grid tasks.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <video-section id="9IbhW4z--mg" title="React Cell Renderers" header="true">
 Custom HTML / DOM inside Cells is achieved using Cell Components.
+Create Custom Cell Components to have any HTML markup
+in a cell. The grid comes with some Provided Cell Components for common grid tasks.
 </video-section>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <video-section id="xsafnM77NVs" title="Angular Cell Renderers" header="true">
 Custom HTML / DOM inside Cells is achieved using Cell Components.
+Create Custom Cell Components to have any HTML markup
+in a cell. The grid comes with some Provided Cell Components for common grid tasks.
 </video-section>
 </framework-specific-section>
 
-
-The example below shows a custom Cell Component in the Gold, Silver, Bronze and Total Columns.
+The example below shows some Custom Cell Components.
 
 <grid-example title='Simple Cell Renderer' name='simple' type='mixed' options='{ "exampleHeight": 460 }'></grid-example>
 
 ## Custom Components
 
-md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
+md-include:component-interface-javascript.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
@@ -54,7 +61,7 @@ The grid comes with some Cell Components out of the box. These Provided Cell Com
 
 - [Checkbox Cell Renderer](/cell-data-types/): For displaying boolean values with a checkbox when `cellDataType` of Boolean is used.
 
-    
+
 ## Selecting Components
 
 The Cell Component for a Column is set via `colDef.cellRenderer` and can be any of the following types:

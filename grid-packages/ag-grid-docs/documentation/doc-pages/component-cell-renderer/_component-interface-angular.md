@@ -17,5 +17,22 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-The `props` (interface ICellRendererParams) passed to the Cell Component are as follows:
+|The Component is provided `props` containing, amoungst other things, the value to be rendered.
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+
+```ts
+class CustomButtonComponent implements ICellRendererAngularComp {
+  // ...
+  agInit(props: ICellRendererParams): void {
+    this.cellValue = props.value;
+  }
+  // ...
+```
+
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+|The provided `props` (interface ICellRendererParams) are:
 </framework-specific-section>
