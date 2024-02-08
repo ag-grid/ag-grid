@@ -15,8 +15,8 @@ function generateData(): any[] {
     return years.flatMap((year, yearIndex) => countries.map((country, index) => ({
         year,
         country,
-        gold: Math.floor(((index + 1 / 7) * 333) % 100) + Math.round(50 * Math.sin((yearIndex / (years.length - 1)) * (Math.PI * 0.75))),
-        silver: Math.floor(((index + 1 / 3) * 555) % 100) + Math.round(50 * Math.sin((yearIndex / (years.length - 1)) * (Math.PI * 0.75))),
-        bronze: Math.floor(((index + 1 / 7.3) * 777) % 100) + Math.round(50 * Math.sin((yearIndex / (years.length - 1)) * (Math.PI * 0.75))),
+        gold: 20 + Math.floor(((index + 1 / 7) * 333) % 100) + Math.round(50 * Math.sin((yearIndex / (years.length - 1)) * (Math.PI * 0.75))),
+        silver: 20 + Math.floor(((index + 1 / 3) * 555) % 100) + Math.round(50 * Math.sin((yearIndex / (years.length - 1)) * (Math.PI * 0.75))),
+        bronze: 20 + Math.floor(((index + 1 / 7.3) * 777) % 100) + Math.round(50 * Math.sin((yearIndex / (years.length - 1)) * (Math.PI * 0.75))),
     })));
 }
