@@ -23,6 +23,7 @@ export type ChartSeriesType =
     'box-plot' |
     'treemap' |
     'sunburst' |
+    'heatmap' |
     'waterfall' |
     'common';
 
@@ -51,6 +52,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'box-plot',
     'treemap',
     'sunburst',
+    'heatmap',
     'waterfall',
 ];
 
@@ -144,6 +146,8 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'pie':
         case 'doughnut':
             return 'pie';
+        case 'heatmap':
+            return 'heatmap';
         case 'waterfall':
             return 'waterfall';
         default:

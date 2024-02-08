@@ -12,7 +12,7 @@ export interface ChartGroupsDef {
     polarGroup?: ('radarLine' | 'radarArea' | 'nightingale' | 'radialColumn' | 'radialBar')[],
     statisticalGroup?: ('boxPlot' | 'histogram' | 'rangeBar' | 'rangeArea')[],
     hierarchicalGroup?: ('treemap' | 'sunburst')[],
-    specializedGroup?: ('waterfall')[],
+    specializedGroup?: ('heatmap' | 'waterfall')[],
 }
 
 export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
@@ -60,6 +60,7 @@ export const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
         'sunburst',
     ],
     specializedGroup: [
+        'heatmap',
         'waterfall',
     ],
     combinationGroup: [
