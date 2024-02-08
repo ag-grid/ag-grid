@@ -9,14 +9,21 @@ const data = [
     category: 'Charting',
     features: [
       {
-        feature: 'Enterprise Integrated Charts',
+        feature: 'Community Integrated Charts',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+        link: 'https://example.com/column-groups', 
+      },
+      {
+        feature: 'Integrated Enterprise Charts',
         community: false,
         enterprise: false,
         chartsGrid: true,
         link: 'https://example.com/column-groups', 
       },
       {
-        feature: 'Enterprise AG Charts',
+        feature: 'AG Charts Enterprise ',
         community: false,
         enterprise: false,
         chartsGrid: true,
@@ -28,32 +35,32 @@ const data = [
     category: 'Filtering',
     features: [
       {
-        feature: 'Simple Column Filters',
-        community: true,
-        enterprise: true,
-        chartsGrid: true,
-      },
-      {
-        feature: 'Multi Filter',
-        community: true,
-        enterprise: true,
-        chartsGrid: true,
-      },
-      {
-        feature: 'Set Filter',
-        community: true,
-        enterprise: true,
-        chartsGrid: true,
-      },
-      {
         feature: 'External Filter',
-        community: false,
+        community: true,
         enterprise: true,
         chartsGrid: true,
       },
 
       {
         feature: 'Quick Filter',
+        community: true,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Simple Column Filters',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Multi Filter',
+        community: false,
+        enterprise: true,
+        chartsGrid: true,
+      },
+      {
+        feature: 'Set Filter',
         community: false,
         enterprise: true,
         chartsGrid: true,
@@ -64,6 +71,7 @@ const data = [
         enterprise: true,
         chartsGrid: true,
       },
+     
  
     ],
   },
@@ -135,19 +143,28 @@ const data = [
 
 const chartsArray = [
   {
-    category: 'Charting',
+    category: 'Grid',
     features: [
       {
-        feature: 'Enterprise Integrated Charts',
+        feature: 'Community Integrated Charts',
         community: false,
-        enterprise: false,
+        enterprise: true,
         chartsGrid: true,
+        link: 'https://example.com/column-groups', 
       },
       {
-        feature: 'Enterprise AG Charts',
+        feature: 'Integrated Enterprise Charts',
         community: false,
         enterprise: false,
         chartsGrid: true,
+        link: 'https://example.com/column-groups', 
+      },
+      {
+        feature: 'AG Charts Enterprise ',
+        community: false,
+        enterprise: false,
+        chartsGrid: true,
+        link: 'https://example.com/column-groups', 
       },
     ],
   },
@@ -346,7 +363,7 @@ const ComparisonTable = ({ isChecked }) => {
         <div className="feature-heading">Community</div>
         {chartsData.map((categoryData) => (
           <React.Fragment key={`heading-${categoryData.category}-community`}>
-            <div className={`feature-cell ${expandedCategories[categoryData.category] ? 'hidden' : 'empty-cell'}`}>-</div>
+            <div className={`feature-cell ${expandedCategories[categoryData.category] ? 'hidden' : 'empty-cell'}`}></div>
             {expandedCategories[categoryData.category] &&
               categoryData.features.map((feature) => (
                 <div
@@ -363,7 +380,7 @@ const ComparisonTable = ({ isChecked }) => {
         <div className="feature-heading">Enterprise</div>
         {chartsData.map((categoryData) => (
           <React.Fragment key={`heading-${categoryData.category}-enterprise`}>
-            <div className={`feature-cell ${expandedCategories[categoryData.category] ? 'hidden' : 'empty-cell'}`}>-</div>
+            <div className={`feature-cell ${expandedCategories[categoryData.category] ? 'hidden' : 'empty-cell'}`}></div>
             {expandedCategories[categoryData.category] &&
               categoryData.features.map((feature) => (
                 <div
@@ -380,7 +397,7 @@ const ComparisonTable = ({ isChecked }) => {
         <div className="feature-heading">Grid + Charts</div>
         {chartsData.map((categoryData) => (
           <React.Fragment key={`heading-${categoryData.category}-chartsGrid`}>
-            <div className={`feature-cell ${expandedCategories[categoryData.category] ? 'hidden' : 'empty-cell'}`}>-</div>
+            <div className={`feature-cell ${expandedCategories[categoryData.category] ? 'hidden' : 'empty-cell'}`}></div>
             {expandedCategories[categoryData.category] &&
               categoryData.features.map((feature) => (
                 <div

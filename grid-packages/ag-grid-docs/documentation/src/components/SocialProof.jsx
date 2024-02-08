@@ -49,7 +49,7 @@ const SocialProof = () => {
                 </div>
 
                 <div className={styles.stat}>
-                    <h4 className="text-2xl">600k</h4>
+                    <h4 className="text-2xl">1M+</h4>
                     <p>Weekly NPM downloads</p>
                 </div>
 
