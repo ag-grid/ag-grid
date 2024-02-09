@@ -116,7 +116,7 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
 
     public hasMethod(name: string): boolean {
         const frameworkComponentInstance = this.getFrameworkComponentInstance();
-        return (!!frameworkComponentInstance && frameworkComponentInstance[name] !== null) ||
+        return (!!frameworkComponentInstance && frameworkComponentInstance[name] != null) ||
             this.fallbackMethodAvailable(name);
     }
 
