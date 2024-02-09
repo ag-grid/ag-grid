@@ -89,11 +89,11 @@ export interface ICellEditorReactComp extends ICellEditor, AgReactComponent {
 export interface ILoadingCellRendererReactComp extends AgReactComponent {
 }
 
-/** @deprecated v31.1 No interface required. */
+/** @deprecated v31.1 Use `ILoadingOverlay` instead. */
 export interface ILoadingOverlayReactComp extends ILoadingOverlay, AgReactComponent {
 }
 
-/** @deprecated v31.1 No interface required. */
+/** @deprecated v31.1 Use `INoRowsOverlay` instead. */
 export interface INoRowsOverlayReactComp extends INoRowsOverlay, AgReactComponent {
 }
 
@@ -105,9 +105,6 @@ export interface IStatusPanelReactComp extends IStatusPanel, AgReactComponent {
 export interface IToolPanelReactComp extends IToolPanel, AgReactComponent {
 }
 
-// /** @deprecated v31.1 No interface required. */
+/** @deprecated v31.1 No interface required. */
 export interface ITooltipReactComp extends AgReactComponent {
-}
-
-export interface IMenuItemReactComp extends IMenuItem, AgReactComponent {
 }

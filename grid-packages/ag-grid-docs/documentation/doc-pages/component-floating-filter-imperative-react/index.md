@@ -50,7 +50,7 @@ In the following example you can see how the Gold, Silver, Bronze and Total colu
 The interface for a custom floating filter component is as follows:
 
 <snippet transform={false} language="ts">
-|interface IFloatingFilterReactComp {
+|interface IFloatingFilter {
 |    // Gets called every time the parent filter changes. Your floating
 |    // filter would typically refresh its UI to reflect the new filter
 |    // state. The provided parentModel is what the parent filter returns
