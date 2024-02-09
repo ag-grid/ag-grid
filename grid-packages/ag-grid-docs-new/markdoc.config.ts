@@ -30,12 +30,20 @@ export default defineMarkdocConfig({
         fence: {
             attributes: {
                 ...Markdoc.nodes.fence.attributes!,
-                transform: Boolean,
+                /**
+                 * Determine if snippet component is used or not
+                 *
+                 * Snippets transform the code based on the user selected framework
+                 */
+                snippet: Boolean,
                 language: String,
                 lineNumbers: Boolean,
                 suppressFrameworkContext: Boolean,
                 spaceBetweenProperties: Boolean,
                 inlineReactProperties: Boolean,
+
+                // TODO: Temporary for mdx migration
+                fixme: Boolean,
             } as any,
             render: component('./src/components/snippet/Snippet.astro'),
         },
@@ -76,15 +84,16 @@ export default defineMarkdocConfig({
         enterpriseIcon: {
             render: component('./src/components/icon/EnterpriseIcon', 'EnterpriseIcon'),
         },
-        //     chartExampleRunner: {
-        //         render: component('./src/features/docs/components/DocsExampleRunner.astro'),
-        //         attributes: {
-        //             title: { type: String, required: true },
-        //             name: { type: String, required: true },
-        //             type: { type: String },
-        //             options: { type: Object },
-        //         },
-        //     },
+        // TODO: Implement
+        gridExampleRunner: {
+            render: 'pre',
+            attributes: {
+                title: { type: String, required: true },
+                name: { type: String, required: true },
+                type: { type: String },
+                options: { type: Object },
+            },
+        },
         matrixTable: {
             render: component('./src/features/matrixTable/components/MatrixTable.astro'),
             attributes: {
