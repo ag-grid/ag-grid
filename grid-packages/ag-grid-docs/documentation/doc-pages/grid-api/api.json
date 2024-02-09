@@ -257,13 +257,13 @@
                 "url": "/rendering-api/"
             }
         },
-        "getFirstDisplayedRow": {
+        "getFirstDisplayedRowIndex": {
             "more": {
                 "name": "Rendering API",
                 "url": "/rendering-api/"
             }
         },
-        "getLastDisplayedRow": {
+        "getLastDisplayedRowIndex": {
             "more": {
                 "name": "Rendering API",
                 "url": "/rendering-api/"

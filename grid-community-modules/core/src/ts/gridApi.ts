@@ -1606,13 +1606,23 @@ export class GridApi<TData = any> {
         return this.rowNodeBlockLoader.getBlockState();
     }
 
-    /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    /** @deprecated v31.1 `getFirstDisplayedRow` is deprecated. Please use `getFirstDisplayedRowIndex` instead. */
     public getFirstDisplayedRow(): number {
+        warnOnce('Since v31.1 getFirstDisplayedRow is deprecated. Please use getFirstDisplayedRowIndex instead.');
+        return this.getFirstDisplayedRowIndex();
+    }
+    /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    public getFirstDisplayedRowIndex(): number {
         return this.rowRenderer.getFirstVirtualRenderedRow();
     }
 
-    /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    /** @deprecated v31.1 `getLastDisplayedRow` is deprecated. Please use `getLastDisplayedRowIndex` instead. */
     public getLastDisplayedRow(): number {
+        warnOnce('Since v31.1 getLastDisplayedRow is deprecated. Please use getLastDisplayedRowIndex instead.');
+        return this.getLastDisplayedRowIndex();
+    }
+    /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */
+    public getLastDisplayedRowIndex(): number {
         return this.rowRenderer.getLastVirtualRenderedRow();
     }
 

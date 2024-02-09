@@ -584,8 +584,8 @@ export class LazyCache extends BeanStub {
      * Deletes any stub nodes not within the given range
      */
     public purgeStubsOutsideOfViewport() {
-        const firstRow = this.api.getFirstDisplayedRow();
-        const lastRow = this.api.getLastDisplayedRow();
+        const firstRow = this.api.getFirstDisplayedRowIndex();
+        const lastRow = this.api.getLastDisplayedRowIndex();
         const firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRow);
         const [_, lastRowBlockEnd] = this.rowLoader.getBlockBoundsForIndex(lastRow);
 
@@ -628,8 +628,8 @@ export class LazyCache extends BeanStub {
             return;
         }
 
-        const firstRowInViewport = this.api.getFirstDisplayedRow();
-        const lastRowInViewport = this.api.getLastDisplayedRow();
+        const firstRowInViewport = this.api.getFirstDisplayedRowIndex();
+        const lastRowInViewport = this.api.getLastDisplayedRowIndex();
 
         // the start storeIndex of every block in this store
         const allLoadedBlocks: Set<number> = new Set();
