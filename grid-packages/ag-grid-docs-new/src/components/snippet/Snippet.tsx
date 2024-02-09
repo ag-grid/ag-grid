@@ -30,7 +30,7 @@ export const Snippet = (props: Props) => {
     const {
         framework,
         content,
-        transform = true,
+        transform,
         language,
         lineNumbers,
         suppressFrameworkContext,
