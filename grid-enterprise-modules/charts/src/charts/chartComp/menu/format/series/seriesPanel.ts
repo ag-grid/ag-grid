@@ -21,6 +21,7 @@ import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import { CalloutPanel } from "./calloutPanel";
 import { CapsPanel } from "./capsPanel";
 import { ConnectorLinePanel } from "./connectorLinePanel";
@@ -51,6 +52,7 @@ export class SeriesPanel extends Component {
     private widgetFuncs: {[name: string]: () => void}= {
         'lineWidth': () => this.initStrokeWidth('lineWidth'),
         'strokeWidth': () => this.initStrokeWidth('strokeWidth'),
+        'lineColor': () => this.initLineColor(),
         'lineDash': () => this.initLineDash(),
         'lineOpacity': () => this.initLineOpacity(),
         'fillOpacity': () => this.initFillOpacity(),
@@ -84,7 +86,7 @@ export class SeriesPanel extends Component {
         'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
         'treemap': ['tooltips'],
         'sunburst': ['tooltips'],
-        'heatmap': ['tooltips'],
+        'heatmap': ['tooltips', 'labels', 'lineColor', 'lineWidth', 'lineOpacity'],
         'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
@@ -173,6 +175,19 @@ export class SeriesPanel extends Component {
             .onValueChange(newValue => this.setSeriesOption("tooltip.enabled", newValue));
 
         this.addWidget(seriesTooltipsToggle);
+    }
+
+    private initLineColor(): void {
+        const currentValue = this.getSeriesOption<string | undefined>("stroke");
+
+        const seriesLineColorPicker = this.createBean(new AgColorPicker());
+        seriesLineColorPicker
+            .setLabel(this.translate("strokeColor"))
+            .setLabelWidth('flex')
+            .onValueChange(newValue => this.setSeriesOption("stroke", newValue));
+        if (currentValue) seriesLineColorPicker.setValue(currentValue);
+
+        this.addWidget(seriesLineColorPicker);
     }
 
     private initStrokeWidth(label: 'strokeWidth' | 'lineWidth'): void {

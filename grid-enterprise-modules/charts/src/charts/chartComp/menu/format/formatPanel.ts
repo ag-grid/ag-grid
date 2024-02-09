@@ -142,7 +142,7 @@ export class FormatPanel extends Component {
             'range-area': ['axis', 'navigator'],
             'treemap': [],
             'sunburst': [],
-            'heatmap': [],
+            'heatmap': ['axis'],
             'waterfall': ['axis', 'navigator'],
             'box-plot': ['axis', 'navigator'],
         };
