@@ -251,6 +251,7 @@ const AG_GRID_LOCALE_EN = {
 
     specializedChart: 'Specialized',
     waterfall: 'Waterfall',
+    heatmap: 'Heatmap',
 
     combinationChart: 'Combination',
     columnLineCombo: 'Column & Line',
@@ -387,6 +388,7 @@ const AG_GRID_LOCALE_EN = {
     treemapTooltip: 'Treemap',
     sunburstTooltip: 'Sunburst',
     waterfallTooltip: 'Waterfall',
+    heatmapTooltip: 'Heatmap',
     columnLineComboTooltip: 'Column & Line',
     areaColumnComboTooltip: 'Area & Column',
     customComboTooltip: 'Custom Combination',
