@@ -18,7 +18,7 @@ If providing custom behaviour, then the component setup will be different, and i
 The interface for a custom menu item component is as follows:
 
 <snippet transform={false} language="ts">
-|interface IMenuItemReactComp {
+|interface IMenuItem {
 |    // optional methods
 |
 |    // Configure the default grid behaviour for this item, including styling,

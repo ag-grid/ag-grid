@@ -45,7 +45,7 @@ The example below shows a few cell editors in action.
 The interface for a custom cell editor component is as follows:
 
 <snippet transform={false} language="ts">
-|interface ICellEditorReactComp {
+|interface ICellEditor {
 |
 |    // Mandatory - Return the final value - called by the grid once after editing is complete
 |    getValue(): any;
