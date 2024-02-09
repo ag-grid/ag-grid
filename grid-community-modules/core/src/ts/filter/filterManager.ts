@@ -339,7 +339,7 @@ export class FilterManager extends BeanStub {
     }
 
     public isAnyFilterPresent(): boolean {
-        return this.isQuickFilterPresent() || this.isColumnFilterPresent() || this.isAggregateFilterPresent() || this.isExternalFilterPresent();
+        return this.isQuickFilterPresent() || this.isColumnFilterPresent() || this.isAggregateFilterPresent() || this.isExternalFilterPresent() || this.isAdvancedFilterPresent();
     }
 
     private doColumnFiltersPass(node: RowNode, filterToSkip?: IFilterComp, targetAggregates?: boolean): boolean {
