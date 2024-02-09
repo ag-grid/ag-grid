@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
           lengthRatio: 0.8, // 80% of bar's width (default is 0.5)
         },
         tooltip: {
-          renderer: ({ yName, minKey, q1Key, medianKey, q3Key, maxKey, datum, color }: any) => ({
+          renderer: ({ yName, minKey, q1Key, medianKey, q3Key, maxKey, datum, color }) => ({
             title: yName,
             content: [
               `Minimum: ${datum[minKey]}`,
