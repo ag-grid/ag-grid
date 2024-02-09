@@ -4,7 +4,7 @@ frameworks: ["react"]
 ---
 
 <warning>
-|This page describes the old imperative way of declaring custom menu item components when the grid option `reactiveCustomComponents` is not set. It is strongly recommended to instead use the new behaviour described on the [Custom Menu Item](../component-menu-item) page.
+|This page describes the old imperative way of declaring custom menu item components when the grid option `reactiveCustomComponents` is not set. This behaviour is deprecated, and you should instead use the new behaviour described on the [Custom Menu Item](../component-menu-item) page.
 </warning>
 
 If you are not [Providing Custom Behaviour](/component-menu-item/#providing-custom-behaviour), then declaring custom menu item components imperatively is similar to with `reactiveCustomComponents` enabled. However the props will be slightly different (see [Custom Menu Item Parameters](/component-menu-item-imperative-react/#custom-menu-item-parameters)).

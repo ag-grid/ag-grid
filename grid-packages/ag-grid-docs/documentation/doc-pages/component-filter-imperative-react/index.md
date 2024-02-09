@@ -4,7 +4,7 @@ frameworks: ["react"]
 ---
 
 <warning>
-|This page describes the old imperative way of declaring custom filter components when the grid option `reactiveCustomComponents` is not set. It is strongly recommended to instead use the new behaviour described on the [Custom Filter](../component-filter) page.
+|This page describes the old imperative way of declaring custom filter components when the grid option `reactiveCustomComponents` is not set. This behaviour is deprecated, and you should instead use the new behaviour described on the [Custom Filter](../component-filter) page.
 </warning>
 
 An example filter component looks like this:

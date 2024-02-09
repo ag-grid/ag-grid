@@ -6,6 +6,7 @@ import { showJsComp } from '../jsComp';
 import { FloatingFilterComponentProxy } from '../../shared/customComp/floatingFilterComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
 import { CustomFloatingFilterCallbacks } from '../../shared/customComp/interfaces';
+import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 
 const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
@@ -87,10 +88,14 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     const reactiveCustomComponents = useMemo(() => gridOptionsService.get('reactiveCustomComponents'), []);
     const floatingFilterCompProxy = useMemo(() => {
-        if (reactiveCustomComponents && userCompDetails) {
-            const compProxy = new FloatingFilterComponentProxy(userCompDetails!.params, () => setRenderKey(prev => prev + 1));
-            userCompRef(compProxy);
-            return compProxy;
+        if (userCompDetails) {
+            if (reactiveCustomComponents) {
+                const compProxy = new FloatingFilterComponentProxy(userCompDetails!.params, () => setRenderKey(prev => prev + 1));
+                userCompRef(compProxy);
+                return compProxy;
+            } else {
+                warnReactiveCustomComponents();
+            }
         }
         return undefined;
     }, [userCompDetails]);

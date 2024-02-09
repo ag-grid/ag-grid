@@ -4,7 +4,7 @@ frameworks: ["react"]
 ---
 
 <warning>
-|This page describes the old imperative way of declaring custom floating filter components when the grid option `reactiveCustomComponents` is not set. It is strongly recommended to instead use the new behaviour described on the [Custom Floating Filter](../component-floating-filter) page.
+|This page describes the old imperative way of declaring custom floating filter components when the grid option `reactiveCustomComponents` is not set. This behaviour is deprecated, and you should instead use the new behaviour described on the [Custom Floating Filter](../component-floating-filter) page.
 </warning>
 
 An example floating filter component looks like this:

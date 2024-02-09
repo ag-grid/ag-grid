@@ -4,7 +4,7 @@ frameworks: ["react"]
 ---
 
 <warning>
-|This page describes the old imperative way of declaring custom cell editor components when the grid option `reactiveCustomComponents` is not set. It is strongly recommended to instead use the new behaviour described on the [Custom Cell Editor](../component-cell-editor) page.
+|This page describes the old imperative way of declaring custom cell editor components when the grid option `reactiveCustomComponents` is not set. This behaviour is deprecated, and you should instead use the new behaviour described on the [Custom Cell Editor](../component-cell-editor) page.
 </warning>
 
 An example cell editor component looks like this:
