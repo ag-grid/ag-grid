@@ -93,7 +93,7 @@ export class HeaderPositionUtils extends BeanStub {
         if (currentRowType === HeaderRowType.COLUMN_GROUP) {
             const leafColumns = (column as ColumnGroup).getDisplayedLeafColumns();
             const leafColumn = direction === 'After' ? leafColumns[0] : last(leafColumns);
-            const columnsInTheWay = [];
+            const columnsInTheWay: ColumnGroup[] = [];
 
             let currentColumn: Column | ColumnGroup = leafColumn;
             while (currentColumn.getParent() !== column) {
