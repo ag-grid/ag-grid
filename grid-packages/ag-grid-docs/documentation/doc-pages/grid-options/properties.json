@@ -1057,13 +1057,13 @@
                 "url": "/flashing-cells/"
             }
         },
-        "cellFlashDelay": {
+        "cellFlashDuration": {
             "more": {
                 "name": "How Flashing Works",
                 "url": "/flashing-cells/#how-flashing-works"
             }
         },
-        "cellFadeDelay": {
+        "cellFadeDuration": {
             "more": {
                 "name": "How Flashing Works",
                 "url": "/flashing-cells/#how-flashing-works"

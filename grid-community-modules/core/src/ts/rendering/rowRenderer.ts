@@ -61,8 +61,15 @@ export interface RefreshCellsParams<TData = any> extends GetCellsParams<TData> {
 }
 
 export interface FlashCellsParams<TData = any> extends GetCellsParams<TData> {
+    /** @deprecated v31.1 Use `flashDuration` instead. */
     flashDelay?: number;
+    /** @deprecated v31.1 Use `fadeDuration` instead. */
     fadeDelay?: number;
+
+    /** The duration in milliseconds of how long a cell should remain in its "flashed" state. */
+    flashDuration?: number;
+    /** The duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `flashDuration` has completed. */
+    fadeDuration?: number;
 }
 
 export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> { }
@@ -681,9 +688,8 @@ export class RowRenderer extends BeanStub {
     }
 
     public flashCells(params: FlashCellsParams = {}): void {
-        const { flashDelay, fadeDelay } = params;
         this.getCellCtrls(params.rowNodes, params.columns)
-            .forEach(cellCtrl => cellCtrl.flashCell({ flashDelay, fadeDelay }));
+            .forEach(cellCtrl => cellCtrl.flashCell(params));
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {

@@ -36,6 +36,7 @@ import { getValueUsingField } from "../../utils/object";
 import { getElementSize } from "../../utils/dom";
 import { setAriaColIndex } from "../../utils/aria";
 import { CssClassApplier } from "../../headerRendering/cells/cssClassApplier";
+import { FlashCellsParams } from "../rowRenderer";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -686,26 +687,26 @@ export class CellCtrl extends BeanStub {
     }
 
     // user can also call this via API
-    public flashCell(delays?: { flashDelay?: number | null; fadeDelay?: number | null; }): void {
-        const flashDelay = delays && delays.flashDelay;
-        const fadeDelay = delays && delays.fadeDelay;
+    public flashCell(delays?: Pick<FlashCellsParams, 'fadeDelay' | 'flashDelay' | 'fadeDuration' | 'flashDuration'>): void {
+        const flashDuration = delays?.flashDuration ?? delays?.flashDelay;
+        const fadeDuration = delays?.fadeDuration ?? delays?.fadeDelay;
 
-        this.animateCell('data-changed', flashDelay, fadeDelay);
+        this.animateCell('data-changed', flashDuration, fadeDuration);
     }
 
-    private animateCell(cssName: string, flashDelay?: number | null, fadeDelay?: number | null): void {
+    private animateCell(cssName: string, flashDuration?: number | null, fadeDuration?: number | null): void {
         if (!this.cellComp) { return; }
 
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
         const { gridOptionsService } = this.beans;
 
-        if (!flashDelay) {
-            flashDelay = gridOptionsService.get('cellFlashDelay');
+        if (!flashDuration) {
+            flashDuration = gridOptionsService.get('cellFlashDuration');
         }
 
-        if (!exists(fadeDelay)) {
-            fadeDelay = gridOptionsService.get('cellFadeDelay');
+        if (!exists(fadeDuration)) {
+            fadeDuration = gridOptionsService.get('cellFadeDuration');
         }
 
         // we want to highlight the cells, without any animation
@@ -719,14 +720,14 @@ export class CellCtrl extends BeanStub {
                 this.cellComp.addOrRemoveCssClass(fullName, false);
                 this.cellComp.addOrRemoveCssClass(animationFullName, true);
 
-                this.eGui.style.transition = `background-color ${fadeDelay}ms`;
+                this.eGui.style.transition = `background-color ${fadeDuration}ms`;
                 window.setTimeout(() => {
                     if (!this.isAlive()) { return; }
                     // and then to leave things as we got them, we remove the animation
                     this.cellComp.addOrRemoveCssClass(animationFullName, false);
                     this.eGui.style.transition = '';
-                }, fadeDelay!);
-            }, flashDelay!);
+                }, fadeDuration!);
+            }, flashDuration!);
         });
     }
 

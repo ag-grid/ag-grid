@@ -935,13 +935,21 @@ export interface GridOptions<TData = any> {
      */
     enableCellChangeFlash?: boolean;
     /**
-     * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its "flashed" state.
+     * To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long a cell should remain in its "flashed" state.
      * @default 500
+     */
+    cellFlashDuration?: number;
+    /**
+     * @deprecated v31.1 - use `cellFlashDuration` instead.
      */
     cellFlashDelay?: number;
     /**
-     * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
+     * To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
      * @default 1000
+     */
+    cellFadeDuration?: number;
+    /**
+     * @deprecated v31.1 - use `cellFadeDuration` instead.
      */
     cellFadeDelay?: number;
     /**

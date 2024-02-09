@@ -923,12 +923,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
-    /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its "flashed" state.
+    /** To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long a cell should remain in its "flashed" state.
          * @default 500
          */
+    @Input() public cellFlashDuration: number | undefined = undefined;
+    /** @deprecated v31.1 - use `cellFlashDuration` instead.
+         */
     @Input() public cellFlashDelay: number | undefined = undefined;
-    /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
+    /** To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
          * @default 1000
+         */
+    @Input() public cellFadeDuration: number | undefined = undefined;
+    /** @deprecated v31.1 - use `cellFadeDuration` instead.
          */
     @Input() public cellFadeDelay: number | undefined = undefined;
     /** Set to `true` to have cells flash after data changes even when the change is due to filtering.

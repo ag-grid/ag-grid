@@ -417,6 +417,10 @@ export class GridApi<TData = any> {
 
     /** Flash rows, columns or individual cells. */
     public flashCells(params: FlashCellsParams<TData> = {}): void {
+        const warning = (prop: 'fade' | 'flash') => warnOnce(`Since v31.1 api.flashCells parameter '${prop}Delay' is deprecated. Please use '${prop}Duration' instead.`);
+        if(exists(params.fadeDelay)){ warning('fade') }
+        if(exists(params.flashDelay)){ warning('flash') }
+
         this.frameworkOverrides.wrapIncoming(() => this.rowRenderer.flashCells(params));
     }
 
