@@ -57,7 +57,9 @@ export class HeatmapChartProxy extends ChartProxy {
         return flatMap(params.data, (datum, index) => {
             // We need to create a unique y value object for each row to prevent unintended category grouping
             // when there are multiple rows with the same category value
-            const yValue = { id: index, value: datum[category.id], toString() { return datum[category.id]; } };
+            const value = datum[category.id];
+            const valueString = value == null ? '' : String(value);
+            const yValue = { id: index, value, toString: () => valueString };
             // Return a flat list of output data items corresponding to each cell,
             // appending the synthetic series and category fields to the cell data
             return params.fields.map(({ colId, displayName }) => ({
