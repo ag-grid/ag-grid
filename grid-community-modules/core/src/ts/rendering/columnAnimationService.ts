@@ -44,7 +44,7 @@ export class ColumnAnimationService extends BeanStub {
     public finish(): void {
         if (!this.active) { return; }
         this.executeNextVMTurn(() => {
-            // React components can be setup asynchronously meaning comps can call executeNextVMTurn after finish has been called
+            // React components are rendered asynchronously so they call executeNextVMTurn after finish has been called
             // This flushes any remaining executeNextVMTurn calls asap
             this.flush();
         });
@@ -87,18 +87,23 @@ export class ColumnAnimationService extends BeanStub {
         });
     }
 
-    public flush(): void {
+    private flush(): void {
         const nowFuncs = this.executeNextFuncs;
         this.executeNextFuncs = [];
 
         const waitFuncs = this.executeLaterFuncs;
         this.executeLaterFuncs = [];
 
-        if (nowFuncs.length === 0 && waitFuncs.length === 0) { return; }
 
-        this.getFrameworkOverrides().wrapIncoming(() => {
-            window.setTimeout(() => nowFuncs.forEach(func => func()), 0);
-            window.setTimeout(() => waitFuncs.forEach(func => func()), 200);
-        });
+        if(nowFuncs.length > 0){
+            this.getFrameworkOverrides().wrapIncoming(() => {
+                window.setTimeout(() => nowFuncs.forEach(func => func()), 0);
+            });    
+        }
+        if(waitFuncs.length > 0){
+            this.getFrameworkOverrides().wrapIncoming(() => {         
+                window.setTimeout(() => waitFuncs.forEach(func => func()), 200);
+            });
+        }
     }
 }
