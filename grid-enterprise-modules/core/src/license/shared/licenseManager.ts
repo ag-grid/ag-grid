@@ -44,7 +44,7 @@ export class LicenseManager {
 
         if (licenseDetails.missing) {
             if (!this.isWebsiteUrl() || this.isForceWatermark()) {
-                this.outputMissingLicenseKey(requiredLicenseName);
+                this.outputMissingLicenseKey(requiredLicenseName, requiredLicenseName);
             }
         } else if (licenseDetails.expired) {
             const gridReleaseDate = LicenseManager.getGridReleaseDate();
@@ -304,8 +304,8 @@ export class LicenseManager {
     }
 
     private outputInvalidLicenseKey(incorrectLicenseType: boolean, currentLicenseType: string, suppliedLicenseName: string) {
+        const requiredLicenseName = `AG Grid ${currentLicenseType === 'BOTH' ? 'and AG Charts ' : ''}Enterprise`;
         if (incorrectLicenseType) {
-            const requiredLicenseName = `AG Grid ${currentLicenseType === 'BOTH' ? 'and AG Charts ' : ''}Enterprise`;
 
             // TC4, TC5,TC10
             this.centerPadAndOutput('');
@@ -318,7 +318,7 @@ export class LicenseManager {
         } else {
             // TC3, TC9
             this.centerPadAndOutput('');
-            this.centerPadAndOutput(`${suppliedLicenseName ? ' ' + suppliedLicenseName + ' ' : ''}`);
+            this.centerPadAndOutput(`${requiredLicenseName ? ' ' + requiredLicenseName + ' ' : ''}`);
             this.centerPadAndOutput(' Invalid License ');
             this.padAndOutput(`* Your license for ${suppliedLicenseName} is not valid - please contact info@ag-grid.com to obtain a valid license.`, ' ', '*');
             this.centerPadAndOutput('');
@@ -341,10 +341,10 @@ export class LicenseManager {
         this.watermarkMessage = "Trial Period Expired";
     }
 
-    private outputMissingLicenseKey(currentLicenseName: string) {
+    private outputMissingLicenseKey(currentLicenseName: string, requiredLicenseName: string) {
         // TC6, TC12
         this.centerPadAndOutput('');
-        this.centerPadAndOutput('');
+        this.centerPadAndOutput(` ${requiredLicenseName} `);
         this.centerPadAndOutput(' License Key Not Found ');
         this.padAndOutput(`* All ${currentLicenseName} features are unlocked for trial.`, ' ', '*');
         this.padAndOutput('* If you want to hide the watermark please email info@ag-grid.com for a trial license key.', ' ', '*');
