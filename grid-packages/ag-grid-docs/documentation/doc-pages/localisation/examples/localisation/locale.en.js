@@ -341,6 +341,7 @@ const AG_GRID_LOCALE_EN = {
     boldItalic: 'Bold Italic',
     predefined: 'Predefined',
     fillOpacity: 'Fill Opacity',
+    strokeColor: 'Line Color',
     strokeOpacity: 'Line Opacity',
     histogramBinCount: 'Bin count',
     connectorLine: 'Connector Line',

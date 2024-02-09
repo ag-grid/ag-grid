@@ -88,6 +88,7 @@ export class ChartTranslationService extends BeanStub {
         boldItalic: 'Bold Italic',
         predefined: 'Predefined',
         fillOpacity: 'Fill Opacity',
+        strokeColor: 'Line Color',
         strokeOpacity: 'Line Opacity',
         histogramBinCount: 'Bin count',
         connectorLine: 'Connector Line',
