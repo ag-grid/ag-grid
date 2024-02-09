@@ -350,7 +350,8 @@ export class ChartDataModel extends BeanStub {
         const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
         const { dimensionColState, valueColState } = this;
 
-        if (dimensionColState.filter(idsMatch).length > 0) {
+        const supportsMultipleDimensions = isHierarchical(this.chartType);
+        if (!supportsMultipleDimensions && dimensionColState.filter(idsMatch).length > 0) {
             // only one dimension should be selected
             dimensionColState.forEach(cs => cs.selected = idsMatch(cs));
         } else {
