@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     Column,
@@ -227,7 +226,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
         let sheetName = 'ag-grid';
 
         if (params.sheetName != null) {
-            sheetName = _.utf8_encode(String(params.sheetName).substring(0, 31));
+            sheetName = String(params.sheetName).substring(0, 31);
         }
 
         const config: ExcelGridSerializingParams = {
