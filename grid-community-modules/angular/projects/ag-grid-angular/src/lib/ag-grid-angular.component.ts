@@ -360,7 +360,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public columnMenu: 'legacy' | 'new' | undefined = undefined;
     /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
-         * If `columnMenu = true`, this will default to `true` instead of `false`.
+         * If `columnMenu = 'new'`, this will default to `true` instead of `false`.
          * @default false
          */
     @Input() public suppressMenuHide: boolean | undefined = undefined;

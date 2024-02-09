@@ -21,6 +21,7 @@ import {
     MiniColumnLineCombo,
     MiniCustomCombo,
     MiniDoughnut,
+    MiniHeatmap,
     MiniHistogram,
     MiniLine,
     MiniNightingale,
@@ -78,7 +79,10 @@ const miniChartMapping = {
         enterprise: true,
         chartTypes: {treemap: MiniTreemap, sunburst: MiniSunburst}
     },
-    specializedGroup: {enterprise: true, chartTypes: {waterfall: MiniWaterfall}},
+    specializedGroup: {
+        enterprise: true,
+        chartTypes: {heatmap: MiniHeatmap, waterfall: MiniWaterfall}
+    },
     combinationGroup: {
         enterprise: false,
         chartTypes: {

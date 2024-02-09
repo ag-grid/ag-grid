@@ -95,7 +95,7 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
 
     if (!createExcelFileForExcel(data, fontSize, author)) { return Promise.resolve(undefined); }
 
-    return ZipContainer.getCompressedContent(mimeType);
+    return ZipContainer.getZipFile(mimeType);
 };
 
 export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
@@ -104,23 +104,17 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
 
     if (!createExcelFileForExcel(data, fontSize, author)) { return; }
 
-    return ZipContainer.getContent(mimeType);
+    return ZipContainer.getUncompressedZipFile(mimeType);
 };
 
 export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
     const { fileName = 'export.xlsx' } = params;
-    if (params.compressOutput) {
-        getMultipleSheetsAsExcelCompressed(params).then(contents => {
-            if (contents) {
-                Downloader.download(fileName, contents);
-            }
-        });
-    } else {
-        const contents = getMultipleSheetsAsExcel(params);
+
+    getMultipleSheetsAsExcelCompressed(params).then(contents => {
         if (contents) {
             Downloader.download(fileName, contents);
         }
-    }
+    });
 };
 
 const createImageRelationsForSheet = (sheetIndex: number, currentRelationIndex: number) => {
@@ -172,19 +166,14 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
             data: [data],
             fontSize: mergedParams.fontSize,
             author: mergedParams.author,
-            mimeType: mergedParams.mimeType,
-            compressOutput: mergedParams.compressOutput,
+            mimeType: mergedParams.mimeType
         };
 
-        if (exportParams.compressOutput) {
-            this.packageCompressedFile(exportParams).then(packageFile => {
-                if (packageFile) {
-                    Downloader.download(this.getFileName(mergedParams.fileName), packageFile);
-                }
-            });
-        } else {
-            this.exportMultipleSheetsAsExcel(exportParams);
-        }
+        this.packageCompressedFile(exportParams).then(packageFile => {
+            if (packageFile) {
+                Downloader.download(this.getFileName(mergedParams.fileName), packageFile);
+            }
+        });
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): void {

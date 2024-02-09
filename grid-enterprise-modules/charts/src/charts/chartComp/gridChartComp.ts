@@ -38,12 +38,14 @@ import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy"
 import {BoxPlotChartProxy} from "./chartProxies/statistical/boxPlotChartProxy";
 import {TreemapChartProxy} from "./chartProxies/hierarchical/treemapChartProxy";
 import {SunburstChartProxy} from "./chartProxies/hierarchical/sunburstChartProxy";
+import {HeatmapChartProxy} from './chartProxies/specialized/heatmapChartProxy';
 import {WaterfallChartProxy} from './chartProxies/cartesian/waterfallChartProxy';
 import {ChartTranslationService} from "./services/chartTranslationService";
 import {ChartCrossFilterService} from "./services/chartCrossFilterService";
 import {CrossFilteringContext} from "../chartService";
 import {ChartOptionsService} from "./services/chartOptionsService";
 import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
+import {isHierarchical} from "./utils/seriesTypeMapper";
 
 export interface GridChartParams {
     chartId: string;
@@ -268,6 +270,8 @@ export class GridChartComp extends Component {
                 return new TreemapChartProxy(chartProxyParams);
             case 'sunburst':
                 return new SunburstChartProxy(chartProxyParams);
+            case 'heatmap':
+                return new HeatmapChartProxy(chartProxyParams);
             case 'waterfall':
                 return new WaterfallChartProxy(chartProxyParams);
             case 'columnLineCombo':
@@ -400,11 +404,16 @@ export class GridChartComp extends Component {
 
     private handleEmptyChart(data: any[], fields: any[]): boolean {
         const pivotModeDisabled = this.chartController.isPivotChart() && !this.chartController.isPivotMode();
+        
+        // Determine the minimum number of fields based on the chart type
+        const chartType = this.chartController.getChartType();
         let minFieldsRequired = 1;
-
         if (this.chartController.isActiveXYChart()) {
-            minFieldsRequired = this.chartController.getChartType() === 'bubble' ? 3 : 2;
+            minFieldsRequired = chartType === 'bubble' ? 3 : 2;
+        } else if (isHierarchical(chartType)) {
+            minFieldsRequired = 0;
         }
+
         const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
 
         if (this.eChart) {

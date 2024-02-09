@@ -59,6 +59,7 @@ export class UpdateParamsValidator {
         'boxPlot',
         'treemap',
         'sunburst',
+        'heatmap',
         'waterfall',
         'columnLineCombo',
         'areaColumnCombo',

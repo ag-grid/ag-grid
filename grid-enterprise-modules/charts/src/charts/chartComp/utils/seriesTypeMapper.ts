@@ -23,6 +23,7 @@ export type ChartSeriesType =
     'box-plot' |
     'treemap' |
     'sunburst' |
+    'heatmap' |
     'waterfall' |
     'common';
 
@@ -51,6 +52,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'box-plot',
     'treemap',
     'sunburst',
+    'heatmap',
     'waterfall',
 ];
 
@@ -91,6 +93,17 @@ export function isHierarchical(chartType: ChartType): boolean {
     switch (chartType) {
         case 'treemap':
         case 'sunburst':
+            return true;
+        default:
+            return false;
+    }
+}
+
+export function hasGradientLegend(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'treemap':
+        case 'sunburst':
+        case 'heatmap':
             return true;
         default:
             return false;
@@ -144,22 +157,11 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'pie':
         case 'doughnut':
             return 'pie';
+        case 'heatmap':
+            return 'heatmap';
         case 'waterfall':
             return 'waterfall';
         default:
             return 'cartesian';
-    }
-}
-
-export function isPolarChartSeriesType(seriesType: ChartSeriesType): seriesType is PolarChartSeriesType {
-    switch (seriesType) {
-        case 'radar-line':
-        case 'radar-area':
-        case 'nightingale':
-        case 'radial-column':
-        case 'radial-bar':
-            return true;
-        default:
-            return false;
     }
 }

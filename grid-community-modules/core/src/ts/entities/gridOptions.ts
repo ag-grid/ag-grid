@@ -193,7 +193,7 @@ export interface GridOptions<TData = any> {
     columnMenu?: 'legacy' | 'new';
     /**
      * Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
-     * If `columnMenu = true`, this will default to `true` instead of `false`.
+     * If `columnMenu = 'new'`, this will default to `true` instead of `false`.
      * @default false
      */
     suppressMenuHide?: boolean;

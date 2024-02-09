@@ -43,8 +43,15 @@ export class ColumnAnimationService extends BeanStub {
 
     public finish(): void {
         if (!this.active) { return; }
+        this.executeNextVMTurn(() => {
+            // React components can be setup asynchronously meaning comps can call executeNextVMTurn after finish has been called
+            // This flushes any remaining executeNextVMTurn calls asap
+            this.flush();
+        });
         this.executeLaterVMTurn(() => {
             this.active = false;
+            // Ensure anything remaining is also executed now that active is false preventing any further executeNextVMTurn / executeLaterVMTurn calls
+            this.flush();
         });
         this.flush();
     }

@@ -272,6 +272,7 @@ const AG_GRID_LOCALE_EN = {
     navigator: 'Navigator',
     color: 'Color',
     thickness: 'Thickness',
+    preferredLength: 'Preferred Length',
     xType: 'X Type',
     automatic: 'Automatic',
     category: 'Category',
