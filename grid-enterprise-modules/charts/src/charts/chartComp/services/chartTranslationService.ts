@@ -143,6 +143,8 @@ export class ChartTranslationService extends BeanStub {
         endAngle: 'End Angle',
         groupPadding: 'Group Padding',
         seriesPadding: 'Series Padding',
+        group: 'Group',
+        tile: 'Tile',
         whisker: 'Whisker',
         cap: 'Cap',
         capLengthRatio: 'Length Ratio',
