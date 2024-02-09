@@ -367,9 +367,8 @@ export class FocusService extends BeanStub {
         if (headerPosition.headerRowIndex === -1) {
             if (this.filterManager.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
-            } else {
-                return this.focusGridView(headerPosition.column as Column);
             }
+            return this.focusGridView(headerPosition.column as Column);
         }
 
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);

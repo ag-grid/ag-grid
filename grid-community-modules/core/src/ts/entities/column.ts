@@ -629,6 +629,25 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return !colDef.suppressSpanHeaderHeight && !colDef.autoHeaderHeight;
     }
 
+    public getColumnGroupPaddingInfo(): { numberOfParents: number, isSpanningTotal: boolean } {
+        let parent = this.getParent();
+
+        if (!parent || !parent.isPadding()) { return { numberOfParents: 0, isSpanningTotal: false }; }
+
+        const numberOfParents = parent.getPaddingLevel() + 1;
+        let isSpanningTotal = true;
+
+        while (parent) {
+            if (!parent.isPadding()) {
+                isSpanningTotal = false;
+                break;
+            }
+            parent = parent.getParent();
+        }
+
+        return { numberOfParents, isSpanningTotal };
+    }
+
     /** Returns the column definition for this column.
      * The column definition will be the result of merging the application provided column definition with any provided defaults
      * (e.g. `defaultColDef` grid option, or column types.

@@ -23,12 +23,16 @@ export class HeaderNavigationService extends BeanStub {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
 
     private gridBodyCon: GridBodyCtrl;
+    private currentHeaderRowWithoutSpan: number = -1;
 
     @PostConstruct
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
+
+        const eDocument = this.gridOptionsService.getDocument();
+        this.addManagedListener(eDocument, 'mousedown', this.resetHeaderRowWithoutSpan.bind(this));
     }
 
     public getHeaderRowCount(): number {
@@ -51,7 +55,7 @@ export class HeaderNavigationService extends BeanStub {
         const rowLen = this.getHeaderRowCount();
         const isUp = direction === HeaderNavigationDirection.UP;
 
-        let { nextRow, nextFocusColumn } = isUp
+        let { headerRowIndex: nextRow, column: nextFocusColumn, headerRowIndexWithoutSpan } = isUp
             ? this.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
             : this.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex);
 
@@ -65,7 +69,11 @@ export class HeaderNavigationService extends BeanStub {
 
         if (nextRow >= rowLen) {
             nextRow = -1; // -1 indicates the focus should move to grid rows.
+            this.resetHeaderRowWithoutSpan();
+        } else if (headerRowIndexWithoutSpan !== undefined) {
+            this.currentHeaderRowWithoutSpan = headerRowIndexWithoutSpan;
         }
+
 
         if (!skipColumn && !nextFocusColumn) {
             return false;
@@ -76,6 +84,10 @@ export class HeaderNavigationService extends BeanStub {
             allowUserOverride:  true,
             event
         });
+    }
+
+    private resetHeaderRowWithoutSpan(): void {
+        this.currentHeaderRowWithoutSpan = -1;
     }
 
     /*
@@ -90,6 +102,10 @@ export class HeaderNavigationService extends BeanStub {
         let normalisedDirection: 'Before' |  'After';
 
         // either navigating to the left or isRtl (cannot be both)
+        if (this.currentHeaderRowWithoutSpan !== -1) {
+            focusedHeader.headerRowIndex = this.currentHeaderRowWithoutSpan;
+        }
+
         if (isLeft !== isRtl) {
             normalisedDirection = 'Before';
             nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;

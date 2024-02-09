@@ -14,6 +14,10 @@ export interface HeaderPosition {
     column: Column | ColumnGroup;
 }
 
+export interface HeaderFuturePosition extends HeaderPosition {
+    headerRowIndexWithoutSpan?: number;
+}
+
 @Bean('headerPositionUtils')
 export class HeaderPositionUtils extends BeanStub {
 
@@ -36,18 +40,21 @@ export class HeaderPositionUtils extends BeanStub {
         if (!nextColumn) { return; }
 
         let { headerRowIndex } = focusedHeader;
+        const columnsInPath: (Column | ColumnGroup)[] = [nextColumn];
 
-        const currentRowType = this.getHeaderRowType(headerRowIndex);
+        while (nextColumn.getParent()) {
+            nextColumn = nextColumn.getParent();
+            columnsInPath.push(nextColumn);
+        }
 
-        if (currentRowType === HeaderRowType.COLUMN_GROUP) {
-            const columnGroup = nextColumn as ColumnGroup;
-            if (columnGroup.isPadding() && this.isAnyChildSpanningHeaderHeight(columnGroup)) {
-                const { nextFocusColumn, nextRow } = this.getColumnVisibleChild(columnGroup, headerRowIndex, direction);
-
-                if (nextFocusColumn) {
-                    nextColumn = nextFocusColumn;
-                    headerRowIndex = nextRow;
-                }
+        nextColumn = columnsInPath[columnsInPath.length - 1 - headerRowIndex];
+        if (nextColumn instanceof ColumnGroup && nextColumn.isPadding()) {
+            const targetColumn: ColumnGroup = nextColumn;
+            nextColumn = targetColumn.getLeafColumns()[0];
+            let col: Column | ColumnGroup = nextColumn;
+            while (col !== targetColumn) {
+                headerRowIndex++;
+                col = col.getParent();
             }
         }
 
@@ -62,13 +69,14 @@ export class HeaderPositionUtils extends BeanStub {
         return columnGroup.getLeafColumns().some(col => col.isSpanHeaderHeight());
     }
 
-    public getColumnVisibleParent(currentColumn: Column | ColumnGroup, currentIndex: number): { nextFocusColumn: Column | ColumnGroup | null; nextRow: number } {
+    public getColumnVisibleParent(currentColumn: Column | ColumnGroup, currentIndex: number): HeaderFuturePosition {
         const currentRowType = this.getHeaderRowType(currentIndex);
         const isFloatingFilter = currentRowType === HeaderRowType.FLOATING_FILTER;
         const isColumn = currentRowType === HeaderRowType.COLUMN;
 
         let nextFocusColumn: Column | ColumnGroup = isFloatingFilter ? currentColumn : currentColumn.getParent();
         let nextRow = currentIndex - 1;
+        let headerRowIndexWithoutSpan: number | undefined = nextRow;
 
         if (isColumn && this.isAnyChildSpanningHeaderHeight((currentColumn as Column).getParent())) {
             while (nextFocusColumn && (nextFocusColumn as ColumnGroup).isPadding()) {
@@ -76,19 +84,22 @@ export class HeaderPositionUtils extends BeanStub {
                 nextRow--;
             }
 
+            headerRowIndexWithoutSpan = nextRow;
             if (nextRow < 0) {
                 nextFocusColumn = currentColumn;
                 nextRow = currentIndex;
+                headerRowIndexWithoutSpan = undefined;
             }
         }
 
-        return { nextFocusColumn: nextFocusColumn, nextRow };
+        return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
     }
 
-    public getColumnVisibleChild(column: Column | ColumnGroup, currentIndex: number, direction: 'Before' | 'After' = 'After'): { nextFocusColumn: Column | ColumnGroup | null; nextRow: number } {
+    public getColumnVisibleChild(column: Column | ColumnGroup, currentIndex: number, direction: 'Before' | 'After' = 'After'): HeaderFuturePosition {
         const currentRowType = this.getHeaderRowType(currentIndex);
         let nextFocusColumn: Column | ColumnGroup | null = column;
         let nextRow = currentIndex + 1;
+        let headerRowIndexWithoutSpan = nextRow;
 
         if (currentRowType === HeaderRowType.COLUMN_GROUP) {
             const leafColumns = (column as ColumnGroup).getDisplayedLeafColumns();
@@ -107,13 +118,13 @@ export class HeaderPositionUtils extends BeanStub {
                 const colToFocus = columnsInTheWay[i];
                 if (!colToFocus.isPadding()) {
                     nextFocusColumn = colToFocus;
-                    break; 
+                    break;
                 }
                 nextRow++;
             }
         }
 
-        return { nextFocusColumn, nextRow };
+        return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
     }
 
     private getHeaderRowType(rowIndex: number): HeaderRowType | undefined {

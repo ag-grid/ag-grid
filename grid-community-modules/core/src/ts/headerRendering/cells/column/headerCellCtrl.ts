@@ -546,7 +546,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private refreshSpanHeaderHeight() {
-        const { eGui, column, comp, columnModel, gridOptionsService } = this;
+        const { eGui, column, comp, columnModel } = this;
         if (!column.isSpanHeaderHeight()) {
             eGui.style.removeProperty('top');
             eGui.style.removeProperty('height');
@@ -555,7 +555,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             return;
         }
 
-        const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
+        const { numberOfParents, isSpanningTotal } = this.column.getColumnGroupPaddingInfo();
 
         comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
 
@@ -579,25 +579,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         eGui.style.setProperty('top', `${-extraHeight}px`);
         eGui.style.setProperty('height', `${headerHeight + extraHeight}px`);
-    }
-
-    private getColumnGroupPaddingInfo(): { numberOfParents: number, isSpanningTotal: boolean } {
-        let parent = this.column.getParent();
-
-        if (!parent || !parent.isPadding()) { return { numberOfParents: 0, isSpanningTotal: false }; }
-
-        const numberOfParents = parent.getPaddingLevel() + 1;
-        let isSpanningTotal = true;
-
-        while (parent) {
-            if (!parent.isPadding()) {
-                isSpanningTotal = false;
-                break;
-            }
-            parent = parent.getParent();
-        }
-
-        return { numberOfParents, isSpanningTotal };
     }
 
     private setupAutoHeight(wrapperElement: HTMLElement) {
