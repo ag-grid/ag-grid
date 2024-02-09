@@ -113,6 +113,12 @@ Menu items can be grouped together by adding separators between groups. Separato
 menuItems.push('separator')
 ```
 
+### Custom Menu Item Components
+
+In addition to the provided menu items, it is also possible to create custom menu item components.
+
+For more details, refer to the section: [Custom Menu Item Components](/component-menu-item/).
+
 ### Example: Customising the Menu Items
 
 The following example demonstrates the `colDef.mainMenuItems` property:
