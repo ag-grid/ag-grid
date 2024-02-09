@@ -815,18 +815,18 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Returns the filter component instance for a column.     
-     * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
-     * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
+     * @deprecated v31.1 To get/set individual filter models, use `getColumnFilterModel` or `setColumnFilterModel` instead.
+     * To get hold of the filter instance, use `getColumnFilterInstance` which returns the instance asynchronously.
      */
     public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
+        warnOnce(`'getFilterInstance' is deprecated. To get/set individual filter models, use 'getColumnFilterModel' or 'setColumnFilterModel' instead. To get hold of the filter instance, use 'getColumnFilterInstance' which returns the instance asynchronously.`);
         return this.filterManager.getFilterInstance(key, callback);
     }
 
     /**
-     * Returns the filter component instance for a column.     
-     * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
-     * This method is similar to `getFilterInstance`, but returns a `Promise` instead of using a callback.
+     * Returns the filter component instance for a column.
+     * For getting/setting models for individual column filters, use `getColumnFilterModel` and `setColumnFilterModel` instead of this.
+     * `key` can be a column ID or a `Column` object.
      */
     public getColumnFilterInstance<TFilter extends IFilter>(key: string | Column): Promise<TFilter | null | undefined> {
         return this.filterManager.getColumnFilterInstance(key);
@@ -1297,6 +1297,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */
     public showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void {
+        warnOnce(`'showColumnMenuAfterButtonClick' is deprecated. Use 'IHeaderParams.showColumnMenu' within a header component, or 'api.showColumnMenu' elsewhere.`);
         // use grid column so works with pivot mode
         const column = this.columnModel.getGridColumn(colKey)!;
         this.menuService.showColumnMenu({
@@ -1308,6 +1309,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v31.1 Use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere. */
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
+        warnOnce(`'showColumnMenuAfterMouseClick' is deprecated. Use 'IHeaderParams.showColumnMenuAfterMouseClick' within a header component, or 'api.showColumnMenu' elsewhere.`);
         // use grid column so works with pivot mode
         let column = this.columnModel.getGridColumn(colKey);
         if (!column) {
