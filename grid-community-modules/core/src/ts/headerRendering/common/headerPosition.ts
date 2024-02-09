@@ -92,19 +92,24 @@ export class HeaderPositionUtils extends BeanStub {
 
         if (currentRowType === HeaderRowType.COLUMN_GROUP) {
             const leafColumns = (column as ColumnGroup).getDisplayedLeafColumns();
-            const leafChild = direction === 'After' ? leafColumns[0] : last(leafColumns);
+            const leafColumn = direction === 'After' ? leafColumns[0] : last(leafColumns);
+            const columnsInTheWay = [];
 
-            if (this.isAnyChildSpanningHeaderHeight(leafChild.getParent())) {
-                nextFocusColumn = leafChild;
+            let currentColumn: Column | ColumnGroup = leafColumn;
+            while (currentColumn.getParent() !== column) {
+                currentColumn = currentColumn.getParent();
+                columnsInTheWay.push(currentColumn);
+            }
 
-                let currentColumn = leafChild.getParent();
+            nextFocusColumn = leafColumn;
 
-                while (currentColumn && currentColumn !== column) {
-                    currentColumn = currentColumn.getParent();
-                    nextRow++;
+            for (let i = columnsInTheWay.length - 1; i >= 0; i--) {
+                const colToFocus = columnsInTheWay[i];
+                if (!colToFocus.isPadding()) {
+                    nextFocusColumn = colToFocus;
+                    break; 
                 }
-            } else {
-                nextFocusColumn = (column as ColumnGroup).getDisplayedChildren()![0] as ColumnGroup;
+                nextRow++;
             }
         }
 
