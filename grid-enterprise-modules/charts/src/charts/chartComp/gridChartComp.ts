@@ -30,14 +30,22 @@ import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
 import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
 import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
 import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
-import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
+import {PolarChartProxy} from "./chartProxies/polar/polarChartProxy";
+import {PieChartProxy} from "./chartProxies/pie/pieChartProxy";
 import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
+import {RangeChartProxy} from "./chartProxies/statistical/rangeChartProxy";
 import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
+import {BoxPlotChartProxy} from "./chartProxies/statistical/boxPlotChartProxy";
+import {TreemapChartProxy} from "./chartProxies/hierarchical/treemapChartProxy";
+import {SunburstChartProxy} from "./chartProxies/hierarchical/sunburstChartProxy";
+import {HeatmapChartProxy} from './chartProxies/specialized/heatmapChartProxy';
+import {WaterfallChartProxy} from './chartProxies/cartesian/waterfallChartProxy';
 import {ChartTranslationService} from "./services/chartTranslationService";
 import {ChartCrossFilterService} from "./services/chartCrossFilterService";
 import {CrossFilteringContext} from "../chartService";
 import {ChartOptionsService} from "./services/chartOptionsService";
 import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
+import {isHierarchical} from "./utils/seriesTypeMapper";
 
 export interface GridChartParams {
     chartId: string;
@@ -214,7 +222,7 @@ export class GridChartComp extends Component {
     }
 
     private getChartThemes(): string[] {
-        return this.chartController.getThemes();
+        return this.chartController.getThemeNames();
     }
 
     private getGridOptionsChartThemeOverrides(): AgChartThemeOverrides | undefined {
@@ -246,6 +254,26 @@ export class GridChartComp extends Component {
                 return new ScatterChartProxy(chartProxyParams);
             case 'histogram':
                 return new HistogramChartProxy(chartProxyParams);
+            case 'radarLine':
+            case 'radarArea':
+            case 'nightingale':
+            case 'radialColumn':
+            case 'radialBar':
+                return new PolarChartProxy(chartProxyParams);
+            case 'rangeBar':
+                return new RangeChartProxy(chartProxyParams);
+            case 'rangeArea':
+                return new RangeChartProxy(chartProxyParams);
+            case 'boxPlot':
+                return new BoxPlotChartProxy(chartProxyParams);
+            case 'treemap':
+                return new TreemapChartProxy(chartProxyParams);
+            case 'sunburst':
+                return new SunburstChartProxy(chartProxyParams);
+            case 'heatmap':
+                return new HeatmapChartProxy(chartProxyParams);
+            case 'waterfall':
+                return new WaterfallChartProxy(chartProxyParams);
             case 'columnLineCombo':
             case 'areaColumnCombo':
             case 'customCombo':
@@ -376,11 +404,16 @@ export class GridChartComp extends Component {
 
     private handleEmptyChart(data: any[], fields: any[]): boolean {
         const pivotModeDisabled = this.chartController.isPivotChart() && !this.chartController.isPivotMode();
+        
+        // Determine the minimum number of fields based on the chart type
+        const chartType = this.chartController.getChartType();
         let minFieldsRequired = 1;
-
         if (this.chartController.isActiveXYChart()) {
-            minFieldsRequired = this.chartController.getChartType() === 'bubble' ? 3 : 2;
+            minFieldsRequired = chartType === 'bubble' ? 3 : 2;
+        } else if (isHierarchical(chartType)) {
+            minFieldsRequired = 0;
         }
+
         const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
 
         if (this.eChart) {

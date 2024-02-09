@@ -7,13 +7,12 @@ export default props => {
 
     return isHeader ?
         (
-            <div className="custom-tooltip">
-                <p>Group Name: {props.value}</p>
-                {isGroupedHeader ? <hr/> : null}
+            <div className="custom-tooltip custom-tooltip-grouped">
+                <span>Group Name: {props.value}</span>
                 {isGroupedHeader ?
                     props.colDef.children.map(function (header, idx) {
                         return (
-                            <p key={idx}>Child {idx + 1} - {header.headerName}</p>
+                            <span key={idx}>Child {idx + 1} - {header.headerName}</span>
                         );
                     })
                     : null
@@ -22,8 +21,8 @@ export default props => {
         :
         (
             <div className="custom-tooltip">
-                <p><span>Athlete's Name:</span></p>
-                <p><span>{valueToDisplay}</span></p>
+                <span>Athlete's Name:</span>
+                <span>{valueToDisplay}</span>
             </div>
         );
 };

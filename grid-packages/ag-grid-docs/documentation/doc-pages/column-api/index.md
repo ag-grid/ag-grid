@@ -2,14 +2,10 @@
 title: "Column API (Deprecated)"
 ---
 
-</framework-specific-section>
-
 <framework-specific-section frameworks="javascript">
 <note>
 The Column API was deprecated in v31 and all methods were migrated to the [Grid API](/javascript-data-grid/grid-api/).
 </note>
-
-</framework-specific-section>
 
 </framework-specific-section>
 
@@ -20,14 +16,10 @@ The Column API was deprecated in v31 and all methods were migrated to the [Grid 
 
 </framework-specific-section>
 
-</framework-specific-section>
-
 <framework-specific-section frameworks="angular">
 <note>
 The Column API was deprecated in v31 and all methods were migrated to the [Grid API](/angular-data-grid/grid-api/).
 </note>
-
-</framework-specific-section>
 
 </framework-specific-section>
 

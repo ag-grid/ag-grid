@@ -144,6 +144,8 @@ cellEditorParams: params => {
 }
 ```
 
+The `params` object provided to the function is of type `ICellEditorParams`, and it is expected to return the type of the parameters for the specific editor (e.g. `IRichSelectCellEditorParams` in the above example).
+
 ## Example: Rich Cell Editor / Dynamic Parameters
 
 Below shows an example with dynamic editor parameters. The following can be noted:

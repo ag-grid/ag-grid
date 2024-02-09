@@ -1,4 +1,5 @@
 import ts = require("typescript");
+import {integratedChartsUsesChartsEnterprise} from "./consts";
 const sucrase = require("sucrase");
 
 export type ImportType = 'packages' | 'modules';
@@ -107,14 +108,14 @@ export function tsCollect(tsTree, tsBindings, collectors, recurse = true) {
     ts.forEachChild(tsTree, (node: ts.Node) => {
 
         collectors.filter(c => {
-            let res = false;
-            try {
-                res = c.matches(node)
-            } catch (error) {
-                return false;
+                let res = false;
+                try {
+                    res = c.matches(node)
+                } catch (error) {
+                    return false;
+                }
+                return res;
             }
-            return res;
-        }
         ).forEach(c => {
             try {
                 c.apply(tsBindings, node)
@@ -161,7 +162,7 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
         if (node.declarations.length > 0) {
             const declaration = node.declarations[0];
             // Don't include api declarations as these are handled separately
-            const isLetApi = declaration.name.getText() === 'gridApi';            
+            const isLetApi = declaration.name.getText() === 'gridApi';
             return !isLetApi && !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
         }
     }
@@ -208,7 +209,7 @@ export function tsNodeIsFunctionCall(node: any): boolean {
 }
 
 export function tsNodeIsGlobalFunctionCall(node: ts.Node) {
-    // Get top level function calls like 
+    // Get top level function calls like
     // setInterval(callback, 500)
     // but don't match things like
     // AgChart.create(options)
@@ -439,7 +440,7 @@ function getLowestExpression(exp: any) {
 }
 
 /**
- * Find all the properties accessed in this node. 
+ * Find all the properties accessed in this node.
  */
 export function findAllAccessedProperties(node) {
     let properties = [];
@@ -451,7 +452,7 @@ export function findAllAccessedProperties(node) {
     } else if (ts.isCallExpression(node) || ts.isPropertyAccessExpression(node)) {
         // When there are chained accesses we need to recurse to the lowest identifier as this is the first in the statement,
         // and will be the true accessed variable.
-        // i.e api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
+        // i.e api!.getDisplayedRowCount() we need to recurse down the tree to extract gridOptions
         const exp = getLowestExpression(node.expression);
 
         if (ts.isArrayLiteralExpression(exp)) {
@@ -479,7 +480,7 @@ export function findAllAccessedProperties(node) {
     }
     else if (ts.isVariableDeclaration(node)) {
         // get lowest identifier as this is the first in the statement
-        // i.e var nextHeader = params.nextHeaderPosition 
+        // i.e var nextHeader = params.nextHeaderPosition
         // we need to recurse down the initializer tree to extract params and not nextHeaderPosition
         let init = node.initializer as any;
         if (init) {
@@ -527,7 +528,7 @@ export function findAllAccessedProperties(node) {
 
 /** Convert import paths to their package equivalent when the docs are in Packages mode
  * i.e import { GridOptions } from '@ag-grid-community/core';
- * to 
+ * to
  * import { GridOptions } from '@ag-grid-community';
  */
 export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
@@ -588,8 +589,7 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
     let workingImports = {};
     let namespacedImports = [];
 
-    const chartsEnterprise = false;
-    // const chartsEnterprise = bindingImports.some(i => i.module.includes('ag-charts-enterprise'));
+    const chartsEnterprise = bindingImports.some(i => i.module.includes('ag-charts-enterprise'));
 
     bindingImports.forEach((i: BindingImport) => {
 
@@ -635,9 +635,9 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
         imports.push(`import 'ag-grid-enterprise';`)
     }
 
-    // if (chartsEnterprise) {
-    //     imports.push(`import 'ag-charts-enterprise';`)
-    // }
+    if (chartsEnterprise) {
+        imports.push(`import 'ag-charts-enterprise';`)
+    }
 }
 
 export function getModuleRegistration({ gridSettings, enterprise, exampleName }) {
@@ -650,6 +650,8 @@ export function getModuleRegistration({ gridSettings, enterprise, exampleName })
 
     let gridSuppliedModules;
     let exampleModules = Array.isArray(modules) ? modules : ['clientside'];
+    exampleModules = exampleModules.map(module => module === 'charts-enterprise' && !integratedChartsUsesChartsEnterprise ? 'charts' : module)
+
     const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
     moduleRegistration.push(...moduleImports);
     gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
@@ -680,10 +682,10 @@ export function addGenericInterfaceImport(imports: string[], tData: string, bind
 
 export function replaceGridReadyRowData(callback: string, rowDataSetter: string) {
     return callback
-    // replace gridApi.setGridOption('rowData', data) with this.rowData = data
-    .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
-    // replace gridApi.setGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
-    .replace(/gridApi(!?)\.setGridOption\('rowData', data/, `${rowDataSetter} = (data`);
+        // replace gridApi.setGridOption('rowData', data) with this.rowData = data
+        .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
+        // replace gridApi.setGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
+        .replace(/gridApi(!?)\.setGridOption\('rowData', data/, `${rowDataSetter} = (data`);
 }
 
 export function preferParamsApi(code: string): string {
@@ -700,8 +702,17 @@ export function getActiveTheme(theme: string, typescript: boolean) {
     return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
 }
 
+// TODO detecting "enableCharts" in the example source would do this more reliably
+const chartsExamplePathSubstrings = [
+    '/integrated-charts-',
+    '/custom-icons/examples/icons-images',
+    '/modules/examples/individual-registration',
+    '/localisation/examples/callback',
+    '/localisation/examples/localisation',
+];
+
 export function getIntegratedDarkModeCode(exampleName: string, typescript?: boolean, apiName = 'params.api'): string {
-    if (!exampleName.includes('integrated-charts-')) {
+    if (!chartsExamplePathSubstrings.find(s => exampleName.includes(s))) {
         return '';
     }
     return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace(/params\.api/g, apiName)}${DARK_INTEGRATED_END}`;

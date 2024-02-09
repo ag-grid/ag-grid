@@ -54,6 +54,7 @@ import {
     ColumnHeaderContextMenuEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
+    ColumnMenuVisibleChangedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
     ColumnPivotChangeRequestEvent,
@@ -218,21 +219,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     constructor(elementDef: ElementRef,
         private viewContainerRef: ViewContainerRef,
         private angularFrameworkOverrides: AngularFrameworkOverrides,
-        private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
-        private ngZone: NgZone
+        private frameworkComponentWrapper: AngularFrameworkComponentWrapper
     ) {
         this._nativeElement = elementDef.nativeElement;
     }
 
-    runOutsideAngular<T>(callback: () => T): T {
-        // Check if ngZone exists, as it won't be present when running zoneless. 
-        return this.ngZone ? this.ngZone.runOutsideAngular(callback) : callback();
-    }
 
     ngAfterViewInit(): void {
       // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
-      this.runOutsideAngular(() => {
-          this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.ngZone);
+      this.angularFrameworkOverrides.runOutsideAngular(() => {
+          this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.angularFrameworkOverrides);
           const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
 
           this.gridParams = {
@@ -271,7 +267,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     public ngOnChanges(changes: any): void {
          if (this._initialised) {
                // Run the changes outside of angular so any event handlers that are created do not trigger change detection
-             this.runOutsideAngular(() => {
+             this.angularFrameworkOverrides.runOutsideAngular(() => {
                  const gridOptions: GridOptions = {};
                  Object.entries(changes).forEach(([key, value]: [string, any]) => {
                      gridOptions[key as keyof GridOptions] = value.currentValue;
@@ -318,7 +314,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         if (emitter && this.isEmitterUsed(eventType)) {
 
             // Make sure we emit within the angular zone, so change detection works properly
-            const fireEmitter = () => this.ngZone.run(() => emitter.emit(event));
+            const fireEmitter = () => this.angularFrameworkOverrides.runInsideAngular(() => emitter.emit(event));
 
             if (eventType === 'gridReady') {
                 // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit then gridReady event
@@ -339,7 +335,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     // @START@
     /** Specifies the status bar components to use in the status bar.
-         * @initial
          */
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     /** Specifies the side bar components.
@@ -358,7 +353,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public allowContextMenuWithControlKey: boolean | undefined = undefined;
+    /** Changes the display type of the column menu.
+         * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
+         * @default 'legacy'
+         * @initial
+         */
+    @Input() public columnMenu: 'legacy' | 'new' | undefined = undefined;
     /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
+         * If `columnMenu = 'new'`, this will default to `true` instead of `false`.
          * @default false
          */
     @Input() public suppressMenuHide: boolean | undefined = undefined;
@@ -720,7 +722,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * A list of grids to treat as Aligned Grids.
          * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
          * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
-         * @initial
          */
     @Input() public alignedGrids: (AlignedGrid[] | (() => AlignedGrid[])) | undefined = undefined;
     /** Change this value to set the tabIndex order of the Grid within your application.
@@ -793,12 +794,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
-         * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
+         * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-loading-overlay-component) for framework specific implementation details.
          * @initial
          */
     @Input() public loadingOverlayComponent: any = undefined;
     /** Customise the parameters provided to the loading overlay component.
-         * @initial
          */
     @Input() public loadingOverlayComponentParams: any = undefined;
     /** Disables the 'loading' overlay.
@@ -810,12 +810,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
     /** Provide a custom no rows overlay component.
-         * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
+         * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-no-rows-overlay-component) for framework specific implementation details.
          * @initial
          */
     @Input() public noRowsOverlayComponent: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.
-         * @initial
          */
     @Input() public noRowsOverlayComponentParams: any = undefined;
     /** Disables the 'no rows' overlay.
@@ -924,12 +923,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
-    /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its "flashed" state.
+    /** To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long a cell should remain in its "flashed" state.
          * @default 500
          */
+    @Input() public cellFlashDuration: number | undefined = undefined;
+    /** @deprecated v31.1 - use `cellFlashDuration` instead.
+         */
     @Input() public cellFlashDelay: number | undefined = undefined;
-    /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
+    /** To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
          * @default 1000
+         */
+    @Input() public cellFadeDuration: number | undefined = undefined;
+    /** @deprecated v31.1 - use `cellFadeDuration` instead.
          */
     @Input() public cellFadeDelay: number | undefined = undefined;
     /** Set to `true` to have cells flash after data changes even when the change is due to filtering.
@@ -1187,6 +1192,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public serverSideSortAllLevels: boolean | undefined = undefined;
+    /** When enabled, sorts fully loaded groups in the browser instead of requesting from the server.
+         * @default false
+         */
+    @Input() public serverSideEnableClientSideSort: boolean | undefined = undefined;
     /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
          * @default false
          * @initial
@@ -1396,7 +1405,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** For customising the main 'column header' menu.
          * @initial
          */
-    @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
+    @Input() public getMainMenuItems: GetMainMenuItems<TData> | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
          */
     @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;
@@ -1544,6 +1553,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** The tool panel size has been changed.
          */
     @Output() public toolPanelSizeChanged: EventEmitter<ToolPanelSizeChangedEvent<TData>> = new EventEmitter<ToolPanelSizeChangedEvent<TData>>();
+    /** The column menu visibility has changed. Fires twice if switching between tabs - once with the old tab and once with the new tab.
+         */
+    @Output() public columnMenuVisibleChanged: EventEmitter<ColumnMenuVisibleChangedEvent<TData>> = new EventEmitter<ColumnMenuVisibleChangedEvent<TData>>();
     /** Cut operation has started.
          */
     @Output() public cutStart: EventEmitter<CutStartEvent<TData>> = new EventEmitter<CutStartEvent<TData>>();
@@ -1925,6 +1937,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_detailRowAutoHeight: boolean | null | '';
     static ngAcceptInputType_serverSideFilterAllLevels: boolean | null | '';
     static ngAcceptInputType_serverSideSortAllLevels: boolean | null | '';
+    static ngAcceptInputType_serverSideEnableClientSideSort: boolean | null | '';
     static ngAcceptInputType_serverSideOnlyRefreshFilteredGroups: boolean | null | '';
     static ngAcceptInputType_serverSideSortOnServer: boolean | null | '';
     static ngAcceptInputType_serverSideFilterOnServer: boolean | null | '';

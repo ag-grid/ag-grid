@@ -1,4 +1,4 @@
-import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, ColDef, GridOptions, CellValueChangedEvent } from '@ag-grid-community/core';
 import { CustomStatsToolPanel } from './customStatsToolPanel_typescript'
 
 const columnDefs: ColDef[] = [
@@ -48,10 +48,16 @@ const gridOptions: GridOptions<IOlympicData> = {
         labelKey: 'customStats',
         iconKey: 'custom-stats',
         toolPanel: CustomStatsToolPanel,
+        toolPanelParams: {
+          title: 'Custom Stats'
+        },
       },
     ],
     defaultToolPanel: 'customStats',
-  }
+  },
+  onCellValueChanged: (params: CellValueChangedEvent) => {
+    params.api.refreshClientSideRowModel();
+  },
 }
 
 // setup the grid after the page has finished loading

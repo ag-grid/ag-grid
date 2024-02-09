@@ -5,7 +5,6 @@ import { IFloatingFilterAngularComp } from "@ag-grid-community/angular";
 import { IFloatingFilterParams, ISimpleFilter } from "@ag-grid-community/core";
 
 export interface CustomParams {
-    suppressFilterButton: boolean;
     color: string
 }
 @Component({

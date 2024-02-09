@@ -81,7 +81,8 @@ class RainPerTenMmRenderer implements ICellRenderer {
     template: `
         <div class="example-wrapper">
         <div style="margin-bottom: 5px;">
-            <input type="button" value="Frostier Year" (click)="frostierYear()">
+            <button (click)="frostierYear()">Frostier Year</button>
+            <button style="margin-left: 5px;" (click)="togglePrefix()">Toggle Frost Prefix</button>
         </div>
         <ag-grid-angular
                 #agGrid
@@ -100,47 +101,7 @@ export class AppComponent {
 
     private gridApi!: GridApi;
 
-    public columnDefs: ColDef[] = [
-        {
-            headerName: "Month",
-            field: "Month",
-            width: 75,
-            cellStyle: { backgroundColor: "#CC222244" }
-        },
-        {
-            headerName: "Max Temp (\u02DAC)",
-            field: "Max temp (C)",
-            width: 120,
-            cellRenderer: DeltaIndicator
-        },
-        {
-            headerName: "Min Temp (\u02DAC)",
-            field: "Min temp (C)",
-            width: 120,
-            cellRenderer: DeltaIndicator
-        },
-        {
-            headerName: "Days of Air Frost",
-            field: "Days of air frost (days)",
-            width: 233,
-            cellRenderer: DaysFrostRenderer,
-            cellRendererParams: { rendererImage: "frost.png" }
-        },
-        {
-            headerName: "Days Sunshine",
-            field: "Sunshine (hours)",
-            width: 190,
-            cellRenderer: DaysSunshineRenderer,
-            cellRendererParams: { rendererImage: "sun.png" }
-        },
-        {
-            headerName: "Rainfall (10mm)",
-            field: "Rainfall (mm)",
-            width: 180,
-            cellRenderer: RainPerTenMmRenderer,
-            cellRendererParams: { rendererImage: "rain.png" }
-        }
-    ];
+    public columnDefs: ColDef[] = this.getColumnDefs();
 
     public defaultColDef: ColDef = {
         editable: true,
@@ -149,6 +110,8 @@ export class AppComponent {
         filter: true,
         
     };
+
+    private frostPrefix: boolean = false;
 
     constructor(private http: HttpClient) {
     }
@@ -166,10 +129,59 @@ export class AppComponent {
         });
     }
 
+    togglePrefix() {
+        this.frostPrefix = !this.frostPrefix;
+        this.columnDefs = this.getColumnDefs();
+    }
+
     onGridReady(params: any) {
         this.gridApi = params.api;
 
         this.http.get('https://www.ag-grid.com/example-assets/weather-se-england.json').subscribe(data => params.api.setGridOption('rowData', data));
+    }
+
+    private getColumnDefs() {
+        return [
+            {
+                headerName: "Month",
+                field: "Month",
+                width: 75,
+                cellStyle: { backgroundColor: "#CC222244" }
+            },
+            {
+                headerName: "Max Temp (\u02DAC)",
+                field: "Max temp (C)",
+                width: 120,
+                cellRenderer: DeltaIndicator
+            },
+            {
+                headerName: "Min Temp (\u02DAC)",
+                field: "Min temp (C)",
+                width: 120,
+                cellRenderer: DeltaIndicator
+            },
+            {
+                headerName: "Days of Air Frost",
+                field: "Days of air frost (days)",
+                width: 233,
+                cellRenderer: DaysFrostRenderer,
+                cellRendererParams: { rendererImage: "frost.png", showPrefix: this.frostPrefix }
+            },
+            {
+                headerName: "Days Sunshine",
+                field: "Sunshine (hours)",
+                width: 190,
+                cellRenderer: DaysSunshineRenderer,
+                cellRendererParams: { rendererImage: "sun.png" }
+            },
+            {
+                headerName: "Rainfall (10mm)",
+                field: "Rainfall (mm)",
+                width: 180,
+                cellRenderer: RainPerTenMmRenderer,
+                cellRendererParams: { rendererImage: "rain.png" }
+            }
+        ];
     }
 }
 

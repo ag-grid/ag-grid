@@ -1,26 +1,38 @@
 import { AgPromise } from "../utils";
 
+export type FrameworkOverridesIncomingSource = 'resize-observer';
+
 export interface IFrameworkOverrides {
 
     setInterval(action: any, interval?: any): AgPromise<number>;
 
     addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
     
-    /** Angular uses Zones, we run ALL events outside of Zone JS so that we do not kick off
-     * the Angular change detection. Any event listener or setTimeout() or setInterval() run by our code 
+    /** 
+     * This method is to cater for Angular's change detection. 
+     * Angular uses Zones, we want to run internal AG Grid outside of Zone JS so that we do not kick off
+     * Angular change detection. Any event listener or setTimeout() or setInterval() run by our code 
      * would trigger change detection in Angular. 
      * 
-     * Before events are returned to the user / callbacks called, those functions are wrapping in Angular's zone
+     * Before events are returned to the user, those functions are wrapped in Angular's zone
      * again so that the user's code triggers change detection as normal. See wrapOutgoing() below.
      */
-    dispatchEvent(listener: () => void): void;
+    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T;
 
     /**
-     * Any code that is executed outside of AG Grid should be wrapped in this method. This is to cater for Angular's
-     * change detection. This is currently used for events, callbacks that the user provides either via the component
-     * or via registration with the grid api.     
+     * This method is to cater for Angular's change detection. 
+     * This is currently used for events that the user provides either via the component or via registration with the grid api.
+     * This method should not be implemented for the other frameworks to avoid unnecessary overhead.
      */
-    wrapOutgoing<T>(listener: () => T): T;
+    wrapOutgoing: <T>(callback: () => T) => T;
+
+    /**
+     * The shouldWrapOutgoing property is used to determine if events should be run outside of Angular or not.
+     * If an event handler is registered outside of Angular then we should not wrap the event handler
+     * with runInsideAngular() as the user may not have wanted this.
+     * This is also used to not wrap internal event listeners that are registered with RowNodes and Columns.
+     */
+    shouldWrapOutgoing?: boolean;
 
     /*
     * vue components are specified in the "components" part of the vue component - as such we need a way to deteremine if a given component is

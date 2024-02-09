@@ -7,34 +7,26 @@ const columnDefs: ColDef[] = [
     {
         field: 'gold',
         floatingFilterComponent: NumberFloatingFilterComponent,
-        floatingFilterComponentParams: {
-            suppressFilterButton: true,
-        },
-        filter: NumberFilterComponent
+        filter: NumberFilterComponent,
+        suppressFloatingFilterButton: true,
     },
     {
         field: 'silver',
         floatingFilterComponent: NumberFloatingFilterComponent,
-        floatingFilterComponentParams: {
-            suppressFilterButton: true,
-        },
-        filter: NumberFilterComponent
+        filter: NumberFilterComponent,
+        suppressFloatingFilterButton: true,
     },
     {
         field: 'bronze',
         floatingFilterComponent: NumberFloatingFilterComponent,
-        floatingFilterComponentParams: {
-            suppressFilterButton: true,
-        },
-        filter: NumberFilterComponent
+        filter: NumberFilterComponent,
+        suppressFloatingFilterButton: true,
     },
     {
         field: 'total',
         floatingFilterComponent: NumberFloatingFilterComponent,
-        floatingFilterComponentParams: {
-            suppressFilterButton: true,
-        },
-        filter: NumberFilterComponent
+        filter: NumberFilterComponent,
+        suppressFloatingFilterButton: true,
     },
 ]
 
@@ -42,7 +34,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
-        editable: true,
         flex: 1,
         minWidth: 100,
         filter: true,

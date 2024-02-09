@@ -12,6 +12,7 @@ import { getAllKeysInObjects } from "../utils/object";
 import { Column } from "./column";
 import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
 import { CellEditRequestEvent } from "../events";
+import { FrameworkEventListenerService } from "../misc/frameworkEventListenerService";
 
 export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
@@ -225,6 +226,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     private selected: boolean | undefined = false;
     private eventService: EventService | null;
+    private frameworkEventListenerService: FrameworkEventListenerService | null;
 
     private beans: Beans;
 
@@ -818,15 +820,12 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
     // sets the data for an aggregation
     public setAggData(newAggData: any): void {
-        // find out all keys that could potentially change
-        const colIds = getAllKeysInObjects([this.aggData, newAggData]);
         const oldAggData = this.aggData;
-
         this.aggData = newAggData;
 
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
-            colIds.forEach(colId => {
+            const eventFunc = (colId: string) => {
                 const value = this.aggData ? this.aggData[colId] : undefined;
                 const oldValue = oldAggData ? oldAggData[colId] : undefined;
 
@@ -837,7 +836,15 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                 if (!column) { return; }
 
                 this.dispatchCellChangedEvent(column, value, oldValue);
-            });
+            };
+
+            for (const key in this.aggData) {
+                eventFunc(key);
+            }
+            for (const key in newAggData) {
+                if (key in this.aggData) { continue; } // skip if already fired an event.
+                eventFunc(key);
+            }
         }
     }
 
@@ -1073,17 +1080,24 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /** Add an event listener. */
-    public addEventListener(eventType: RowNodeEventType, listener: Function): void {
+    public addEventListener(eventType: RowNodeEventType, userListener: Function): void {
         if (!this.eventService) {
             this.eventService = new EventService();
         }
+        if(this.beans.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
+            this.eventService.setFrameworkOverrides(this.beans.frameworkOverrides);
+            this.frameworkEventListenerService = new FrameworkEventListenerService(this.beans.frameworkOverrides);
+        }
+
+        const listener = this.frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
         this.eventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove event listener. */
-    public removeEventListener(eventType: RowNodeEventType, listener: Function): void {
+    public removeEventListener(eventType: RowNodeEventType, userListener: Function): void {
         if (!this.eventService) { return; }
 
+        const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
         this.eventService.removeEventListener(eventType, listener as AgEventListener);
         if (this.eventService.noRegisteredListenersExist()) {
             this.eventService = null;

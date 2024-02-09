@@ -89,6 +89,11 @@
         padding-top: calc(var(--ag-grid-size) * 2);
     }
 
+    .ag-column-select-column-readonly.ag-icon-grip,
+    .ag-column-select-column-readonly .ag-icon-grip {
+        opacity: 0.35;
+    }
+
     .ag-menu-header {
         background-color: var(--ag-header-background-color);
     }
@@ -137,5 +142,9 @@
         background: var(--ag-header-background-color);
         border: 1px solid var(--ag-secondary-border-color);
         border-right: none;
+    }
+
+    .ag-filter-active .ag-icon-filter {
+        color: var(--ag-balham-active-color);
     }
 }

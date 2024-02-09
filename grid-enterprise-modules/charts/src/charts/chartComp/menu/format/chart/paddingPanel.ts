@@ -12,7 +12,6 @@ import { ChartTranslationService } from "../../../services/chartTranslationServi
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 import { AgChartPaddingOptions } from "ag-charts-community";
-// import { AgChartPaddingOptions } from "ag-charts-enterprise";
 import { ChartController } from "../../../chartController";
 
 export class PaddingPanel extends Component {
@@ -81,8 +80,9 @@ export class PaddingPanel extends Component {
 
     private updateTopPadding(chartOptions: any) {
         // keep 'top' padding in sync with chart as toggling chart title on / off change the 'top' padding
-        const seriesType = this.chartController.getChartSeriesTypes()[0];
-        const topPadding = chartOptions[seriesType]?.padding?.top;
+        const topPadding = [...this.chartController.getChartSeriesTypes(), 'common']
+            .map((seriesType) => chartOptions[seriesType]?.padding?.top)
+            .find((value) => value != null);
         if (topPadding != null) {
             this.paddingTopSlider.setValue(topPadding);
         }

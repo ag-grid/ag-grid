@@ -9,6 +9,9 @@ import {
     IFloatingFilter,
     IHeader,
     IHeaderGroup,
+    ILoadingOverlay,
+    IMenuItem,
+    INoRowsOverlay,
     IStatusPanel,
     IToolPanel,
     Module
@@ -87,11 +90,11 @@ export interface ILoadingCellRendererReactComp extends AgReactComponent {
 }
 
 /** @deprecated v31.1 No interface required. */
-export interface ILoadingOverlayReactComp extends AgReactComponent {
+export interface ILoadingOverlayReactComp extends ILoadingOverlay, AgReactComponent {
 }
 
 /** @deprecated v31.1 No interface required. */
-export interface INoRowsOverlayReactComp extends AgReactComponent {
+export interface INoRowsOverlayReactComp extends INoRowsOverlay, AgReactComponent {
 }
 
 /** @deprecated v31.1 Use `IStatusPanel` instead. */
@@ -104,4 +107,7 @@ export interface IToolPanelReactComp extends IToolPanel, AgReactComponent {
 
 // /** @deprecated v31.1 No interface required. */
 export interface ITooltipReactComp extends AgReactComponent {
+}
+
+export interface IMenuItemReactComp extends IMenuItem, AgReactComponent {
 }

@@ -2,42 +2,38 @@
 
 // Copy of ag-grid.com menu styles, before we bring the whole component across
 
-.whatsNewLink {
-    margin-top: $spacing-size-4;
-    margin-bottom: $spacing-size-2;
+.whatsNewLink a {
+    display: block;
+    position: relative;
+    width: fit-content;
+    margin-bottom: $spacing-size-4;
+    padding: 2px 10px;
+    text-decoration: none;
+    font-size: var(--text-fs-sm);
+    color: var(--color-logo-orange);
+    border-radius: 24px;
+    border: 1px solid var(--color-logo-orange);
+    transition:
+        background-color $transition-default-timing,
+        color $transition-default-timing;
+    -webkit-font-smoothing: auto;
 
-    a {
-        display: block;
-        position: relative;
-        width: fit-content;
-        margin-bottom: $spacing-size-4;
-        padding: 2px 10px;
-        text-decoration: none;
-        font-size: var(--text-fs-sm);
+    &:hover,
+    &:focus {
+        background-color: color-mix(in srgb, var(--color-logo-orange) 5%, var(--color-bg-primary));
         color: var(--color-logo-orange);
-        border-radius: 24px;
-        border: 1px solid var(--color-logo-orange);
-        transition: background-color $transition-default-timing, color $transition-default-timing;
-        -webkit-font-smoothing: auto;
+    }
 
+    #{$selector-darkmode} & {
         &:hover,
         &:focus {
-            background-color: color-mix(in srgb, var(--color-logo-orange) 5%, var(--color-bg-primary));
-        }
-
-        #{$selector-darkmode} & {
-            &:hover,
-            &:focus {
-                background-color: color-mix(in srgb, var(--color-logo-orange) 10%, var(--color-bg-primary));
-            }
+            background-color: color-mix(in srgb, var(--color-logo-orange) 10%, var(--color-bg-primary));
         }
     }
 }
 
 .menu {
     $top-bar-height: 58px;
-
-    --menu-width: min(30vw, 250px);
 
     font-size: var(--text-fs-base);
     width: 100%;
@@ -61,7 +57,7 @@
 .menuInner {
     flex-basis: auto;
     flex-direction: column;
-    padding-top: 0;
+    max-width: $spacing-size-64 + $spacing-size-4;
     padding-bottom: $spacing-size-16;
 
     li {
@@ -73,10 +69,10 @@
     }
 
     hr {
+        height: 1px;
         margin-top: $spacing-size-4;
         margin-bottom: $spacing-size-4;
-        height: 1px;
-        background-color: var(--color-border-primary);
+        background-color: var(--color-border-secondary);
     }
 
     h5 {
@@ -87,10 +83,11 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         display: block;
+        padding-top: 0;
     }
 }
 
-button:not([class^='ag-']).sectionHeader {
+button.sectionHeader {
     width: 100%;
     padding-top: $spacing-size-1;
     padding-bottom: $spacing-size-2;
@@ -98,11 +95,18 @@ button:not([class^='ag-']).sectionHeader {
     font-weight: var(--text-semibold);
     border: 2px solid transparent;
     outline: none;
-    transition: color $transition-default-timing, border-color $transition-default-timing;
+    transition:
+        color $transition-default-timing,
+        border-color $transition-default-timing;
     border-radius: var(--radius-sm);
 
     &:focus-visible {
         border-color: var(--color-button-primary-shadow-focus);
+    }
+
+    &:hover {
+        color: var(--color-fg-primary);
+        border: 2px solid transparent;
     }
 
     &:hover .sectionIcon {
@@ -132,7 +136,9 @@ button:not([class^='ag-']).sectionHeader {
             fill: var(--color-fg-primary);
         }
 
-        transition: transform 0.33s ease-in-out, fill $transition-default-timing;
+        transition:
+            transform 0.33s ease-in-out,
+            fill $transition-default-timing;
 
         &.active {
             transform: rotate(90deg);
@@ -195,7 +201,11 @@ button:not([class^='ag-']).sectionHeader {
     color: var(--color-fg-secondary);
     border-left: 1px solid transparent;
     outline: none;
-    transition: color 0.33s ease-in-out, border-color 0.33s ease-in-out, background-color 0.33s ease-in-out;
+    transition:
+        color 0.33s ease-in-out,
+        border-color 0.33s ease-in-out,
+        background-color 0.33s ease-in-out;
+    line-height: var(--text-lh-sm);
 
     #{$selector-darkmode} & {
         --active-color: var(--color-brand-300);

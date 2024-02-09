@@ -4,7 +4,6 @@ declare var $: any;
 
 export interface CustomFloatingParams {
     maxValue: number,
-    suppressFilterButton: boolean,
 }
 
 export class NumberFloatingFilter implements IFloatingFilterComp {

@@ -12,7 +12,7 @@ import {
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
-import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
+import { applyThemeOverrides, createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
 
 export interface ChartProxyParams {
     chartInstance?: AgChartInstance;
@@ -44,11 +44,11 @@ export interface FieldDefinition {
 export interface UpdateParams {
     data: any[];
     grouping: boolean;
-    category: {
+    categories: {
         id: string;
         name: string;
         chartDataType?: string
-    };
+    }[];
     fields: FieldDefinition[];
     chartId?: string;
     getCrossFilteringContext: () => CrossFilteringContext,
@@ -157,19 +157,31 @@ export abstract class ChartProxy {
     protected getCommonChartOptions(updatedOverrides?: AgChartThemeOverrides) {
         // Only apply active overrides if chart is initialised.
         const existingOptions: any = this.clearThemeOverrides ? {} : this.chart?.getOptions() ?? {};
-        const formattingPanelOverrides = this.chart != null ?
-            { overrides: this.getActiveFormattingPanelOverrides() } : {};
+        const formattingPanelOverrides = this.chart != null ? this.getActiveFormattingPanelOverrides() : undefined;
         this.clearThemeOverrides = false;
+
+        // Create a base theme and apply the various layers of overrides.
+        const baseTheme = createAgChartTheme(this.chartProxyParams, this);
+        const chartThemeDefaults = this.getChartThemeDefaults();
+        const theme = applyThemeOverrides(baseTheme, [
+            chartThemeDefaults,
+            updatedOverrides ?? formattingPanelOverrides,
+        ]);
 
         return {
             ...existingOptions,
-            theme: {
-                ...createAgChartTheme(this.chartProxyParams, this),
-                ...(updatedOverrides ? { overrides: updatedOverrides } : formattingPanelOverrides),
-            },
+            theme,
             container: this.chartProxyParams.parentElement,
             mode: 'integrated',
         }
+    }
+
+    /**
+     * Retrieve default theme overrides for the current chart type
+     */
+    protected getChartThemeDefaults(): AgChartThemeOverrides | undefined {
+        // Override this method to provide chart type specific theme overrides
+        return undefined;
     }
 
     private getActiveFormattingPanelOverrides(): AgChartThemeOverrides {
@@ -183,6 +195,7 @@ export abstract class ChartProxy {
 
     public destroy({ keepChartInstance = false } = {}): AgChartInstance | undefined {
         if (keepChartInstance) {
+            this.chart.resetAnimations();
             return this.chart;
         }
 

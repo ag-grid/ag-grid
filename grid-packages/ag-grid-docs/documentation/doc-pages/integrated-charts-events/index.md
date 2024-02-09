@@ -46,7 +46,7 @@ The following example demonstrates when the described events occur by writing to
 
 - Close the chart dialog to see the "Destroyed chart with ID id-xxxxxxxxxxx" message logged.
 
-<grid-example title='Events' name='events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Events' name='events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Event Driven Chart Updates 
 
@@ -57,7 +57,7 @@ updated using the following Grid API method:
 
 Try changing the chart cell range in the grid and notice the subtitle is updated with chart range info.
 
-<grid-example title='Event Driven Chart Updates' name='event-driven-chart-updates' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"], "exampleHeight": 710 }'></grid-example>
+<grid-example title='Event Driven Chart Updates' name='event-driven-chart-updates' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"], "exampleHeight": 710 }'></grid-example>
 
 ## Standalone Chart Events
 
@@ -90,7 +90,7 @@ The example below demonstrates Standalone Charts Events subscription:
 - Click on the bars in the series and observe that the `seriesNodeClick` listener emits a console message.
 - Click on a legend item and observe that the `legendItemClick` listener emits a console message.
 
-<grid-example title='Subscribing to Standalone Charts Events' name='standalone-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
+<grid-example title='Subscribing to Standalone Charts Events' name='standalone-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
 ## Next Up
 

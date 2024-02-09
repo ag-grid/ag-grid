@@ -1,6 +1,4 @@
 <framework-specific-section frameworks="vue">
-|## Cell Renderer Component
-|
 |When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell and 
 |row values available to you via a `params` object.  
 |

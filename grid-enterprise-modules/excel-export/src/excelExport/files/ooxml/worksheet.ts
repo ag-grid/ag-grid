@@ -239,7 +239,7 @@ const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string
         const pos = getHeaderPosition(curr.position);
         const output = applyHeaderFontStyle(`${prev}&amp;${pos}`, curr.font);
 
-        return `${output}${_.escapeString(_.utf8_encode(replaceHeaderFooterTokens(curr.value)))}`;
+        return `${output}${_.escapeString(replaceHeaderFooterTokens(curr.value))}`;
     }, '');
 
 const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElement[] => {

@@ -6,7 +6,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     headerCheckboxSelection: true,
     checkboxSelection: true,
     floatingFilter: false,
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     minWidth: 55,
     maxWidth: 55,
     width: 55,

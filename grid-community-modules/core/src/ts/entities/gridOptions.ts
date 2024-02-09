@@ -89,6 +89,7 @@ import {
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderClickedEvent,
     ColumnHeaderContextMenuEvent,
+    ColumnMenuVisibleChangedEvent
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -150,6 +151,7 @@ import { AlignedGrid } from "../interfaces/iAlignedGrid";
 import { GridState } from "../interfaces/gridState";
 import { SizeColumnsToContentStrategy, SizeColumnsToFitProvidedWidthStrategy, SizeColumnsToFitGridStrategy } from "../interfaces/autoSizeStrategy";
 import { Column } from "./column";
+import { MenuItemDef } from "../interfaces/menuItem";
 
 export interface GridOptions<TData = any> {
 
@@ -160,7 +162,6 @@ export interface GridOptions<TData = any> {
     // *** Accessories *** //
     /**
      * Specifies the status bar components to use in the status bar.
-     * @initial
      */
     statusBar?: { statusPanels: StatusPanelDef[]; };
     /**
@@ -184,7 +185,15 @@ export interface GridOptions<TData = any> {
      */
     allowContextMenuWithControlKey?: boolean;
     /**
+     * Changes the display type of the column menu.
+     * `'new'` just displays the main list of menu items. `'legacy'` displays a tabbed menu.
+     * @default 'legacy'
+     * @initial
+     */
+    columnMenu?: 'legacy' | 'new';
+    /**
      * Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
+     * If `columnMenu = 'new'`, this will default to `true` instead of `false`.
      * @default false
      */
     suppressMenuHide?: boolean;
@@ -668,7 +677,6 @@ export interface GridOptions<TData = any> {
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
      * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
-     * @initial
      */
     alignedGrids?: AlignedGrid[] | (() => AlignedGrid[]);
     /**
@@ -758,13 +766,12 @@ export interface GridOptions<TData = any> {
     overlayLoadingTemplate?: string;
     /**
      * Provide a custom loading overlay component.
-     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
+     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-loading-overlay-component) for framework specific implementation details.
      * @initial
      */
     loadingOverlayComponent?: any;
     /**
      * Customise the parameters provided to the loading overlay component.
-     * @initial
      */
     loadingOverlayComponentParams?: any;
 
@@ -782,13 +789,12 @@ export interface GridOptions<TData = any> {
 
     /**
      * Provide a custom no rows overlay component.
-     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
+     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#implementing-a-no-rows-overlay-component) for framework specific implementation details.
      * @initial
      */
     noRowsOverlayComponent?: any;
     /**
      * Customise the parameters provided to the no rows overlay component.
-     * @initial
      */
     noRowsOverlayComponentParams?: any;
 
@@ -929,13 +935,21 @@ export interface GridOptions<TData = any> {
      */
     enableCellChangeFlash?: boolean;
     /**
-     * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its "flashed" state.
+     * To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long a cell should remain in its "flashed" state.
      * @default 500
+     */
+    cellFlashDuration?: number;
+    /**
+     * @deprecated v31.1 - use `cellFlashDuration` instead.
      */
     cellFlashDelay?: number;
     /**
-     * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
+     * To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
      * @default 1000
+     */
+    cellFadeDuration?: number;
+    /**
+     * @deprecated v31.1 - use `cellFadeDuration` instead.
      */
     cellFadeDelay?: number;
     /**
@@ -1275,6 +1289,11 @@ export interface GridOptions<TData = any> {
      */
     serverSideSortAllLevels?: boolean;
     /**
+     * When enabled, sorts fully loaded groups in the browser instead of requesting from the server.
+     * @default false
+     */
+    serverSideEnableClientSideSort?: boolean;
+    /**
      * When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
      * @default false
      * @initial
@@ -1546,6 +1565,16 @@ export interface GridOptions<TData = any> {
      */
     initialState?: GridState;
 
+    /**
+     * **React only**.
+     * 
+     * If enabled, makes it easier to set up custom components.
+     * If disabled, custom components will either need to have methods declared imperatively,
+     * or the component props will not update reactively.
+     * @initial
+     */
+    reactiveCustomComponents?: boolean;
+
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
     // *****************************************************************************************************
@@ -1559,7 +1588,7 @@ export interface GridOptions<TData = any> {
      * For customising the main 'column header' menu.
      * @initial
      */
-    getMainMenuItems?: GetMainMenuItems;
+    getMainMenuItems?: GetMainMenuItems<TData>;
     /**
      * Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
@@ -1785,6 +1814,10 @@ export interface GridOptions<TData = any> {
      * The tool panel size has been changed.
      */
     onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>): void;
+    /**
+     * The column menu visibility has changed. Fires twice if switching between tabs - once with the old tab and once with the new tab.
+     */
+    onColumnMenuVisibleChanged?(event: ColumnMenuVisibleChangedEvent<TData>): void;
 
     // *** Clipboard *** //
     /**
@@ -2236,46 +2269,15 @@ export interface RowClassParams<TData = any, TContext = any> extends AgGridCommo
     rowIndex: number;
 }
 
-export interface GetContextMenuItems<TData = any> {
-    (params: GetContextMenuItemsParams<TData>): (string | MenuItemDef)[];
+export interface GetContextMenuItems<TData = any, TContext = any> {
+    (params: GetContextMenuItemsParams<TData, TContext>): (string | MenuItemDef<TData, TContext>)[];
 }
 export interface GetChartToolbarItems {
     (params: GetChartToolbarItemsParams): ChartMenuOptions[];
 }
-export interface MenuItemLeafDef {
-    /**
-     * Name of the menu item */
-    name: string;
-    /**
-     * It the item should be enabled / disabled */
-    disabled?: boolean;
-    /**
-     * Shortcut (just display text, saying the shortcut here does nothing) */
-    shortcut?: string;
-    /**
-     * Function that gets executed when item is chosen */
-    action?: () => void;
-    /**
-     * Set to true to provide a check beside the option */
-    checked?: boolean;
-    /**
-     * The icon to display, either a DOM element or HTML string */
-    icon?: Element | string;
-    /**
-     * CSS classes to apply to the menu item */
-    cssClasses?: string[];
-    /**
-     * Tooltip for the menu item */
-    tooltip?: string;
-}
 
-export interface MenuItemDef extends MenuItemLeafDef {
-    /**
-     * If this item is a sub menu, contains a list of menu item definitions */
-    subMenu?: (MenuItemDef | string)[];
-}
-export interface GetMainMenuItems {
-    (params: GetMainMenuItemsParams): (string | MenuItemDef)[];
+export interface GetMainMenuItems<TData = any, TContext = any> {
+    (params: GetMainMenuItemsParams<TData, TContext>): (string | MenuItemDef<TData, TContext>)[];
 }
 
 export interface GetRowNodeIdFunc<TData = any> {

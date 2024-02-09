@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
-import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const SportRenderer = (props: ICellRendererParams) => {
+const SportRenderer = (props: CustomCellRendererProps) => {
     return (
         <i className="far fa-trash-alt"
             style={{ cursor: 'pointer' }}
@@ -25,7 +25,7 @@ const leftColumns: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -37,7 +37,7 @@ const leftColumns: ColDef[] = [
         colId: 'checkbox',
         maxWidth: 50,
         checkboxSelection: true,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         headerCheckboxSelection: true
     },
     { field: "athlete" },
@@ -48,7 +48,7 @@ const rightColumns: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         rowDragText: (params, dragItemCount) => {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
@@ -59,7 +59,7 @@ const rightColumns: ColDef[] = [
     { field: "athlete" },
     { field: "sport" },
     {
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         maxWidth: 50,
         cellRenderer: SportRenderer
     }
@@ -209,7 +209,7 @@ const GridExample = () => {
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div className={'grid-wrapper ' + /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div className={'grid-wrapper ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>

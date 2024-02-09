@@ -1,6 +1,5 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { _Scene } from "ag-charts-community";
-// import { _Scene } from "ag-charts-enterprise";
 import { ChartType } from "@ag-grid-community/core";
 import { createLinePaths } from "../miniChartHelpers";
 

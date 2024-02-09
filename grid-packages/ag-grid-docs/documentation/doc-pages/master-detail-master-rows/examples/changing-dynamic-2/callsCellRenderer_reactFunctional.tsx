@@ -1,27 +1,9 @@
-import React, { Component } from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import React from 'react';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default class CustomLoadingCellRenderer extends Component<
-  ICellRendererParams,
-  { value: any }
-> {
-  constructor(props: ICellRendererParams) {
-    super(props);
-
-    this.state = {
-      value: props.value,
-    };
-  }
-
-  refresh(props: ICellRendererParams) {
-    this.setState({
-      value: props.value,
-    });
-    return true;
-  }
-
-  onAdd() {
-    var oldData = this.props.node.data;
+export default (props: CustomCellRendererProps) => {
+  const onAdd = () => {
+    var oldData = props.node.data;
 
     var oldCallRecords = oldData.callRecords;
 
@@ -46,13 +28,13 @@ export default class CustomLoadingCellRenderer extends Component<
       callRecords: newCallRecords,
     };
 
-    this.props.api.applyTransaction({ update: [newData] });
+    props.api.applyTransaction({ update: [newData] });
 
-    this.props.node.setExpanded(true);
+    props.node.setExpanded(true);
   }
 
-  onRemove() {
-    var oldData = this.props.node.data;
+  const onRemove = () => {
+    var oldData = props.node.data;
 
     var oldCallRecords = oldData.callRecords;
 
@@ -74,16 +56,14 @@ export default class CustomLoadingCellRenderer extends Component<
       callRecords: newCallRecords,
     };
 
-    this.props.api.applyTransaction({ update: [newData] });
+    props.api.applyTransaction({ update: [newData] });
   }
 
-  render() {
-    return (
-      <div className="calls-cell-renderer">
-        <button onClick={this.onAdd.bind(this)}>+</button>
-        <button onClick={this.onRemove.bind(this)}>-</button>
-        <span>{this.state.value}</span>
-      </div>
-    );
-  }
+  return (
+    <div className="calls-cell-renderer">
+      <button onClick={onAdd}>+</button>
+      <button onClick={onRemove}>-</button>
+      <span>{props.value}</span>
+    </div>
+  );
 }

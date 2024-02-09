@@ -22,7 +22,9 @@
     text-align: center;
     font-size: 2em;
     margin-right: $spacing-size-2;
-    transition: background-color $transition-default-timing, transform 0.33s ease-in-out;
+    transition:
+        background-color $transition-default-timing,
+        transform 0.33s ease-in-out;
 
     &:hover {
         background: var(--color-util-brand-700);

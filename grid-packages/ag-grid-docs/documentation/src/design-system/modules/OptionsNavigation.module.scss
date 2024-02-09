@@ -7,8 +7,6 @@
 }
 
 .expandableSnippet {
-    --total-header-height: calc(var(--header-nav-height) * 2 + 4px);
-
     position: sticky;
     top: var(--total-header-height);
     display: flex;
@@ -16,10 +14,6 @@
     width: 100%;
     height: calc(100vh - var(--total-header-height));
     z-index: 3;
-
-    #{$selector-darkmode} & {
-        --total-header-height: calc(var(--header-nav-height) * 2 + 6px);
-    }
 
     @media screen and (min-width: $breakpoint-options-medium) {
         overflow-y: auto;
@@ -37,7 +31,7 @@
         border-bottom: 1px solid var(--color-util-gray-200);
 
         @media screen and (min-width: $breakpoint-options-medium) {
-            padding: $spacing-size-4 $spacing-size-4 $spacing-size-4 var(--layout-gap);
+            padding: $spacing-size-4 $spacing-size-4 $spacing-size-4 var(--layout-horizontal-margins);
         }
 
         @media screen and (min-width: $breakpoint-options-extra-large) {
@@ -92,7 +86,7 @@
 
 .navContainer > code {
     #{$selector-darkmode} & {
-        background: var(--color-gray-900);
+        background: var(--color-bg-tertiary);
     }
 }
 
@@ -113,20 +107,22 @@
     }
 
     &.groupWhiskers::before {
-        top: -7px;
+        top: -4px;
         bottom: -14px;
-        width: 2px;
+        width: 1px;
+        transform: translateX(5px);
     }
 
     &.groupWhiskers::after {
         bottom: -14px;
-        height: 2px;
+        height: 1px;
         width: 8px;
+        transform: translateX(5px);
     }
 }
 
 .navItem {
-    padding: 0 16px 0 calc(var(--layout-gap) + var(--nav-options-indent) * var(--options-nav-depth, 0));
+    padding: 0 16px 0 calc(var(--layout-horizontal-margins) + var(--nav-options-indent) * var(--options-nav-depth, 0));
 
     @media screen and (min-width: $breakpoint-options-extra-large) {
         padding: 0 16px 0 calc(#{$spacing-size-4} + var(--nav-options-indent) * var(--options-nav-depth, 0));
@@ -164,7 +160,7 @@
 
 .propertyName {
     position: relative;
-    color: var(--string-color);
+    color: var(--color-fg-primary);
     cursor: pointer;
 
     .punctuation {
@@ -185,7 +181,7 @@
         top: 8.5px;
         right: calc(100% + 10px);
         width: var(--nav-options-indent);
-        height: 2px;
+        height: 1px;
         background-color: var(--color-util-gray-300);
 
         #{$selector-darkmode} & {
@@ -251,7 +247,7 @@
         color: var(--color-util-brand-700);
 
         #{$selector-darkmode} & {
-            color: var(--color-util-brand-400);
+            color: var(--color-fg-primary);
         }
     }
 
@@ -259,7 +255,7 @@
         background-color: var(--color-util-brand-100);
 
         #{$selector-darkmode} & {
-            background-color: var(--color-util-brand-50);
+            background-color: rgba(255, 255, 255, 0.075);
         }
     }
 }

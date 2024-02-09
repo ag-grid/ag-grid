@@ -6,7 +6,6 @@ import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
 import { IFloatingFilter } from '../../../filter/floating/floatingFilter';
-import { IMenuFactory } from '../../../interfaces/iMenuFactory';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { AgPromise } from '../../../utils';
@@ -16,6 +15,7 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { setAriaLabel } from "../../../utils/aria";
+import { warnOnce } from "../../../utils/function";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveBodyCssClass(cssClassName: string, on: boolean): void;
@@ -30,12 +30,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
-    @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
 
     private eButtonShowMainFilter: HTMLElement;
     private eFloatingFilterBody: HTMLElement;
 
     private suppressFilterButton: boolean;
+    private highlightFilterButtonWhenActive: boolean;
     private active: boolean;
     private iconCreated: boolean = false;
 
@@ -236,10 +236,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupFilterButton(): void {
-        const colDef = this.column.getColDef();
-        // this is unusual - we need a params value OUTSIDE the component the params are for.
-        // the params are for the floating filter component, but this property is actually for the wrapper.
-        this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
+        this.suppressFilterButton = !this.menuService.isFloatingFilterButtonEnabled(this.column);
+        this.highlightFilterButtonWhenActive = !this.menuService.isLegacyMenuEnabled();
     }
 
     private setupUserComp(): void {
@@ -262,7 +260,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private showParentFilter() {
         const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
-        this.menuFactory.showMenuAfterButtonClick(this.column, eventSource, 'floatingFilter', 'filterMenuTab', ['filterMenuTab']);
+        this.menuService.showFilterMenu({
+            column: this.column,
+            buttonElement: eventSource,
+            containerType: 'floatingFilter',
+            positionBy: 'button'
+        });
     }
 
     private setupSyncWithFilter(): void {
@@ -306,7 +309,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private updateFilterButton(): void {
         if (!this.suppressFilterButton && this.comp) {
-            this.comp.setButtonWrapperDisplayed(this.filterManager.isFilterAllowed(this.column));
+            const isFilterAllowed = this.filterManager.isFilterAllowed(this.column);
+            this.comp.setButtonWrapperDisplayed(isFilterAllowed);
+            if (this.highlightFilterButtonWhenActive && isFilterAllowed) {
+                this.eButtonShowMainFilter.classList.toggle('ag-filter-active', this.column.isFilterActive());
+            }
         }
     }
 
@@ -358,8 +365,19 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         const params = userCompDetails.params;
 
         this.comp.getFloatingFilterComp()?.then(floatingFilter => {
-            if (floatingFilter?.onParamsUpdated && typeof floatingFilter.onParamsUpdated === 'function') {
-                floatingFilter.onParamsUpdated(params)
+            let hasRefreshed = false;
+            if (floatingFilter?.refresh && typeof floatingFilter.refresh === 'function') {
+                const result = floatingFilter.refresh(params);
+                // framework wrapper always implements optional methods, but returns null if no underlying method
+                if (result !== null) {
+                    hasRefreshed = true;
+                }
+            }
+            if (!hasRefreshed && floatingFilter?.onParamsUpdated && typeof floatingFilter.onParamsUpdated === 'function') {
+                const result = floatingFilter.onParamsUpdated(params);
+                if (result !== null) {
+                    warnOnce(`Custom floating filter method 'onParamsUpdated' is deprecated. Use 'refresh' instead.`);
+                }
             }
         })
     }

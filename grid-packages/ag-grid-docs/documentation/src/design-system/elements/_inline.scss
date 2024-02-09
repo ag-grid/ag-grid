@@ -5,6 +5,7 @@ a#{$selector-exclude-grid} {
     text-decoration: none;
     color: var(--color-link);
     transition: color $transition-default-timing;
+    font-weight: var(--text-semibold);
 
     &:hover {
         color: var(--color-link-hover);

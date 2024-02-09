@@ -7,7 +7,7 @@ const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
         const textNode = key.toString();
         const child: XmlElement = {
             name: 't',
-            textNode: _.utf8_encode(_.escapeString(textNode))
+            textNode: _.escapeString(textNode)
         };
 
         // if we have leading or trailing spaces, instruct Excel not to trim them

@@ -39,7 +39,7 @@ const gridOptions: GridOptions = {
   rowData: getData(5),
   domLayout: 'autoHeight',
   onGridReady: (params) => {
-    document.querySelector('#currentRowCount')!.innerHTML = '5'
+    document.querySelector('#currentRowCount')!.textContent = '5'
   },
   popupParent: document.body,
 }
@@ -75,7 +75,7 @@ function getData(count: number) {
 function updateRowData(rowCount: number) {
   gridApi!.setGridOption('rowData', getData(rowCount));
 
-  document.querySelector('#currentRowCount')!.innerHTML = `${rowCount}`;
+  document.querySelector('#currentRowCount')!.textContent = `${rowCount}`;
 }
 
 function cbFloatingRows() {

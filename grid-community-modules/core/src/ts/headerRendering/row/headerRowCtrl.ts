@@ -7,7 +7,6 @@ import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { VirtualColumnsChangedEvent } from "../../events";
 import { FocusService } from "../../focusService";
-import { isBrowserSafari } from "../../utils/browser";
 import { AbstractHeaderCellCtrl } from "../cells/abstractCell/abstractHeaderCellCtrl";
 import { HeaderFilterCellCtrl } from "../cells/floatingFilter/headerFilterCellCtrl";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
@@ -91,14 +90,6 @@ export class HeaderRowCtrl extends BeanStub {
     public getAriaRowIndex(): number {
         return this.rowIndex + 1;
     }
-    public getTransform(): string | undefined {
-        if (isBrowserSafari()) {
-            // fix for a Safari rendering bug that caused the header to flicker above chart panels
-            // as you move the mouse over the header
-            return 'translateZ(0)';
-        }
-    }
-
 
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));

@@ -1,8 +1,13 @@
 @use '../core' as *;
 
 .container {
-    margin-top: $spacing-size-12;
+    width: 100%;
+    margin-top: $spacing-size-8;
     margin-bottom: calc($spacing-size-12 * 2.5);
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        width: var(--layout-width-9-12);
+    }
 
     :global(.ag-filter-icon) {
         display: none;

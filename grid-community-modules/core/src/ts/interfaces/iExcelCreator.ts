@@ -476,11 +476,11 @@ export interface ExcelHeaderFooterContent {
 }
 
 export interface IExcelCreator {
-    exportDataAsExcel(params?: ExcelExportParams): void;
     getDataAsExcel(params?: ExcelExportParams): Blob | string | undefined;
     getSheetDataForExcel(params?: ExcelExportParams): string;
-
     getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined;
+
+    exportDataAsExcel(params?: ExcelExportParams): void;
     exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
 
     /** private methods */

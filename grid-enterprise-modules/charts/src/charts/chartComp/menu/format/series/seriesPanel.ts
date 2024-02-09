@@ -11,6 +11,7 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
+import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
@@ -21,6 +22,10 @@ import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
 import { CalloutPanel } from "./calloutPanel";
+import { CapsPanel } from "./capsPanel";
+import { ConnectorLinePanel } from "./connectorLinePanel";
+import { WhiskersPanel } from "./whiskersPanel";
+import { SeriesItemsPanel } from "./seriesItemsPanel";
 
 export class SeriesPanel extends Component {
 
@@ -44,8 +49,8 @@ export class SeriesPanel extends Component {
     private seriesType: ChartSeriesType;
 
     private widgetFuncs: {[name: string]: () => void}= {
-        'lineWidth': () => this.initLineWidth(),
-        'strokeWidth': () => this.initStrokeWidth(),
+        'lineWidth': () => this.initStrokeWidth('lineWidth'),
+        'strokeWidth': () => this.initStrokeWidth('strokeWidth'),
         'lineDash': () => this.initLineDash(),
         'lineOpacity': () => this.initLineOpacity(),
         'fillOpacity': () => this.initFillOpacity(),
@@ -54,17 +59,33 @@ export class SeriesPanel extends Component {
         'shadow': () => this.initShadow(),
         'tooltips': () => this.initTooltips(),
         'bins': () => this.initBins(),
+        'whiskers': () => this.initWhiskers(),
+        'caps': () => this.initCaps(),
+        'connectorLine': () => this.initConnectorLine(),
+        'seriesItems': () => this.initSeriesItemsPanel(),
     };
 
-    private seriesWidgetMappings: {[name: string]: string[]} = {
-        'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
-        'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+    private seriesWidgetMappings: { [K in ChartSeriesType]?: string[] } = {
         'column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
-        'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'scatter': ['tooltips', 'markers', 'labels'],
         'bubble': ['tooltips', 'markers', 'labels'],
-        'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
+        'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
+        'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
+        'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
+        'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
+        'treemap': ['tooltips'],
+        'sunburst': ['tooltips'],
+        'heatmap': ['tooltips'],
+        'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
     constructor({
@@ -105,12 +126,18 @@ export class SeriesPanel extends Component {
 
         const chart = this.chartController.getChartProxy().getChart();
         chart.waitForUpdate().then(() => {
+            const componentWasRemoved = !this.isAlive();
+            if (componentWasRemoved) {
+                // It's possible that the component was unmounted during the async delay in updating the chart.
+                // If this is the case we want to bail out to avoid operating on stale UI components.
+                return;
+            }
             if (this.chartController.isComboChart()) {
                 this.updateSeriesType();
                 this.initSeriesSelect();
             }
 
-            this.seriesWidgetMappings[this.seriesType].forEach((w) => this.widgetFuncs[w]());
+            (this.seriesWidgetMappings[this.seriesType] ?? []).forEach((w) => this.widgetFuncs[w]());
         })
         .catch(e => console.error(`AG Grid - chart rendering failed`, e));
 
@@ -148,32 +175,18 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesTooltipsToggle);
     }
 
-    private initStrokeWidth(): void {
-        const currentValue = this.getSeriesOption<number>("strokeWidth");
+    private initStrokeWidth(label: 'strokeWidth' | 'lineWidth'): void {
+        const currentValue = this.getSeriesOption<number | undefined>("strokeWidth") ?? 0;
 
         const seriesStrokeWidthSlider = this.createBean(new AgSlider());
         seriesStrokeWidthSlider
-            .setLabel(this.translate("strokeWidth"))
+            .setLabel(this.translate(label))
             .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
             .onValueChange(newValue => this.setSeriesOption("strokeWidth", newValue));
 
         this.addWidget(seriesStrokeWidthSlider);
-    }
-
-    private initLineWidth() {
-        const currentValue = this.getSeriesOption<number>("strokeWidth");
-
-        const seriesLineWidthSlider = this.createBean(new AgSlider());
-        seriesLineWidthSlider
-            .setLabel(this.translate('lineWidth'))
-            .setMaxValue(getMaxValue(currentValue, 10))
-            .setTextFieldWidth(45)
-            .setValue(`${currentValue}`)
-            .onValueChange(newValue => this.setSeriesOption("strokeWidth", newValue));
-
-        this.addWidget(seriesLineWidthSlider);
     }
 
     private initLineDash(): void {
@@ -192,7 +205,7 @@ export class SeriesPanel extends Component {
     }
 
     private initLineOpacity(): void {
-        const currentValue = this.getSeriesOption<number>("strokeOpacity");
+        const currentValue = this.getSeriesOption<number | undefined>("strokeOpacity") ?? 0;
 
         const seriesLineOpacitySlider = this.createBean(new AgSlider());
         seriesLineOpacitySlider
@@ -207,7 +220,7 @@ export class SeriesPanel extends Component {
     }
 
     private initFillOpacity(): void {
-        const currentValue = this.getSeriesOption<number>("fillOpacity");
+        const currentValue = this.getSeriesOption<number | undefined>("fillOpacity") ?? 0;
 
         const seriesFillOpacitySlider = this.createBean(new AgSlider());
         seriesFillOpacitySlider
@@ -255,6 +268,39 @@ export class SeriesPanel extends Component {
 
             this.addWidget(sectorPanelComp);
         }
+
+        if (this.seriesType === 'range-bar') {
+            // Add label placement dropdown
+            const options: Array<ListOption<AgRangeBarSeriesLabelPlacement>> = [
+                { value: 'inside', text: this.translate('inside') },
+                { value: 'outside', text: this.translate('outside') },
+            ];
+            const placementValue = this.chartOptionsService.getSeriesOption<AgRangeBarSeriesLabelPlacement>('label.placement', this.seriesType);
+            const placementSelect = labelPanelComp.createManagedBean(new AgSelect());
+            placementSelect
+                .setLabel(this.translate('labelPlacement'))
+                .setLabelAlignment('left')
+                .setLabelWidth('flex')
+                .setInputWidth('flex')
+                .addOptions(options)
+                .setValue(placementValue)
+                .onValueChange((newValue) => this.chartOptionsService.setSeriesOption('label.placement', newValue, this.seriesType));
+
+            labelPanelComp.addCompToPanel(placementSelect);
+            this.activePanels.push(placementSelect);
+
+            // Add padding slider
+            const paddingValue = this.chartOptionsService.getSeriesOption<number>('label.padding', this.seriesType);
+            const paddingSlider = labelPanelComp.createManagedBean(new AgSlider());
+            paddingSlider.setLabel(this.chartTranslationService.translate('padding'))
+                .setMaxValue(getMaxValue(paddingValue, 200))
+                .setValue(`${paddingValue}`)
+                .setTextFieldWidth(45)
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption('label.padding', newValue, this.seriesType));
+
+            labelPanelComp.addCompToPanel(paddingSlider);
+            this.activePanels.push(paddingSlider);
+        }
     }
 
     private getSectorLabelPositionRatio(): AgSlider {
@@ -282,7 +328,7 @@ export class SeriesPanel extends Component {
     }
 
     private initBins() {
-        const currentValue = (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins")).length;
+        const currentValue = (this.getSeriesOption<any>("bins") ?? this.getSeriesOption<any>("calculatedBins", true)).length;
 
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider
@@ -296,13 +342,33 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesBinCountSlider);
     }
 
+    private initWhiskers() {
+        const whiskersPanelComp = this.createBean(new WhiskersPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(whiskersPanelComp);
+    }
+
+    private initCaps() {
+        const capsPanelComp = this.createBean(new CapsPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(capsPanelComp);
+    }
+
+    private initConnectorLine() {
+        const connectorLinePanelComp = this.createBean(new ConnectorLinePanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(connectorLinePanelComp);
+    }
+
+    private initSeriesItemsPanel() {
+        const seriesItemsPanelComp = this.createBean(new SeriesItemsPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(seriesItemsPanelComp);
+    }
+
     private addWidget(widget: Component): void {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
     }
 
-    private getSeriesOption<T = string>(expression: string): T {
-        return this.chartOptionsService.getSeriesOption<T>(expression, this.seriesType);
+    private getSeriesOption<T = string>(expression: string, calculated?: boolean): T {
+        return this.chartOptionsService.getSeriesOption<T>(expression, this.seriesType, calculated);
     }
 
     private setSeriesOption<T = string>(expression: string, newValue: T): void {
@@ -315,7 +381,7 @@ export class SeriesPanel extends Component {
         }
         const ct = this.chartController.getSeriesChartTypes()[0].chartType;
 
-        if (ct === 'columnLineCombo') { 
+        if (ct === 'columnLineCombo') {
             return 'column';
         }
 
@@ -335,6 +401,17 @@ export class SeriesPanel extends Component {
                 ['line', {value: 'line', text: this.translate('line', 'Line')}],
                 ['scatter', {value: 'scatter', text: this.translate('scatter', 'Scatter')}],
                 ['histogram', {value: 'histogram', text: this.translate('histogram', 'Histogram')}],
+                ['radial-column', {value: 'radial-column', text: this.translate('radialColumn', 'Radial Column')}],
+                ['radial-bar', {value: 'radial-bar', text: this.translate('radialBar', 'Radial Bar')}],
+                ['radar-line', {value: 'radar-line', text: this.translate('radarLine', 'Radar Line')}],
+                ['radar-area', {value: 'radar-area', text: this.translate('radarArea', 'Radar Area')}],
+                ['nightingale', {value: 'nightingale', text: this.translate('nightingale', 'Nightingale')}],
+                ['range-bar', {value: 'range-bar', text: this.translate('rangeBar', 'Range Bar')}],
+                ['range-area', {value: 'range-area', text: this.translate('rangeArea', 'Range Area')}],
+                ['treemap', {value: 'treemap', text: this.translate('treemap', 'Treemap')}],
+                ['sunburst', {value: 'sunburst', text: this.translate('sunburst', 'Sunburst')}],
+                ['waterfall', {value: 'waterfall', text: this.translate('waterfall', 'Waterfall')}],
+                ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
             ]);
         }

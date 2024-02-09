@@ -1,5 +1,6 @@
 (function (global) {
     var ANGULAR_VERSION = "14.2.6";
+    window.ENABLE_PROD_MODE = true;
 
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
@@ -75,6 +76,10 @@
                 main: './dist/ag-grid-enterprise.cjs.min.js',
                 defaultExtension: 'js'
             },
+            'ag-grid-enterprise-charts-enterprise': {
+                main: './dist/ag-grid-enterprise-charts-enterprise.cjs.js',
+                defaultExtension: 'js'
+            },
             "@ag-grid-community/angular": {
                 main: "./fesm2015/ag-grid-community-angular.mjs",
                 defaultExtension: "mjs"
@@ -83,10 +88,10 @@
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js'
             },
-            // 'ag-charts-enterprise': {
-            //     main: './dist/package/main.cjs.js',
-            //     defaultExtension: 'js'
-            // },
+            'ag-charts-enterprise': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js'
+            },
             rxjs: {
                 defaultExtension: false
             }

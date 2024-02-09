@@ -7,9 +7,10 @@ import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ITooltipParams } from "../rendering/tooltipComponent";
 import { Column } from "./column";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
-import { RowClassParams } from "./gridOptions";
+import { RowClassParams, GetMainMenuItems, GetContextMenuItems } from "./gridOptions";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { IRowNode } from "../interfaces/iRowNode";
+import { MenuItemDef } from "../interfaces/menuItem";
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef<TData = any, TValue = any> {
@@ -124,7 +125,7 @@ export type ToolPanelClass<TData = any, TValue = any> = string | string[] | ((pa
 type StringOrNumKeys<TObj> = keyof TObj & (string | number);
 type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = 
     TValue extends object
-        ? `${Prefix}.${ TDepth['length'] extends 7 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
+        ? `${Prefix}.${ TDepth['length'] extends 5 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
         : never;
 
 // This type wrapper is needed for correct handling of union types in ColDefField
@@ -325,6 +326,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Events *** //
 
+    // NOTE: Make sure that wherever these are called that they are wrapped in frameworkOverrides.wrapOutgoing()
+
     /** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */
     onCellValueChanged?: (event: NewValueParams<TData, TValue>) => void;
     /** Callback called when a cell is clicked. */
@@ -347,6 +350,11 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      */
     floatingFilter?: boolean;
+    /**
+     * If `true`, the button in the floating filter that opens the parent filter in a popup will not be displayed.
+     * Only applies if `floatingFilter = true`.
+     */
+    suppressFloatingFilterButton?: boolean;
 
     // *** Column Headers *** //
 
@@ -371,13 +379,37 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.
      */
     menuTabs?: ColumnMenuTab[];
-    /** Params used to change the behaviour and appearance of the Columns Menu tab. */
+    /** Params used to change the behaviour and appearance of the Column Chooser/Columns Menu tab. */
+    columnChooserParams?: ColumnChooserParams;
+    /** @deprecated v31.1 Use columnChooserParams instead */
     columnsMenuParams?: ColumnsMenuParams;
+    /** @deprecated v31.1 Use suppressHeaderMenuButton instead */
+    suppressMenu?: boolean;
     /**
-     * Set to `true` if no menu should be shown for this column header.
+     * Set to `true` if no menu button should be shown for this column header.
      * @default false
      */
-    suppressMenu?: boolean;
+    suppressHeaderMenuButton?: boolean;
+    /**
+     * Set to `true` to not display the filter button in the column header.
+     * Only applies when `columnMenu = 'new'`.
+     * @default false
+     */
+    suppressHeaderFilterButton?: boolean;
+    /**
+     * Set to `true` to not display the column menu when the column header is right-clicked.
+     * Only applies when `columnMenu = 'new'`.
+     * @default false
+     */
+    suppressHeaderContextMenu?: boolean;
+    /**
+     * Customise the list of menu items available in the column menu.
+     */
+    mainMenuItems?: (string | MenuItemDef<TData>)[] | GetMainMenuItems<TData>;
+    /**
+     * Customise the list of menu items available in the context menu.
+     */
+    contextMenuItems?: (string | MenuItemDef<TData>)[] | GetContextMenuItems<TData>;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
     /**
@@ -743,7 +775,10 @@ export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgG
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
 
-export interface ColumnsMenuParams {
+/** @deprecated v31.1 Use `ColumnChooserParams` instead */
+export interface ColumnsMenuParams extends ColumnChooserParams {}
+
+export interface ColumnChooserParams {
     /** To suppress updating the layout of columns as they are rearranged in the grid */
     suppressSyncLayoutWithGrid?: boolean;
     /** To suppress Column Filter section*/

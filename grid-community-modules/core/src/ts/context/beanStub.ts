@@ -86,10 +86,6 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public dispatchEventAsync(event: AgEvent): void {
-        window.setTimeout(() => this.dispatchEvent(event), 0);
-    }
-
     public dispatchEvent<T extends AgEvent>(event: T): void {
         if (this.localEventService) {
             this.localEventService.dispatchEvent(event);
@@ -107,18 +103,12 @@ export class BeanStub implements IEventEmitter {
 
         if (object instanceof HTMLElement) {
             addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
-        } else if (object instanceof Window) {
-            object.addEventListener(event, listener);
         } else {
             object.addEventListener(event, listener);
         }
 
         const destroyFunc: () => null = () => {
-            if (object instanceof HTMLElement || object instanceof Window) {
-                object.removeEventListener(event, listener);
-            } else {
-                object.removeEventListener(event, listener);
-            }
+            (object as any).removeEventListener(event, listener);
 
             this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
             return null;
@@ -132,7 +122,7 @@ export class BeanStub implements IEventEmitter {
     private setupGridOptionListener<K extends keyof GridOptions>(
         event: keyof GridOptions,
         listener: PropertyValueChangedListener<K>
-    ) {
+    ): (() => null) {
         this.gridOptionsService.addEventListener(event, listener);
         const destroyFunc: () => null = () => {
             this.gridOptionsService.removeEventListener(event, listener);
@@ -140,6 +130,7 @@ export class BeanStub implements IEventEmitter {
             return null;
         };
         this.destroyFunctions.push(destroyFunc);
+        return destroyFunc;
     }
 
     /**
@@ -150,12 +141,12 @@ export class BeanStub implements IEventEmitter {
     public addManagedPropertyListener<K extends keyof GridOptions>(
         event: K,
         listener: PropertyValueChangedListener<K>
-    ): void {
+    ): (() => null) {
         if (this.destroyed) {
-            return;
+            return () => null;
         }
 
-        this.setupGridOptionListener(event, listener);
+        return this.setupGridOptionListener(event, listener);
     }
 
     private propertyListenerId = 0;

@@ -37,7 +37,7 @@ const CurrencyRenderer = props => {
     const value = useMemo(() => props.value, [props.value]);
 
     const formatValueToCurrency = (currency, value) => {
-        return `${currency}${value.toFixed(2)}`;
+        return `${currency} ${value.toFixed(2)}`;
     };
 
     return <span>{formatValueToCurrency('EUR', value)}</span>;
@@ -96,7 +96,7 @@ const GridExample = () => {
             width: 150
         },
         {
-            headerName: "Currency (Pipe)",
+            headerName: "Currency",
             field: "currency",
             cellRenderer: CurrencyRenderer,
             colId: "currency",
@@ -155,7 +155,9 @@ const GridExample = () => {
                         context={{
                             methodFromParent
                         }}
-                        defaultColDef={defaultColDef} />
+                        defaultColDef={defaultColDef}
+                        reactiveCustomComponents
+                    />
                 </div>
             </div>
         </div>

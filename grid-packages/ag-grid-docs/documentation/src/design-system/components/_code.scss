@@ -1,9 +1,12 @@
 @use '../core' as *;
 
 $vertical-padding: $spacing-size-2;
+$blog-code-selector: '.post-full pre[class*="language-"]';
 
 pre.code,
-pre.code code {
+#{$blog-code-selector},
+pre.code code,
+#{$blog-code-selector} code {
     color: black;
     background: none;
     text-align: left;
@@ -29,24 +32,28 @@ pre.code code {
     }
 }
 
-pre.code {
+pre.code,
+#{$blog-code-selector} {
+    --color-code-background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
+
     --comment-color: #5d6376;
     --tag-color: #984f4e;
-    --string-color: #0087bf;
+    --string-color: #c33c3a;
     --punctuation-color: #393a34;
     --keyword-color: #b31ea7;
-    --symbol-color: #0087bf;
-    --function-color: #2d7df7;
+    --symbol-color: #0e4491;
+    --function-color: #393a34;
     --deleted-color: #f54946;
-    --selector-color: #00009f;
+    --selector-color: #0e4491;
     --important-color: #e90;
-    --class-name-color: #2b91af;
+    --class-name-color: #0e4491;
     --property-color: #2ea248;
 
     position: relative;
     margin: 0 0 $spacing-size-4;
     padding: 0;
     border: 1px solid color-mix(in srgb, var(--color-border-secondary), var(--color-border-primary));
+    background-color: var(--color-code-background);
     overflow: visible;
     overflow-y: auto;
 
@@ -69,14 +76,15 @@ pre.code {
     }
 }
 
-pre.code > code {
+pre.code > code,
+#{$blog-code-selector} > code {
     position: relative;
     display: inline-block;
     min-width: 100%;
     margin-bottom: -6px;
     padding: $vertical-padding $spacing-size-4;
     font-size: 15px;
-    background-color: var(--color-bg-secondary);
+    background-color: var(--color-code-background);
     background-size: 3em 3em;
     background-origin: content-box;
     background-attachment: local;
@@ -85,37 +93,47 @@ pre.code > code {
     overflow-x: auto;
 }
 
-pre.code > .language-bash {
+pre.code > .language-bash,
+#{$blog-code-selector} > .language-bash {
     color: var(--function-color);
 }
 
-pre.code.line-numbers.line-numbers code {
+pre.code.line-numbers.line-numbers code,
+#{$blog-code-selector}.line-numbers.line-numbers code {
     padding-left: 3.8em;
 }
 
-pre.code.line-numbers.line-numbers .line-numbers-rows {
+pre.code.line-numbers.line-numbers .line-numbers-rows,
+#{$blog-code-selector}.line-numbers.line-numbers .line-numbers-rows {
     left: 0;
 }
 
-pre.code[data-line] {
+pre.code[data-line],
+#{$blog-code-selector}[data-line] {
     padding-top: 0;
     padding-bottom: 0;
     padding-left: 0;
 }
-pre[data-line] code {
+
+pre[data-line] code,
+#{$blog-code-selector}[data-line] code {
     position: relative;
     padding-left: 4em;
 }
-pre.code .line-highlight {
+
+pre.code .line-highlight,
+#{$blog-code-selector} .line-highlight {
     margin-top: 0;
 }
 
-pre.code.line-numbers {
+pre.code.line-numbers,
+#{$blog-code-selector}.line-numbers {
     position: relative;
     counter-reset: linenumber;
 }
 
-pre.code.line-numbers > code {
+pre.code.line-numbers > code,
+#{$blog-code-selector}.line-numbers > code {
     position: relative;
     white-space: inherit;
     min-height: calc(100% - 1px);

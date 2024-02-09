@@ -4,7 +4,12 @@ import { Component } from "../../widgets/component";
 
 export interface ILoadingOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> { }
 
-export interface ILoadingOverlayComp extends IComponent<ILoadingOverlayParams> { }
+export interface ILoadingOverlay<TData = any, TContext = any> {
+    // Gets called when the `loadingOverlayComponentParams` grid option is updated
+    refresh?(params: ILoadingOverlayParams<TData, TContext>): void;
+}
+
+export interface ILoadingOverlayComp<TData = any, TContext = any> extends IComponent<ILoadingOverlayParams<TData, TContext>>, ILoadingOverlay<TData, TContext> { }
 
 export class LoadingOverlayComponent extends Component implements ILoadingOverlayComp {
 
@@ -30,7 +35,7 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(() => {
-                this.getGui().innerText = localeTextFunc('loadingOoo', 'Loading...');
+                this.getGui().textContent = localeTextFunc('loadingOoo', 'Loading...');
             });
         }
     }

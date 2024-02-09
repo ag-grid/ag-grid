@@ -1,7 +1,7 @@
 import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
-import { setAriaLabel, setAriaDescribedBy, setAriaExpanded, setAriaRole } from "../utils/aria";
+import { setAriaExpanded, setAriaRole } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
 import { setElementWidth, getAbsoluteWidth, getInnerHeight, formatSize } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';

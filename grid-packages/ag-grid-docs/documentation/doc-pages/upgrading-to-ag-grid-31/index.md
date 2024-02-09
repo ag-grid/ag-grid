@@ -39,8 +39,12 @@ This release includes the following breaking changes:
 * `AgGridReactFire` is no longer exported from `ag-grid-react`. You should use `AgGridReact` instead.
 * The loading overlay is now displayed for all row models if column definitions are not provided when the grid is initialised. The rows will also not be created and rendered until the column definitions are provided.
 * Validation is now run when `gridOptions` are updated, meaning warnings may appear in console when changing grid options if an invalid configuration is reached.
-* Auto-generated group row IDs when using Client-Side Row Model now have a different format (but the same prefix).<br>`rowDataUpdated` event is only fired for the Client-Side Row Model (per the existing documentation)."
-* Legacy React Rendering, enabled via `suppressReactUi` property is deprecated since v28 and is now removed.<br>AG Grid now only renders via React components as has been the default since v28.
+* Auto-generated group row IDs when using Client-Side Row Model now have a different format (but the same prefix).
+
+  `rowDataUpdated` event is only fired for the Client-Side Row Model (per the existing documentation)."
+* Legacy React Rendering, enabled via `suppressReactUi` property is deprecated since v28 and is now removed.
+
+  AG Grid now only renders via React components as has been the default since v28.
 * `rowDataChangeDetectionStrategy` - removed. identity / reference equals always used.
 
 ### Integrated Charts
@@ -148,7 +152,7 @@ Column API is now deprecated. Column API methods are now available in [Grid API]
 
 * `setGetRowId` is now deprecated because `getRowId` can no longer be updated (listed as a breaking change above).
 
-* The Grid API methods listed below have been deprecated. Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead as described in [Updating Grid Options](/grid-interface/#updating-grid-options/).
+* The Grid API methods listed below have been deprecated. Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead as described in [Updating Grid Options](/grid-interface/#updating-grid-options).
 
     * `setPivotMode`
     * `setPinnedTopRowData`

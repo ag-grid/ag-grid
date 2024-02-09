@@ -12,7 +12,7 @@ export class ClickableStatusBarComponent implements IStatusPanelComp {
 
         this.buttonListener = this.onButtonClicked.bind(this);
         this.eGui.addEventListener("click", this.buttonListener);
-        this.eGui.innerHTML = 'Click Me For Selected Row Count';
+        this.eGui.textContent = 'Click Me For Selected Row Count';
         this.eGui.style.padding = "5px";
         this.eGui.style.margin = "5px";
     }

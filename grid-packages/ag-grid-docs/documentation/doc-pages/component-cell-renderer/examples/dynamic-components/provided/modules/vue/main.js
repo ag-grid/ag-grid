@@ -73,7 +73,7 @@ const VueExample = {
                     width: 150
                 },
                 {
-                    headerName: "Currency (Pipe)",
+                    headerName: "Currency",
                     field: "currency",
                     cellRenderer: "currencyRenderer",
                     colId: "currency",

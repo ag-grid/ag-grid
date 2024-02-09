@@ -28,7 +28,7 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
 
     private isValidRowModel() {
         // this component is only really useful with client or server side rowmodels
-        const rowModelType = this.gridApi.getModel().getType();
+        const rowModelType = this.gridApi.__getModel().getType();
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 
@@ -47,6 +47,10 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
     }
 
     public init() {
+    }
+
+    public refresh(): boolean {
+        return true;
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

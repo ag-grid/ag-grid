@@ -5,7 +5,7 @@ enterprise: true
 
 The Multi Filter allows multiple [Provided Filters](/filtering/#column-filter-types) or [Custom Filters](/component-filter/) to be used on the same column. This provides greater flexibility when filtering data in the grid.
 
-<image-caption src="filter-multi/resources/multi-filter.png" alt="Multi Filter" width="34rem" centered="true" toggledarkmode="true"></image-caption>
+<image-caption src="filter-multi/resources/multi-filter.png" alt="Multi Filter" centered="true" toggledarkmode="true"></image-caption>
 
 ## Enabling the Multi Filter
 
@@ -89,7 +89,7 @@ You can use your own [Custom Filters](/component-filter/) with the Multi Filter.
 
 The example below shows a Custom Filter in use on the **Year** column, used alongside the grid-provided [Number Filter](/filter-number/).
 
-<grid-example title='Custom Filters' name='custom-filter' type='generated' options='{ "enterprise": true, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard", "filterpanel"], "exampleHeight": 635 }'></grid-example>
+<grid-example title='Custom Filters' name='custom-filter' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard", "filterpanel"], "exampleHeight": 635 }'></grid-example>
 
 ## Multi Filter Model
 

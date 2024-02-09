@@ -2,8 +2,9 @@
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, FirstDataRenderedEvent, ISetFilter, ModuleRegistry } from '@ag-grid-community/core';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
@@ -12,12 +13,11 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 import { getData } from "./data";
-import { ColDef, FirstDataRenderedEvent, ICellRendererParams, IFiltersToolPanel, ISetFilter, ModuleRegistry } from '@ag-grid-community/core';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, FiltersToolPanelModule])
 
-const colourCellRenderer = (props: ICellRendererParams) => {
+const colourCellRenderer = (props: CustomCellRendererProps) => {
     if (!props.value || props.value === '(Select All)') {
         return props.value;
     }
@@ -83,35 +83,37 @@ const GridExample = () => {
     }, [])
 
     const setModel = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type])!;
-        instance.setModel({ values: MANGLED_COLOURS });
-        gridRef.current!.api.onFilterChanged();
+        gridRef.current!.api.setColumnFilterModel(FILTER_TYPES[type], { values: MANGLED_COLOURS }).then(() => {
+            gridRef.current!.api.onFilterChanged();
+        });
     }, [])
 
     const getModel = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance(FILTER_TYPES[type])!;
-        alert(JSON.stringify(instance.getModel(), null, 2));
+        alert(JSON.stringify(gridRef.current!.api.getColumnFilterModel(FILTER_TYPES[type]), null, 2));
     }, [alert])
 
     const setFilterValues = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type])!;
-        instance.setFilterValues(MANGLED_COLOURS);
-        instance.applyModel();
-        gridRef.current!.api.onFilterChanged();
+        gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
+            instance!.setFilterValues(MANGLED_COLOURS);
+            instance!.applyModel();
+            gridRef.current!.api.onFilterChanged();
+        });
     }, [])
 
     const getValues = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type])!;
-        alert(JSON.stringify(instance.getFilterValues(), null, 2));
+        gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
+            alert(JSON.stringify(instance!.getFilterValues(), null, 2));
+        });
     }, [alert])
 
     const reset = useCallback((type: string) => {
-        const instance = gridRef.current!.api.getFilterInstance<ISetFilter>(FILTER_TYPES[type])!;
-        instance.resetFilterValues();
-        instance.setModel(null);
-        gridRef.current!.api.onFilterChanged();
+        gridRef.current!.api.getColumnFilterInstance<ISetFilter>(FILTER_TYPES[type]).then(instance => {
+            instance!.resetFilterValues();
+            instance!.setModel(null).then(() => {
+                gridRef.current!.api.onFilterChanged();
+            });
+        });
     }, [])
-
 
     return (
         <div style={containerStyle}>

@@ -74,7 +74,7 @@ In the grid below, select a range by dragging the mouse over cells and notice th
 
 By default all of the aggregations available will be displayed but you can configure the aggregation component to only show a subset of the aggregations.
 
-In this code snippet we have configured the aggregation component to only show `min, max and average`:
+In this code snippet we have configured the aggregation component to only show `min, max and average` by providing `statusPanelParams` (of type `IAggregationStatusPanelParams`):
 
 <snippet>
 const gridOptions = {
@@ -91,6 +91,8 @@ const gridOptions = {
     }
 }
 </snippet>
+
+<interface-documentation interfaceName="IAggregationStatusPanelParams"></interface-documentation>
 
 ### Accessing Status Panels
 

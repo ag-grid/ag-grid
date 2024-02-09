@@ -61,12 +61,12 @@ const buildCjsEs6 = () => {
 };
 
 // Start of webpack related tasks
-const webpackTask = (minify, styles, libraryTarget) => {
-    const mainFile = styles ? './webpack-with-styles.js' : './webpack-no-styles.js';
+const webpackTask = (minify, styles, libraryTarget, chartsEnterprise) => {
+    const mainFile = styles ? `./webpack${chartsEnterprise ? '-chartsEnterprise' : ''}-with-styles.js` : `./webpack${chartsEnterprise ? '-chartsEnterprise' : ''}-no-styles.js`;
 
     const isUmd = libraryTarget === 'umd';
 
-    let fileName = 'ag-grid-enterprise';
+    let fileName = `ag-grid-enterprise${chartsEnterprise ? '-charts-enterprise' : ''}`;
     fileName += isUmd ? '' : `.${libraryTarget}`;
     fileName += minify ? '.min' : '';
     fileName += styles ? '' : '.noStyle';
@@ -91,8 +91,8 @@ const webpackTask = (minify, styles, libraryTarget) => {
             resolve: {
                 extensions: ['.mjs', '.js'],
                 alias: {
-                    "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/package/main.esm.js'),
-                    // "ag-charts-enterprise": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-enterprise/dist/package/main.esm.js')
+                    "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/package/main.esm.mjs'),
+                    "ag-charts-enterprise": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts-enterprise/node_modules/ag-charts-enterprise/dist/package/main.esm.mjs')
                 }
             },
             output: {
@@ -168,29 +168,19 @@ gulp.task('build', parallel('buildCjs', 'buildEsm'));
 gulp.task('copy-grid-core-styles', copyGridCoreStyles);
 
 // webpack related tasks
-gulp.task('webpack', series(webpackTask.bind(null, false, true, 'umd')));
-// gulp.task('webpack', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, false, true, 'umd')));
-gulp.task('webpack-no-clean', series(webpackTask.bind(null, false, true, 'umd')));
-gulp.task('webpack-minify', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, true, true, 'umd')));
-gulp.task('webpack-minify-no-clean', series(webpackTask.bind(null, true, true, 'umd')));
-gulp.task('webpack-noStyle', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, false, false, 'umd')));
-gulp.task('webpack-noStyle-no-clean', series(webpackTask.bind(null, false, false, 'umd')));
-gulp.task('webpack-minify-noStyle', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, true, false, 'umd')));
-gulp.task('webpack-minify-noStyle-no-clean', series(webpackTask.bind(null, true, false, 'umd')));
+gulp.task('webpack-no-clean',                series(webpackTask.bind(null, false, true,  'umd', false), webpackTask.bind(null, false, true,  'umd', true)));``
+gulp.task('webpack-minify-no-clean',         series(webpackTask.bind(null, true,  true,  'umd', false), webpackTask.bind(null, true,  true,  'umd', true)));
+gulp.task('webpack-noStyle-no-clean',        series(webpackTask.bind(null, false, false, 'umd', false), webpackTask.bind(null, false, false, 'umd', true)));
+gulp.task('webpack-minify-noStyle-no-clean', series(webpackTask.bind(null, true,  false, 'umd', false), webpackTask.bind(null, true,  false, 'umd', true)));
 
-gulp.task('webpack-amd', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, false, true, 'amd')));
-gulp.task('webpack-amd-no-clean', series(webpackTask.bind(null, false, true, 'amd')));
-gulp.task('webpack-amd-minify', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, true, true, 'amd')));
-gulp.task('webpack-amd-minify-no-clean', series(webpackTask.bind(null, true, true, 'amd')));
-gulp.task('webpack-amd-noStyle', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, false, false, 'amd')));
-gulp.task('webpack-amd-noStyle-no-clean', series(webpackTask.bind(null, false, false, 'amd')));
-gulp.task('webpack-amd-minify-noStyle', series('clean', 'build', 'copy-grid-core-styles', webpackTask.bind(null, true, false, 'amd')));
-gulp.task('webpack-amd-minify-noStyle-no-clean', series(webpackTask.bind(null, true, false, 'amd')));
+gulp.task('webpack-amd-no-clean', series(webpackTask.bind(null, false, true, 'amd', false)));
+gulp.task('webpack-amd-minify-no-clean', series(webpackTask.bind(null, true, true, 'amd', false)));
+gulp.task('webpack-amd-noStyle-no-clean', series(webpackTask.bind(null, false, false, 'amd', false)));
+gulp.task('webpack-amd-minify-noStyle-no-clean', series(webpackTask.bind(null, true, false, 'amd', false)));
 
 // for us to be able to parallise the webpack compilations we need to pin webpack-stream to 5.0.0. See: https://github.com/shama/webpack-stream/issues/201
-gulp.task('webpack-all-no-clean', series('copy-grid-core-styles', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean', 'webpack-amd-no-clean', 'webpack-amd-minify-no-clean', 'webpack-amd-noStyle-no-clean', 'webpack-amd-minify-noStyle-no-clean')));
-gulp.task('webpack-all', series('clean', 'build', 'copy-grid-core-styles', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean', 'webpack-amd-no-clean', 'webpack-amd-minify-no-clean', 'webpack-amd-noStyle-no-clean', 'webpack-amd-minify-noStyle-no-clean')));
+gulp.task('webpack', series('clean', 'build', 'copy-grid-core-styles', parallel('webpack-no-clean', 'webpack-minify-no-clean', 'webpack-noStyle-no-clean', 'webpack-minify-noStyle-no-clean', 'webpack-amd-no-clean', 'webpack-amd-minify-no-clean', 'webpack-amd-noStyle-no-clean', 'webpack-amd-minify-noStyle-no-clean')));
 
 // default/release task
-gulp.task('default', series('webpack-all'));
+gulp.task('default', series('webpack'));
 

@@ -45,6 +45,36 @@ const builds = {
         format: 'esm',
         env: 'production',
         banner
+    },
+    'enterprise-charts-cjs-dev': {
+        entry: path.resolve(__dirname, './src/main-charts.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.cjs.js'),
+        format: 'cjs',
+        env: 'development',
+        nodeFormatOverride: 'es5-cjs',
+        banner
+    },
+    'enterprise-charts-cjs-prod': {
+        entry: path.resolve(__dirname, './src/main-charts.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.cjs.min.js'),
+        format: 'cjs',
+        env: 'production',
+        nodeFormatOverride: 'es5-cjs',
+        banner
+    },
+    'enterprise-charts-esm-dev': {
+        entry: path.resolve(__dirname, './src/main-charts.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.esm.js'),
+        format: 'esm',
+        env: 'development',
+        banner
+    },
+    'enterprise-charts-esm-prod': {
+        entry: path.resolve(__dirname, './src/main-charts.ts'),
+        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.esm.min.js'),
+        format: 'esm',
+        env: 'production',
+        banner
     }
 };
 
@@ -63,9 +93,9 @@ function genConfig(name) {
             }),
             node({dedupe: ['ag-charts-community'], format: opts.nodeFormatOverride }),      // for utils package - defaulting to use index.js
             commonjs({
-                // namedExports: {
-                //     '../../grid-enterprise-modules/charts/node_modules/ag-charts-enterprise/dist/package/main.cjs.js' : Object.keys(agChartsCommunity)
-                // }
+                namedExports: {
+                    '../../grid-enterprise-modules/charts/node_modules/ag-charts-enterprise/dist/package/main.cjs.js' : Object.keys(agChartsCommunity)
+                }
             }),
             typescript({
                 tsconfig: "tsconfig.es6.json"

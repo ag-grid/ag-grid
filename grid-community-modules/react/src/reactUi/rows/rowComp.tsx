@@ -7,7 +7,7 @@ import CellComp from '../cells/cellComp';
 
 const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) => {
 
-    const { context } = useContext(BeansContext);
+    const { context, gridOptionsService } = useContext(BeansContext);
     const { rowCtrl, containerType } = params;
 
     const tabIndex = rowCtrl.getTabIndex();
@@ -98,6 +98,20 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
             },
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: () => fullWidthCompRef.current,
+            refreshFullWidth: getUpdatedParams => {
+                if (canRefreshFullWidthRef.current) {
+                    setFullWidthCompDetails(prevFullWidthCompDetails => ({
+                        ...prevFullWidthCompDetails!,
+                        params: getUpdatedParams()
+                    }));
+                    return true;
+                } else {
+                    if (!fullWidthCompRef.current || !fullWidthCompRef.current.refresh) {
+                        return false;
+                    }
+                    return fullWidthCompRef.current.refresh(getUpdatedParams());
+                }
+            }
         };
         rowCtrl.setComp(compProxy, eGui.current, containerType);
 
@@ -119,6 +133,12 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
         const res = fullWidthCompDetails?.componentFromFramework && isComponentStateless(fullWidthCompDetails.componentClass);
         return !!res;
     }, [fullWidthCompDetails]);
+
+    // needs to be a ref to avoid stale closure, as used in compProxy passed to row ctrl
+    const canRefreshFullWidthRef = useRef(false);
+    useEffect(() => {
+        canRefreshFullWidthRef.current = reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gridOptionsService.get('reactiveCustomComponents');
+    }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
 
     const showCellsJsx = () => cellCtrls?.map(cellCtrl => (
         <CellComp

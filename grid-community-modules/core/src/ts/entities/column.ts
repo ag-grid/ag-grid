@@ -8,6 +8,8 @@ import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
 import { IRowNode } from "../interfaces/iRowNode";
+import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { FrameworkEventListenerService } from "../misc/frameworkEventListenerService";
 import { ColumnHoverService } from "../rendering/columnHoverService";
 import { exists, missing } from "../utils/generic";
 import { mergeDeep } from "../utils/object";
@@ -90,9 +92,12 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     @Autowired('gridOptionsService') private readonly gridOptionsService: GridOptionsService;
     @Autowired('columnUtils') private readonly columnUtils: ColumnUtils;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
+    
+    @Autowired('frameworkOverrides') private readonly frameworkOverrides: IFrameworkOverrides;
+    private frameworkEventListenerService: FrameworkEventListenerService | null;
 
     private readonly colId: any;
-    private colDef: ColDef<TValue>;
+    private colDef: ColDef<any, TValue>;
 
     // used by React (and possibly other frameworks) as key for rendering. also used to
     // identify old vs new columns for destroying cols when no longer used.
@@ -102,7 +107,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     // when the user provides an updated list of columns - so we can check if we have a column already
     // existing for a col def. we cannot use the this.colDef as that is the result of a merge.
     // This is used in ColumnFactory
-    private userProvidedColDef: ColDef<TValue> | null;
+    private userProvidedColDef: ColDef<any, TValue> | null;
 
     private actualWidth: any;
 
@@ -143,7 +148,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     private parent: ColumnGroup;
     private originalParent: ProvidedColumnGroup | null;
 
-    constructor(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null, colId: string, primary: boolean) {
+    constructor(colDef: ColDef<any, TValue>, userProvidedColDef: ColDef<any, TValue> | null, colId: string, primary: boolean) {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.colId = colId;
@@ -209,7 +214,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     // gets called when user provides an alternative colDef, eg
-    public setColDef(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null, source: ColumnEventType = 'api'): void {
+    public setColDef(colDef: ColDef<any, TValue>, userProvidedColDef: ColDef<any, TValue> | null, source: ColumnEventType = 'api'): void {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
@@ -223,7 +228,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      * This may not be correct, as items can be superseded by default column options.
      * However it's useful for comparison, eg to know which application column definition matches that column.
      */
-    public getUserProvidedColDef(): ColDef<TValue> | null {
+    public getUserProvidedColDef(): ColDef<any, TValue> | null {
         return this.userProvidedColDef;
     }
 
@@ -326,12 +331,20 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     /** Add an event listener to the column. */
-    public addEventListener(eventType: ColumnEventName, listener: Function): void {
+    public addEventListener(eventType: ColumnEventName, userListener: Function): void {
+        if(this.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
+            // Only construct if we need it, as it's an overhead for column construction
+            this.eventService.setFrameworkOverrides(this.frameworkOverrides);
+            this.frameworkEventListenerService = new FrameworkEventListenerService(this.frameworkOverrides);
+        }
+        const listener = this.frameworkEventListenerService?.wrap(userListener as AgEventListener) ?? userListener;
+
         this.eventService.addEventListener(eventType, listener as AgEventListener);
     }
 
     /** Remove event listener from the column. */
-    public removeEventListener(eventType: ColumnEventName, listener: Function): void {
+    public removeEventListener(eventType: ColumnEventName, userListener: Function): void {
+        const listener = this.frameworkEventListenerService?.unwrap(userListener as AgEventListener) ?? userListener;
         this.eventService.removeEventListener(eventType, listener as AgEventListener);
     }
 
@@ -621,7 +634,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      * (e.g. `defaultColDef` grid option, or column types.
      *
      * Equivalent: `getDefinition` */
-    public getColDef(): ColDef<TValue> {
+    public getColDef(): ColDef<any, TValue> {
         return this.colDef;
     }
 
@@ -650,7 +663,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return this.colId;
     }
 
-    public getDefinition(): AbstractColDef<TValue> {
+    public getDefinition(): AbstractColDef<any, TValue> {
         return this.colDef;
     }
 
@@ -813,6 +826,9 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return this.colDef.enableRowGroup === true;
     }
 
+    /**
+     * @deprecated v31.1 Use `getColDef().menuTabs ?? defaultValues` instead.
+     */
     public getMenuTabs(defaultValues: ColumnMenuTab[]): ColumnMenuTab[] {
         let menuTabs = this.getColDef().menuTabs;
 

@@ -72,6 +72,7 @@ const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         width: 170,
+        sortable: false,
     },
     rowData: getData(),
     suppressRowTransform: true,

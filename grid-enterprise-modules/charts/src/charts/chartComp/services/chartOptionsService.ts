@@ -1,10 +1,10 @@
 import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon } from "@ag-grid-community/core";
-import { AgCartesianAxisType, AgCharts, AgChartOptions } from "ag-charts-community";
+import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType } from "ag-charts-community";
 
 import { ChartController } from "../chartController";
 import { AgChartActual } from "../utils/integration";
 import { deepMerge } from "../utils/object";
-import { ChartSeriesType, getSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
+import { ChartSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
 type SupportedSeries = AgChartActual['series'][number];
@@ -23,7 +23,7 @@ export class ChartOptionsService extends BeanStub {
     public setChartOption<T = string>(expression: string, value: T, isSilent?: boolean): void {
         const chartSeriesTypes = this.chartController.getChartSeriesTypes();
         if (this.chartController.isComboChart()) {
-            chartSeriesTypes.push('cartesian');
+            chartSeriesTypes.push('common');
         }
 
         let chartOptions = {};
@@ -35,9 +35,9 @@ export class ChartOptionsService extends BeanStub {
                 value
             }));
         });
-        this.updateChart(chartOptions);
 
         if (!isSilent) {
+            this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
         }
     }
@@ -49,19 +49,36 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getAxisProperty<T = string>(expression: string): T {
-        return _.get(this.getChart().axes?.[0], expression, undefined) as T;
+        return _.get(this.getChart().axes?.[0], expression, undefined);
     }
 
     public setAxisProperty<T = string>(expression: string, value: T) {
-        // update axis options
         const chart = this.getChart();
         let chartOptions = {};
-        chart.axes?.forEach((axis: any) => {
-            chartOptions = deepMerge(chartOptions, this.getUpdateAxisOptions<T>(axis, expression, value));
+
+        const relevantAxes = chart.axes?.filter((axis: any) => {
+            const parts = expression.split('.');
+            let current = axis;
+            for (const part of parts) {
+                if (!(part in current)) {
+                    return false;
+                }
+                current = current[part];
+            }
+            return true;
         });
 
-        this.updateChart(chartOptions);
-        this.raiseChartOptionsChangedEvent();
+        relevantAxes?.forEach((axis: any) => {
+            const updateOptions = this.getUpdateAxisOptions<T>(axis, expression, value);
+            if (updateOptions) {
+                chartOptions = deepMerge(chartOptions, updateOptions);
+            }
+        });
+
+        if (Object.keys(chartOptions).length > 0) {
+            this.updateChart(chartOptions);
+            this.raiseChartOptionsChangedEvent();
+        }
     }
 
     public getLabelRotation(axisType: 'xAxis' | 'yAxis'): number {
@@ -78,9 +95,12 @@ export class ChartOptionsService extends BeanStub {
         }
     }
 
-    public getSeriesOption<T = string>(expression: string, seriesType: ChartSeriesType): T {
+    public getSeriesOption<T = string>(expression: string, seriesType: ChartSeriesType, calculated?: boolean): T {
+        // N.B. 'calculated' here refers to the fact that the property exists on the internal series object itself,
+        // rather than the properties object. This is due to us needing to reach inside the chart itself to retrieve
+        // the value, and will likely be cleaned up in a future release
         const series = this.getChart().series.find((s: any) => ChartOptionsService.isMatchingSeries(seriesType, s));
-        return _.get(series, expression, undefined) as T;
+        return _.get(calculated ? series : series?.properties.toJson(), expression, undefined) as T;
     }
 
     public setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {
@@ -113,18 +133,24 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private getUpdateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T): AgChartOptions {
-        const seriesType = getSeriesType(this.getChartType());
-        const validAxisTypes: AgCartesianAxisType[] = ['number', 'category', 'time', 'grouped-category'];
+        const chartSeriesTypes = this.chartController.getChartSeriesTypes();
+        if (this.chartController.isComboChart()) {
+            chartSeriesTypes.push('common');
+        }
+
+        const validAxisTypes: (AgCartesianAxisType | AgPolarAxisType)[] = ['number', 'category', 'time', 'grouped-category', 'angle-category', 'angle-number', 'radius-category', 'radius-number'];
 
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};
         }
 
-        return this.createChartOptions<T>({
-            seriesType,
-            expression: `axes.${chartAxis.type}.${expression}`,
-            value
-        });
+        return chartSeriesTypes
+            .map((seriesType) => this.createChartOptions<T>({
+                seriesType,
+                expression: `axes.${chartAxis.type}.${expression}`,
+                value,
+            }))
+            .reduce((combinedOptions, options) => deepMerge(combinedOptions, options));
     }
 
     public getChartType(): ChartType {

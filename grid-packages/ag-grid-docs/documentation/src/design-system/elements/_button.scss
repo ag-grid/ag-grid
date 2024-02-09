@@ -15,7 +15,6 @@ input[type='submit']#{$selector-exclude-grid},
 .button-tertiary {
     appearance: none;
     display: inline-block;
-    font-size: var(--text-fs-base);
     font-weight: var(--text-bold);
     padding: 0.375em 1em 0.5em;
     white-space: nowrap;
@@ -36,6 +35,11 @@ input[type='submit']#{$selector-exclude-grid},
     &:hover,
     &.hover {
         background-color: var(--color-button-primary-bg-hover);
+        color: var(--color-button-primary-fg);
+
+        &[aria-disabled] {
+            background-color: var(--color-button-primary-bg);
+        }
     }
 
     &:active {
@@ -52,22 +56,34 @@ input[type='submit']#{$selector-exclude-grid},
 
     &:disabled,
     &[disabled],
+    &[aria-disabled],
     &.disabled {
         background-color: var(--color-button-disabled-bg);
         color: var(--color-button-disabled-fg);
         border: 1px solid var(--color-button-disabled-border);
-        pointer-events: none;
         cursor: default;
+    }
+
+    /* Disable pointer events for `disabled` but not `aria-disabled` */
+    &:disabled,
+    &[disabled],
+    &.disabled {
+        pointer-events: none;
     }
 
     .icon {
         --icon-size: 2em;
-
+        fill: var(--color-button-primary-fg);
         display: inline-block;
         position: relative;
         bottom: 0.05em;
         margin: -1em 0.125em -1em 0;
     }
+}
+
+// Fix hover issues for links with .button class
+a.button:hover {
+    color: var(--color-button-primary-fg);
 }
 
 .button-secondary {
@@ -77,6 +93,7 @@ input[type='submit']#{$selector-exclude-grid},
 
     &:hover,
     &.hover {
+        color: var(--color-button-secondary-fg);
         background-color: var(--color-button-secondary-bg-hover);
     }
 
@@ -89,6 +106,11 @@ input[type='submit']#{$selector-exclude-grid},
     }
 }
 
+// Fix hover issues for links with .button-secondary class
+a.button-secondary:hover {
+    color: var(--color-button-secondary-fg);
+}
+
 .button-tertiary {
     background-color: var(--color-button-tertiary-bg);
     color: var(--color-button-tertiary-fg);
@@ -97,6 +119,7 @@ input[type='submit']#{$selector-exclude-grid},
     &:hover,
     &.hover {
         background-color: var(--color-button-tertiary-bg-hover);
+        color: var(--color-button-tertiary-fg);
     }
 
     &:active {
@@ -108,12 +131,25 @@ input[type='submit']#{$selector-exclude-grid},
     }
 }
 
+// Fix hover issues for links with .button-tertiary class
+a.button-tertiary:hover {
+    color: var(--color-button-tertiary-fg);
+}
+
 .button-secondary,
 .button-tertiary {
     &:disabled,
     &[disabled],
+    &[aria-disabled],
     &.disabled {
         color: var(--color-button-disabled-fg);
+    }
+
+    &:hover,
+    &.hover {
+        &[aria-disabled] {
+            background-color: var(--color-button-disabled-bg);
+        }
     }
 }
 
@@ -131,6 +167,7 @@ input[type='submit']#{$selector-exclude-grid},
     &.hover,
     &:disabled,
     &[disabled],
+    &[aria-disabled],
     &.disabled {
         background-color: transparent;
         border: none;
@@ -139,6 +176,14 @@ input[type='submit']#{$selector-exclude-grid},
     &:focus-visible,
     &.focus {
         box-shadow: none;
+    }
+
+    &:hover,
+    &.hover {
+        &[aria-disabled] {
+            background-color: transparent;
+            color: var(--color-button-disabled-fg);
+        }
     }
 }
 

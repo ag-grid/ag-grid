@@ -37,72 +37,73 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtExport() {
-  const spreadsheets = []
+  const performExport = async () => {
+    const spreadsheets = []
 
-  //set a filter condition ensuring no records are returned so only the header content is exported
-  const filterInstance = gridApi!.getFilterInstance('athlete')!
+    //set a filter condition ensuring no records are returned so only the header content is exported
+    await gridApi!.setColumnFilterModel('athlete', {
+      values: [],
+    })
 
-  filterInstance.setModel({
-    values: [],
-  })
+    gridApi!.onFilterChanged()
 
-  gridApi!.onFilterChanged()
+    //export custom content for cover page
+    spreadsheets.push(
+      gridApi!.getSheetDataForExcel({
+        prependContent: [
+          {
+            cells: [{
+              styleId: 'coverHeading',
+              mergeAcross: 3,
+              data: { value: 'AG Grid', type: 'String' },
+            }],
+          },
+          {
+            cells: [{
+              styleId: 'coverHeading',
+              mergeAcross: 3,
+              data: { value: '', type: 'String' },
+            }],
+          },
+          {
+            cells: [{
+              styleId: 'coverText',
+              mergeAcross: 3,
+              data: {
+                value:
+                  'Data shown lists Olympic medal winners for years 2000-2012',
+                type: 'String',
+              },
+            }],
+          },
+          {
+            cells: [{
+              styleId: 'coverText',
+              data: {
+                value:
+                  'This data includes a row for each participation record - athlete name, country, year, sport, count of gold, silver, bronze medals won during the sports event',
+                type: 'String',
+              },
+            }],
+          },
+        ],
+        processHeaderCallback: () => '',
+        sheetName: 'cover',
+      })!
+    )
 
-  //export custom content for cover page
-  spreadsheets.push(
-    gridApi!.getSheetDataForExcel({
-      prependContent: [
-        {
-          cells: [{
-            styleId: 'coverHeading',
-            mergeAcross: 3,
-            data: { value: 'AG Grid', type: 'String' },
-          }],
-        },
-        {
-          cells: [{
-            styleId: 'coverHeading',
-            mergeAcross: 3,
-            data: { value: '', type: 'String' },
-          }],
-        },
-        {
-          cells: [{
-            styleId: 'coverText',
-            mergeAcross: 3,
-            data: {
-              value:
-                'Data shown lists Olympic medal winners for years 2000-2012',
-              type: 'String',
-            },
-          }],
-        },
-        {
-          cells: [{
-            styleId: 'coverText',
-            data: {
-              value:
-                'This data includes a row for each participation record - athlete name, country, year, sport, count of gold, silver, bronze medals won during the sports event',
-              type: 'String',
-            },
-          }],
-        },
-      ],
-      processHeaderCallback: () => '',
-      sheetName: 'cover',
-    })!
-  )
+    //remove filter condition set above so all the grid data can be exported on a separate sheet
+    await gridApi.setColumnFilterModel('athlete', null)
+    gridApi!.onFilterChanged()
 
-  //remove filter condition set above so all the grid data can be exported on a separate sheet
-  filterInstance.setModel(null)
-  gridApi!.onFilterChanged()
+    spreadsheets.push(gridApi!.getSheetDataForExcel()!)
 
-  spreadsheets.push(gridApi!.getSheetDataForExcel()!)
-
-  gridApi!.exportMultipleSheetsAsExcel({
-    data: spreadsheets,
-    fileName: 'ag-grid.xlsx',
-  })
+    gridApi!.exportMultipleSheetsAsExcel({
+      data: spreadsheets,
+      fileName: 'ag-grid.xlsx',
+    })
+  };
+  performExport();
 }
 
 // setup the grid after the page has finished loading

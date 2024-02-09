@@ -515,11 +515,20 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     refreshAfterSort(params: StoreRefreshAfterParams) {
         const serverSortsAllLevels = this.storeUtils.isServerSideSortAllLevels();
         if (serverSortsAllLevels || this.storeUtils.isServerRefreshNeeded(this.parentRowNode, this.ssrmParams.rowGroupCols, params)) {
-            const oldCount = this.cache.getRowCount();
-            this.destroyBean(this.cache);
-            this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
-            this.fireStoreUpdatedEvent();
-            return;
+            const allRowsLoaded = this.cache.isStoreFullyLoaded();
+            const isClientSideSortingEnabled = this.gridOptionsService.get('serverSideEnableClientSideSort');
+            
+            const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
+            if (!isClientSideSort) {
+                const oldCount = this.cache.getRowCount();
+                this.destroyBean(this.cache);
+                this.cache = this.createManagedBean(new LazyCache(this, oldCount, this.storeParams));
+                return;
+            }
+
+            // client side sorting only handles one level, so allow it to pass through
+            // to recursive sort.
+            this.cache.clientSideSortRows();
         }
 
         // call refreshAfterSort on children, as we did not purge.
@@ -541,7 +550,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             return;
         }
 
-        // call refreshAfterSort on children, as we did not purge.
+        // call refreshAfterFilter on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
         this.forEachChildStoreShallow(store => store.refreshAfterFilter(params));
     }

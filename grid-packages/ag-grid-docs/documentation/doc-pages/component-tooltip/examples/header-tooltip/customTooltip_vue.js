@@ -1,17 +1,14 @@
 export default {
   template: `
-      <div class="custom-tooltip" v-if="isHeader">
-          <p>Group Name: {{ params.value }}</p>
-          <hr v-if="isGroupedHeader"/>
-          <div v-if="isGroupedHeader">
-            <p v-for="(header, idx) in params.colDef.children">
-              Child {{ (idx + 1) }} - {{ header.headerName }}
-            </p>
-          </div>
-          </div>
-          <div class="custom-tooltip" v-else>
-          <p><span>Athlete's Name:</span></p>
-          <p><span>{{ athlete }}</span></p>
+      <div class="custom-tooltip custom-tooltip-grouped" v-if="isHeader">
+          <span>Group Name: {{ params.value }}</span>
+          <span v-if="isGroupedHeader" v-for="(header, idx) in params.colDef.children">
+            Child {{ (idx + 1) }} - {{ header.headerName }}
+          </span>
+        </div>
+        <div class="custom-tooltip" v-else>
+          <span>Athlete's Name:</span>
+          <span>{{ athlete }}</span>
       </div>
     `,
   data: function () {

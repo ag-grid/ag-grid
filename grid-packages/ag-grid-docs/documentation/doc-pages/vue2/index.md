@@ -3,16 +3,6 @@ title: "Get Started with AG Grid"
 frameworks: ["vue"]
 version: 2
 ---
-<style>
-   .gatsby-resp-image-wrapper {
-       margin-left: 0 !important;
-       margin-right: 0 !important;
-       margin-bottom: 1rem;
-   }
-   .gatsby-resp-image-image {
-       box-shadow: none !important;
-   }
-</style>
 
 AG Grid is the industry standard for Vue Enterprise Applications. Developers using AG Grid
 are building applications that would not be possible if AG Grid did not exist.

@@ -20,24 +20,21 @@ const gridOptions: GridOptions<IOlympicData> = {
 let savedMiniFilterText: string | null = '';
 
 function getMiniFilterText() {
-  const athleteFilter = gridApi!.getFilterInstance<ISetFilter>('athlete')!;
-  console.log(athleteFilter.getMiniFilter());
+  gridApi!.getColumnFilterInstance<ISetFilter>('athlete').then(athleteFilter => {
+    console.log(athleteFilter!.getMiniFilter());
+  });
 }
 
 function saveMiniFilterText() {
-  const athleteFilter = gridApi!.getFilterInstance<ISetFilter>('athlete')!;
-  savedMiniFilterText = athleteFilter.getMiniFilter();
+  gridApi!.getColumnFilterInstance<ISetFilter>('athlete').then(athleteFilter => {
+    savedMiniFilterText = athleteFilter!.getMiniFilter();
+  });
 }
 
 function restoreMiniFilterText() {
-  const athleteFilter = gridApi!.getFilterInstance<ISetFilter>('athlete')!;
-  athleteFilter.setMiniFilter(savedMiniFilterText)
-}
-
-function resetFilter() {
-  const athleteFilter = gridApi!.getFilterInstance<ISetFilter>('athlete')!;
-  athleteFilter.setModel(null)
-  gridApi!.onFilterChanged()
+  gridApi!.getColumnFilterInstance<ISetFilter>('athlete').then(athleteFilter => {
+    athleteFilter!.setMiniFilter(savedMiniFilterText)
+  });
 }
 
 // setup the grid after the page has finished loading

@@ -51,14 +51,14 @@ Applying the model is then typically followed by calling `gridApi.onFilterChange
 <interface-documentation interfaceName='IProvidedFilter' names='["getModelFromUi", "applyModel"]' config='{"description":""}'></interface-documentation>
 
 <snippet>
-| // Get a reference to the 'name' filter instance
-| const filterInstance = api.getFilterInstance('name');
-| 
-| // Apply the model to ensure any changes in the UI or via API methods are recognised
-| filterInstance.applyModel();
-| 
-| // Tell grid to run filter operation again
-| api.onFilterChanged();
+|// Get a reference to the 'name' filter instance
+|api.getColumnFilterInstance('name').then(filterInstance => {
+|    // Apply the model to ensure any changes in the UI or via API methods are recognised
+|    filterInstance.applyModel();
+|
+|    // Tell grid to run filter operation again
+|    api.onFilterChanged();
+|});
 </snippet>
 
 If no call is made to `filterInstance.applyModel()` then the filter UI will show any changes that have been made, but they won't be reflected in the filter model and therefore won't be reflected in the filtering. This will appear as if the user never hit the Apply button (regardless of whether the Apply button is active or not).

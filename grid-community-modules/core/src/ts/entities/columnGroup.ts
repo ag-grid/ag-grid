@@ -112,7 +112,7 @@ export class ColumnGroup implements IHeaderColumn {
     }
 
     public setLeft(left: number | null) {
-        this.oldLeft = left;
+        this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
             this.localEventService.dispatchEvent(this.createAgEvent(ColumnGroup.EVENT_LEFT_CHANGED));

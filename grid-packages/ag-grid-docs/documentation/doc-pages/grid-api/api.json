@@ -406,7 +406,7 @@
         },
         "isColumnFilterPresent": {},
         "isAnyFilterPresent": {},
-        "getFilterInstance": {
+        "getColumnFilterInstance": {
             "more": {
                 "name": "Accessing Individual Filter Component Instances",
                 "url": "/filter-api/#accessing-individual-filter-component-instances"
@@ -422,6 +422,18 @@
             "more": {
                 "name": "Get / Set All Filter Models",
                 "url": "/filter-api/#get--set-all-filter-models"
+            }
+        },
+        "getColumnFilterModel": {
+            "more": {
+                "name": "Get / Set Individual Filter Model",
+                "url": "/filter-api/#get--set-individual-filter-model"
+            }
+        },
+        "setColumnFilterModel": {
+            "more": {
+                "name": "Get / Set Individual Filter Model",
+                "url": "/filter-api/#get--set-individual-filter-model"
             }
         },
         "onFilterChanged": {
@@ -839,10 +851,32 @@
         "meta": {
             "displayName": "Accessories"
         },
-        "showColumnMenuAfterButtonClick": {},
-        "showColumnMenuAfterMouseClick": {},
+        "showColumnChooser": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api--events"
+            }
+        },
+        "showColumnFilter": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api--events"
+            }
+        },
+        "showColumnMenu": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api--events"
+            }
+        },
         "hidePopupMenu": {
             "description": "Hides any visible [context menu](/context-menu/) or [column menu](/column-menu/)."
+        },
+        "hideColumnChooser": {
+            "more": {
+                "name": "Column Menu API",
+                "url": "/column-menu/#column-menu-api--events"
+            }
         },
         "getSideBar": {
             "more": {
@@ -1050,16 +1084,6 @@
         },
         "getGridId": {},
         "isAnimationFrameQueueEmpty": {}
-    },
-    "rowModels": {
-        "meta": {
-            "displayName": "RowModel",
-            "page": {
-                "name": "Row Model",
-                "url": "/row-models/"
-            }
-        },
-        "getModel": {}
     },
     "data": {
         "meta": {

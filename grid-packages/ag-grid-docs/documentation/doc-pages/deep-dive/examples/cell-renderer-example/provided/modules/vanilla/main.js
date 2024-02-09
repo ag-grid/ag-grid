@@ -14,7 +14,7 @@ class CompanyLogoRenderer {
     )
 
     let companyName = document.createElement("p")
-    companyName.innerHTML = params.value
+    companyName.textContent = params.value
     companyName.setAttribute(
       "style",
       "text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"

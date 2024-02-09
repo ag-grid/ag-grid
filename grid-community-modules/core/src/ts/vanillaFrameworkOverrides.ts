@@ -1,4 +1,4 @@
-import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { FrameworkOverridesIncomingSource, IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { includes } from "./utils/array";
 import { AgPromise } from "./utils";
 
@@ -11,10 +11,6 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
 
     constructor(private frameworkName: 'javascript' | 'angular' | 'react' | 'vue' | 'solid' = 'javascript') {}
 
-    // for Vanilla JS, we use simple timeout
-    public setTimeout(action: any, timeout?: any): void {
-        window.setTimeout(action, timeout);
-    }
     public setInterval(action: any, timeout?: any): AgPromise<number> {
         return new AgPromise(resolve => {
             resolve(window.setInterval(action, timeout));
@@ -32,13 +28,9 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
         element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
     }
 
-    dispatchEvent(listener: () => void): void {
-        listener();
-    }
-
-    wrapOutgoing<T>( callback: () => T): T {
-        return callback();
-    }
+    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = callback => callback();
+    wrapOutgoing: <T>(callback: () => T) => T = callback => callback();
+    get shouldWrapOutgoing() { return false;}
 
     frameworkComponent(name: string): any {
         return null;

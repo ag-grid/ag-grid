@@ -26,7 +26,8 @@ import {
     Events,
     GridColumnsChangedEvent,
     NewColumnsLoadedEvent,
-    VirtualColumnsChangedEvent
+    VirtualColumnsChangedEvent,
+    ColumnContainerWidthChanged
 } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { ProvidedColumnGroup } from '../entities/providedColumnGroup';
@@ -192,6 +193,9 @@ export class ColumnModel extends BeanStub {
     // all three lists above combined
     private displayedColumns: Column[] = [];
 
+    // list of all columns (displayed and hidden) in visible order including pinned
+    private ariaOrderColumns: Column[];
+
     // for fast lookup, to see if a column or group is still displayed
     private displayedColumnsAndGroupsMap: { [id: string]: IHeaderColumn } = {};
 
@@ -211,9 +215,9 @@ export class ColumnModel extends BeanStub {
 
     // all columns & groups to be rendered, index by row. used by header rows to get all items
     // to render for that row.
-    private viewportRowLeft: { [row: number]: IHeaderColumn[]; };
-    private viewportRowRight: { [row: number]: IHeaderColumn[]; };
-    private viewportRowCenter: { [row: number]: IHeaderColumn[]; };
+    private viewportRowLeft: { [row: number]: IHeaderColumn[]; } = {};
+    private viewportRowRight: { [row: number]: IHeaderColumn[]; } = {};
+    private viewportRowCenter: { [row: number]: IHeaderColumn[]; } = {};
 
     // true if we are doing column spanning
     private colSpanActive: boolean;
@@ -235,6 +239,7 @@ export class ColumnModel extends BeanStub {
     private groupDisplayColumnsMap: { [originalColumnId: string]: Column };
 
     private ready = false;
+    private changeEventsDispatching = false;
     private logger: Logger;
 
     private autoGroupsNeedBuilding = false;
@@ -344,6 +349,7 @@ export class ColumnModel extends BeanStub {
         this.destroyOldColumns(this.groupAutoColsBalancedTree);
     }
 
+
     private createColumnsFromColumnDefs(colsPreviouslyExisted: boolean, source: ColumnEventType = 'api'): void {
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = colsPreviouslyExisted ? this.compareColumnStatesAndDispatchEvents(source) : undefined;
@@ -395,11 +401,19 @@ export class ColumnModel extends BeanStub {
         // in case applications use it
         this.dispatchEverythingChanged(source);
 
+        // Row Models react to all of these events as well as new columns loaded,
+        // this flag instructs row model to ignore these events to reduce refreshes.
+        this.changeEventsDispatching = true;
         if (dispatchEventsFunc) {
             dispatchEventsFunc();
         }
+        this.changeEventsDispatching = false;
 
         this.dispatchNewColumnsLoaded(source);
+    }
+
+    public shouldRowModelIgnoreRefresh(): boolean {
+        return this.changeEventsDispatching;
     }
 
     private dispatchNewColumnsLoaded(source: ColumnEventType): void {
@@ -930,7 +944,7 @@ export class ColumnModel extends BeanStub {
         };
 
         // if doing column virtualisation, then we filter based on the viewport.
-        const filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInRowViewport.bind(this);
+        const filterCallback = this.isColumnVirtualisationSuppressed() ? null : this.isColumnInRowViewport.bind(this);
 
         return this.getDisplayedColumnsForRow(
             rowNode,
@@ -968,7 +982,7 @@ export class ColumnModel extends BeanStub {
             targetColumn = col;
         }
 
-        return this.getAllGridColumns().indexOf(targetColumn) + 1;
+        return this.ariaOrderColumns.indexOf(targetColumn) + 1;
     }
 
     private isColumnInHeaderViewport(col: Column): boolean {
@@ -1697,6 +1711,14 @@ export class ColumnModel extends BeanStub {
             this.bodyWidth = newBodyWidth;
             this.leftWidth = newLeftWidth;
             this.rightWidth = newRightWidth;
+
+            // this event is fired to allow the grid viewport to resize before the
+            // scrollbar tries to update its visibility.
+            const evt: WithoutGridCommon<ColumnContainerWidthChanged> = {
+                type: Events.EVENT_COLUMN_CONTAINER_WIDTH_CHANGED,
+            };
+            this.eventService.dispatchEvent(evt);
+
             // when this fires, it is picked up by the gridPanel, which ends up in
             // gridPanel calling setWidthAndScrollPosition(), which in turn calls setViewportPosition()
             const event: WithoutGridCommon<DisplayedColumnsWidthChangedEvent> = {
@@ -1755,11 +1777,11 @@ export class ColumnModel extends BeanStub {
     // + clientSideRowController -> sorting, building quick filter text
     // + headerRenderer -> sorting (clearing icon)
     public getAllPrimaryColumns(): Column[] | null {
-        return this.primaryColumns ? this.primaryColumns.slice() : null;
+        return this.primaryColumns ? this.primaryColumns : null;
     }
 
     public getSecondaryColumns(): Column[] | null {
-        return this.secondaryColumns ? this.secondaryColumns.slice() : null;
+        return this.secondaryColumns ? this.secondaryColumns : null;
     }
 
     public getAllColumnsForQuickFilter(): Column[] {
@@ -2517,9 +2539,13 @@ export class ColumnModel extends BeanStub {
 
         // flex
         const flex = getValue('flex').value1;
+        // if flex is null or a value, set into the col
         if (flex !== undefined) {
             column.setFlex(flex);
-        } else {
+        }
+        
+        // if flex is null or undefined, fall back to setting width
+        if (flex == null) {
             // if no flex, then use width if it's there
             const width = getValue('width').value1;
             if (width != null) {
@@ -2656,7 +2682,7 @@ export class ColumnModel extends BeanStub {
         return this.gridColumnsMap[key];
     }
 
-    private getSecondaryColumn(key: ColKey): Column | null {
+    public getSecondaryColumn(key: ColKey): Column | null {
         if (!this.secondaryColumns) { return null; }
         return this.getColumn(key, this.secondaryColumns, this.secondaryColumnsMap);
     }
@@ -3293,10 +3319,28 @@ export class ColumnModel extends BeanStub {
             this.lastSecondaryOrder = this.gridColumns;
         }
 
+        // create the new auto columns
+        const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
+        // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
+        if (areAutoColsChanged) {
+            const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
+
+            // if group cols have changed, remove them from any previous orders and add them to the start.
+            if (this.lastPrimaryOrder) {
+                this.lastPrimaryOrder = this.lastPrimaryOrder.filter(col => !groupAutoColsMap.has(col));
+                this.lastPrimaryOrder = [...this.groupAutoColumns!, ...this.lastPrimaryOrder];
+            }
+
+            if (this.lastSecondaryOrder) {
+                this.lastSecondaryOrder = this.lastSecondaryOrder.filter(col => !groupAutoColsMap.has(col));
+                this.lastSecondaryOrder = [...this.groupAutoColumns!, ...this.lastSecondaryOrder];
+            }
+        }
+
         let sortOrderToRecover: Column[] | undefined;
 
         if (this.secondaryColumns && this.secondaryBalancedTree) {
-            const hasSameColumns = this.secondaryColumns.every((col) => {
+            const hasSameColumns = this.secondaryColumns.some((col) => {
                 return this.gridColumnsMap[col.getColId()] !== undefined;
             });
             this.gridBalancedTree = this.secondaryBalancedTree.slice();
@@ -3322,16 +3366,6 @@ export class ColumnModel extends BeanStub {
             sortOrderToRecover = this.lastPrimaryOrder;
         }
 
-        // create the new auto columns
-        const areAutoColsChanged = this.createGroupAutoColumnsIfNeeded();
-        // if auto group cols have changed, and we have a sort order, we need to move auto cols to the start
-        if (areAutoColsChanged && sortOrderToRecover) {
-            const groupAutoColsMap = convertToMap<Column, true>(this.groupAutoColumns!.map(col => [col, true]));
-            // if group columns has changed, we don't preserve the group column order, so remove them from the old order
-            sortOrderToRecover = sortOrderToRecover.filter(col => !groupAutoColsMap.has(col));
-            // and add them to the start of the order
-            sortOrderToRecover = [...this.groupAutoColumns!, ...sortOrderToRecover];
-        }
         this.addAutoGroupToGridColumns();
         this.orderGridColsLike(sortOrderToRecover);
 
@@ -3502,6 +3536,7 @@ export class ColumnModel extends BeanStub {
         this.displayedColumnsRight = [];
         this.displayedColumnsCenter = [];
         this.displayedColumns = [];
+        this.ariaOrderColumns = [];
         this.viewportColumns = [];
         this.headerViewportColumns = [];
         this.viewportColumnsHash = '';
@@ -3526,6 +3561,7 @@ export class ColumnModel extends BeanStub {
         this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeLeft, this.displayedColumnsLeft);
         this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeCentre, this.displayedColumnsCenter);
         this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeRight, this.displayedColumnsRight);
+        this.joinColumnsAriaOrder();
         this.joinDisplayedColumns();
         this.setLeftValues(source);
         this.displayedAutoHeightCols = this.displayedColumns.filter(col => col.isAutoHeight());
@@ -3537,6 +3573,26 @@ export class ColumnModel extends BeanStub {
 
     public wasAutoRowHeightEverActive(): boolean {
         return this.autoHeightActiveAtLeastOnce;
+    }
+
+    private joinColumnsAriaOrder(): void {
+        const allColumns = this.getAllGridColumns();
+        const pinnedLeft: Column[] = [];
+        const center: Column[] = [];
+        const pinnedRight: Column[] = [];
+
+        for (const col of allColumns) {
+            const pinned = col.getPinned();
+            if (!pinned) {
+                center.push(col);
+            } else if (pinned === true || pinned === 'left') {
+                pinnedLeft.push(col);
+            } else {
+                pinnedRight.push(col);
+            }
+        }
+
+        this.ariaOrderColumns = pinnedLeft.concat(center).concat(pinnedRight);
     }
 
     private joinDisplayedColumns(): void {
@@ -3561,7 +3617,7 @@ export class ColumnModel extends BeanStub {
         if (!this.primaryColumns) { return; }
 
         // go through each list of displayed columns
-        const allColumns = this.primaryColumns.slice(0);
+        const allColumns = this.getPrimaryAndSecondaryAndAutoColumns().slice(0);
 
         // let totalColumnWidth = this.getWidthOfColsInList()
         const doingRtl = this.gridOptionsService.get('enableRtl');
@@ -3622,8 +3678,14 @@ export class ColumnModel extends BeanStub {
         });
     }
 
+    private isColumnVirtualisationSuppressed(){
+        // When running within jsdom the viewportRight is always 0, so we need to return true to allow
+        // tests to validate all the columns.
+        return this.suppressColumnVirtualisation || this.viewportRight === 0;
+    }
+
     private extractViewportColumns(): void {
-        if (this.suppressColumnVirtualisation) {
+        if (this.isColumnVirtualisationSuppressed()) {
             // no virtualisation, so don't filter
             this.viewportColumnsCenter = this.displayedColumnsCenter;
             this.headerViewportColumnsCenter = this.displayedColumnsCenter;

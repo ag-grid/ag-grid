@@ -5,7 +5,7 @@ export const getCssVarValue = (cssVar) => {
         return null;
     } else {
         const bodyStyles = window.getComputedStyle(document.body);
-    
+
         return bodyStyles.getPropertyValue(cssVar);
     }
 };

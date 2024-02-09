@@ -7,7 +7,7 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import '@ag-grid-community/styles/ag-theme-balham.css';
 import '@ag-grid-community/styles/ag-theme-material.css';
-import { GridChartsModule } from '@ag-grid-enterprise/charts';
+import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
@@ -43,8 +43,9 @@ import {
     sharedNumberParser,
     suppressColumnMoveAnimation,
 } from './utils';
+
 import { WinningsFilter } from './WinningsFilter';
-import GlobalContextConsumer from 'components/GlobalContext';
+import { useGlobalContext } from 'components/GlobalContext';
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -563,7 +564,7 @@ const desktopDefaultCols = [
                 editable: false,
                 filter: false,
                 sortable: false,
-                suppressMenu: true,
+                suppressHeaderMenuButton: true,
                 cellStyle: { 'text-align': 'right' },
                 cellRenderer: () => 'Abra...',
             },
@@ -575,7 +576,7 @@ const desktopDefaultCols = [
                 editable: false,
                 filter: false,
                 sortable: false,
-                suppressMenu: true,
+                suppressHeaderMenuButton: true,
                 cellStyle: { 'text-align': 'left' },
                 cellRenderer: () => '...cadabra!',
             },
@@ -772,7 +773,6 @@ const ExampleInner = ({darkMode}) => {
             // debug: true,
             // suppressMultiRangeSelection: true,
             rowGroupPanelShow: isSmall ? undefined : 'always', // on of ['always','onlyWhenGrouping']
-            suppressMenuHide: isSmall,
             pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
             // suppressExpandablePivotGroups: true,
             // pivotColumnGroupTotals: 'before',
@@ -896,6 +896,7 @@ const ExampleInner = ({darkMode}) => {
             aggFuncs: {
                 zero: () => 0,
             },
+            columnMenu: 'new',
             getBusinessKeyForNode: (node) => (node.data ? node.data.name : ''),
             initialGroupOrderComparator: ({ nodeA, nodeB }) => {
                 if (nodeA.key < nodeB.key) {
@@ -1479,12 +1480,9 @@ const ExampleInner = ({darkMode}) => {
 
 const themesWithDarkVariant = ['ag-theme-quartz', 'ag-theme-alpine', 'ag-theme-balham']
 
-const Example = () => (
-    <GlobalContextConsumer>
-        {({ darkMode }) => (
-            <ExampleInner darkMode={darkMode} />
-        )}
-    </GlobalContextConsumer>
-);
+const Example = () => {
+    const { darkMode } = useGlobalContext();
+    return <ExampleInner darkMode={darkMode} />
+}
 
 export default Example;

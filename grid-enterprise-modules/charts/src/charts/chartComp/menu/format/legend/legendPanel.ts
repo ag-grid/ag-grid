@@ -10,7 +10,6 @@ import {
     RefSelector,
 } from "@ag-grid-community/core";
 import { AgChartLegendPosition } from "ag-charts-community";
-// import { AgChartLegendPosition } from "ag-charts-enterprise";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
@@ -108,7 +107,7 @@ export class LegendPanel extends Component {
 
     private initLegendItems() {
         const initSlider = (expression: string, labelKey: string, input: AgSlider, defaultMaxValue: number) => {
-            const currentValue = this.chartOptionsService.getChartOption<number>(`legend.${expression}`);
+            const currentValue = this.chartOptionsService.getChartOption<number | undefined>(`legend.${expression}`) ?? 0;
             input.setLabel(this.chartTranslationService.translate(labelKey))
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)

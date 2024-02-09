@@ -47,7 +47,7 @@ To use the theme, set the `ag-theme-quartz` class on your grid div:
 <div id="myGrid" class="ag-theme-quartz">
 ```
 
-To customise the Alpine theme, you can add more parameters to the `grid-styles` mixin, as described in the rest of this page.
+To customise the theme, you can add more parameters to the `grid-styles` mixin, as described in the rest of this page.
 
 ## Choosing a theme
 
@@ -199,7 +199,7 @@ To do this, set the `theme` parameter to your custom theme and the `extend-theme
 
 To use this theme, add the `ag-theme-acmecorp` class to your grid div.
 
-Theme extension is only available in the Sass API. The alternative method of creating a [reusable package of design customisations](/global-style-customisation#creating-a-reusable-package-of-design-customisations) works in both Sass and pure CSS projects.
+Theme extension is only available in the Sass API. The alternative method of creating a [reusable package of design customisations](/global-style-customisation/#creating-a-reusable-package-of-design-customisations) works in both Sass and pure CSS projects.
 
 Theme extension works with multiple themes too, set the `extend-theme` parameter at the theme level:
 

@@ -20,6 +20,22 @@ export * from "./area/miniNormalizedArea";
 
 export * from "./histogram/miniHistogram";
 
+export * from './polar/miniRadialColumn';
+export * from './polar/miniRadialBar';
+export * from './polar/miniRadarLine';
+export * from './polar/miniRadarArea';
+export * from './polar/miniNightingale';
+
+export * from './statistical/miniRangeBar';
+export * from './statistical/miniRangeArea';
+export * from './statistical/miniBoxPlot';
+
+export * from './hierarchical/miniTreemap';
+export * from './hierarchical/miniSunburst';
+
+export * from './specialized/miniHeatmap';
+export * from './specialized/miniWaterfall';
+
 export * from "./combo/miniColumnLineCombo";
 export * from "./combo/miniAreaColumnCombo";
 export * from "./combo/miniCustomCombo";

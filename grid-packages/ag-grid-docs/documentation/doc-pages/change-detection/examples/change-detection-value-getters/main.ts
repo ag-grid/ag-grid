@@ -22,6 +22,7 @@ const gridOptions: GridOptions = {
   },
   columnTypes: {
     valueColumn: {
+      minWidth: 90,
       editable: true,
       valueParser: 'Number(newValue)',
       filter: 'agNumberColumnFilter',

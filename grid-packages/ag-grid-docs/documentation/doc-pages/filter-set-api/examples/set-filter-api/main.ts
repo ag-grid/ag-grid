@@ -60,44 +60,46 @@ function patchData(data: any[]) {
 }
 
 function selectJohnAndKenny() {
-    const instance = gridApi!.getFilterInstance('athlete')!
-    instance.setModel({ values: ['John Joe Nevin', 'Kenny Egan'] })
-    gridApi!.onFilterChanged()
+    gridApi!.setColumnFilterModel('athlete', { values: ['John Joe Nevin', 'Kenny Egan'] }).then(() => {
+        gridApi!.onFilterChanged();
+    });
 }
 
 function selectEverything() {
-    const instance = gridApi!.getFilterInstance('athlete')!
-    instance.setModel(null)
-    gridApi!.onFilterChanged()
+    gridApi!.setColumnFilterModel('athlete', null).then(() => {
+        gridApi!.onFilterChanged();
+    });
 }
 
 function selectNothing() {
-    const instance = gridApi!.getFilterInstance('athlete')!
-    instance.setModel({ values: [] })
-    gridApi!.onFilterChanged()
+    gridApi!.setColumnFilterModel('athlete', { values: [] }).then(() => {
+        gridApi!.onFilterChanged();
+    });
 }
 
 function setCountriesToFranceAustralia() {
-    const instance = gridApi!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
-    instance.setFilterValues([
-        {
-            name: 'France',
-            code: 'FR',
-        },
-        {
-            name: 'Australia',
-            code: 'AU'
-        }
-    ])
-    instance.applyModel()
-    gridApi!.onFilterChanged()
+    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string, code: string }>>('country').then(instance => {
+        instance!.setFilterValues([
+            {
+                name: 'France',
+                code: 'FR',
+            },
+            {
+                name: 'Australia',
+                code: 'AU'
+            }
+        ])
+        instance!.applyModel()
+        gridApi!.onFilterChanged()
+    });
 }
 
 function setCountriesToAll() {
-    const instance = gridApi!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
-    instance.resetFilterValues()
-    instance.applyModel()
-    gridApi!.onFilterChanged()
+    gridApi!.getColumnFilterInstance<ISetFilter<{ name: string, code: string }>>('country').then(instance => {
+        instance!.resetFilterValues()
+        instance!.applyModel()
+        gridApi!.onFilterChanged()
+    });
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

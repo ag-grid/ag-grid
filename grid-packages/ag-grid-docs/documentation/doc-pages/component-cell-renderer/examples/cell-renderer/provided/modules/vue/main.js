@@ -69,7 +69,8 @@ const VueExample = {
         <div style="height: 100%">
         <div class="example-wrapper">
             <div style="margin-bottom: 5px;">
-                <input type="button" value="Frostier Year" v-on:click="frostierYear(Math.floor(Math.random() * 2) + 1)">
+                <button v-on:click="frostierYear(Math.floor(Math.random() * 2) + 1)">Frostier Year</button>
+                <button style="margin-left: 5px;" v-on:click="togglePrefix()">Toggle Frost Prefix</button>
             </div>
             <ag-grid-vue
                     style="width: 100%; height: 100%;"
@@ -96,7 +97,44 @@ const VueExample = {
                 rainPerTenMmRenderer: RainPerTenMmRenderer
             },
             gridApi: null,
-            columnDefs: [
+            columnDefs: this.getColumnDefs(false),
+            defaultColDef: {
+                editable: true,flex: 1,
+                minWidth: 100,
+                filter: true,
+                
+            },
+            rowData: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            frostPrefix: false,
+        }
+    },
+    methods: {
+        onGridReady(params) {
+            this.gridApi = params.api;
+
+            const updateData = (data) => this.gridApi.setGridOption('rowData', data);
+
+            fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
+                .then(resp => resp.json())
+                .then(data => updateData(data));
+        },
+        /**
+         * Updates the Days of Air Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
+         * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
+         */
+        frostierYear(extraDaysFrost) {
+            // iterate over the rows and make each "days of air frost"
+            this.gridApi.forEachNode(rowNode => {
+                rowNode.setDataValue('Days of air frost (days)', rowNode.data['Days of air frost (days)'] + extraDaysFrost);
+            });
+        },
+        togglePrefix() {
+            this.frostPrefix = !this.frostPrefix;
+            this.columnDefs = this.getColumnDefs(this.frostPrefix);
+        },
+        getColumnDefs(frostPrefix) {
+            return [
                 {
                     headerName: "Month",
                     field: "Month",
@@ -120,7 +158,7 @@ const VueExample = {
                     field: "Days of air frost (days)",
                     width: 233,
                     cellRenderer: "daysFrostRenderer",
-                    cellRendererParams: { rendererImage: "frost.png" }    // Complementing the Cell Renderer parameters
+                    cellRendererParams: { rendererImage: "frost.png", showPrefix: frostPrefix }    // Complementing the Cell Renderer parameters
                 },
                 {
                     headerName: "Days Sunshine",
@@ -136,36 +174,7 @@ const VueExample = {
                     cellRenderer: "rainPerTenMmRenderer",
                     cellRendererParams: { rendererImage: "rain.png" }     // Complementing the Cell Renderer parameters
                 }
-            ],
-            defaultColDef: {
-                editable: true,flex: 1,
-                minWidth: 100,
-                filter: true,
-                
-            },
-            rowData: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-        }
-    },
-    methods: {
-        onGridReady(params) {
-            this.gridApi = params.api;
-
-            const updateData = (data) => this.gridApi.setGridOption('rowData', data);
-
-            fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
-                .then(resp => resp.json())
-                .then(data => updateData(data));
-        },
-        /**
-         * Updates the Days of Air Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
-         * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
-         */
-        frostierYear(extraDaysFrost) {
-            // iterate over the rows and make each "days of air frost"
-            this.gridApi.forEachNode(rowNode => {
-                rowNode.setDataValue('Days of air frost (days)', rowNode.data['Days of air frost (days)'] + extraDaysFrost);
-            });
+            ];
         }
     }
 }

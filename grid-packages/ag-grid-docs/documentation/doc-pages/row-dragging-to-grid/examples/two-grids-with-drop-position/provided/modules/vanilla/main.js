@@ -121,11 +121,11 @@ function binDrop(data) {
         remove: [data]
     };
 
-    [leftGridOptions, rightGridOptions].forEach(function (option) {
-        var rowsInGrid = !!option.api.getRowNode(data.id);
+    [leftApi, rightApi].forEach(function (gridApi) {
+        var rowsInGrid = !!gridApi.getRowNode(data.id);
 
         if (rowsInGrid) {
-            option.api.applyTransaction(transaction);
+            gridApi.applyTransaction(transaction);
         }
     });
 }
@@ -140,12 +140,12 @@ function addBinZone(params) {
                 icon.style.transform = 'scale(1.5)';
             },
             onDragLeave: () => {
-                eBin.style.color = 'black';
+                eBin.style = "";
                 icon.style.transform = 'scale(1)';
             },
             onDragStop: (params) => {
                 binDrop(params.node.data);
-                eBin.style.color = 'black';
+                eBin.style = "";
                 icon.style.transform = 'scale(1)';
             }
         };

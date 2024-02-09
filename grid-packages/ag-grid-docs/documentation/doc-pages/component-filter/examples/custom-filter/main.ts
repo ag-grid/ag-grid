@@ -1,58 +1,24 @@
-import { GridApi, createGrid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 import { PersonFilter } from './personFilter_typescript'
 import { YearFilter } from './yearFilter_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 150, filter: PersonFilter },
-  { field: 'age', filter: 'agNumberColumnFilter' },
+  { field: 'year', minWidth: 130, filter: YearFilter },
   { field: 'country', minWidth: 150 },
-  { field: 'year', filter: YearFilter },
-  {
-    field: 'date',
-    minWidth: 130,
-    filter: 'agDateColumnFilter',
-    filterParams: {
-      comparator: function (
-        filterLocalDateAtMidnight: Date,
-        cellValue: string
-      ) {
-        const dateAsString = cellValue
-        const dateParts = dateAsString.split('/')
-        const cellDate = new Date(
-          Number(dateParts[2]),
-          Number(dateParts[1]) - 1,
-          Number(dateParts[0])
-        )
-
-        if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-          return 0
-        }
-
-        if (cellDate < filterLocalDateAtMidnight) {
-          return -1
-        }
-
-        if (cellDate > filterLocalDateAtMidnight) {
-          return 1
-        }
-      },
-    } as IDateFilterParams,
-  },
   { field: 'sport' },
-  { field: 'gold', filter: 'agNumberColumnFilter' },
-  { field: 'silver', filter: 'agNumberColumnFilter' },
-  { field: 'bronze', filter: 'agNumberColumnFilter' },
-  { field: 'total', filter: 'agNumberColumnFilter' },
+  { field: 'gold' },
+  { field: 'silver' },
+  { field: 'bronze' },
+  { field: 'total' },
 ]
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    editable: true,
     flex: 1,
     minWidth: 100,
-    filter: true,
   },
   columnDefs: columnDefs,
   rowData: null,

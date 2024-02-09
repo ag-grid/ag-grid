@@ -214,6 +214,9 @@ export class Events {
 
     public static EVENT_STATE_UPDATED: 'stateUpdated' = 'stateUpdated';
 
+    /** The visibility of the column menu has changed. */
+    public static EVENT_COLUMN_MENU_VISIBLE_CHANGED: 'columnMenuVisibleChanged' = 'columnMenuVisibleChanged';
+
     /*****************************  INTERNAL EVENTS: START ******************************************* */
 
     /** Please remember to add to ComponentUtil.EXCLUDED_INTERNAL_EVENTS to not have these events exposed to framework components. */
@@ -221,6 +224,7 @@ export class Events {
     /** All items from here down are used internally by the grid, not intended for external use. */
     // not documented, either experimental, or we just don't want users using an depending on them
     public static EVENT_BODY_HEIGHT_CHANGED: 'bodyHeightChanged' = 'bodyHeightChanged';
+    public static EVENT_COLUMN_CONTAINER_WIDTH_CHANGED: 'columnContainerWidthChanged' = 'columnContainerWidthChanged';
     public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED: 'displayedColumnsWidthChanged' = 'displayedColumnsWidthChanged';
     public static EVENT_SCROLL_VISIBILITY_CHANGED: 'scrollVisibilityChanged' = 'scrollVisibilityChanged';
     public static EVENT_COLUMN_HOVER_CHANGED: 'columnHoverChanged' = 'columnHoverChanged';

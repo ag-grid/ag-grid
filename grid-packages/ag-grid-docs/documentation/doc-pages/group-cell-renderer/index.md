@@ -3,7 +3,7 @@ title: "Group Cell Renderer"
 enterprise: true
 ---
 
-If you are grouping in the grid, then you will need to provide a group cell renderer as the group cell renderer is what provides the user with the expand and collapse functionality.
+When using row grouping, the grid displays group cell renderers in the group column to allow expanding and collapsing the group rows. This section describes how the group cell renderer can be configured.
 
 ## Group Cell Renderer Configuration
 

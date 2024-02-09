@@ -23,7 +23,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: true,
   },
   sideBar: true,
-  suppressMenuHide: true
+  suppressMenuHide: true,
+  enableCharts: true,
+  enableRangeSelection: true
 }
 
 

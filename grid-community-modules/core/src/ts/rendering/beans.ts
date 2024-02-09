@@ -11,7 +11,6 @@ import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
 import { IRangeService, ISelectionHandleFactory } from "../interfaces/IRangeService";
 import { FocusService } from "../focusService";
-import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { PopupService } from "../widgets/popupService";
 import { ValueFormatterService } from "./valueFormatterService";
 import { StylingService } from "../styling/stylingService";
@@ -45,6 +44,7 @@ import { LocaleService } from "../localeService";
 import { Environment } from "../environment";
 import { ValueParserService } from "../valueService/valueParserService";
 import { SyncService } from "../syncService";
+import { AriaAnnouncementService } from "./ariaAnnouncementService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -72,7 +72,6 @@ export class Beans {
     @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
     @Optional('rangeService') public rangeService: IRangeService;
     @Autowired('focusService') public focusService: FocusService;
-    @Optional('contextMenuFactory') public contextMenuFactory: IContextMenuFactory;
     @Autowired('popupService') public popupService: PopupService;
     @Autowired('valueFormatterService') public valueFormatterService: ValueFormatterService;
     @Autowired('stylingService') public stylingService: StylingService;
@@ -100,6 +99,7 @@ export class Beans {
     @Autowired('localeService') public localeService: LocaleService;
     @Autowired('valueParserService') public valueParserService: ValueParserService;
     @Autowired('syncService') public syncService: SyncService;
+    @Autowired('ariaAnnouncementService') public ariaAnnouncementService: AriaAnnouncementService;
 
     public clientSideRowModel: IClientSideRowModel;
     public serverSideRowModel: IServerSideRowModel;

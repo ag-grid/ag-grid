@@ -835,6 +835,11 @@
             "showInCollapsed": true
           },
           {
+            "title": "Tooltips",
+            "url": "/tooltips/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Context",
             "url": "/context/",
             "showInCollapsed": true
@@ -1566,7 +1571,7 @@
         ]
       },
       {
-        "title": "Components",
+        "title": "Custom Components",
         "items": [
           {
             "title": "Registering Components",
@@ -1574,88 +1579,87 @@
             "showInCollapsed": true
           },
           {
-            "title": "Component Types",
-            "url": "/component-types/",
+            "title": "Cell Renderer",
+            "url": "/component-cell-renderer/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Cell Editor",
+            "url": "/component-cell-editor/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Date Component",
+            "url": "/component-date/"
+          },
+          {
+            "title": "Filter Component",
+            "url": "/component-filter/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Floating Filter Component",
+            "url": "/component-floating-filter/"
+          },
+          {
+            "title": "Header Component",
+            "url": "/component-header/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Loading Cell Renderer",
+            "url": "/component-loading-cell-renderer/"
+          },
+          {
+            "title": "Menu Item Component",
+            "url": "/component-menu-item/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Overlay Component",
+            "url": "/component-overlay/"
+          },
+          {
+            "title": "Status Bar Component",
+            "url": "/component-status-bar/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Tool Panel Component",
+            "url": "/component-tool-panel/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Tooltip Component",
+            "url": "/component-tooltip/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Higher Order Components",
+            "url": "/framework-hoc/",
             "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Cell Renderer",
-                "url": "/component-cell-renderer/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Cell Editor",
-                "url": "/component-cell-editor/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Date Component",
-                "url": "/component-date/"
-              },
-              {
-                "title": "Filter Component",
-                "url": "/component-filter/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Floating Filter Component",
-                "url": "/component-floating-filter/"
-              },
-              {
-                "title": "Header Component",
-                "url": "/component-header/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Loading Cell Renderer",
-                "url": "/component-loading-cell-renderer/"
-              },
-              {
-                "title": "Overlay Component",
-                "url": "/component-overlay/"
-              },
-              {
-                "title": "Status Bar Component",
-                "url": "/component-status-bar/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Tool Panel Component",
-                "url": "/component-tool-panel/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Tooltip Component",
-                "url": "/component-tooltip/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Higher Order Components",
-                "url": "/framework-hoc/",
-                "showInCollapsed": true,
-                "frameworks": [
-                  "react"
-                ]
-              },
-              {
-                "title": "Parent/Child Communication",
-                "url": "/component-communication/",
-                "showInCollapsed": true,
-                "frameworks": [
-                  "angular",
-                  "vue"
-                ]
-              },
-              {
-                "title": "Provide/Inject",
-                "url": "/component-provide-inject/",
-                "showInCollapsed": true,
-                "frameworks": [
-                  "vue"
-                ]
-              }
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Parent/Child Communication",
+            "url": "/component-communication/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "angular",
+              "vue"
+            ]
+          },
+          {
+            "title": "Provide/Inject",
+            "url": "/component-provide-inject/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
             ]
           }
         ]

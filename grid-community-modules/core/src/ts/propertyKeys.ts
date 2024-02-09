@@ -32,7 +32,6 @@ type CallbackKeys = KeysOfType<(any: AgGridCommon<any, any>) => any>;
 type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
 
 export const INITIAL_GRID_OPTION_KEYS = {
-    statusBar: true,
     enableBrowserTooltips: true,
     tooltipTrigger: true,
     tooltipMouseTrack: true,
@@ -60,7 +59,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     keepDetailRowsCount: true,
     detailRowHeight: true,
     detailRowAutoHeight: true,
-    alignedGrids: true,
     tabIndex: true,
     valueCache: true,
     valueCacheNeverExpires: true,
@@ -72,10 +70,8 @@ export const INITIAL_GRID_OPTION_KEYS = {
     suppressPropertyNamesCheck: true,
     debug: true,
     loadingOverlayComponent: true,
-    loadingOverlayComponentParams: true,
     suppressLoadingOverlay: true,
     noRowsOverlayComponent: true,
-    noRowsOverlayComponentParams: true,
     paginationPageSizeSelector: true,
     paginateChildRows: true,
     pivotPanelShow: true,
@@ -122,14 +118,16 @@ export const INITIAL_GRID_OPTION_KEYS = {
     createChartContainer: true,
     getLocaleText: true,
     getRowId: true,
+    reactiveCustomComponents: true,
+    columnMenu: true,
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
 
 export type ManagedGridOptionKey = Exclude<GridOptionKey, InitialGridOptionKey>;
 
-export type ManagedGridOptions = {
-    [K in (keyof GridOptions & ManagedGridOptionKey)]: GridOptions[K]
+export type ManagedGridOptions<TData = any> = {
+    [K in (ManagedGridOptionKey)]?: GridOptions<TData>[K]
 };
 
 /**
@@ -140,7 +138,7 @@ export class PropertyKeys {
     public static STRING_PROPERTIES: KeysOfType<string>[] = [
         'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate', 'gridId', 'quickFilterText', 'rowModelType', 'editType', 'domLayout', 
         'clipboardDelimiter', 'rowGroupPanelShow', 'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
-        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator',
+        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger', 'serverSidePivotResultFieldSeparator', 'columnMenu',
     ];
 
     public static OBJECT_PROPERTIES: KeysLike<object | HTMLElement>[] = [
@@ -162,7 +160,7 @@ export class PropertyKeys {
         'viewportRowModelBufferSize', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests', 'tooltipShowDelay',
         'tooltipHideDelay', 'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount', 'serverSideInitialRowCount',
         'scrollbarWidth', 'asyncTransactionWaitMillis', 'blockLoadDebounceMillis', 'keepDetailRowsCount', 'undoRedoCellEditingLimit',
-        'cellFlashDelay', 'cellFadeDelay', 'tabIndex'
+        'cellFlashDelay', 'cellFadeDelay', 'cellFlashDuration', 'cellFadeDuration', 'tabIndex'
     ];
 
     public static BOOLEAN_PROPERTIES: KeysOfType<boolean>[] = [
@@ -187,12 +185,12 @@ export class PropertyKeys {
         'enableCellTextSelection', 'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction',  'excludeChildrenWhenTreeDataFiltering',
         'tooltipMouseTrack', 'tooltipInteraction', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu', 'undoRedoCellEditing',
         'allowDragFromColumnsToolPanel', 'pivotSuppressAutoColumn', 'suppressExpandablePivotGroups', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
-        'serverSideFilterAllLevels', 'serverSideSortAllLevels', 'serverSideOnlyRefreshFilteredGroups', 'serverSideSortOnServer', 'serverSideFilterOnServer',
+        'serverSideFilterAllLevels', 'serverSideSortAllLevels', 'serverSideEnableClientSideSort', 'serverSideOnlyRefreshFilteredGroups', 'serverSideSortOnServer', 'serverSideFilterOnServer',
         'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi', 'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus',
         'maintainColumnOrder', 'groupMaintainOrder', 'columnHoverHighlight', 'readOnlyEdit', 'suppressRowVirtualisation', 'enableCellEditingOnBackspace',
         'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky', 'suppressCutToClipboard',
         'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter','enableAdvancedFilter', 'masterDetail', 'treeData',
-        'suppressGroupMaintainValueType'
+        'suppressGroupMaintainValueType', 'reactiveCustomComponents'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

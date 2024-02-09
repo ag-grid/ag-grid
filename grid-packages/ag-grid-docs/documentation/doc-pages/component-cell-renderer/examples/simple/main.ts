@@ -1,4 +1,4 @@
-import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, ColDef, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
 import { MedalCellRenderer } from "./medalCellRenderer_typescript";
 import { TotalValueRenderer } from "./totalValueRenderer_typescript";
 
@@ -8,7 +8,13 @@ const columnDefs: ColDef[] = [
   { field: 'gold', cellRenderer: MedalCellRenderer },
   { field: 'silver', cellRenderer: MedalCellRenderer },
   { field: 'bronze', cellRenderer: MedalCellRenderer },
-  { field: 'total', minWidth: 190, cellRenderer: TotalValueRenderer },
+  {
+    field: 'total',
+    minWidth: 190,
+    editable: false,
+    valueGetter: (params: ValueGetterParams) => params.data.gold + params.data.silver + params.data.bronze,
+    cellRenderer: TotalValueRenderer,
+  },
 ]
 
 let gridApi: GridApi<IOlympicData>;

@@ -58,7 +58,9 @@ The reducer that is associated with the action type will then transform the stat
 in the store. Reducers are pure functions which receive the current application state along with
 the action to be performed on that state to produce some new state.
 
-<span style="font-weight: bold; margin-left: 20%; font-size: 1.2rem;">(currentState, action) => newState</span>
+```
+(currentState, action) => newState
+```
 
 UI components can subscribe to the store for specific parts of the state in order to be notified
 when there are changes to the store. This allows components to retrieve the latest state to refresh the view.

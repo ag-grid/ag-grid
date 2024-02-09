@@ -10,14 +10,19 @@ import { KeyCode } from '../../../constants/keyCode';
 import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
 import { CtrlsService } from '../../../ctrlsService';
 import { setAriaRole } from '../../../utils/aria';
+import { MenuService } from '../../../misc/menuService';
+import { WithoutGridCommon } from '../../../interfaces/iCommon';
+import { ColumnMenuVisibleChangedEvent } from '../../../events';
+import { Events } from '../../../eventKeys';
 
-@Bean('menuFactory')
+@Bean('filterMenuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('menuService') private menuService: MenuService;
 
     private hidePopup: () => void;
     private tabListener: () => null;
@@ -28,33 +33,53 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         }
     }
 
-    public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch): void {
+    public showMenuAfterMouseEvent(column: Column | undefined, mouseEvent: MouseEvent | Touch, containerType: ContainerType): void {
         this.showPopup(column, eMenu => {
             this.popupService.positionPopupUnderMouseEvent({
                 column,
-                type: 'columnMenu',
+                type: containerType,
                 mouseEvent,
                 ePopup: eMenu
             });
-        }, 'columnMenu', mouseEvent.target as HTMLElement);
+        }, containerType, mouseEvent.target as HTMLElement, this.menuService.isLegacyMenuEnabled());
     }
 
-    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, containerType: ContainerType): void {
+    public showMenuAfterButtonClick(column: Column | undefined, eventSource: HTMLElement, containerType: ContainerType): void {
+        let multiplier = -1;
+        let alignSide: 'left' | 'right' = 'left';
+
+        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        if (!isLegacyMenuEnabled && this.gridOptionsService.get('enableRtl')) {
+            multiplier = 1;
+            alignSide = 'right';
+        }
+        let nudgeX = isLegacyMenuEnabled ? undefined : (4 * multiplier);
+        let nudgeY = isLegacyMenuEnabled ? undefined : 4;
+
         this.showPopup(column, eMenu => {
             this.popupService.positionPopupByComponent({
                 type: containerType,
                 eventSource,
                 ePopup: eMenu,
+                nudgeX,
+                nudgeY,
+                alignSide,
                 keepWithinBounds: true,
                 position: 'under',
                 column,
             });
-        }, containerType, eventSource);
+        }, containerType, eventSource, isLegacyMenuEnabled);
     }
 
-    private showPopup(column: Column, positionCallback: (eMenu: HTMLElement) => void, containerType: ContainerType, eventSource: HTMLElement): void {
-        const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
-        if (!filterWrapper) {
+    private showPopup(
+        column: Column | undefined,
+        positionCallback: (eMenu: HTMLElement) => void,
+        containerType: ContainerType,
+        eventSource: HTMLElement,
+        isLegacyMenuEnabled: boolean
+    ): void {
+        const filterWrapper =  column ? this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU') : undefined;
+        if (!filterWrapper || !column) {
             throw new Error('AG Grid - unable to show popup filter, filter instantiation failed');
         }
 
@@ -62,6 +87,9 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         setAriaRole(eMenu, 'presentation');
         eMenu.classList.add('ag-menu');
+        if (!isLegacyMenuEnabled) {
+            eMenu.classList.add('ag-filter-menu');
+        }
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
 
@@ -71,7 +99,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         const afterGuiDetached = () => filterWrapper.filterPromise?.then(filter => filter?.afterGuiDetached?.());
 
-        const anchorToElement = eventSource || this.ctrlsService.getGridBodyCtrl().getGui();
+        const anchorToElement = this.menuService.isColumnMenuAnchoringEnabled() ? (eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui()) : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             column.setMenuVisible(false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;
@@ -86,9 +114,14 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
                 if (focusableEl) { focusableEl.focus(); }
             }
             afterGuiDetached();
+            this.dispatchVisibleChangedEvent(false, containerType, column);
         };
 
         const translate = this.localeService.getLocaleTextFunc();
+
+        const ariaLabel = isLegacyMenuEnabled && containerType !== 'columnFilter'
+            ? translate('ariaLabelColumnMenu', 'Column Menu')
+            : translate('ariaLabelColumnFilter', 'Column Filter');
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,
@@ -97,7 +130,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback,
             positionCallback: () => positionCallback(eMenu),
             anchorToElement,
-            ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
+            ariaLabel
         });
 
         if (addPopupRes) {
@@ -115,6 +148,8 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         });
 
         column.setMenuVisible(true, 'contextMenu');
+
+        this.dispatchVisibleChangedEvent(true, containerType, column);
     }
 
     private trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
@@ -129,8 +164,23 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         this.focusService.focusInto(menu, e.shiftKey);
     }
 
+    private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: Column): void {
+        const displayedEvent: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
+            type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
+            visible,
+            switchingTab: false,
+            key: containerType as 'columnMenu' | 'columnFilter' | 'floatingFilter',
+            column: column ?? null
+        }
+        this.eventService.dispatchEvent(displayedEvent)
+    }
+
     public isMenuEnabled(column: Column): boolean {
         // for standard, we show menu if filter is enabled, and the menu is not suppressed by passing an empty array
-        return column.isFilterAllowed() && column.getMenuTabs(['filterMenuTab']).includes('filterMenuTab');
+        return column.isFilterAllowed() && (column.getColDef().menuTabs ?? ['filterMenuTab']).includes('filterMenuTab');
+    }
+
+    public showMenuAfterContextMenuEvent(): void {
+        // not supported in standard menu
     }
 }

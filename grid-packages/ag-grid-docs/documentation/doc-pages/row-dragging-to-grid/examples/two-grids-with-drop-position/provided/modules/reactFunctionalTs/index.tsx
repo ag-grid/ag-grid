@@ -122,12 +122,12 @@ const GridExample = () => {
                 eBinIcon.current!.style.transform = 'scale(1.5)';
             },
             onDragLeave: () => {
-                eBin.current!.style.color = 'black';
+                eBin.current!.style.color = "";
                 eBinIcon.current!.style.transform = 'scale(1)';
             },
             onDragStop: (params) => {
                 binDrop(params.node.data);
-                eBin.current!.style.color = 'black';
+                eBin.current!.style.color = "";
                 eBinIcon.current!.style.transform = 'scale(1)';
             }
         };
@@ -192,7 +192,7 @@ const GridExample = () => {
     )
 
     return (
-        <div className={'example-wrapper ' + /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+        <div className={'example-wrapper ' + /** DARK MODE START **/(document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz')/** DARK MODE END **/}>
             {getInnerGridCol('Left')}
             <div className="inner-col vertical-toolbar">
                 <span className="bin" ref={eBin}>

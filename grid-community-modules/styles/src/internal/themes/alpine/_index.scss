@@ -39,6 +39,10 @@
         background-color: var(--ag-control-panel-background-color);
     }
 
+    .ag-panel-content-wrapper .ag-column-select {
+        background-color: var(--ag-control-panel-background-color);
+    }
+
     .ag-menu-header {
         background-color: var(--ag-control-panel-background-color);
         padding-top: 1px; // hack to align column menu tab header border with header row border
@@ -176,7 +180,13 @@
         }
     }
 
+    .ag-column-select-column-readonly.ag-icon-grip,
+    .ag-column-select-column-readonly .ag-icon-grip {
+        opacity: 0.35;
+    }
+
     .ag-header-cell-menu-button,
+    .ag-header-cell-filter-button,
     .ag-side-button-button,
     .ag-tab,
     .ag-panel-title-bar-button,
@@ -196,6 +206,10 @@
         &:hover {
             color: var(--ag-alpine-active-color);
         }
+    }
+
+    .ag-filter-active .ag-icon-filter {
+        color: var(--ag-alpine-active-color);
     }
 
     .ag-chart-menu-close {

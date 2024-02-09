@@ -9,6 +9,7 @@ import { INTEGRATED_CHARTS_ID } from '../../../components/automated-examples/lib
 import automatedExamplesVars from '../../../components/automated-examples/lib/vars.module.scss';
 import { OverlayButton } from '../../../components/automated-examples/OverlayButton';
 import { ToggleAutomatedExampleButton } from '../../../components/automated-examples/ToggleAutomatedExampleButton';
+import { useGlobalContext } from '../../../components/GlobalContext';
 import LogoMark from '../../../components/LogoMark';
 import breakpoints from '../../../design-system/breakpoint.module.scss';
 import {
@@ -50,7 +51,7 @@ if (!isProductionBuild()) {
     );
 }
 
-function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold, darkMode }) {
+function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold }) {
     const exampleId = INTEGRATED_CHARTS_ID;
     const gridClassname = 'automated-integrated-charts-grid';
     const gridRef = useRef(null);
@@ -59,6 +60,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
     const [gridIsReady, setGridIsReady] = useState(false);
     const [automatedExample, setAutomatedExample] = useState();
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
+    const { darkMode } = useGlobalContext();
     const debuggerManager = automatedExampleManager?.getDebuggerManager();
     const isMobile = () => window.innerWidth <= AUTOMATED_EXAMPLE_MEDIUM_WIDTH;
 

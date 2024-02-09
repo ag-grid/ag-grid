@@ -35,6 +35,7 @@ const VueExample = {
                 style="width: 100%; height: 100%;"
                 :class="themeClass"
                 :columnDefs="columnDefs"
+                :suppressMovableColumns="true"
                 @grid-ready="onGridReady"
                 :context="context"
                 :defaultColDef="defaultColDef"
@@ -166,7 +167,7 @@ const VueExample = {
       }
       // Mutate the context object in place
       this.context.month = newMonth
-      document.querySelector("#monthName").innerHTML = monthNames[newMonth + 1]
+      document.querySelector("#monthName").textContent = monthNames[newMonth + 1]
       this.gridApi.refreshClientSideRowModel("aggregate")
       this.gridApi.refreshCells()
     },

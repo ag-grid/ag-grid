@@ -21,6 +21,7 @@ export class ToolPanelWrapper extends Component {
     private toolPanelId: string;
     private resizeBar: HorizontalResizeComp;
     private width: number | undefined;
+    private params: IToolPanelParams;
 
     constructor() {
         super(ToolPanelWrapper.TEMPLATE);
@@ -49,6 +50,8 @@ export class ToolPanelWrapper extends Component {
 
         const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         const componentPromise = compDetails.newAgStackInstance();
+
+        this.params = compDetails.params;
 
         if (componentPromise == null) {
             console.warn(`AG Grid: error processing tool panel component ${id}. You need to specify 'toolPanel'`);
@@ -91,7 +94,7 @@ export class ToolPanelWrapper extends Component {
     }
 
     public refresh(): void {
-        this.toolPanelCompInstance.refresh();
+        this.toolPanelCompInstance.refresh(this.params);
     }
 
 }

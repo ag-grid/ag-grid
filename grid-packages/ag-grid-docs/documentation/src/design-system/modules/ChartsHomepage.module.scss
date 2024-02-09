@@ -12,7 +12,11 @@
 .heroInner {
     display: flex;
     flex-direction: column;
-    gap: 0 $spacing-size-8;
+    gap: 0 $spacing-size-4;
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        gap: 0 $spacing-size-8;
+    }
 
     @media screen and (min-width: $breakpoint-hero-large) {
         flex-direction: row;
@@ -47,6 +51,7 @@
     h1,
     h2 {
         line-height: var(--text-lh-tight);
+        color: var(--color-white);
     }
 
     h1 {

@@ -34,6 +34,10 @@ export class FiltersToolPanelListPanel extends Component {
     // null is used to check if we should search filters when new cols are loaded
     private searchFilterText: string | null;
 
+    // If a column drag is happening, we suppress handling the event until it has completed
+    private suppressOnColumnsChanged: boolean = false;
+    private onColumnsChangedPending: boolean = false;
+
     constructor() {
         super(FiltersToolPanelListPanel.TEMPLATE);
     }
@@ -63,6 +67,17 @@ export class FiltersToolPanelListPanel extends Component {
             }
         });
 
+        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STARTED, () => {
+            this.suppressOnColumnsChanged = true;
+        });
+        this.addManagedListener(this.eventService, Events.EVENT_DRAG_STOPPED, () => {
+            this.suppressOnColumnsChanged = false;
+            if (this.onColumnsChangedPending) {
+                this.onColumnsChangedPending = false;
+                this.onColumnsChanged();
+            }
+        });
+
         if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
@@ -74,6 +89,10 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     public onColumnsChanged(): void {
+        if (this.suppressOnColumnsChanged) {
+            this.onColumnsChangedPending = true;
+            return;
+        }
         const pivotModeActive = this.columnModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         shouldSyncColumnLayoutWithGrid ? this.syncFilterLayout() : this.buildTreeFromProvidedColumnDefs();

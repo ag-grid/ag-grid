@@ -433,7 +433,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 width: 150,
                 editable: false,
                 sortable: false,
-                suppressMenu: true,
+                suppressHeaderMenuButton: true,
                 cellStyle: { 'text-align': 'right' },
                 cellRenderer: () => {
                     return 'Abra...'
@@ -445,7 +445,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 width: 150,
                 editable: false,
                 sortable: false,
-                suppressMenu: true,
+                suppressHeaderMenuButton: true,
                 cellStyle: { 'text-align': 'left' },
                 cellRenderer: () => {
                     return '...cadabra!'

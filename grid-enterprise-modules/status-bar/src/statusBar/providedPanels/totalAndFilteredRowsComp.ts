@@ -15,7 +15,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     @PostConstruct
     protected postConstruct(): void {
         // this component is only really useful with client side row model
-        if (this.gridApi.getModel().getType() !== 'clientSide') {
+        if (this.gridApi.__getModel().getType() !== 'clientSide') {
             console.warn(`AG Grid: agTotalAndFilteredRowCountComponent should only be used with the client side row model.`);
             return;
         }
@@ -64,6 +64,10 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     }
 
     public init() {}
+
+    public refresh(): boolean {
+        return true;
+    }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.

@@ -1,12 +1,41 @@
 @use '../core' as *;
 
+.whatsNewContainer {
+    width: 100%;
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        width: var(--layout-width-9-12);
+        padding-top: $spacing-size-10;
+    }
+}
+
+.versions {
+    --versions-gap: #{$spacing-size-4};
+
+    container-type: inline-size;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--versions-gap);
+    margin-top: $spacing-size-8;
+    margin-bottom: $spacing-size-8;
+}
+
 .version {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 100%;
     padding: $spacing-size-4;
     border-radius: 8px;
     border: 1px solid var(--color-border-primary);
+
+    @container (min-width: 640px) {
+        width: calc(100% / 2 - var(--versions-gap) / 2);
+    }
+
+    @container (min-width: 960px) {
+        width: calc(100% / 3 - var(--versions-gap) / 3 * 2);
+    }
 
     #{$selector-darkmode} & {
         background-color: var(--color-util-gray-200);
@@ -16,7 +45,6 @@
         margin-top: 8px;
         margin-bottom: 4px;
         font-size: 1rem;
-        color: var(--text-color);
 
         #{$selector-darkmode} & {
             color: var(--color-text-secondary);
@@ -96,37 +124,10 @@
     border-bottom: 1px solid var(--color-border-primary);
 }
 
-.versions {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(300px, 1fr));
-    grid-gap: 16px;
-    margin-top: 32px;
-    margin-bottom: 32px;
-}
-
 .topheader {
     display: flex;
     flex-direction: column;
     gap: 8px;
-}
-
-.heading {
-    padding-top: 28px;
-    padding-left: $spacing-size-4;
-    padding-right: $spacing-size-4;
-
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        padding-left: 0;
-        padding-right: $spacing-size-8;
-    }
-}
-
-@media (max-width: 1200px) {
-    .versions {
-        display: flex;
-        flex-direction: column;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
-    }
 }
 
 .description {
@@ -158,8 +159,8 @@
     width: 100%;
     display: flex;
     justify-content: left;
-    padding-top: $spacing-size-2;
-    padding-bottom: $spacing-size-2;
+    padding-top: $spacing-size-1;
+    padding-bottom: $spacing-size-1;
     color: var(--color-link);
 }
 
@@ -167,6 +168,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: flex-start;
 }
 
 .flex a {

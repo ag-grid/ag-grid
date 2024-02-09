@@ -22,9 +22,10 @@ export interface DialogOptions extends PanelOptions {
     alwaysOnTop?: boolean;
     maximizable?: boolean;
     afterGuiAttached?: () => void;
+    closedCallback?: (event?: MouseEvent | TouchEvent | KeyboardEvent) => void;
 }
 
-export class AgDialog extends AgPanel {
+export class AgDialog extends AgPanel<DialogOptions> {
 
     @Autowired('popupService') private popupService: PopupService;
 
@@ -43,15 +44,13 @@ export class AgDialog extends AgPanel {
         height: 0
     };
 
-    protected config: DialogOptions | undefined;
-
     constructor(config: DialogOptions) {
         super({...config, popup: true });
     }
 
     protected postConstruct() {
         const eGui = this.getGui();
-        const { movable, resizable, maximizable } = this.config as DialogOptions;
+        const { movable, resizable, maximizable } = this.config;
 
         this.addCssClass('ag-dialog');
 
@@ -69,14 +68,14 @@ export class AgDialog extends AgPanel {
 
     protected renderComponent() {
         const eGui = this.getGui();
-        const { alwaysOnTop, modal, title, afterGuiAttached  } = this.config as DialogOptions;
+        const { alwaysOnTop, modal, title, afterGuiAttached  } = this.config;
         const translate = this.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal,
             eChild: eGui,
             closeOnEsc: true,
-            closedCallback: this.destroy.bind(this),
+            closedCallback: this.onClosed.bind(this),
             alwaysOnTop,
             ariaLabel: title || translate('ariaLabelDialog', 'Dialog'),
             afterGuiAttached
@@ -85,6 +84,11 @@ export class AgDialog extends AgPanel {
         if (addPopupRes) {
             this.close = addPopupRes.hideFunc;
         }
+    }
+
+    private onClosed(event?: MouseEvent | TouchEvent | KeyboardEvent): void {
+        this.destroy();
+        this.config.closedCallback?.(event);
     }
 
     private toggleMaximize() {

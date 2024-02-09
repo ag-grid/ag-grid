@@ -32,28 +32,28 @@ const columnDefs: ColGroupDef[] = [
       {
         field: 'gold',
         enableValue: true,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         filter: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
       {
         field: 'silver',
         enableValue: true,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         filter: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
       {
         field: 'bronze',
         enableValue: true,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         filter: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
       {
         field: 'total',
         enableValue: true,
-        suppressMenu: true,
+        suppressHeaderMenuButton: true,
         filter: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
@@ -73,7 +73,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function setIdText(id: string, value: string | number | undefined) {
-  document.getElementById(id)!.innerHTML = value == undefined ? 'undefined' : value + ''
+  document.getElementById(id)!.textContent = value == undefined ? 'undefined' : value + ''
 }
 
 function setPivotOn() {

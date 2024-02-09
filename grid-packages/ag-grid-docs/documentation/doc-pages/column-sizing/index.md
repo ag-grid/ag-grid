@@ -135,7 +135,8 @@ A parameters object can be provided with minimum and maximum widths, either for 
 
 ### Auto-Size Columns to Fit Cell Contents
 
-Columns can be resized to fit the contents of the cells.
+Columns can be resized to fit the contents of the cells. The example below demonstrates the use of `autoSizeStrategy` to size the columns by default. The example
+button can restore this sizing by using the API if the columns are first resized by dragging the resize handle.
 
 <grid-example title='Auto-Size Columns to Fit Cell Contents' name='column-resizing' type='generated'></grid-example>
 

@@ -15,6 +15,10 @@ import { CssClassApplier } from "../cssClassApplier";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { setAriaColIndex } from "../../../utils/aria";
 import { Events } from "../../../eventKeys";
+import { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from "../../../events";
+import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
+import { WithoutGridCommon } from "../../../interfaces/iCommon";
+import { MenuService } from "../../../misc/menuService";
 
 let instanceIdSequence = 0;
 
@@ -35,6 +39,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
     @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
+    @Autowired('menuService') protected readonly menuService: MenuService;
 
     private instanceId: string;
     private columnGroupChild: IHeaderColumn;
@@ -226,6 +231,28 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
             this.dragAndDropService.removeDragSource(this.dragSource);
             this.dragSource = null;
         }
+    }
+
+    protected handleContextMenuMouseEvent(mouseEvent: MouseEvent | undefined, touchEvent: TouchEvent | undefined, column: Column | ProvidedColumnGroup): void {
+        const event = mouseEvent ?? touchEvent!;
+        if (this.gridOptionsService.get('preventDefaultOnContextMenu')) {
+            event.preventDefault();
+        }
+        const columnToUse = column instanceof Column ? column : undefined;
+        if (this.menuService.isHeaderContextMenuEnabled(columnToUse)) {
+            this.menuService.showHeaderContextMenu(columnToUse, mouseEvent, touchEvent);
+        }
+
+        this.dispatchColumnMouseEvent(Events.EVENT_COLUMN_HEADER_CONTEXT_MENU, column);
+    }
+
+    protected dispatchColumnMouseEvent(eventType: "columnHeaderContextMenu" | "columnHeaderClicked", column: Column | ProvidedColumnGroup): void {
+        const event: WithoutGridCommon<ColumnHeaderClickedEvent | ColumnHeaderContextMenuEvent> = {
+            type: eventType,
+            column,
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     protected destroy(): void {

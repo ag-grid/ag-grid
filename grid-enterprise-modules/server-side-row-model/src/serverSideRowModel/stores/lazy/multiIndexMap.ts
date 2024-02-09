@@ -12,6 +12,10 @@ export class MultiIndexMap<K> {
         );
     }
 
+    public getSize(): number {
+        return this.maps.get(this.indexes[0])!.size;
+    }
+
     public getBy(index: keyof K, key: any): K | undefined {
         const map = this.maps.get(index);
         if (!map) {

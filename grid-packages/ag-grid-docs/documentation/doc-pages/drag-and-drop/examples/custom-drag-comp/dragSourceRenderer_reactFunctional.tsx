@@ -1,23 +1,17 @@
-import React, { Component } from 'react';
-import { ICellRendererParams } from '@ag-grid-community/core';
+import React from 'react';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 
-export default class DragSourceRenderer extends Component<ICellRendererParams> {
-  constructor(props: ICellRendererParams) {
-    super(props);
-  }
-
-  onDragStart = (dragEvent: any) => {
+export default (props: CustomCellRendererProps) => {
+  const onDragStart = (dragEvent: any) => {
     dragEvent.dataTransfer.setData(
       'text/plain',
-      'Dragged item with ID: ' + this.props.node.data.id
+      'Dragged item with ID: ' + props.node.data.id
     );
   };
 
-  render() {
-    return (
-      <div draggable="true" onDragStart={this.onDragStart}>
-        Drag Me!
-      </div>
-    );
-  }
+  return (
+    <div draggable="true" onDragStart={onDragStart}>
+      Drag Me!
+    </div>
+  );
 }

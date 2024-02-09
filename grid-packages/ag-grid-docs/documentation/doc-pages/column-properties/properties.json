@@ -7,6 +7,11 @@
             "displayName": "Columns"
         },
         "field": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ColDefField"
+                ]
+            },
             "more": {
                 "name": "Accessing Row Data Values",
                 "url": "/column-definitions/#accessing-row-data-values"
@@ -75,6 +80,12 @@
                 "name": "Suppressing the Fill Handle",
                 "url": "/range-selection-fill-handle/#suppressing-the-fill-handle"
             }
+        },
+        "contextMenuItems": {
+            "more": {
+                "name": "Configuring the Context Menu",
+                "url": "/context-menu/#configuring-the-context-menu"
+            }
         }
     },
     "charts": {
@@ -88,7 +99,13 @@
         "meta": {
             "displayName": "Columns: Tooltips"
         },
-        "tooltipField": {},
+        "tooltipField": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ColDefField"
+                ]
+            }
+        },
         "tooltipValueGetter": {
             "more": {
                 "name": "Tooltip Component",
@@ -133,14 +150,42 @@
                 "url": "/column-headers/#auto-header-height"
             }
         },
-        "menuTabs": {},
-        "columnsMenuParams": {
+        "menuTabs": {
             "more": {
-                "name": "Customising the Columns Menu Tab",
-                "url": "/column-menu/#customising-the-columns-menu-tab"
+                "name": "Legacy Tabbed Column Menu",
+                "url": "/column-menu/#legacy-tabbed-column-menu"
             }
         },
-        "suppressMenu": {},
+        "columnChooserParams": {
+            "more": {
+                "name": "Customising the Column Chooser",
+                "url": "/column-menu/#customising-the-column-chooser"
+            }
+        },
+        "mainMenuItems": {
+            "more": {
+                "name": "Customising the Menu Items",
+                "url": "/column-menu/#customising-the-menu-items"
+            }
+        },
+        "suppressHeaderMenuButton": {
+            "more": {
+                "name": "Customising the Column Menu",
+                "url": "/column-menu/#customising-the-column-menu"
+            }
+        },
+        "suppressHeaderFilterButton": {
+            "more": {
+                "name": "Customising the Column Menu",
+                "url": "/column-menu/#customising-the-column-menu"
+            }
+        },
+        "suppressHeaderContextMenu": {
+            "more": {
+                "name": "Customising the Column Menu",
+                "url": "/column-menu/#customising-the-column-menu"
+            }
+        },
         "suppressHeaderKeyboardEvent": {
             "more": {
                 "name": "Suppress Keyboard Events",
@@ -162,7 +207,13 @@
         "headerCheckboxSelectionCurrentPageOnly": {
             "more": {
                 "name": "Select Everything on the Current Page",
-                "url": "/row-selection/#example-select-only-the-current-page"
+                "url": "/row-selection/#select-only-the-current-page"
+            }
+        },
+        "suppressFloatingFilterButton": {
+            "more": {
+                "name": "Floating Filters",
+                "url": "/floating-filters/"
             }
         }
     },
@@ -263,7 +314,7 @@
         "cellRendererParams": {
             "more": {
                 "name": "Cell Renderer Params",
-                "url": "/component-cell-renderer/#reference-ICellRendererParams"
+                "url": "/component-cell-renderer/#complementing-cell-renderer-params"
             }
         },
         "cellRendererSelector": {

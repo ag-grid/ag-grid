@@ -1,8 +1,25 @@
 <framework-specific-section frameworks="vue">
-|## Status Bar Panel Interface
+|Any valid Vue component can be a status bar component, however it is also possible to implement the following optional methods:
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="ts">
+|interface IStatusPanel {
+|    // Called when the `statusBar` grid option is updated.
+|    // If this method returns `true`, the grid assumes that
+|    // the status panel has updated with the latest params,
+|    // and takes no further action. If this method returns `false`,
+|    // or is not implemented, the grid will destroy and
+|    // recreate the status panel.
+|    refresh(params: IStatusPanelParams): boolean;
 |
-|Any valid Vue component can be a status bar component.
-|
-|When a custom status bar component is instantiated then the following will be made available on `this.params`:
-|
+|    // Gets called when the grid is destroyed.
+|    // If your status bar components needs to do any cleanup, do it here.
+|    destroy(): void;
+|}
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+|When a custom status bar component is instantiated then the following will be made available on `this.params`.
 </framework-specific-section>

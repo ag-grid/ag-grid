@@ -71,8 +71,8 @@ describe('ColDef.field Types', () => {
             { field: 'child.child' },
             { field: 'child.child.a' },
             { field: 'child.child.child' },
-            // @ts-expect-error - validate type 6 levels deep
-            { field: 'child.child.child.child.child.child.childWrong' },
+            // @ts-expect-error - validate type 5 levels deep
+            { field: 'child.child.child.child.childWrong' },
             // Let the user take care of the rest
             { field: 'child.child.child.child.child.child.child.childWrong' },
             { field: 'child.child.child.child.child.child.child.child.child.child.child.child.child.child.child.child' },
@@ -147,8 +147,8 @@ describe('ColDef.field Types', () => {
             { field: 'child.child' },
             { field: 'child.child.a' },
             { field: 'child.child.child' },
-            // @ts-expect-error - validate type 6 levels deep
-            { field: 'child.child.child.child.child.child.childWrong' },
+            // @ts-expect-error - validate type 5 levels deep
+            { field: 'child.child.child.child.childWrong' },
             // Let the user take care of the rest
             { field: 'child.child.child.child.child.child.child.childWrong' },
             { field: 'child.child.child.child.child.child.child.child.child.child.child.child.child.child.child.child' },

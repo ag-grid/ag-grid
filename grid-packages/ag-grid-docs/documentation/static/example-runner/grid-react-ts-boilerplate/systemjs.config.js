@@ -74,6 +74,10 @@
                 main: './dist/ag-grid-enterprise.cjs.min.js',
                 defaultExtension: 'js'
             },
+            'ag-grid-enterprise-charts-enterprise': {
+                main: './dist/ag-grid-enterprise-charts-enterprise.cjs.js',
+                defaultExtension: 'js'
+            },
             '@ag-grid-community/react': {
                 main: './lib/main.mjs',
                 defaultExtension: 'mjs',
@@ -82,10 +86,10 @@
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js'
             },
-            // 'ag-charts-enterprise': {
-            //     main: './dist/package/main.cjs.js',
-            //     defaultExtension: 'js'
-            // },
+            'ag-charts-enterprise': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js'
+            },
         },
         meta: {
             typescript: {

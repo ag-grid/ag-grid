@@ -141,7 +141,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 return node.key;
             }
             const value = node.groupData?.[column.getId()];
-            if (!value || !node.rowGroupColumn) { return value; }
+            if (!value || !node.rowGroupColumn || node.rowGroupColumn.getColDef().useValueFormatterForExport === false) { return value; }
             return this.valueFormatterService.formatValue(node.rowGroupColumn, node, value) ?? value;
         }
 

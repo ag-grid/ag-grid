@@ -5,6 +5,7 @@ import {
     ColumnModel,
     ColumnPivotChangeRequestEvent,
     DragAndDropService,
+    DraggingEvent,
     Events,
     ITooltipParams,
     LoggerFactory,
@@ -95,11 +96,11 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
         }
     }
 
-    protected isColumnDroppable(column: Column): boolean {
+    protected isColumnDroppable(column: Column, draggingEvent: DraggingEvent): boolean {
         // we never allow grouping of secondary columns
         if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
-        return column.isAllowPivot() && !column.isPivotActive();
+        return column.isAllowPivot() && (!column.isPivotActive() || this.isSourceEventFromTarget(draggingEvent));
     }
 
     protected updateColumns(columns: Column[]): void {

@@ -37,8 +37,7 @@ const App = {
         { field: "rocket" }
       ],
       defaultColDef: {
-        filter: true,
-        editable: true
+        filter: true
       },
       themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
     };

@@ -1,14 +1,12 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
-import { ScrollVisibleService } from "../../gridBodyComp/scrollVisibleService";
 import { Events } from "../../eventKeys";
 import { RowContainerEventsFeature } from "./rowContainerEventsFeature";
 import { DragService } from "../../dragAndDrop/dragService";
 import { CtrlsService } from "../../ctrlsService";
-import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isVisible, setScrollLeft } from "../../utils/dom";
+import { getInnerWidth, getScrollLeft, isHorizontalScrollShowing, isInDOM, setScrollLeft } from "../../utils/dom";
 import { ColumnModel } from "../../columns/columnModel";
 import { ResizeObserverService } from "../../misc/resizeObserverService";
-import { AnimationFrameService } from "../../misc/animationFrameService";
 import { ViewportSizeFeature } from "../viewportSizeFeature";
 import { convertToMap } from "../../utils/map";
 import { SetPinnedLeftWidthFeature } from "./setPinnedLeftWidthFeature";
@@ -19,7 +17,6 @@ import { CenterWidthFeature } from "../centerWidthFeature";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { ColumnPinnedType } from "../../entities/column";
-import { isInvisibleScrollbar } from "../../utils/browser";
 import { DisplayedRowsChangedEvent } from "../../events";
 
 export enum RowContainerName {
@@ -139,12 +136,10 @@ export class RowContainerCtrl extends BeanStub {
         }
     }
 
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
-    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
 
     private readonly name: RowContainerName;
@@ -334,8 +329,8 @@ export class RowContainerCtrl extends BeanStub {
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 
-    public isViewportVisible(): boolean {
-        return isVisible(this.eViewport);
+    public isViewportInTheDOMTree(): boolean {
+        return isInDOM(this.eViewport);
     }
 
     public getViewportScrollLeft(): number {

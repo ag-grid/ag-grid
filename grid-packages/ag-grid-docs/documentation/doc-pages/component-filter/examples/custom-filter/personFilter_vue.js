@@ -1,16 +1,11 @@
 export default {
     template: `
-      <div style="padding: 4px; width: 200px;">
-      <div style="font-weight: bold;">Custom Athlete Filter</div>
-      <div>
-        <input style="margin: 4px 0 4px 0;" type="text" v-model="filterText" v-on:keyup="updateFilter($event)" placeholder="Full name search..."/>
-      </div>
-      <div style="margin-top: 20px;">This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>
-      <div style="margin-top: 20px;">Just to emphasise that anything can go in here, here is an image!!</div>
-      <div>
-        <img src="https://www.ag-grid.com/images/ag-Grid2-200.png"
-             style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey; background-color: white;"/>
-      </div>
+      <div class="person-filter">
+        <div>Custom Athlete Filter</div>
+        <div>
+            <input type="text" ref="eFilterText" v-model="filterText" v-on:keyup="updateFilter($event)" placeholder="Full name search..."/>
+        </div>
+        <div>This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>
       </div>
     `,
     data: function () {
@@ -52,6 +47,13 @@ export default {
 
         setModel(model) {
             this.filterText = model == null ? null : model.value;
+        },
+
+        afterGuiAttached(params) {
+            if (!params || !params.suppressFocus) {
+                // focus the input element for keyboard navigation
+                this.$refs.eFilterText.focus();
+            }
         }
     }
 };

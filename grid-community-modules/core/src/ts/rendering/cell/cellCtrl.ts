@@ -36,6 +36,7 @@ import { getValueUsingField } from "../../utils/object";
 import { getElementSize } from "../../utils/dom";
 import { setAriaColIndex } from "../../utils/aria";
 import { CssClassApplier } from "../../headerRendering/cells/cssClassApplier";
+import { FlashCellsParams } from "../rowRenderer";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -61,7 +62,7 @@ export interface ICellComp {
     getParentOfValue(): HTMLElement | null;
 
     setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean): void;
-    setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: 'over' | 'under'): void;
+    setEditDetails(compDetails?: UserCompDetails, popup?: boolean, position?: 'over' | 'under', reactiveCustomComponents?: boolean): void;
 }
 
 let instanceIdSequence = 0;
@@ -78,6 +79,7 @@ export class CellCtrl extends BeanStub {
     private column: Column;
     private rowNode: RowNode;
     private rowCtrl: RowCtrl;
+    private editCompDetails?: UserCompDetails;
 
     private focusEventToRestore: CellFocusedEvent | undefined;
 
@@ -400,13 +402,14 @@ export class CellCtrl extends BeanStub {
         const editorParams = this.createCellEditorParams(key, cellStartedEdit);
         const colDef = this.column.getColDef();
         const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
+        this.editCompDetails = compDetails;
 
         // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
         const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup ;
         const position: 'over' | 'under' | undefined = compDetails?.popupPositionFromSelector != null ? compDetails.popupPositionFromSelector : colDef.cellEditorPopupPosition;
 
         this.setEditing(true);
-        this.cellComp.setEditDetails(compDetails, popup, position);
+        this.cellComp.setEditDetails(compDetails, popup, position, this.beans.gridOptionsService.get('reactiveCustomComponents'));
 
         const e: CellEditingStartedEvent = this.createEvent(event, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(e);
@@ -492,6 +495,7 @@ export class CellCtrl extends BeanStub {
 
         this.setEditing(false);
         this.cellComp.setEditDetails(); // passing nothing stops editing
+        this.editCompDetails = undefined;
 
         this.updateAndFormatValue(false);
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
@@ -683,26 +687,26 @@ export class CellCtrl extends BeanStub {
     }
 
     // user can also call this via API
-    public flashCell(delays?: { flashDelay?: number | null; fadeDelay?: number | null; }): void {
-        const flashDelay = delays && delays.flashDelay;
-        const fadeDelay = delays && delays.fadeDelay;
+    public flashCell(delays?: Pick<FlashCellsParams, 'fadeDelay' | 'flashDelay' | 'fadeDuration' | 'flashDuration'>): void {
+        const flashDuration = delays?.flashDuration ?? delays?.flashDelay;
+        const fadeDuration = delays?.fadeDuration ?? delays?.fadeDelay;
 
-        this.animateCell('data-changed', flashDelay, fadeDelay);
+        this.animateCell('data-changed', flashDuration, fadeDuration);
     }
 
-    private animateCell(cssName: string, flashDelay?: number | null, fadeDelay?: number | null): void {
+    private animateCell(cssName: string, flashDuration?: number | null, fadeDuration?: number | null): void {
         if (!this.cellComp) { return; }
 
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
         const { gridOptionsService } = this.beans;
 
-        if (!flashDelay) {
-            flashDelay = gridOptionsService.get('cellFlashDelay');
+        if (!flashDuration) {
+            flashDuration = gridOptionsService.get('cellFlashDuration');
         }
 
-        if (!exists(fadeDelay)) {
-            fadeDelay = gridOptionsService.get('cellFadeDelay');
+        if (!exists(fadeDuration)) {
+            fadeDuration = gridOptionsService.get('cellFadeDuration');
         }
 
         // we want to highlight the cells, without any animation
@@ -710,19 +714,21 @@ export class CellCtrl extends BeanStub {
         this.cellComp.addOrRemoveCssClass(animationFullName, false);
 
         // then once that is applied, we remove the highlight with animation
-        window.setTimeout(() => {
-            if (!this.isAlive()) { return; }
-            this.cellComp.addOrRemoveCssClass(fullName, false);
-            this.cellComp.addOrRemoveCssClass(animationFullName, true);
-
-            this.eGui.style.transition = `background-color ${fadeDelay}ms`;
+        this.beans.frameworkOverrides.wrapIncoming(() => {
             window.setTimeout(() => {
                 if (!this.isAlive()) { return; }
-                // and then to leave things as we got them, we remove the animation
-                this.cellComp.addOrRemoveCssClass(animationFullName, false);
-                this.eGui.style.transition = '';
-            }, fadeDelay!);
-        }, flashDelay);
+                this.cellComp.addOrRemoveCssClass(fullName, false);
+                this.cellComp.addOrRemoveCssClass(animationFullName, true);
+
+                this.eGui.style.transition = `background-color ${fadeDuration}ms`;
+                window.setTimeout(() => {
+                    if (!this.isAlive()) { return; }
+                    // and then to leave things as we got them, we remove the animation
+                    this.cellComp.addOrRemoveCssClass(animationFullName, false);
+                    this.eGui.style.transition = '';
+                }, fadeDuration!);
+            }, flashDuration!);
+        });
     }
 
     public onFlashCells(event: FlashCellsEvent): void {
@@ -994,6 +1000,10 @@ export class CellCtrl extends BeanStub {
         if (!cellFocused && !fullRowEdit && this.editing) {
             this.stopRowOrCellEdit();
         }
+
+        if (cellFocused) {
+            this.rowCtrl.announceDescription();
+        }
     }
 
     private createCellPosition(): void {
@@ -1047,6 +1057,15 @@ export class CellCtrl extends BeanStub {
 
         if (!this.editing) {
             this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
+        } else {
+            const cellEditor = this.getCellEditor();
+            if (cellEditor?.refresh) {
+                const { eventKey, cellStartedEdit } = this.editCompDetails!.params;
+                const editorParams = this.createCellEditorParams(eventKey, cellStartedEdit);
+                const colDef = this.column.getColDef();
+                const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
+                cellEditor.refresh(compDetails!.params);
+            }
         }
     }
 
@@ -1064,7 +1083,11 @@ export class CellCtrl extends BeanStub {
 
         if (colDef.onCellContextMenu) {
             // to make the callback async, do in a timeout
-            window.setTimeout(() => (colDef.onCellContextMenu as any)(cellContextMenuEvent), 0);
+            window.setTimeout(() => {
+                this.beans.frameworkOverrides.wrapOutgoing(() => {
+                    (colDef.onCellContextMenu as any)(cellContextMenuEvent)
+                });
+            }, 0);
         }
     }
 

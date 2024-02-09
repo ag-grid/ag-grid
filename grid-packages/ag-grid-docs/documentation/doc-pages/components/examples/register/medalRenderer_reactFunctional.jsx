@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
+import React from 'react';
 
 export default (props) => {
     const country = props.valueFormatted ? props.valueFormatted : props.value;

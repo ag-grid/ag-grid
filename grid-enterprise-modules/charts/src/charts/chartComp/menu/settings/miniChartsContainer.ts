@@ -1,3 +1,4 @@
+
 import {
     _,
     AgGroupComponent,
@@ -14,59 +15,83 @@ import {
     MiniArea,
     MiniAreaColumnCombo,
     MiniBar,
+    MiniBoxPlot,
     MiniBubble,
     MiniColumn,
     MiniColumnLineCombo,
     MiniCustomCombo,
     MiniDoughnut,
+    MiniHeatmap,
     MiniHistogram,
     MiniLine,
+    MiniNightingale,
     MiniNormalizedArea,
     MiniNormalizedBar,
     MiniNormalizedColumn,
     MiniPie,
+    MiniRadarArea,
+    MiniRadarLine,
+    MiniRadialBar,
+    MiniRadialColumn,
+    MiniRangeBar,
+    MiniRangeArea,
+    MiniWaterfall,
     MiniScatter,
     MiniStackedArea,
     MiniStackedBar,
     MiniStackedColumn,
+    MiniSunburst,
+    MiniTreemap,
 } from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
+
+// import {enterprise} from "../../../../main";
+
+export type ThemeTemplateParameters = {
+    extensions: Map<any, any>;
+    properties: Map<any, any>;
+}
 
 const miniChartMapping = {
     columnGroup: {
-        column: MiniColumn,
-        stackedColumn: MiniStackedColumn,
-        normalizedColumn: MiniNormalizedColumn
+        enterprise: false,
+        chartTypes: {column: MiniColumn, stackedColumn: MiniStackedColumn, normalizedColumn: MiniNormalizedColumn}
     },
     barGroup: {
-        bar: MiniBar,
-        stackedBar: MiniStackedBar,
-        normalizedBar: MiniNormalizedBar
+        enterprise: false,
+        chartTypes: {bar: MiniBar, stackedBar: MiniStackedBar, normalizedBar: MiniNormalizedBar}
     },
-    pieGroup: {
-        pie: MiniPie,
-        doughnut: MiniDoughnut
-    },
-    lineGroup: {
-        line: MiniLine
-    },
-    scatterGroup: {
-        scatter: MiniScatter,
-        bubble: MiniBubble
-    },
+    pieGroup: {enterprise: false, chartTypes: {pie: MiniPie, doughnut: MiniDoughnut}},
+    lineGroup: {enterprise: false, chartTypes: {line: MiniLine}},
+    scatterGroup: {enterprise: false, chartTypes: {scatter: MiniScatter, bubble: MiniBubble}},
     areaGroup: {
-        area: MiniArea,
-        stackedArea: MiniStackedArea,
-        normalizedArea: MiniNormalizedArea
+        enterprise: false,
+        chartTypes: {area: MiniArea, stackedArea: MiniStackedArea, normalizedArea: MiniNormalizedArea}
     },
-    histogramGroup: {
-        histogram: MiniHistogram
+    polarGroup: {
+        enterprise: true,
+        chartTypes: {radarLine: MiniRadarLine, radarArea: MiniRadarArea, nightingale: MiniNightingale, radialColumn: MiniRadialColumn, radialBar: MiniRadialBar}
+    },
+    statisticalGroup: {
+        enterprise: true,
+        chartTypes: {boxPlot: MiniBoxPlot, histogram: MiniHistogram, rangeBar: MiniRangeBar, rangeArea: MiniRangeArea}
+    },
+    hierarchicalGroup: {
+        enterprise: true,
+        chartTypes: {treemap: MiniTreemap, sunburst: MiniSunburst}
+    },
+    specializedGroup: {
+        enterprise: true,
+        chartTypes: {heatmap: MiniHeatmap, waterfall: MiniWaterfall}
     },
     combinationGroup: {
-        columnLineCombo: MiniColumnLineCombo,
-        areaColumnCombo: MiniAreaColumnCombo,
-        customCombo: MiniCustomCombo
+        enterprise: false,
+        chartTypes: {
+            columnLineCombo: MiniColumnLineCombo,
+            areaColumnCombo: MiniAreaColumnCombo,
+            customCombo: MiniCustomCombo
+        }
     }
-}
+};
 
 export class MiniChartsContainer extends Component {
 
@@ -74,6 +99,8 @@ export class MiniChartsContainer extends Component {
 
     private readonly fills: string[];
     private readonly strokes: string[];
+    private readonly themeTemplateParameters: ThemeTemplateParameters;
+    private readonly isCustomTheme: boolean;
     private wrappers: { [key: string]: HTMLElement } = {};
     private chartController: ChartController;
 
@@ -81,25 +108,26 @@ export class MiniChartsContainer extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(chartController: ChartController, fills: string[], strokes: string[], chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS) {
+    constructor(chartController: ChartController, fills: string[], strokes: string[], themeTemplateParameters: ThemeTemplateParameters, isCustomTheme: boolean, chartGroups: ChartGroupsDef = DEFAULT_CHART_GROUPS) {
         super(MiniChartsContainer.TEMPLATE);
 
         this.chartController = chartController;
         this.fills = fills;
         this.strokes = strokes;
+        this.themeTemplateParameters = themeTemplateParameters;
+        this.isCustomTheme = isCustomTheme;
         this.chartGroups = {...chartGroups};
     }
 
     @PostConstruct
     private init() {
-        // hide MiniCustomCombo if no custom combo exists
-        if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
-        }
-
         const eGui = this.getGui();
-
+        const isEnterprise = this.chartController.isEnterprise();
         Object.keys(this.chartGroups).forEach((group: keyof ChartGroupsDef) => {
+            if (!isEnterprise && miniChartMapping[group]?.enterprise) {
+                return; // skip enterprise groups if community
+            }
+
             const chartGroupValues = this.chartGroups[group];
             const groupComponent = this.createBean(new AgGroupComponent({
                 title: this.chartTranslationService.translate(group),
@@ -111,9 +139,9 @@ export class MiniChartsContainer extends Component {
             }));
 
             chartGroupValues!.forEach((chartType: keyof ChartGroupsDef[typeof group]) => {
-                const MiniClass = miniChartMapping[group]?.[chartType] as any;
+                const MiniClass = miniChartMapping[group]?.chartTypes[chartType] as any;
                 if (!MiniClass) {
-                    _.warnOnce(`invalid chartGroupsDef config '${group}${miniChartMapping[group] ? `.${chartType}` : ''}'`);
+                    _.warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
                     return;
                 }
 
@@ -128,12 +156,17 @@ export class MiniChartsContainer extends Component {
 
                 this.wrappers[miniClassChartType] = miniWrapper;
 
-                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes));
+                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes, this.themeTemplateParameters, this.isCustomTheme));
                 groupComponent.addItem(miniWrapper);
             });
 
             eGui.appendChild(groupComponent.getGui());
         });
+
+        // hide MiniCustomCombo if no custom combo exists
+        if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(chartType => chartType !== 'customCombo');
+        }
 
         this.updateSelectedMiniChart();
     }

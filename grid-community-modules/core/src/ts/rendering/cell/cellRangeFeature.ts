@@ -170,7 +170,7 @@ export class CellRangeFeature {
     }
 
     public refreshHandle(): void {
-        if (!this.beans.rangeService) { return; }
+        if (!this.beans.rangeService || this.beans.context.isDestroyed()) { return; }
 
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
 

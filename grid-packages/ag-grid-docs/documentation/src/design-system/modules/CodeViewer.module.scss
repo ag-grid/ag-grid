@@ -18,7 +18,9 @@
     display: flex;
     min-width: 100%;
     height: 100%;
-    transition: transform 0.33s ease-in-out, min-width 0.33s ease-in-out;
+    transition:
+        transform 0.33s ease-in-out,
+        min-width 0.33s ease-in-out;
 
     @container (width < 640px) {
         height: calc(100% - var(--mobile-header-height));
@@ -100,6 +102,7 @@
     font-weight: var(--text-bold);
     overflow: hidden;
     text-overflow: ellipsis;
+    color: var(--color-fg-primary);
     border-top: 1px solid var(--file-border-color);
     border-left: 1px solid var(--file-border-color);
     border-bottom: 1px solid var(--file-border-color);
@@ -107,12 +110,15 @@
     border-bottom-right-radius: 0;
     border-bottom-left-radius: var(--radius-sm);
     border-top-left-radius: var(--radius-sm);
-    transition: color $transition-default-timing, background-color $transition-default-timing,
+    transition:
+        color $transition-default-timing,
+        background-color $transition-default-timing,
         border-color $transition-default-timing;
 
     &:hover {
         --file-border-color: var(--color-border-primary);
 
+        color: var(--color-fg-primary);
         background-color: var(--color-bg-primary);
         border-top: 1px solid var(--file-border-color);
         border-left: 1px solid var(--file-border-color);
@@ -130,10 +136,10 @@
     &.isActive {
         --file-border-color: var(--color-border-primary);
 
-        background-color: var(--color-bg-secondary);
+        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
 
         #{$selector-darkmode} & {
-            background-color: var(--color-bg-secondary);
+            background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 70%);
         }
     }
 }

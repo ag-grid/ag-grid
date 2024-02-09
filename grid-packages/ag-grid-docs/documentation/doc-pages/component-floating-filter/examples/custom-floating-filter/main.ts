@@ -6,42 +6,42 @@ const columnDefs: ColDef[] = [
   {
     field: 'gold',
     filter: 'agNumberColumnFilter',
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
       color: 'gold',
     },
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'silver',
     filter: 'agNumberColumnFilter',
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
       color: 'silver',
     },
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'bronze',
     filter: 'agNumberColumnFilter',
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
       color: '#CD7F32',
     },
+    suppressFloatingFilterButton: true,
   },
   {
     field: 'total',
     filter: 'agNumberColumnFilter',
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
-      suppressFilterButton: true,
       color: 'unset',
     },
+    suppressFloatingFilterButton: true,
   },
 ]
 
@@ -49,7 +49,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    editable: true,
     flex: 1,
     minWidth: 100,
     filter: true,

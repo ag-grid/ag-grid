@@ -208,7 +208,7 @@ The grid comes with some provided cell renderers out of the box. These cell rend
 
 Simple renderer for boolean values that uses the standard HTML checkbox `input`. The renderer also allows editing.
 
-If editing is enabled, then it is recommended to also use the [Checkbox Cell Editor](/provided-cell-editors/#checkbox-cell-editor) so that the UI matches when in edit mode.
+If editing is enabled, then it is recommended to also use the [Checkbox Cell Editor](/provided-cell-editors-checkbox/) so that the UI matches when in edit mode.
 
 Specified with `agCheckboxCellRenderer` and configured with `ICheckboxCellRendererParams`.
 

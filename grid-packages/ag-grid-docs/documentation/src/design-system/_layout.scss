@@ -2,21 +2,23 @@
 
 .layout-grid {
     display: flex;
-    flex-wrap: wrap;
     gap: var(--layout-gap);
-    max-width: min(calc(100% - var(--layout-gap) * 2), var(--layout-max-width));
+    flex-wrap: wrap;
+    max-width: min(calc(100% - var(--layout-horizontal-margins) * 2), var(--layout-max-width));
     margin-right: auto;
     margin-left: auto;
 }
 
 .layout-page-max-width {
-    max-width: min(calc(100% - var(--layout-gap) * 2), var(--layout-max-width));
+    max-width: min(calc(100% - var(--layout-horizontal-margins) * 2), var(--layout-max-width));
     margin-right: auto;
     margin-left: auto;
 }
 
-.layout-copy-max-width {
-    max-width: var(--layout-copy-max-width);
+.layout-max-width-small {
+    max-width: var(--layout-max-width-small);
+    padding-left: var(--layout-horizontal-margins);
+    padding-right: var(--layout-horizontal-margins);
     margin-right: auto;
     margin-left: auto;
 }

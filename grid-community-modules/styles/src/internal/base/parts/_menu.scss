@@ -3,6 +3,8 @@
 @mixin output {
     .ag-menu {
         @include ag.card();
+        background-color: var(--ag-popup-background-color);
+        border-color: var(--ag-popup-border-color);
         padding: 0;
     }
 
@@ -141,11 +143,15 @@
     }
 
     .ag-set-filter-add-group-indent {
-        @include ag.unthemed-rtl((margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2)));
+        @include ag.unthemed-rtl((margin-left: calc(var(--ag-icon-size) + var(--ag-widget-container-horizontal-padding))));
     }
 
     .ag-set-filter-group-icons {
         @include ag.unthemed-rtl((margin-right: var(--ag-widget-container-horizontal-padding)))
+    }
+
+    .ag-filter-menu .ag-set-filter-list {
+        min-width: 200px;
     }
 
     @include ag.keyboard-focus((ag-filter-virtual-list-item), 1px);

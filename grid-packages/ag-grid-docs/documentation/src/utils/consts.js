@@ -25,3 +25,8 @@ export const isBuildServerBuild = () => (!isDevelopment() && process.env.GATSBY_
 
 // used in docs app code to determine if prod type features should be exposed
 export const isProductionEnvironment = () => (isProductionBuild() || isPreProductionBuild());
+
+// whether integrated charts includes ag-charts-enterprise or just ag-charts-community
+// also need to update grid-packages/ag-grid-docs/src/example-generation/consts.ts if this value is changed
+// and grid-packages/ag-grid-docs/example-generator-documentation.js
+export const integratedChartsUsesChartsEnterprise = true;

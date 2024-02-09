@@ -12,4 +12,4 @@ The grid's Global Style is highly customisable:
 
 - If you are using Sass, check out the [Sass API](/global-style-customisation-sass/) which provides additional validation.
 
-Alternatively if you want to change the appearance of individual columns, headers or cells then consider using [row styles](/row-styles/), [cell styles](/cell-styles/) or [custom renderers](/component-types/).
+Alternatively if you want to change the appearance of individual columns, headers or cells then consider using [row styles](/row-styles/), [cell styles](/cell-styles/) or [custom renderers](/components/).

@@ -1,8 +1,8 @@
 import { _, Autowired, Component, PostConstruct, RefSelector, ResizeObserverService } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
 import { AgChartThemePalette } from "ag-charts-community";
-// import { AgChartThemePalette } from "ag-charts-enterprise";
 import { ChartController } from "../../chartController";
+import { isStockTheme } from "../../chartProxies/chartTheme";
 
 type AnimationDirection = 'left' | 'right';
 
@@ -83,6 +83,7 @@ export class ChartSettingsPanel extends Component {
 
     private resetPalettes(forceReset?: boolean): void {
         const palettes = this.chartController.getPalettes();
+        const themeTemplateParameters = this.chartController.getThemeTemplateParameters();
         const chartGroups = this.gridOptionsService.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
 
         if ((_.shallowCompare(palettes, this.palettes) && !forceReset) || this.isAnimating) {
@@ -90,7 +91,7 @@ export class ChartSettingsPanel extends Component {
         }
 
         this.palettes = palettes;
-        this.themes = this.chartController.getThemes();
+        this.themes = this.chartController.getThemeNames();
         this.activePaletteIndex = this.themes.findIndex(name => name === this.chartController.getChartThemeName());
         this.cardItems = [];
 
@@ -98,10 +99,23 @@ export class ChartSettingsPanel extends Component {
 
         this.destroyMiniCharts();
 
+        const { themes } = this;
+
         this.palettes.forEach((palette, index) => {
             const isActivePalette = this.activePaletteIndex === index;
             const { fills, strokes } = palette;
-            const miniChartsContainer = this.createBean(new MiniChartsContainer(this.chartController, fills, strokes, chartGroups));
+            const themeName = themes[index];
+            const isCustomTheme = !isStockTheme(themeName);
+            const miniChartsContainer = this.createBean(
+                new MiniChartsContainer(
+                    this.chartController,
+                    fills,
+                    strokes,
+                    themeTemplateParameters[index],
+                    isCustomTheme,
+                    chartGroups
+                )
+            );
 
             this.miniChartsContainers.push(miniChartsContainer);
             this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());

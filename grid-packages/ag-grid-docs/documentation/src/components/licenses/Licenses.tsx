@@ -77,7 +77,7 @@ const License = (props: LicenseData) => {
 
     return (
         <>
-            <div className={classnames(styles.top, 'top')}>
+            <div className={classnames(styles.top, 'top')} id={id}>
                 <div className={styles.licenseMeta}>
                     <Logo className={styles.logo}/>
                     <p className="text-sm"><Icon name="enterprise" /> {subHeading}</p>
@@ -94,6 +94,8 @@ const License = (props: LicenseData) => {
 
                     <a className={classnames(styles.learnMoreLink, 'text-sm')} href={learnMoreLink}>
                         Learn more
+
+                        <Icon name="arrowRight" />
                     </a>
                 </div>
 
@@ -109,7 +111,7 @@ const License = (props: LicenseData) => {
 
                 <div className={styles.licenseActions}>
                     <a
-                        className="button"
+                        className="button-tertiary"
                         href={buyLink}
                         target="_blank"
                         onClick={() => {

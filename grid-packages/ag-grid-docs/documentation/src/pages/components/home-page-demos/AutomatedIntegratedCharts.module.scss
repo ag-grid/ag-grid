@@ -58,11 +58,8 @@ $z-index-splash-contents: 10;
     }
 
     :global(.flag) {
-        font-size: 1.75rem;
-
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            font-size: 1.25rem;
-        }
+        margin-right: 2px;
+        margin-top: -4px;
     }
 
     :global(.ag-chart-menu-close) {
@@ -140,47 +137,6 @@ $z-index-splash-contents: 10;
         --icon-size: 1.5em;
 
         margin: -1em 0 -1em 0.25em;
-    }
-}
-
-.getStartedLink {
-    --icon-size: 1.25em;
-    --text-color: var(--link-color);
-
-    position: relative;
-    display: inline-block;
-    padding-right: $spacing-size-6;
-    transition: color $transition-default-timing;
-
-    &::after {
-        content: '';
-        position: absolute;
-        right: 0;
-        bottom: -3px;
-        left: 0;
-        height: 2px;
-        background-color: var(--text-color);
-        transition: background-color $transition-default-timing;
-
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            display: none;
-        }
-    }
-
-    &:hover,
-    &:focus-visible {
-        --text-color: var(--link-hover-color);
-
-        :global(.icon) {
-            transform: translateX(4px);
-        }
-    }
-
-    :global(.icon) {
-        position: absolute;
-        bottom: 0;
-        right: -0.33em;
-        transition: transform $transition-default-timing, fill $transition-default-timing;
     }
 }
 

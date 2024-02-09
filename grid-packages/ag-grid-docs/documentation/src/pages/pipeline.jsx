@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
-import GlobalContextConsumer from '../components/GlobalContext';
+import { useGlobalContext } from '../components/GlobalContext';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
 import { Icon } from '../components/Icon';
@@ -116,6 +116,7 @@ const Pipeline = ({ location }) => {
     const [gridApi, setGridApi] = useState(null);
     const URLFilterSearchQuery = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
+    const { darkMode } = useGlobalContext();
 
     useEffect(() => {
         fetch('/pipeline/pipeline.json')
@@ -167,26 +168,20 @@ const Pipeline = ({ location }) => {
                         </span>
                     </div>
 
-                    <GlobalContextConsumer>
-                        {({ darkMode }) => {
-                            return (
-                                <Grid
-                                    gridHeight={'78vh'}
-                                    columnDefs={COLUMN_DEFS}
-                                    isRowMaster={isRowMaster}
-                                    detailRowAutoHeight={true}
-                                    defaultColDef={defaultColDef}
-                                    enableCellTextSelection={true}
-                                    detailCellRendererParams={detailCellRendererParams}
-                                    detailCellRenderer={DetailCellRenderer}
-                                    masterDetail={true}
-                                    rowData={rowData}
-                                    onGridReady={gridReady}
-                                    theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
-                                ></Grid>
-                            );
-                        }}
-                    </GlobalContextConsumer>
+                    <Grid
+                        gridHeight={'78vh'}
+                        columnDefs={COLUMN_DEFS}
+                        isRowMaster={isRowMaster}
+                        detailRowAutoHeight={true}
+                        defaultColDef={defaultColDef}
+                        enableCellTextSelection={true}
+                        detailCellRendererParams={detailCellRendererParams}
+                        detailCellRenderer={DetailCellRenderer}
+                        masterDetail={true}
+                        rowData={rowData}
+                        onGridReady={gridReady}
+                        theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
+                    ></Grid>
                 </div>
             )}
         </>

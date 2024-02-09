@@ -1,6 +1,5 @@
 import { _ } from "@ag-grid-community/core";
 import { AgBarSeriesOptions, AgCartesianAxisOptions } from "ag-charts-community";
-// import { AgBarSeriesOptions, AgCartesianAxisOptions } from "ag-charts-enterprise";
 import { ChartProxyParams, UpdateParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
@@ -34,14 +33,15 @@ export class BarChartProxy extends CartesianChartProxy {
     }
 
     public getSeries(params: UpdateParams): AgBarSeriesOptions[] {
+        const [category] = params.categories;
         const series: AgBarSeriesOptions[] = params.fields.map(f => (
             {
                 type: this.standaloneChartType,
                 direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
                 stacked: this.crossFiltering || isStacked(this.chartType),
                 normalizedTo: this.isNormalised() ? 100 : undefined,
-                xKey: params.category.id,
-                xName: params.category.name,
+                xKey: category.id,
+                xName: category.name,
                 yKey: f.colId,
                 yName: f.displayName
             } as AgBarSeriesOptions

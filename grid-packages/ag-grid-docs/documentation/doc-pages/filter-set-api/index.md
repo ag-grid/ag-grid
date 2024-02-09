@@ -9,23 +9,31 @@ This section describes how the Set Filter can be controlled programmatically usi
 
 Get and set the state of the Set Filter by getting and setting the model on the filter instance.
 
-<snippet>
-| // get filter instance
-| const countryFilterComponent = api.getFilterInstance('country');
+<snippet transform="false">
+|// get filter model
+|const model = api.getColumnFilterModel('country');
 | 
-| // get filter model
-| const model = countryFilterComponent.getModel();
+|// set filter model and update
+|await api.setColumnFilterModel('country', { values: ['Spain', 'Ireland', 'South Africa'] });
 | 
-| // set filter model and update
-| countryFilterComponent.setModel({ values: ['Spain', 'Ireland', 'South Africa'] });
-| 
-| // refresh rows based on the filter (not automatic to allow for batching multiple filters)
-| api.onFilterChanged();
+|// refresh rows based on the filter (not automatic to allow for batching multiple filters)
+|api.onFilterChanged();
 </snippet>
 
 The filter model contains an array of string values where each item in the array corresponds to an element to be selected from the set.
 
+<interface-documentation interfaceName='SetFilterModel'></interface-documentation>
+
 ## Set Filter API
+
+The Set Filter instance can be retrieved via the `getColumnFilterInstance` API method.
+
+<snippet>
+|// get filter instance
+|api.getColumnFilterInstance('country').then(countryFilterComponent => {
+|    // use set filter instance
+|});
+</snippet>
 
 The `ISetFilter` interface defines the public API for the Set Filter.
 

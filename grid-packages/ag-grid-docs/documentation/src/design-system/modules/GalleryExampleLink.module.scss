@@ -1,50 +1,35 @@
 @use '../core' as *;
 
 .link {
-    --link-border-color: var(--color-util-brand-100);
-
     position: relative;
     display: flex;
     flex-direction: column;
     border-radius: var(--radius-sm);
-    border: 1px solid var(--link-border-color);
+    border: 1px solid var(--color-border-secondary);
+    overflow: hidden;
+    transition: border-color 0.5s ease-in-out;
 
-    &::after {
-        $border-width: 2px;
-
-        content: '';
-        position: absolute;
-        top: $border-width * -1;
-        right: $border-width * -1;
-        bottom: $border-width * -1;
-        left: $border-width * -1;
-        border-radius: calc(var(--radius-sm) + 1px);
-        border: $border-width solid var(--color-link-hover);
-        opacity: 0;
-        transition: opacity 0.5s ease-in-out;
+    &:hover {
+        border-color: var(--color-link);
     }
 
-    &:hover::after {
-        opacity: 1;
+    .image {
+        flex: 1;
+        padding: 24px;
     }
 
-    > div {
-        border-radius: var(--radius-sm);
-    }
-
-    span {
+    .label {
         display: block;
-        flex-grow: 1;
+        flex: none;
         padding: $spacing-size-2 $spacing-size-4;
         font-size: 12px;
         line-height: var(--text-lh-tight);
-        border-top: 1px solid var(--link-border-color);
+        border-top: 1px solid var(--color-border-secondary);
+        transition: border-color 0.5s ease-in-out;
     }
 
     #{$selector-darkmode} & {
-        --link-border-color: color-mix(in srgb, var(--color-bg-primary), white 10%);
-
-        background-color: var(--color-bg-secondary);
+        background-color: #192232; // Dark themes background color
     }
 }
 

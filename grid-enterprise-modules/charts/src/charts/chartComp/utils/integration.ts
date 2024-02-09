@@ -1,5 +1,4 @@
-import { _Scene, AgCartesianAxisType, AgChartInstance } from "ag-charts-community";
-// import { _Scene, AgCartesianAxisType, AgChartInstance } from "ag-charts-enterprise";
+import { _Scene, AgCartesianAxisType, AgChartInstance, AgPolarAxisOptions } from "ag-charts-community";
 
 export function deproxy(chartOrProxy: AgChartInstance): AgChartActual {
     if ((chartOrProxy as any).chart != null) {
@@ -8,7 +7,7 @@ export function deproxy(chartOrProxy: AgChartInstance): AgChartActual {
     return chartOrProxy as AgChartActual;
 }
 
-// Extensions to the public ag-charts-enterprise API that Integrated Charts currently depends on for
+// Extensions to the public ag-charts-community API that Integrated Charts currently depends on for
 // correct operation. Over time we aim to eliminate these and only use the public API.
 //
 // AVOID ADDING MORE DEPENDENCIES ON THESE PRIVATE APIS.
@@ -20,9 +19,13 @@ export interface AgChartActual extends AgChartInstance {
     series: {
         type: string;
         toggleSeriesItem(itemId: string, enabled: boolean): void;
+        properties: {
+            [key: string]: any;
+            toJson(): any;
+        };
     }[];
     axes?: {
-        type: AgCartesianAxisType;
+        type: AgCartesianAxisType | AgPolarAxisOptions['type'];
         direction: 'x' | 'y';
     }[];
     scene: {
@@ -34,3 +37,6 @@ export interface AgChartActual extends AgChartInstance {
     addEventListener(type: 'click', cb: (even: any) => void): void;
     waitForUpdate(): Promise<void>;
 }
+
+export type AgChartAxis = NonNullable<AgChartActual['axes']>[number];
+export type AgChartAxisType = AgChartAxis['type'];

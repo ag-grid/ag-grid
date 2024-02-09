@@ -9,7 +9,7 @@ This section describes how to make use of Vue 3's `script/setup` syntactic sugar
 
 ## Using Custom Components in AG Grid with script/setup
 
-When using a [Custom Component](../component-types/) in AG Grid with `script/setup` you need to expose the custom components
+When using a [Custom Component](../components/) in AG Grid with `script/setup` you need to expose the custom components
 with `defineExpose`, as follows:
 
 <snippet transform={false} language="html">
@@ -52,7 +52,7 @@ with `defineExpose`, as follows:
 
 Here we expose the custom `CellComponentRenderer` for use within the grid, referenced in the column definition via `cellRenderer: "CellComponentRenderer"`.
 
-With the exception of the `defineExpose` you can then use  [Custom Components](../component-types/) in the normal way for Vue 3 Components.
+With the exception of the `defineExpose` you can then use  [Custom Components](../components/) in the normal way for Vue 3 Components.
 
 ### Date Components
 

@@ -100,6 +100,8 @@ export class GridOptionsService {
         this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
+        // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
+        this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
 
@@ -148,7 +150,7 @@ export class GridOptionsService {
                 mergedParams.columnApi = this.columnApi;
                 mergedParams.context = this.context;
 
-                return this.frameworkOverrides.wrapOutgoing(() => callback(mergedParams));
+                return callback(mergedParams);
             };
             return wrapped;
         }
@@ -294,10 +296,11 @@ export class GridOptionsService {
                 return;
             }
 
-            const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
-            if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
+            const eventHandlerName = ComponentUtil.getCallbackForEvent(eventName);
+            const eventHandler = (this.gridOptions as any)[eventHandlerName];
+            if (typeof eventHandler === 'function') {
                 this.frameworkOverrides.wrapOutgoing(() => {
-                    (this.gridOptions as any)[callbackMethodName](event);
+                    eventHandler(event);
                 })
             }
         }

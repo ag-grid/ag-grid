@@ -54,8 +54,12 @@ export class SortService extends BeanStub {
             // are going to inspect the original array position. This is what sortedRowNodes is for.
             let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
+                const nextGroup = this.columnModel.getRowGroupColumns()?.[rowNode.level + 1];
+                // if the sort is null, then sort was explicitly removed, so remove sort from this group.
+                const wasSortExplicitlyRemoved =  nextGroup?.getSort() === null;
+
                 const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
-                if (rowNode.childrenAfterSort) {
+                if (rowNode.childrenAfterSort && !wasSortExplicitlyRemoved) {
                     const indexedOrders: { [key:string]: number } = {};
                     rowNode.childrenAfterSort.forEach((node, idx) => {
                         indexedOrders[node.id!] = idx;

@@ -5,7 +5,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { ISelectionService } from "../interfaces/iSelectionService";
 import { SelectionService } from "../selectionService";
 import { ChangedPath } from "../utils/changedPath";
-import { IClientSideRowModel } from "../main";
+import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 @Bean('selectableService')
 export class SelectableService extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;

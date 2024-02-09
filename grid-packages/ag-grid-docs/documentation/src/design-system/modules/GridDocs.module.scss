@@ -4,27 +4,39 @@
     display: contents;
 }
 
+%enterprise-icon {
+    display: inline-block;
+    background-image: url('../../images/enterprise.svg');
+    text-indent: -10000px;
+    background-position-y: center;
+    background-repeat: no-repeat;
+    content: 'e';
+}
+
 .doc-page {
     flex: 1 1 0px;
     min-width: 0px;
-    padding-top: $spacing-size-8 + $spacing-size-1;
+    padding-top: $spacing-size-4;
     padding-bottom: $spacing-size-16;
+
+    @media screen and (max-width: $breakpoint-docs-nav-large) {
+        border: none;
+    }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         width: var(--layout-width-9-12);
+        padding-top: $spacing-size-10;
+        padding-right: $spacing-size-3;
+    }
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        padding-top: 0;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
-        width: var(--layout-width-8-12);
-    }
-
-    @media screen and (min-width: $breakpoint-docs-nav-extra-large) {
-        width: var(--layout-width-6-12);
-        margin-right: calc(var(--layout-width-1-12) + var(--layout-gap));
-        margin-left: calc(var(--layout-width-1-12) + var(--layout-gap));
-    }
-
-    &.noSideMenu {
+        width: var(--layout-width-7-12);
+        max-width: var(--layout-width-7-12);
+        padding-right: 0;
     }
 
     h1,
@@ -67,6 +79,17 @@
     :global(.alert) {
         margin-bottom: $spacing-size-4;
     }
+
+    enterprise-icon::after {
+        @extend %enterprise-icon;
+
+        width: 1rem;
+        margin-left: 0.25rem;
+    }
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        padding-top: var(--spacing-size-5);
+    }
 }
 
 .docsPageHeader {
@@ -75,6 +98,10 @@
 
 .docsPageTitle {
     margin-bottom: $spacing-size-4;
+
+    span:nth-of-type(2) {
+        letter-spacing: -1.2px;
+    }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         line-height: var(--line-height-ultra-tight);
@@ -100,14 +127,15 @@
 .pageTitleGroup {
     display: flex;
     flex-direction: column;
+    color: var(--color-fg-primary);
 }
 
 .headerFramework {
     display: none;
-    font-size: var(--text-fs-xl);
-    font-weight: var(--text-regular);
-    color: var(--color-text-tertiary);
-    padding-bottom: 6px;
+    font-size: var(--text-fs-base);
+    font-weight: var(--text-semibold);
+    color: var(--color-text-brand-primary);
+    padding-bottom: $spacing-size-3;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         display: block;
@@ -149,6 +177,8 @@
 .pageSections > div > p:first-child {
     font-size: var(--text-fs-xl);
     margin-bottom: $spacing-size-8;
+    color: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 20%);
+    line-height: var(--text-lh-sm);
 
     code {
         font-size: 0.8em;
@@ -176,5 +206,8 @@
     > table,
     > pre {
         font-size: var(--text-fs-base);
+    }
+    p {
+        line-height: var(--text-lh-xs);
     }
 }

@@ -14,8 +14,16 @@ import React, {
     useRef,
     useState
 } from 'react';
+import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
+import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
+import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
+import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';
+import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponentWrapper';
+import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverlayComponentWrapper';
+import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
+import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
 import { AgReactUiProps } from '../shared/interfaces';
-import { NewReactComponent } from '../shared/newReactComponent';
+import { ReactComponent } from '../shared/reactComponent';
 import { PortalManager } from '../shared/portalManager';
 import { BeansContext } from "./beansContext";
 import { CssClasses } from "./utils";
@@ -63,15 +71,15 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
             });
         }
 
+        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
+
         const gridParams: GridParams = {
             providedBeanInstances: {
-                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current),
+                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current, !!mergedGridOps.reactiveCustomComponents),
             },
             modules,
             frameworkOverrides: new ReactFrameworkOverrides(),
         };
-
-        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
 
         const createUiCallback = (context: Context) => {
             setContext(context);
@@ -168,15 +176,40 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
     implements FrameworkComponentWrapper {
-    private readonly parent: PortalManager;
-
-    constructor(parent: PortalManager) {
+    constructor(private readonly parent: PortalManager, private readonly reactiveCustomComponents?: boolean) {
         super();
-        this.parent = parent;
     }
 
     createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
-        return new NewReactComponent(UserReactComponent, this.parent as any, componentType);
+        if (this.reactiveCustomComponents) {
+            const getComponentClass = (propertyName: string) => {
+                switch (propertyName) {
+                    case 'filter':
+                        return FilterComponentWrapper;
+                    case 'floatingFilterComponent':
+                        return FloatingFilterComponentWrapper;
+                    case 'dateComponent':
+                        return DateComponentWrapper;
+                    case 'loadingOverlayComponent':
+                        return LoadingOverlayComponentWrapper;
+                    case 'noRowsOverlayComponent':
+                        return NoRowsOverlayComponentWrapper;
+                    case 'statusPanel':
+                        return StatusPanelComponentWrapper;
+                    case 'toolPanel':
+                        return ToolPanelComponentWrapper;
+                    case 'menuItem':
+                        return MenuItemComponentWrapper;
+                }
+            }
+            const ComponentClass = getComponentClass(componentType.propertyName);
+            if (ComponentClass) {
+                return new ComponentClass(UserReactComponent, this.parent, componentType);
+            }
+        }
+        // only cell renderers and tool panel should use fallback methods
+        const suppressFallbackMethods = !componentType.cellRenderer && componentType.propertyName !== 'toolPanel';
+        return new ReactComponent(UserReactComponent, this.parent, componentType, suppressFallbackMethods);
     }
 }
 

@@ -5,6 +5,8 @@ import { ColDefUtil } from '../../components/colDefUtil';
 import { GridOptions } from 'src/ts/main';
 
 const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
+    columnsMenuParams: { version: '31.1', message: 'Use `columnChooserParams` instead.' }, 
+    suppressMenu: { version: '31.1', message: 'Use `suppressHeaderMenuButton` instead.' }, 
 };
 
 const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options: never, gridOptions: GridOptions) => {
@@ -42,6 +44,9 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
         return null;
     },
     columnsMenuParams: {
+        module: [ModuleNames.MenuModule, ModuleNames.ColumnsToolPanelModule],
+    },
+    columnChooserParams: {
         module: [ModuleNames.MenuModule, ModuleNames.ColumnsToolPanelModule],
     },
     

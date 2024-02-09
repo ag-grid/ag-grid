@@ -1,4 +1,3 @@
-// import {AgCartesianAxisOptions} from "ag-charts-enterprise";
 import {AgCartesianAxisOptions} from "ag-charts-community";
 import {ChartType, SeriesChartType} from "@ag-grid-community/core";
 import {ChartProxyParams, FieldDefinition, UpdateParams} from "../chartProxy";
@@ -54,7 +53,8 @@ export class ComboChartProxy extends CartesianChartProxy {
     }
 
     public getSeries(params: UpdateParams): any {
-        const { fields, category, seriesChartTypes } = params;
+        const { fields, seriesChartTypes } = params;
+        const [category] = params.categories;
 
         return fields.map(field => {
             const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);

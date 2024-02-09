@@ -1,15 +1,15 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
-  { headerName: 'Athlete Name', field: 'athlete', suppressMenu: true },
+  { headerName: 'Athlete Name', field: 'athlete', suppressHeaderMenuButton: true },
   { field: 'age', sortable: false },
-  { field: 'country', suppressMenu: true },
+  { field: 'country', suppressHeaderMenuButton: true },
   { field: 'year', sortable: false },
-  { field: 'date', suppressMenu: true, sortable: false },
+  { field: 'date', suppressHeaderMenuButton: true, sortable: false },
   { field: 'sport', sortable: false },
   { field: 'gold' },
   { field: 'silver', sortable: false },
-  { field: 'bronze', suppressMenu: true },
+  { field: 'bronze', suppressHeaderMenuButton: true },
   { field: 'total', sortable: false },
 ]
 
@@ -26,6 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       menuIcon: 'fa-bars',
       template: `<div class="ag-cell-label-container" role="presentation">
                     <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>
+                    <span ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button"></span>
                     <div ref="eLabel" class="ag-header-cell-label" role="presentation">
                         <span ref="eSortOrder" class="ag-header-icon ag-sort-order ag-hidden"></span>
                         <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon ag-hidden"></span>

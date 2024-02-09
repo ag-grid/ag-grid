@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="react">
-|## Cell Renderer Component
+|To configure custom cell renderers, first enable the grid option `reactiveCustomComponents`.
 |
 |When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
 |row values available to you via `props`.  

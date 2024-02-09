@@ -50,6 +50,10 @@ export class EventService implements IEventEmitter {
         }
     }
 
+    public setFrameworkOverrides(frameworkOverrides: IFrameworkOverrides): void {
+        this.frameworkOverrides = frameworkOverrides;
+    }
+
     private getListeners(eventType: string, async: boolean, autoCreateListenerCollection: boolean): Set<AgEventListener> | undefined {
         const listenerMap = async ? this.allAsyncListeners : this.allSyncListeners;
         let listeners = listenerMap.get(eventType);
@@ -132,9 +136,12 @@ export class EventService implements IEventEmitter {
                 // A listener could have been removed by a previously processed listener. In this case we don't want to call 
                 return;
             }
-            const callback = this.frameworkOverrides ? () => this.frameworkOverrides.dispatchEvent(() => listener(event)) : () => listener(event);
+            const callback = this.frameworkOverrides
+                ? () => this.frameworkOverrides.wrapIncoming(() => listener(event))
+                : () => listener(event);
+
             if (async) {
-                this.dispatchAsync(callback);
+                this.dispatchAsync(callback)
             } else {
                 callback();
             }
@@ -150,11 +157,14 @@ export class EventService implements IEventEmitter {
         const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
 
         globalListeners.forEach((listener) => {
-            const callback = () => this.frameworkOverrides ? this.frameworkOverrides.dispatchEvent(() => listener(eventType, event)) : listener(eventType, event);
+            const callback = this.frameworkOverrides
+                ? () => this.frameworkOverrides.wrapIncoming(() => listener(eventType, event))
+                : () => listener(eventType, event);
+           
             if (async) {
                 this.dispatchAsync(callback);
             } else {
-                callback();
+                callback()
             }
         });
     }
@@ -173,7 +183,9 @@ export class EventService implements IEventEmitter {
         // set to 'true' so it will know it's already scheduled for subsequent calls.
         if (!this.scheduled) {
             // if not scheduled, schedule one
-            window.setTimeout(this.flushAsyncQueue.bind(this), 0);
+            this.frameworkOverrides.wrapIncoming(() => {
+                window.setTimeout(this.flushAsyncQueue.bind(this), 0);
+            });
             // mark that it is scheduled
             this.scheduled = true;
         }

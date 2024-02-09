@@ -1,7 +1,7 @@
 import React from 'react';
-import { ICellRendererParams } from "@ag-grid-community/core";
+import { CustomCellRendererProps } from "@ag-grid-community/react";
 
-export default (props: ICellRendererParams) => {
+export default (props: CustomCellRendererProps) => {
     const icon = props.value === 'Male' ? 'fa-male' : 'fa-female';
     return (
         <span>

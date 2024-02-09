@@ -1,9 +1,6 @@
 import { RowNode } from "./entities/rowNode";
 import { Bean } from "./context/context";
 import { BeanStub } from "./context/beanStub";
-import { Qualifier } from "./context/context";
-import { Logger } from "./logger";
-import { LoggerFactory } from "./logger";
 import { Events, SelectionChangedEvent, SelectionEventSourceType } from "./events";
 import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
@@ -24,15 +21,10 @@ export class SelectionService extends BeanStub implements ISelectionService {
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private selectedNodes: Map<string, RowNode> = new Map();
-    private logger: Logger;
+    private lastRowNode: RowNode | null = null;
 
     private groupSelectsChildren: boolean;
     private rowSelection?: 'single' | 'multiple';
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('selectionService');
-        this.resetNodes();
-    }
 
     @PostConstruct
     private init(): void {
@@ -47,24 +39,31 @@ export class SelectionService extends BeanStub implements ISelectionService {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
+    protected destroy(): void {
+        super.destroy();
+        this.resetNodes();
+        this.lastRowNode = null;
+    }
+
     private isMultiselect() {
         return this.rowSelection === 'multiple';
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
-        if (params.nodes.length === 0) return 0;
-
         const {
             newValue,
             clearSelection,
             suppressFinishActions,
             rangeSelect,
+            nodes,
             event,
             source = 'api',
         } = params;
 
+        if (nodes.length === 0) return 0;
 
-        if (params.nodes.length > 1 && !this.isMultiselect()) {
+
+        if (nodes.length > 1 && !this.isMultiselect()) {
             console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
             return 0;
         }
@@ -74,29 +73,45 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
         // if node is a footer, we don't do selection, just pass the info
         // to the sibling (the parent of the group)
-        const nodes = params.nodes.map(node => node.footer ? node.sibling! : node);
+        const filteredNodes = nodes.map(node => node.footer ? node.sibling! : node);
+
         if (rangeSelect) {
-            if (params.nodes.length > 1) {
+            if (nodes.length > 1) {
                 console.warn('AG Grid: cannot range select while selecting multiple rows');
                 return 0;
             }
 
-            const lastSelectedNode = this.getLastSelectedNode();
-            if (lastSelectedNode) {
+            let toNode: RowNode | null = null;
+            if (source === 'checkboxSelected' && newValue === false && this.lastRowNode) {
+                if (this.lastRowNode.id) {
+                    toNode = this.lastRowNode;
+                } else {
+                    this.lastRowNode = null;
+                }
+            }
+
+            if (toNode == null) {
+                toNode = this.getLastSelectedNode();
+            }
+
+            if (toNode) {
                 // if node is a footer, we don't do selection, just pass the info
                 // to the sibling (the parent of the group)
-                const node = nodes[0];
-                const newRowClicked = lastSelectedNode !== node;
+                const fromNode = filteredNodes[0];
+                const newRowClicked = fromNode !== toNode;
                 if (newRowClicked && this.isMultiselect()) {
-                    return this.selectRange(node, lastSelectedNode, params.newValue, source);;
+                    return this.selectRange(fromNode, toNode, newValue, source);
                 }
             }
         }
-        
+
+        // when deselecting nodes, we want to use the last deselected node
+        // as starting point for deselection
+        this.lastRowNode = newValue ? null : filteredNodes[0];
 
         let updatedCount = 0;
-        for (let i = 0; i < nodes.length; i++) {
-            const node = nodes[i];
+        for (let i = 0; i < filteredNodes.length; i++) {
+            const node = filteredNodes[i];
             // when groupSelectsFiltered, then this node may end up intermediate despite
             // trying to set it to true / false. this group will be calculated further on
             // down when we call calculatedSelectedForAllGroupNodes(). we need to skip it
@@ -104,7 +119,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
             const skipThisNode = groupSelectsFiltered && node.group;
 
             if (!skipThisNode) {
-                const thisNodeWasSelected = node.selectThisNode(newValue, params.event, source);
+                const thisNodeWasSelected = node.selectThisNode(newValue, event, source);
                 if (thisNodeWasSelected) {
                     updatedCount++;
                 }
@@ -119,7 +134,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
         if (!suppressFinishActions) {
             const clearOtherNodes = newValue && (clearSelection || !this.isMultiselect());
             if (clearOtherNodes) {
-                updatedCount += this.clearOtherNodes(nodes[0], source);
+                updatedCount += this.clearOtherNodes(filteredNodes[0], source);
             }
 
             // only if we selected something, then update groups and fire events
@@ -147,7 +162,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
         let updatedCount = 0;
 
         nodesToSelect.forEach(rowNode => {
-            if (rowNode.group && this.groupSelectsChildren || (value === false && fromNode === rowNode)) { return; }
+            if (rowNode.group && this.groupSelectsChildren) { return; }
 
             const nodeWasSelected = rowNode.selectThisNode(value, undefined, source);
             if (nodeWasSelected) {
@@ -358,7 +373,6 @@ export class SelectionService extends BeanStub implements ISelectionService {
     }
 
     private resetNodes(): void {
-        this.logger.log('reset');
         this.selectedNodes?.clear();
     }
 
