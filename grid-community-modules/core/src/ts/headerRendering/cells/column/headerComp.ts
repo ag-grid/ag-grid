@@ -282,7 +282,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.params.showFilter(this.eFilterButton ?? this.eMenu ?? this.getGui());
                 return true;
             }
-        } else if (this.params.enableMenu || (!isLegacyMenuEnabled && this.menuService.isHeaderContextMenuEnabled(column))) {
+        } else if (this.params.enableMenu) {
             this.params.showColumnMenu(this.eMenu ?? this.eFilterButton ?? this.getGui());
             return true;
         }

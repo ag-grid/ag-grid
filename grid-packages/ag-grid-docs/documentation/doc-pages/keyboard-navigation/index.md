@@ -53,7 +53,8 @@ Regular Column Headers may have selection checkboxes, sorting functions and menu
 - Press <kbd>␣ Space</kbd> to toggle the Column Header checkbox selection.
 - Press <kbd>↵ Enter</kbd> to toggle the sorting state of that column.
 - Press <kbd>⇧ Shift</kbd>+<kbd>↵ Enter</kbd> to toggle multi-sort for that column.
-- Press <kbd>^ Ctrl</kbd>+<kbd>↵ Enter</kbd> to open the menu for the focused Column Header.
+- Press <kbd>⌥ Alt</kbd>+<kbd>↓</kbd> to open the menu for the focused Column Header.
+- Press <kbd>^ Ctrl</kbd>+<kbd>↵ Enter</kbd> to either open the menu for the focused Column Header (if `columnMenu = 'legacy'`) or open the filter for the focused Column Header (if `columnMenu = 'new'`).
 - When a menu is open, simply press <kbd>⎋ Esc</kbd> to close it and the focus will return to the Column Header.
 
 ### Floating Filter Headers

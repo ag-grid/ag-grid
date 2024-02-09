@@ -9,8 +9,8 @@ import {
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
   { field: 'age', floatingFilter: true, },
-  { field: 'country', suppressHeaderFilter: true },
-  { field: 'year', maxWidth: 120, floatingFilter: true, suppressHeaderFilter: true },
+  { field: 'country', suppressHeaderFilterButton: true },
+  { field: 'year', maxWidth: 120, floatingFilter: true, suppressHeaderFilterButton: true },
   { field: 'sport' },
   { field: 'gold' },
   { field: 'silver' },

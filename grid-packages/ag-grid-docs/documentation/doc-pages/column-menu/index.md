@@ -24,7 +24,7 @@ The new-format column menu is enabled by setting `columnMenu = 'new'`.
 
 How the column menu is launched from the header can be configured via the following column definition properties.
 
-<api-documentation source='column-properties/properties.json' section='header' names='["suppressMenu", "suppressHeaderFilter", "suppressHeaderContextMenu"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='header' names='["suppressHeaderMenuButton", "suppressHeaderFilterButton", "suppressHeaderContextMenu"]'></api-documentation>
 
 The column menu button can be hidden until moused over by the grid option `suppressMenuHide`.
 

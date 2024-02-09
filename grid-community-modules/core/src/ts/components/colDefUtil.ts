@@ -86,6 +86,7 @@ export class ColDefUtil {
         headerCheckboxSelectionFilteredOnly: undefined,
         headerCheckboxSelectionCurrentPageOnly: undefined,
         suppressMenu: undefined,
+        suppressHeaderMenuButton: undefined,
         suppressMovable: undefined,
         lockPosition: undefined,
         lockVisible: undefined,
@@ -141,7 +142,7 @@ export class ColDefUtil {
         mainMenuItems: undefined,
         contextMenuItems: undefined,
         suppressFloatingFilterButton: undefined,
-        suppressHeaderFilter: undefined,
+        suppressHeaderFilterButton: undefined,
         suppressHeaderContextMenu: undefined,
     };
 

@@ -117,11 +117,13 @@ export class MenuService extends BeanStub {
     }
 
     public isColumnMenuInHeaderEnabled(column: Column): boolean {
-        return !column.getColDef().suppressMenu && this.activeMenuFactory.isMenuEnabled(column) && (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory);
+        const { suppressMenu, suppressHeaderMenuButton } = column.getColDef();
+        const isSuppressMenuButton = suppressHeaderMenuButton ?? suppressMenu;
+        return !isSuppressMenuButton && this.activeMenuFactory.isMenuEnabled(column) && (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory);
     }
 
     public isFilterMenuInHeaderEnabled(column: Column): boolean {
-        return !column.getColDef().suppressHeaderFilter && this.filterManager.isFilterAllowed(column);
+        return !column.getColDef().suppressHeaderFilterButton && this.filterManager.isFilterAllowed(column);
     }
 
     public isHeaderContextMenuEnabled(column?: Column): boolean {

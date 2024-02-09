@@ -1,15 +1,15 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
-  { headerName: 'Athlete Name', field: 'athlete', suppressMenu: true },
+  { headerName: 'Athlete Name', field: 'athlete', suppressHeaderMenuButton: true },
   { field: 'age', sortable: false },
-  { field: 'country', suppressMenu: true },
+  { field: 'country', suppressHeaderMenuButton: true },
   { field: 'year', sortable: false },
-  { field: 'date', suppressMenu: true, sortable: false },
+  { field: 'date', suppressHeaderMenuButton: true, sortable: false },
   { field: 'sport', sortable: false },
   { field: 'gold' },
   { field: 'silver', sortable: false },
-  { field: 'bronze', suppressMenu: true },
+  { field: 'bronze', suppressHeaderMenuButton: true },
   { field: 'total', sortable: false },
 ]
 

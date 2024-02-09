@@ -168,13 +168,13 @@
                 "url": "/column-menu/#customising-the-menu-items"
             }
         },
-        "suppressMenu": {
+        "suppressHeaderMenuButton": {
             "more": {
                 "name": "Customising the Column Menu",
                 "url": "/column-menu/#customising-the-column-menu"
             }
         },
-        "suppressHeaderFilter": {
+        "suppressHeaderFilterButton": {
             "more": {
                 "name": "Customising the Column Menu",
                 "url": "/column-menu/#customising-the-column-menu"
