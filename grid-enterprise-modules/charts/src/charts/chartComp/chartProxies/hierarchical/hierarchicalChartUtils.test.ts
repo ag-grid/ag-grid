@@ -121,4 +121,25 @@ describe(createCategoryHierarchy, () => {
         ];
         expect(actual).toEqual(expected);
     });
+
+    it('should format numeric category labels as strings', () => {
+        const input = [
+            { x: 1, y: 3, },
+            { x: 1, y: 4, },
+            { x: 2, y: 5, },
+        ];
+        const categoryKeys: Array<keyof (typeof input)[number]> = ['x', 'y'];
+        const actual = createCategoryHierarchy(input, categoryKeys);
+        const expected = [
+            {
+                'AG-GRID-DEFAULT-LABEL-KEY': '1',
+                children: [
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': '3', x: 1, y: 3 },
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': '4', x: 1, y: 4 },
+                ],
+            },
+            { 'AG-GRID-DEFAULT-LABEL-KEY': '2', children: [{ 'AG-GRID-DEFAULT-LABEL-KEY': '5', x: 2, y: 5 }] },
+        ];
+        expect(actual).toEqual(expected);
+    });
 });
