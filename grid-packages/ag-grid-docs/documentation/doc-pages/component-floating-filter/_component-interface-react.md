@@ -21,7 +21,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom floating filters, however this will involve declaring your React component imperatively, and is not recommended. See [Imperative Floating Filter Component](../component-floating-filter-imperative-react/).</note>
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom floating filters, however this will involve declaring your React component imperatively and is deprecated. See [Imperative Floating Filter Component](../component-floating-filter-imperative-react/). In v32, `reactiveCustomComponents` will default to true.</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">

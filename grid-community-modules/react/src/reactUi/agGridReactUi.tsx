@@ -27,9 +27,9 @@ import { ReactComponent } from '../shared/reactComponent';
 import { PortalManager } from '../shared/portalManager';
 import { BeansContext } from "./beansContext";
 import { CssClasses } from "./utils";
-
 import GroupCellRenderer from "../reactUi/cellRenderer/groupCellRenderer";
 import GridComp from './gridComp';
+import { warnReactiveCustomComponents } from '../shared/customComp/util';
 
 
 export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
@@ -205,6 +205,19 @@ class ReactFrameworkComponentWrapper
             const ComponentClass = getComponentClass(componentType.propertyName);
             if (ComponentClass) {
                 return new ComponentClass(UserReactComponent, this.parent, componentType);
+            }
+        } else {
+            switch (componentType.propertyName) {
+                case 'filter':
+                case 'floatingFilterComponent':
+                case 'dateComponent':
+                case 'loadingOverlayComponent':
+                case 'noRowsOverlayComponent':
+                case 'statusPanel':
+                case 'toolPanel':
+                case 'menuItem':
+                    warnReactiveCustomComponents();
+                    break;
             }
         }
         // only cell renderers and tool panel should use fallback methods
