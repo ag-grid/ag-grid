@@ -34,6 +34,7 @@ function tscTask() {
             'src/**/*.ts*',
             '!src/**/old/**/*',
             '!src/**/__tests__/**/*',
+            '!src/**/*.test.tsx',
             '!src/**/setupTests.ts'
         ]
     ).pipe(sourcemaps.init())

@@ -33,7 +33,8 @@ tscTask = () => {
             'src/**/*.ts*',
             '!src/**/old/**/*',
             '!src/**/__tests__/**/*',
-            '!src/**/setupTests.ts'
+            '!src/**/setupTests.ts',
+            '!src/**/*.test.ts'
         ]
     ).pipe(tscProject());
 
@@ -128,7 +129,8 @@ const copyFromModuleSource = () => {
         [
             "**/*",
             '!**/__tests__*/**/*',
-            '!**/*Test*'
+            '!**/*Test*',
+            '!**/*.test.tsx'
         ], {cwd: '../../grid-community-modules/react/src'})
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
         .pipe(replace('@ag-grid-enterprise', 'ag-grid-enterprise'))
