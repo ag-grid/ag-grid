@@ -48,7 +48,7 @@ export class HeaderPositionUtils extends BeanStub {
         }
 
         nextColumn = columnsInPath[columnsInPath.length - 1 - headerRowIndex];
-        if (nextColumn instanceof ColumnGroup && nextColumn.isPadding()) {
+        if (nextColumn instanceof ColumnGroup && this.isAnyChildSpanningHeaderHeight(nextColumn) && nextColumn.isPadding()) {
             const targetColumn: ColumnGroup = nextColumn;
             nextColumn = targetColumn.getLeafColumns()[0];
             let col: Column | ColumnGroup = nextColumn;
@@ -113,14 +113,20 @@ export class HeaderPositionUtils extends BeanStub {
             }
 
             nextFocusColumn = leafColumn;
-
-            for (let i = columnsInTheWay.length - 1; i >= 0; i--) {
-                const colToFocus = columnsInTheWay[i];
-                if (!colToFocus.isPadding()) {
-                    nextFocusColumn = colToFocus;
-                    break;
+            if (leafColumn.isSpanHeaderHeight()) {
+                for (let i = columnsInTheWay.length - 1; i >= 0; i--) {
+                    const colToFocus = columnsInTheWay[i];
+                    if (!colToFocus.isPadding()) {
+                        nextFocusColumn = colToFocus;
+                        break;
+                    }
+                    nextRow++;
                 }
-                nextRow++;
+            } else {
+                nextFocusColumn = last(columnsInTheWay);
+                if (!nextFocusColumn) {
+                    nextFocusColumn = leafColumn;
+                }
             }
         }
 
