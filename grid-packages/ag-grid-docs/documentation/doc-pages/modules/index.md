@@ -48,8 +48,8 @@ be mixed with the standalone packages of `ag-grid-community` and `ag-grid-enterp
 
 <snippet transform={false}> 
 "dependencies": {
-    "ag-grid-community": "~@AG_GRID_VERSION@" <- a package dependency
-    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@"  <- a module dependency
+    "ag-grid-community": "~@AG_GRID_VERSION@" // a package dependency
+    "@ag-grid-enterprise/row-grouping": "~@AG_GRID_VERSION@"  // a module dependency
     //...other dependencies...
 }
 </snippet>
