@@ -6,6 +6,7 @@ import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./inte
 // floating filter is normally instantiated via react header filter cell comp, but not in the case of multi filter
 export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloatingFilterParams, CustomFloatingFilterProps, CustomFloatingFilterCallbacks> implements IFloatingFilter {
     private model: any = null;
+    private readonly onModelChange = (model: any) => this.updateModel(model);
 
     public onParentModelChanged(parentModel: any): void {
         this.model = parentModel;
@@ -31,7 +32,7 @@ export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloa
         return {
             ...this.sourceParams,
             model: this.model,
-            onModelChange: model => this.updateModel(model),
+            onModelChange: this.onModelChange,
             key: this.key
         } as any;
     }

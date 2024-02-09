@@ -4,6 +4,8 @@ import { CustomFilterProps, CustomFilterCallbacks } from "./interfaces";
 
 export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams, CustomFilterProps, CustomFilterCallbacks> implements IFilter {
     private model: any = null;
+    private readonly onModelChange = (model: any) => this.updateModel(model);
+    private readonly onUiChange = () => this.sourceParams.filterChangedCallback();
 
     public isFilterActive(): boolean {
         return this.model != null;
@@ -44,8 +46,8 @@ export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams
         const props: CustomFilterProps = {
             ...this.sourceParams,
             model: this.model,
-            onModelChange: (model: any) => this.updateModel(model),
-            onUiChange: () => this.sourceParams.filterChangedCallback(),
+            onModelChange: this.onModelChange,
+            onUiChange: () => this.onUiChange,
             key: this.key
         } as any;
         // remove props in IFilterParams but not CustomFilterProps
