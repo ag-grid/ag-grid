@@ -98,7 +98,7 @@ export class PolarAxisPanel extends Component {
             .onValueChange((newValue) => this.chartOptionsService.setAxisProperty('line.width', newValue));
 
         const chartType = this.chartController.getChartType();
-        const hasConfigurableAxisShape = ['radarLine', 'radarArea', 'radialColumn'].includes(chartType);
+        const hasConfigurableAxisShape = ['radarLine', 'radarArea'].includes(chartType);
         if (hasConfigurableAxisShape) {
             const options: Array<ListOption> = [
                 { value: 'circle', text: this.translate('circle') },
