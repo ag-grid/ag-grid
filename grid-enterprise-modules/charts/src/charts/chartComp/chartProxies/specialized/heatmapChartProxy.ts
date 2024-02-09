@@ -9,6 +9,7 @@ import {
 import { ChartProxy, ChartProxyParams, UpdateParams } from '../chartProxy';
 import { flatMap } from '../../utils/array';
 
+export const HEATMAP_CATEGORY_KEY = 'AG-GRID-DEFAULT-HEATMAP-CATEGORY-KEY';
 export const HEATMAP_SERIES_KEY = 'AG-GRID-DEFAULT-HEATMAP-SERIES-KEY';
 export const HEATMAP_VALUE_KEY = 'AG-GRID-DEFAULT-HEATMAP-VALUE-KEY';
 
@@ -20,24 +21,27 @@ export class HeatmapChartProxy extends ChartProxy {
     public override update(params: UpdateParams): void {
         const xSeriesKey = HEATMAP_SERIES_KEY;
         const xValueKey = HEATMAP_VALUE_KEY;
+        const yKey = HEATMAP_CATEGORY_KEY;
         const options: AgCartesianChartOptions = {
             ...this.getCommonChartOptions(params.updatedOverrides),
-            series: this.getSeries(params, xSeriesKey, xValueKey),
-            data: this.getData(params, xSeriesKey, xValueKey),
+            series: this.getSeries(params, xSeriesKey, xValueKey, yKey),
+            data: this.getData(params, xSeriesKey, xValueKey, yKey),
         };
 
         AgCharts.update(this.getChartRef(), options);
     }
 
-    protected getSeries(params: UpdateParams, xSeriesKey: string, xValueKey: string): AgHeatmapSeriesOptions[] {
+    protected getSeries(params: UpdateParams, xSeriesKey: string, xValueKey: string, yKey: string): AgHeatmapSeriesOptions[] {
         const [category] = params.categories;
         return [
             {
                 type: this.standaloneChartType as AgHeatmapSeriesOptions['type'],
-                yKey: category.id,
-                yName: category.name,
+                // The axis keys reference synthetic fields based on the category values and series column names
+                yKey,
                 xKey: xSeriesKey,
+                // The color key references a synthetic field based on the series column value for a specific cell
                 colorKey: xValueKey,
+                yName: category.name,
                 // We don't know how to label the 'x' series, as it is a synthetic series created from the set of all input columns
                 // In future releases we may want to consider inferring the series label from column groupings etc
                 xName: undefined,
@@ -46,13 +50,23 @@ export class HeatmapChartProxy extends ChartProxy {
         ];
     }
 
-    protected getData(params: UpdateParams, xSeriesKey: string, xValueKey: string): any[] {
-        return flatMap(params.data, (row) =>
-            params.fields.map(({ colId, displayName }) => ({
-                ...row,
+    protected getData(params: UpdateParams, xSeriesKey: string, xValueKey: string, yKey: string): any[] {
+        const [category] = params.categories;
+        // Heatmap chart expects a flat array of data, with each row representing a single cell in the heatmap
+        // This means we need to explode the list of input rows into their individual cells
+        return flatMap(params.data, (datum, index) => {
+            // We need to create a unique y value object for each row to prevent unintended category grouping
+            // when there are multiple rows with the same category value
+            const yValue = { id: index, value: datum[category.id], toString() { return datum[category.id]; } };
+            // Return a flat list of output data items corresponding to each cell,
+            // appending the synthetic series and category fields to the cell data
+            return params.fields.map(({ colId, displayName }) => ({
+                ...datum,
                 [xSeriesKey]: displayName,
-                [xValueKey]: row[colId],
-            }))
+                [xValueKey]: datum[colId],
+                [yKey]: yValue,
+            }));
+        }
         );
     }
 
