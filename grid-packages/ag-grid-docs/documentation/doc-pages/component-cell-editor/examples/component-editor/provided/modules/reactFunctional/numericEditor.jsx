@@ -113,7 +113,7 @@ export default memo(({ value, onValueChange, eventKey, stopEditing }) => {
 
     return (
         <input ref={refInput}
-            value={value}
+            value={value == null ? '' : value}
             onChange={(event) => updateValue(event.target.value)}
             onKeyDown={(event) => onKeyDown(event)}
             className="numeric-input"

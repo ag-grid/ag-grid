@@ -15,6 +15,7 @@ export function updateFloatingFilterParent(params: IFloatingFilterParams, model:
 
 export class FloatingFilterComponentProxy implements IFloatingFilter {
     private model: any = null;
+    private readonly onModelChange = (model: any) => this.updateModel(model);
 
     constructor(private floatingFilterParams: IFloatingFilterParams, private readonly refreshProps: () => void) {}
 
@@ -22,7 +23,7 @@ export class FloatingFilterComponentProxy implements IFloatingFilter {
         return {
             ...this.floatingFilterParams,
             model: this.model,
-            onModelChange: model => this.updateModel(model)
+            onModelChange: this.onModelChange
         };
     }
 

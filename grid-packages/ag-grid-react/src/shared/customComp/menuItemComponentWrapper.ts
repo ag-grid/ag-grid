@@ -5,6 +5,7 @@ import { CustomMenuItemProps, CustomMenuItemCallbacks } from "./interfaces";
 export class MenuItemComponentWrapper extends CustomComponentWrapper<IMenuItemParams, CustomMenuItemProps, CustomMenuItemCallbacks> implements IMenuItem {
     private active: boolean = false;
     private expanded: boolean = false;
+    private readonly onActiveChange = (active: boolean) => this.updateActive(active);
 
     public setActive(active: boolean): void {
         this.active = active;
@@ -35,7 +36,7 @@ export class MenuItemComponentWrapper extends CustomComponentWrapper<IMenuItemPa
             ...this.sourceParams,
             active: this.active,
             expanded: this.expanded,
-            onActiveChange: (active: boolean) => this.updateActive(active),
+            onActiveChange: this.onActiveChange,
             key: this.key
         } as any;
         // remove props in IMenuItemParams but not CustomMenuItemProps
