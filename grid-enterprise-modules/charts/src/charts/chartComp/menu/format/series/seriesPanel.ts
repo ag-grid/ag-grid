@@ -27,6 +27,7 @@ import { CapsPanel } from "./capsPanel";
 import { ConnectorLinePanel } from "./connectorLinePanel";
 import { WhiskersPanel } from "./whiskersPanel";
 import { SeriesItemsPanel } from "./seriesItemsPanel";
+import { TileSpacingPanel } from "./tileSpacingPanel";
 
 export class SeriesPanel extends Component {
 
@@ -65,6 +66,7 @@ export class SeriesPanel extends Component {
         'caps': () => this.initCaps(),
         'connectorLine': () => this.initConnectorLine(),
         'seriesItems': () => this.initSeriesItemsPanel(),
+        'tileSpacing': () => this.initTileSpacingPanel(),
     };
 
     private seriesWidgetMappings: { [K in ChartSeriesType]?: string[] } = {
@@ -84,7 +86,7 @@ export class SeriesPanel extends Component {
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
-        'treemap': ['tooltips'],
+        'treemap': ['tooltips', 'tileSpacing'],
         'sunburst': ['tooltips'],
         'heatmap': ['tooltips', 'labels', 'lineColor', 'lineWidth', 'lineOpacity'],
         'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
@@ -375,6 +377,11 @@ export class SeriesPanel extends Component {
     private initSeriesItemsPanel() {
         const seriesItemsPanelComp = this.createBean(new SeriesItemsPanel(this.chartOptionsService, () => this.seriesType));
         this.addWidget(seriesItemsPanelComp);
+    }
+
+    private initTileSpacingPanel() {
+        const tileSpacingPanelComp = this.createBean(new TileSpacingPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(tileSpacingPanelComp);
     }
 
     private addWidget(widget: Component): void {
