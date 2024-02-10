@@ -48,20 +48,32 @@ export class HeaderPositionUtils extends BeanStub {
         }
 
         nextColumn = columnsInPath[columnsInPath.length - 1 - headerRowIndex];
-        if (nextColumn instanceof ColumnGroup && this.isAnyChildSpanningHeaderHeight(nextColumn) && nextColumn.isPadding()) {
-            const targetColumn: ColumnGroup = nextColumn;
+        
+        const { column, headerRowIndex: indexToFocus } = this.getHeaderIndexToFocus(nextColumn, headerRowIndex)
+
+        return {
+            column,
+            headerRowIndex: indexToFocus
+        };
+    }
+
+    public getHeaderIndexToFocus(column: Column | ColumnGroup, currentIndex: number,): HeaderPosition {
+        let nextColumn: Column | undefined;
+
+        if (column instanceof ColumnGroup && this.isAnyChildSpanningHeaderHeight(column) && column.isPadding()) {
+            const targetColumn: ColumnGroup = column;
             nextColumn = targetColumn.getLeafColumns()[0];
             let col: Column | ColumnGroup = nextColumn;
             while (col !== targetColumn) {
-                headerRowIndex++;
+                currentIndex++;
                 col = col.getParent();
             }
         }
 
         return {
-            column: nextColumn,
-            headerRowIndex
-        };
+            column: nextColumn || column,
+            headerRowIndex: currentIndex
+        }
     }
 
     private isAnyChildSpanningHeaderHeight(columnGroup: ColumnGroup): boolean {

@@ -324,8 +324,9 @@ export class FocusService extends BeanStub {
         allowUserOverride?: boolean;
         event?: KeyboardEvent;
         fromCell?: boolean;
+        resetHeaderRowWithoutSpan?: boolean;
     }): boolean {
-        const { direction, fromTab, allowUserOverride, event, fromCell } = params;
+        const { direction, fromTab, allowUserOverride, event, fromCell, resetHeaderRowWithoutSpan } = params;
         let { headerPosition } = params;
 
         if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
@@ -378,6 +379,10 @@ export class FocusService extends BeanStub {
         // this will automatically call the setFocusedHeader method above
         const focusSuccess = headerRowContainerCtrl.focusHeader(headerPosition.headerRowIndex, headerPosition.column, event);
 
+        if (focusSuccess && (resetHeaderRowWithoutSpan || fromCell)) {
+            this.headerNavigationService.resetHeaderRowWithoutSpan();
+        }
+
         return focusSuccess;
     }
 
@@ -390,7 +395,8 @@ export class FocusService extends BeanStub {
         }
 
         return this.focusHeaderPosition({
-            headerPosition: { headerRowIndex: 0, column: firstColumn }
+            headerPosition: { headerRowIndex: 0, column: firstColumn },
+            resetHeaderRowWithoutSpan: true
         });
     }
 
@@ -400,6 +406,7 @@ export class FocusService extends BeanStub {
 
         return this.focusHeaderPosition({
             headerPosition: { headerRowIndex, column },
+            resetHeaderRowWithoutSpan: true,
             event
         });
     }

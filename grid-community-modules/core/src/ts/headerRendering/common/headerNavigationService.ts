@@ -86,7 +86,7 @@ export class HeaderNavigationService extends BeanStub {
         });
     }
 
-    private resetHeaderRowWithoutSpan(): void {
+    public resetHeaderRowWithoutSpan(): void {
         this.currentHeaderRowWithoutSpan = -1;
     }
 
@@ -104,6 +104,8 @@ export class HeaderNavigationService extends BeanStub {
         // either navigating to the left or isRtl (cannot be both)
         if (this.currentHeaderRowWithoutSpan !== -1) {
             focusedHeader.headerRowIndex = this.currentHeaderRowWithoutSpan;
+        } else {
+            this.currentHeaderRowWithoutSpan = focusedHeader.headerRowIndex;
         }
 
         if (isLeft !== isRtl) {
@@ -135,15 +137,25 @@ export class HeaderNavigationService extends BeanStub {
         if (direction === 'Before') {
             if (currentIndex > 0) {
                 nextRowIndex = currentIndex - 1;
+                this.currentHeaderRowWithoutSpan -= 1;
                 nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end')!;
             }
         } else {
             nextRowIndex = currentIndex + 1;
+            if (this.currentHeaderRowWithoutSpan < this.getHeaderRowCount()) {
+                this.currentHeaderRowWithoutSpan += 1;
+            } else {
+                this.resetHeaderRowWithoutSpan();
+            }
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
         }
 
+        if (!nextPosition) { return false; }
+
+        const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(nextPosition.column, nextPosition?.headerRowIndex)
+
         return this.focusService.focusHeaderPosition({
-            headerPosition: nextPosition,
+            headerPosition: { column, headerRowIndex },
             direction,
             fromTab: true,
             allowUserOverride: true,

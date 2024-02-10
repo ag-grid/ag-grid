@@ -274,7 +274,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     public getRowCount(): number {
-        return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);    
+        return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);
     }
 
     protected destroy(): void {
