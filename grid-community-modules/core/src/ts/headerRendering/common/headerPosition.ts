@@ -40,15 +40,18 @@ export class HeaderPositionUtils extends BeanStub {
         if (!nextColumn) { return; }
 
         let { headerRowIndex } = focusedHeader;
-        const columnsInPath: (Column | ColumnGroup)[] = [nextColumn];
 
-        while (nextColumn.getParent()) {
-            nextColumn = nextColumn.getParent();
-            columnsInPath.push(nextColumn);
+        if (this.getHeaderRowType(headerRowIndex) !== HeaderRowType.FLOATING_FILTER) {
+            const columnsInPath: (Column | ColumnGroup)[] = [nextColumn];
+
+            while (nextColumn.getParent()) {
+                nextColumn = nextColumn.getParent();
+                columnsInPath.push(nextColumn);
+            }
+    
+            nextColumn = columnsInPath[columnsInPath.length - 1 - headerRowIndex];
         }
 
-        nextColumn = columnsInPath[columnsInPath.length - 1 - headerRowIndex];
-        
         const { column, headerRowIndex: indexToFocus } = this.getHeaderIndexToFocus(nextColumn, headerRowIndex)
 
         return {
