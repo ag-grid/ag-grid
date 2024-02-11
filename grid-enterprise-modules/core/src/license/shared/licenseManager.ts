@@ -5,10 +5,6 @@ function missingOrEmpty<T>(value?: T[] | string | null): boolean {
     return value == null || value.length === 0;
 }
 
-function exists(value: any, allowEmptyString = false): boolean {
-    return value != null && (value !== '' || allowEmptyString);
-}
-
 const LICENSE_TYPES = {
     '01': 'GRID',
     '02': 'CHARTS',
@@ -53,7 +49,7 @@ export class LicenseManager {
         } else if (!licenseDetails.valid) {
             this.outputInvalidLicenseKey(!!licenseDetails.incorrectLicenseType, licenseDetails.currentLicenseType!, suppliedLicenseName);
         } else if (licenseDetails.isTrial && licenseDetails.trialExpired) {
-            this.outputExpiredTrialKey(licenseDetails.expiry, requiredLicenseName);
+            this.outputExpiredTrialKey(licenseDetails.expiry, requiredLicenseName, suppliedLicenseName);
         }
     }
 
@@ -328,12 +324,12 @@ export class LicenseManager {
         this.watermarkMessage = "Invalid License";
     }
 
-    private outputExpiredTrialKey(formattedExpiryDate: string, requiredLicenseName: string) {
+    private outputExpiredTrialKey(formattedExpiryDate: string, requiredLicenseName: string, suppliedLicenseName: string) {
         // TC14
         this.centerPadAndOutput('');
         this.centerPadAndOutput(` ${requiredLicenseName} `);
         this.centerPadAndOutput(' Trial Period Expired. ');
-        this.padAndOutput(`* Your license for ${requiredLicenseName} expired on ${formattedExpiryDate}.`, ' ', '*');
+        this.padAndOutput(`* Your license for ${suppliedLicenseName} expired on ${formattedExpiryDate}.`, ' ', '*');
         this.padAndOutput('* Please email info@ag-grid.com to purchase a license.', ' ', '*');
         this.centerPadAndOutput('');
         this.centerPadAndOutput('');
