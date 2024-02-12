@@ -651,4 +651,6 @@ transition: all 0.3s ease-in;
     background-color: var(--color-bg-secondary);
     padding-bottom: $spacing-size-3;
     padding-left: $spacing-size-2;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
 }

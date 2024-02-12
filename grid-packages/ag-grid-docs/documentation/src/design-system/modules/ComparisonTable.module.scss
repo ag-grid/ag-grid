@@ -10,9 +10,11 @@
     padding-top: $spacing-size-2;
     padding-bottom: $spacing-size-2;
     border-top: 1px solid var(--color-border-secondary);
+}
 
-    &:last-child {
-        border-bottom: 1px solid var(--color-border-secondary);
+.row {
+    &:first-child {
+        border-top: none;
     }
 }
 
