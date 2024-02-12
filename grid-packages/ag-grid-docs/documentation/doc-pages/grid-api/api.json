@@ -56,12 +56,6 @@
                 "url": "/column-sizing/#auto-size-columns-to-fit-grid"
             }
         },
-        "autoSizeColumn": {
-            "more": {
-                "name": "Auto-Size Columns to Fit Cell Contents",
-                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
-            }
-        },
         "autoSizeColumns": {
             "more": {
                 "name": "Auto-Size Columns to Fit Cell Contents",
@@ -80,7 +74,6 @@
             "displayName": "Column Moving",
             "description": "See [Column Moving](/column-moving/)"
         },
-        "moveColumn": {},
         "moveColumns": {},
         "moveColumnByIndex": {}
     },
@@ -92,7 +85,6 @@
         "isPinning": {},
         "isPinningLeft": {},
         "isPinningRight": {},
-        "setColumnPinned": {},
         "setColumnsPinned": {}
     },
     "state": {
@@ -145,7 +137,6 @@
         "meta": {
             "displayName": "Column Display"
         },
-        "setColumnVisible": {},
         "setColumnsVisible": {},
         "getDisplayNameForColumn": {},
         "getDisplayNameForColumnGroup": {},
@@ -169,9 +160,7 @@
         "isPivotMode": {},
         "getPivotColumns": {},
         "setPivotColumns": {},
-        "addPivotColumn": {},
         "addPivotColumns": {},
-        "removePivotColumn": {},
         "removePivotColumns": {},
         "getPivotResultColumn": {
             "more": {
@@ -615,9 +604,7 @@
         "onGroupExpandedOrCollapsed": {},
         "getRowGroupColumns": {},
         "setRowGroupColumns": {},
-        "addRowGroupColumn": {},
         "addRowGroupColumns": {},
-        "removeRowGroupColumn": {},
         "removeRowGroupColumns": {},
         "moveRowGroupColumn": {}
     },
@@ -832,19 +819,16 @@
             "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
         },
         "getValueColumns": {},
-        "addValueColumn": {},
         "addValueColumns": {},
-        "removeValueColumn": {},
         "removeValueColumns": {},
         "setValueColumns": {},
         "setColumnAggFunc": {},
-        "addAggFunc": {
+        "addAggFuncs": {
             "more": {
                 "name": "Registering Custom Functions",
                 "url": "/aggregation-custom-functions/#registering-custom-functions"
             }
         },
-        "addAggFuncs": {},
         "clearAggFuncs": {}
     },
     "accessories": {

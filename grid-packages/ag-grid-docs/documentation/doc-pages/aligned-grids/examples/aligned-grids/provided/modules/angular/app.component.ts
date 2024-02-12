@@ -99,16 +99,16 @@ export class AppComponent {
 
     onCbAthlete(value: boolean) {
         // we only need to update one grid, as the other is a slave
-        this.topGrid.api.setColumnVisible('athlete', value);
+        this.topGrid.api.setColumnsVisible(['athlete'], value);
     }
 
     onCbAge(value: boolean) {
         // we only need to update one grid, as the other is a slave
-        this.topGrid.api.setColumnVisible('age', value);
+        this.topGrid.api.setColumnsVisible(['age'], value);
     }
 
     onCbCountry(value: boolean) {
         // we only need to update one grid, as the other is a slave
-        this.topGrid.api.setColumnVisible('country', value);
+        this.topGrid.api.setColumnsVisible(['country'], value);
     }
 }

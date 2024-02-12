@@ -49,17 +49,17 @@ const gridOptionsBottom = {
 
 function onCbAthlete(value) {
     // we only need to update one grid, as the other is a slave
-    topApi.setColumnVisible('athlete', value);
+    topApi.setColumnsVisible(['athlete'], value);
 }
 
 function onCbAge(value) {
     // we only need to update one grid, as the other is a slave
-    topApi.setColumnVisible('age', value);
+    topApi.setColumnsVisible(['age'], value);
 }
 
 function onCbCountry(value) {
     // we only need to update one grid, as the other is a slave
-    topApi.setColumnVisible('country', value);
+    topApi.setColumnsVisible(['country'], value);
 }
 
 function setData(rowData) {
