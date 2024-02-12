@@ -1,0 +1,185 @@
+[
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "Video | Blog | Podcast | Other"
+    },
+    {
+        "title": "From Prototyping Jupyter to Deploying Data Apps with Dash AG Grid",
+        "link": "https://medium.com/plotly/from-prototyping-jupyter-to-deploying-data-apps-with-dash-ag-grid-f825789c3647",
+        "description": "Explore the power of Dash AG Grid in a Jupyter Notebook environment for enhanced data visualization and analysis — efficient data handling, advanced filtering capabilities, and dynamic charting. Read this step-by-step guide. ",
+        "author": "Plotly",
+        "type": "Blog",
+        "published": "01/2024"
+    },
+    {
+        "title": "Integrate AG Grid Library in Angular With Data Sorting and Filtering",
+        "link": "https://levelup.gitconnected.com/integrate-ag-grid-library-in-angular-with-data-sorting-and-filtering-f6c984ab9729",
+        "description": "Learn how to install and use the AG Grid library to enable table data sorting and advanced filter functionalities.",
+        "author": "Tara Prasad Routray",
+        "type": "Blog",
+        "published": "05/2023"
+    },
+    {
+        "title": "How To Enhance AG Grid with Avatars: Building a Collaborative Grid with React and Ably",
+        "link": "https://ably.com/blog/how-to-enhance-ag-grid-with-avatars-building-a-collaborative-grid-with-react-and-ably",
+        "description": "Integrate real-time collaboration in AG Grid with Ably",
+        "author": "Devin Rader",
+        "type": "Blog",
+        "published": "12/2023"
+    },
+    {
+        "title": "Streamlit AgGrid with Google Sheets automation for real-time data updates",
+        "link": "https://medium.com/towards-data-science/automate-streamlit-web-app-using-interactive-aggrid-with-google-sheets-81b93fd9e648", 
+        "description": "Customizable Streamlit AgGrid data table connected to a Google Sheets Database",
+        "author": "Avra",
+        "type": "Blog",
+        "published": "12/2022"
+    },
+    {
+        "title": "How to use ag grid in angular | From Setup to Advance",
+        "link": "https://www.youtube.com/watch?v=XqH7gXY0Rb8", 
+        "description": "Learn how to use AG Grid in Angular",
+        "author": "Learning Partner",
+        "type": "Video",
+        "published": "02/2024"
+    },
+    {
+        "title": "Create pivot tables with JavaScript and AGGrid (Spanish)",
+        "link": "https://libreriasjs.com/libreria-javascript-crear-tablas-dinamicas-aggrid/",
+        "description": "Creating pivot tables with JavaScript and AGGrid will allow you to display structured data in the form of grids with filters and sorting.",
+        "author": "Librerias JS",
+        "type": "Blog",
+        "published": "01/2024"
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    }
+]

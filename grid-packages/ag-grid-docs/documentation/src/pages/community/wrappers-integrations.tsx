@@ -24,34 +24,34 @@ const CommunityPage = () => {
                 <div className={styles.pageSections} style={{ marginTop: '25px' }}>
                     <ul>
                         <li>
-                            <a href="https://github.com/plotly/dash">Dash Plotly AG Grid</a> from <a href="https://plotly.com/">Plotly</a> - A Python wrapper for AG Grid
+                            <a target="_blank" href="https://github.com/plotly/dash">Dash Plotly AG Grid</a> from <a target="_blank" href="https://plotly.com/">Plotly</a> - A Python wrapper for AG Grid
                         </li>
                         <li>
-                            <a href="https://github.com/MichaelKim/ag-grid-svelte">Svelte Wrapper</a> from <a>Michael Kim</a> - A Svelte wrapper for AG Grid
+                            <a target="_blank" href="https://github.com/MichaelKim/ag-grid-svelte">Svelte Wrapper</a> from <a target="_blank">Michael Kim</a> - A Svelte wrapper for AG Grid
                         </li>
                         <li>
-                            <a href="https://github.com/PablocFonseca/streamlit-aggrid">Streamlit</a> from <a>Pablo Fonesca</a> - An AG Grid plugin for Streamlit
+                            <a target="_blank" href="https://github.com/PablocFonseca/streamlit-aggrid">Streamlit</a> from <a target="_blank">Pablo Fonesca</a> - An AG Grid plugin for Streamlit
                         </li>
                         <li>
-                            <a href="https://github.com/widgetti/ipyaggrid">IPYAGrid</a> from <a>Widgetti</a> - An AG Grid plugin for IPYA
+                            <a target="_blank" href="https://github.com/widgetti/ipyaggrid">IPYAGrid</a> from <a target="_blank">Widgetti</a> - An AG Grid plugin for IPYA
                         </li>
                         <li>
-                            <a href="https://docs.lowdefy.com/AgGrid#title">AG Grid plugin for Lowdefy</a>
+                            <a target="_blank" href="https://docs.lowdefy.com/AgGrid#title">AG Grid plugin for Lowdefy</a>
                         </li>
                         <li>
-                            <a href="https://github.com/systelab/systelab-components?ref=blog.ag-grid.com"> SysteLab Angular Components</a>
+                            <a target="_blank" href="https://github.com/systelab/systelab-components?ref=blog.ag-grid.com"> SysteLab Angular Components</a>
                         </li>
                         <li>
-                            <a href="https://www.astrouxds.com/patterns/table/#complex-tables">Astro UX Design System</a>
+                            <a target="_blank" href="https://www.astrouxds.com/patterns/table/#complex-tables">Astro UX Design System</a>
                         </li>
                         <li>
-                            <a href="https://xh.io/#hoist">Hoist UI Toolkit</a>
+                            <a target="_blank" href="https://xh.io/#hoist">Hoist UI Toolkit</a>
                         </li>
                         <li>
-                            <a href="https://developer.blackbaud.com/skyux/components/data-grid?docs-active-tab=development">Sky UI Kit</a>
+                            <a target="_blank" href="https://developer.blackbaud.com/skyux/components/data-grid?docs-active-tab=development">Sky UI Kit</a>
                         </li>
                         <li>
-                            <a href="https://ui.vuestic.dev/ui-elements/data-table">Vuestic UI</a>
+                            <a target="_blank" href="https://ui.vuestic.dev/ui-elements/data-table">Vuestic UI</a>
                         </li>
                     </ul>
                 </div>

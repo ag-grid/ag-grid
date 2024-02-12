@@ -1,0 +1,850 @@
+[
+    {
+        "link": "https://www.adaptabletools.com/",
+        "title": "Adaptable",
+        "description": "AdapTable for AG Grid is a powerful, cutting-edge extension for the market-leading AG Grid Data Grid.",
+        "open_source": false,
+        "type": "Extension",
+        "tags": ["React", "Extension"]
+    },
+    {
+        "link": "https://openbb.co/products/pro",
+        "repo": "https://github.com/OpenBB-finance/OpenBBTerminal",
+        "title": "Terminal Pro @ OpenBB",
+        "description": "A sleek graphical interface that is intuitive and fully customizable, making it easier for you to access and analyze financial information with ease.",
+        "open_source": true,
+        "stars": 25600,
+        "type": "Product"
+    },
+    {
+        "link": "https://tableflow.com/",
+        "repo": "https://github.com/tableflowhq/csv-import",
+        "title": "Tableflow",
+        "description": "TableFlow is a data import platform for companies to collect and transform customer data.",
+        "open_source": true,
+        "stars": 1600,
+        "type": "Product"
+    },
+    {
+        "link": "https://marmelab.com/react-admin/",
+        "repo": "https://github.com/marmelab/react-admin",
+        "title": "React Admin",
+        "description": "A frontend Framework for building data-driven applications running on top of REST/GraphQL APIs, using TypeScript, React and Material Design.",
+        "open_source": true,
+        "type": "Integration",
+        "stars": 23500
+    },
+    {
+        "link": "https://www.unavco.org/instrumentation/networks/status/all",
+        "title": "Unavco",
+        "open_source": false,
+        "description": "A public network (GPS) monitoring application.",
+        "type": "Product"
+    },
+    {
+        "link": "https://www.prisma.io/studio",
+        "repo": "https://github.com/prisma/studio",
+        "title": "Prisma Studio",
+        "description": "The easiest way to explore and manipulate your data in all of your Prisma projects.",
+        "open_source": true,
+        "stars": 1700,
+        "type": "Product"
+    },
+    {
+        "link": "https://enso.org/",
+        "repo": "https://github.com/enso-org/enso",
+        "title": "Enso.org",
+        "description": "Hybrid visual and textual functional programming.",
+        "open_source": true,
+        "stars": 7200,
+        "type": "Product"
+    },
+    {
+        "repo": "https://github.com/0wczar/airframe-react",
+        "link": "http://dashboards.webkom.co/react/airframe/dashboards/projects",
+        "title": "Airframe React",
+        "open_source": true,
+        "description": "High Quality Dashboard / Admin / Analytics template that works great on any smartphone, tablet or desktop.",
+        "stars": 3900,
+        "type": "Integration"
+    },
+    {
+        "link": "https://wtmdoc.walkingtec.cn/",
+        "repo": "https://github.com/dotnetcore/wtm",
+        "title": "WTM",
+        "description": "Walkingtec.mvvm framework (WTM) is a rapid development framework based on .net core.",
+        "open_source": true,
+        "stars": 4000,
+        "type": "Integration"
+    },
+    {
+        "link": "https://trafficcontrol.apache.org/",
+        "repo": "https://github.com/apache/trafficcontrol",
+        "title": "Apache Traffic Control",
+        "description": "Apache Traffic Control is an Open Source implementation of a Content Delivery Network",
+        "open_source": true,
+        "stars": 1000,
+        "type": "Product"
+    },
+    {
+        "repo": "https://github.com/yobulkdev/yobulkdev",
+        "link": "www.yobulk.dev/",
+        "title": "YoBulk",
+        "description": "Open Source & AI driven Data Onboarding Platform:Free flatfile.com alternative",
+        "open_source": true,
+        "stars": 850,
+        "type": "Product"
+    },
+    {
+        "repo": "https://github.com/oughtinc/ice?tab=readme-ov-file",
+        "link": "ice.ought.org",
+        "title": "Ice",
+        "description": "Interactive Composition Explorer: a debugger for compositional language model programs",
+        "open_source": true,
+        "stars": 490,
+        "type": "Product"
+    },
+    {
+        "link": "https://wowup.io/",
+        "repo": "https://github.com/WowUp/WowUp",
+        "title": "WowUp",
+        "description": "World of Warcraft addon updater powered by the community",
+        "open_source": true,
+        "stars": 830,
+        "type": "Product"
+    },
+    {
+        "repo": "https://github.com/geosolutions-it/MapStore2",
+        "link": "https://mapstore.geosolutionsgroup.com/mapstore/#/",
+        "title": "Map Store2",
+        "description": "Modern webmapping with OpenLayers, Leaflet, Cesium and React",
+        "open_source": true,
+        "stars": 450,
+        "type": "Product"
+    },
+    {
+        "link": "www.elfdict.com",
+        "repo": "https://github.com/galadhremmin/Parf-Edhellen/tree/master",
+        "title": "Parf Edhellen",
+        "description": "A dictionary for Tolkien's languages",
+        "open_source": true,
+        "stars": 75,
+        "type": "Product"
+    },
+    {
+        "repo": "https://github.com/certego/BuffaLogs",
+        "title": "BuffaLogs",
+        "description": "BuffaLogs is an Open Source Django App whose main purpose is to detect login anomalies",
+        "type": "Product",
+        "open_source": true,
+        "stars": 15
+    },
+    {
+        "repo": "https://github.com/railmapgen/rmg",
+        "link": "railmapgen.github.io/?app=rmg",
+        "title": "Rail Map Gen",
+        "description": "A tool for generating railway maps and information panels in the styles of following public transportation systems",
+        "stars": 145,
+        "open_source": true,
+        "type": "Product"
+    },
+    {
+        "repo": "https://github.com/REditorSupport/vscode-R",
+        "link": "https://marketplace.visualstudio.com/items?itemName=REditorSupport.r",
+        "title": "VS Code - R",
+        "description": "R Extension for Visual Studio Code",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 1000
+    },
+    {
+        "repo": "https://github.com/mxswat/mx-division-builds",
+        "link": "https://mxswat.github.io/mx-division-builds/#/",
+        "title": "MX Division Builds",
+        "description": "A tool to create and share build easily currently in public beta",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 79
+    },
+    {
+        "repo": "https://github.com/vxcontrol/soldr",
+        "title": "Soldr",
+        "description": "SOLDR is an Endpoint Detection and Response system which consists of centralised management part with extensive Web UI and Agents being installed on endpoint systems.",
+        "type": "Product",
+        "open_source": true,
+        "stars": 57
+    },
+    {
+        "link": "https://openziti.io/",
+        "title": "Ziti Console",
+        "description": "The OpenZiti Console is an administrative web interface for an OpenZiti network.",
+        "repo": "https://github.com/openziti/ziti-console",
+        "type": "Product",
+        "open_source": true,
+        "stars": 18
+    },
+    {
+        "repo": "https://github.com/vishwajeetraj11/quizco-frontend",
+        "title": "Quizco",
+        "description": "Quiz Builder and Assessment Application",
+        "link": "quizco-app.netlify.app/",
+        "type": "Product",
+        "open_source": true,
+        "stars": 19
+    },
+    {
+        "repo": "https://github.com/sipb/hydrant",
+        "title": "Hydrant",
+        "description": "MIT semester course planning app",
+        "link": "hydrant.mit.edu/",
+        "type": "Product",
+        "open_source": true,
+        "stars": 21
+    },
+    {
+        "repo": "https://github.com/mlflow/mlflow/tree/master",
+        "title": "MLFlow",
+        "description": "Open source platform for the machine learning lifecycle",
+        "link": "https://mlflow.org",
+        "type": "Product",
+        "open_source": true,
+        "stars": 16700
+    },
+    {
+        "link": "https://github.com/shawnbanasick/ken-q-analysis",
+        "title": "Ken Q Analysis",
+        "description": "A web application for Q Methodology",
+        "repo": "https://shawnbanasick.github.io/ken-q-analysis/index.html",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 10
+    },
+    {
+        "repo": "https://github.com/gedge-platform/gedge-platform",
+        "title": "Gedge Platform",
+        "description": "GEdge-Platform is a cloud edge computing platform for ultra low-latency services at the edge of the network.",
+        "link": "https://gedge-platform.github.io/",
+        "type": "Product",
+        "open_source": true,
+        "stars": 15
+    },
+    {
+        "repo": "https://github.com/windmill-labs/windmill",
+        "title": "Windmill",
+        "description": "Open-source developer platform to turn scripts into workflows and UIs. Fastest workflow engine (5x vs Airflow). Open-source alternative to Airplane and Retool.",
+        "link": "windmill.dev",
+        "type": "Product",
+        "open_source": true,
+        "stars": 8000
+    },
+    {
+        "repo": "https://github.com/jose-donato/budgetguru",
+        "title": "Budget Guru",
+        "description": "BudgetGuru is your AI-powered guide to smarter personal finance.",
+        "link": "budgetguru.vercel.app",
+        "type": "Product",
+        "open_source": true,
+        "stars": 15
+    },
+    {
+        "repo": "https://github.com/jeffvli/feishin",
+        "title": "Feishin",
+        "description": "A modern self-hosted music player.",
+        "link": "feishin.vercel.app",
+        "type": "Product",
+        "open_source": true,
+        "stars": 1300
+    },
+    {
+        "repo": "https://github.com/mlops-ai/mlops",
+        "title": "ML Ops",
+        "description": "Open-source tool for tracking & monitoring machine learning models.",
+        "link": "pypi.org/project/mlops-ai/",
+        "type": "Product",
+        "open_source": true,
+        "stars": 10
+    },
+    {
+        "repo": "https://github.com/opensource-emr/hospital-management-emr",
+        "title": "Hospital Management EMR",
+        "description": "A complete open source for electronic healthcare record management in Hospitals, Clinics and Pharmacy.",
+        "link": "https://opensource-emr.github.io/hospital-management-emr/",
+        "type": "Product",
+        "open_source": true,
+        "stars": 180
+    },
+    {
+        "repo": "https://github.com/AppImage/appimage.github.io",
+        "title": "App Image",
+        "description": "Given an URL to an AppImage, the GitHub action in this project inspects the AppImage and puts it into a community-maintained catalog",
+        "link": "appimage.github.io/",
+        "type": "Product",
+        "open_source": true,
+        "stars": 290
+    },
+    {
+        "repo": "https://github.com/vegaprotocol/vega.xyz",
+        "title": "Vega",
+        "description": "Vega's main website",
+        "link": "vega.xyz",
+        "type": "Product",
+        "open_source": true,
+        "stars": 10
+    },
+    {
+        "repo": "https://github.com/SCADA-LTS/Scada-LTS",
+        "title": "Scada LTS",
+        "description": "Scada-LTS is an Open Source, web-based, multi-platform solution for building your own SCADA (Supervisory Control and Data Acquisition) system.",
+        "link": "",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 615
+    },
+    {
+        "repo": "https://github.com/jpmorganchase/salt-ds",
+        "title": "Salt DS",
+        "description": "React UI components built with a focus on accessibility, customisation and ease-of-use",
+        "link": "https://www.saltdesignsystem.com/salt/index",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 100
+    },
+    {
+        "repo": "https://github.com/sassoftware/vscode-sas-extension",
+        "title": "VS Code SaS Extension",
+        "description": "This SAS Extension for Visual Studio Code provides support for the SAS language, including features such as SAS syntax highlighting, code completion, hover help, code folding, outline, SAS code snippets and run SAS code.",
+        "link": "",
+        "type": "Product",
+        "open_source": true,
+        "stars": 100
+    },
+    {
+        "repo": "https://github.com/plotly/dash-ag-grid",
+        "title": "Dash AG Grid",
+        "description": "Dash AG Grid is a high-performance and highly customizable component that wraps AG Grid, designed for creating rich datagrids.",
+        "link": "dash.plotly.com/dash-ag-grid",
+        "type": "Wrapper",
+        "open_source": true,
+        "stars": 120
+    },
+    {
+        "link": "https://developer.blackbaud.com/skyux/",
+        "type": "Integration",
+        "open_source": true,
+        "repo": "https://github.com/blackbaud/skyux",
+        "stars": 20,
+        "title": "Sky UX",
+        "description": "SKY UX components for Angular"
+    },
+    {
+        "link": "https://ag-grid-svelte.michael.kim/guide",
+        "title": "AG Grid Svelte",
+        "description": "An unofficial Svelte wrapper for AG Grid.",
+        "repo": "https://github.com/MichaelKim/ag-grid-svelte",
+        "type": "Wrapper",
+        "open_source": true,
+        "stars": 36
+    },
+    {
+        "repo": "https://github.com/widgetti/ipyaggrid",
+        "title": "ipyaggrid",
+        "description": "A wrapper for using AG Grid in Jupyter notebooks.",
+        "link": "https://widgetti.github.io/ipyaggrid/",
+        "type": "Wrapper",
+        "open_source": true,
+        "stars": 46
+    },
+    {
+        "repo": "https://github.com/lowdefy/lowdefy",
+        "title": "Lowdefy",
+        "description": "The config web stack for business apps - build internal tools, client portals, web apps, admin panels, dashboards, web sites, and CRUD apps with YAML or JSON.",
+        "link": "https://lowdefy.com/",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 2500
+    },
+    {
+        "repo": "https://github.com/systelab/systelab-components",
+        "title": "Systelab Components",
+        "description": "Systelab Angular common components",
+        "link": "https://systelab.github.io/components/",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 15
+    },
+    {
+        "repo": "https://github.com/RocketCommunicationsInc/astro",
+        "title": "Astro UXDS",
+        "description": "Astro UXDS is a collection of guidelines, patterns and components for designing space-based user interface applications.",
+        "link": "https://www.astrouxds.com/patterns/table/#complex-tables",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 80
+    },
+    {
+        "repo": "https://github.com/xh/hoist-react",
+        "title": "Hoist UX Toolkit",
+        "description": "A web application development toolkit",
+        "link": "https://xh.io/#hoist",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 21
+    },
+    {
+        "repo": "https://github.com/epicmaxco/vuestic-ui",
+        "title": "Vuestic UI",
+        "description": "Free and Open Source UI Library for Vue 3",
+        "link": "https://ui.vuestic.dev/ui-elements/data-table",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 3200
+    },
+    {
+        "repo": "https://github.com/kpmck/cypress-ag-grid",
+        "title": "Cypress AG Grid",
+        "description": "Cypress plugin for interacting with and validating against ag grid.",
+        "link": "",
+        "type": "Utility",
+        "open_source": true,
+        "stars": 30
+    },
+    {
+        "repo": "https://github.com/clickbar/ag-grid-laravel",
+        "title": "AG Grid Laravel Server Side Adapter",
+        "description": "A server-side adapter for AG Grid with support for filtering, sorting, exporting and server-side selection.",
+        "link": "",
+        "type": "Wrapper",
+        "open_source": true,
+        "stars": 15
+    },
+    {
+        "repo": "https://github.com/LSEG/ag-grid-playwright",
+        "title": "AG Grid Playwright",
+        "description": "A simple way to test ag-grid with Playwright. Extensible enough to cover the all of ag-grid's features.",
+        "link": "",
+        "type": "Utility",
+        "open_source": true,
+        "stars": 6
+    },
+    {
+        "repo": "https://github.com/syncfusion/ej2-angular-ui-components",
+        "title": "Syncfusion Angular UI Components",
+        "description": "Syncfusion Angular UI components library offer more than 50+ cross-browser, responsive, and lightweight angular UI controls for building modern web applications.",
+        "link": "https://www.syncfusion.com/angular-components",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 270
+    },
+    {
+        "repo": "https://github.com/zauberzeug/nicegui/tree/main",
+        "title": "Nice GUI",
+        "description": "Create web-based user interfaces with Python. The nice way.",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 6600
+    },
+    {
+        "repo": "https://github.com/terrestris/react-geo",
+        "title": "React GEO",
+        "description": "A set of geo related modules to use in combination with React, Ant Design and OpenLayers.",
+        "type": "Integration",
+        "open_source": true,
+        "stars": 350
+    },
+    {
+        "repo": "https://github.com/Azure/azure-iot-pcs-device-simulation",
+        "title": "Azure IoT Device Simulations",
+        "type": "Product",
+        "open_source": true,
+        "stars": 35,
+        "description": "Helps you build simulated devices that look and behave like the real thing enabling powerful testing scenarios"
+    },
+    {
+        "title": "Paladin Cloud CE",
+        "description": "An extensible, cloud security platform for developers.",
+        "repo": "https://github.com/PaladinCloud/CE",
+        "open_source": true,
+        "stars": 550,
+        "type": "Product",
+        "link": "https://paladincloud.io/"
+    },
+    {
+        "title": "Acuity VAHub",
+        "description": "Source code for main part of ACUITY's Visual Analytics application",
+        "repo": "https://github.com/digital-ECMT/acuity-vahub",
+        "open_source": true,
+        "stars": 5,
+        "type": "Product",
+        "link": "https://github.com/digital-ECMT/acuity-docker/wiki"
+    },
+
+    {
+        "title": "JP Project Identity Server 4",
+        "description": "ASP.NET Core 3 & Angular 8 Administration Panel for 💞IdentityServer4 and ASP.NET Core Identity",
+        "repo": "https://github.com/brunobritodev/JPProject.IdentityServer4.AdminUI?tab=readme-ov-file",
+        "open_source": true,
+        "stars": 750,
+        "type": "Product",
+        "link": "https://admin.jpproject.net/"
+    },
+    {
+        "title": "Firebot",
+        "description": "A powerful all-in-one bot for Twitch streamers",
+        "repo": "https://github.com/crowbartools/Firebot",
+        "open_source": true,
+        "stars": 300,
+        "type": "Product",
+        "link": "https://firebot.app"
+    },
+    {
+        "title": "Grid Widget for BBJ",
+        "description": "A Feature-rich grid component for BBj Based on HTML and JavaScript.",
+        "repo": "https://github.com/BBj-Plugins/BBjGridExWidget",
+        "open_source": true,
+        "stars": 5,
+        "type": "Integration",
+        "link": "https://bbj-plugins.github.io/BBjGridExWidget/"
+    },
+    {
+        "title": "Coveo Search UI",
+        "description": "Coveo JavaScript Search UI Framework",
+        "repo": "https://github.com/coveo/search-ui",
+        "open_source": true,
+        "stars": 131,
+        "type": "Product",
+        "link": "https://docs.coveo.com/en/187/glossary/coveo-javascript-search-framework"
+    },
+    {
+        "title": "PaC Bot",
+        "description": "Policy as Code Bot (PacBot) is a platform for continuous compliance monitoring, compliance reporting and security automation for the cloud",
+        "repo": "https://github.com/tmobile/pacbot",
+        "open_source": true,
+        "stars": 1300,
+        "type": "Product",
+        "link": "https://tmobile.github.io/pacbot/"
+    },
+    {
+        "title": "Knowage Server",
+        "description": "Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.",
+        "repo": "https://github.com/KnowageLabs/Knowage-Server",
+        "open_source": true,
+        "stars": 390,
+        "type": "Product",
+        "link": "https://knowage-suite.com"
+    },
+    {
+        "title": "GoodData UI SDK",
+        "description": "GoodData.UI is a TypeScript framework for building analytical applications on top of the GoodData platform, GoodData Cloud or GoodData.CN.",
+        "repo": "https://github.com/gooddata/gooddata-ui-sdk",
+        "open_source": true,
+        "stars": 60,
+        "type": "Integration",
+        "link": "https://www.gooddata.com/docs/gooddata-ui/latest/"
+    },
+    {
+        "title": "Styled UI",
+        "description": "Faithlife UI styleguide and set of components",
+        "repo": "https://github.com/Faithlife/styled-ui",
+        "open_source": true,
+        "stars": 12,
+        "type": "Integration",
+        "link": "https://faithlife.github.io/styled-ui/"
+    },
+    {
+        "title": "Source Academy Frontend",
+        "description": "Frontend of online learning environment Source Academy @ NUS (React, Redux, Saga, Blueprint)",
+        "repo": "https://github.com/source-academy/frontend",
+        "open_source": true,
+        "stars": 100,
+        "type": "Product",
+        "link": "https://sourceacademy.org"
+    },
+    {
+        "title": "GWT Examples",
+        "description": "Examples of Google Web Toolkit",
+        "repo": "https://github.com/ascendtech/gwt-examples/tree/master",
+        "open_source": true,
+        "stars": 15,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "OpenMrs React Components",
+        "description": "This repository contains React components built to support the development of OpenMRS Open Web App (OWA) using ReactJS",
+        "repo": "https://github.com/openmrs/openmrs-react-components",
+        "open_source": true,
+        "stars": 20,
+        "type": "Integration",
+        "link": "https://openmrs.org/"
+    },
+    {
+        "title": "Irida",
+        "description": "Canada’s Integrated Rapid Infectious Disease Analysis Platform for Genomic Epidemiology",
+        "repo": "https://github.com/phac-nml/irida",
+        "open_source": true,
+        "stars": 45,
+        "type": "Product",
+        "link": "https://irida.ca"
+    },
+    {
+        "title": "OSharp",
+        "description": "OSharp is a rapid development framework based on .Net6.0.",
+        "repo": "https://github.com/dotnetcore/osharp",
+        "open_source": true,
+        "stars": 2660,
+        "type": "Integration",
+        "link": ""
+    },
+    {
+        "title": "Night Hawk Response",
+        "description": "Custom built application for asynchronus forensic data presentation on an Elasticsearch backend.",
+        "repo": "https://github.com/biggiesmallsAG/nightHawkResponse",
+        "open_source": true,
+        "stars": 600,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "MyLG (Unsupported)",
+        "description": "myLG is an open source software utility which combines the functions of the different network probes in one network diagnostic tool.",
+        "repo": "https://github.com/mehrdadrad/mylg",
+        "open_source": true,
+        "stars": 2700,
+        "type": "Product",
+        "link": "https://mylg.io"
+    },
+    {
+        "title": "OpenEMM",
+        "description": "Web-based software for email automation and marketing (newsletters, multi-stage mail campaigns, transaction mails, autoresponder, etc.)",
+        "repo": "https://github.com/agnitas-org/openemm",
+        "open_source": true,
+        "stars": 90,
+        "type": "Product",
+        "link": "https://www.agnitas.de/en/e-marketing_manager/email-marketing-software-variants/openemm/"
+    },
+    {
+        "title": "Shukun AI",
+        "description": "SHUKUN AI is an AI-native database search application that helps companies explore and analyze data. SHUKUN AI provides a feature that helps you split complex natural language tasks into smaller parts then combines them into the results.",
+        "repo": "https://github.com/shukun-ai/shukun-ai",
+        "open_source": true,
+        "stars": 15,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "Section App Client",
+        "description": "Frontend of the ESN section app",
+        "repo": "https://github.com/heddendorp/section-app-client",
+        "open_source": true,
+        "stars": 40,
+        "type": "Product",
+        "link": "https://tumi.esn.world"
+    },
+    {
+        "title": "Statbotics",
+        "description": "Statbotics is an open-source data analytics platform for the FIRST Robotics Competition (FRC)",
+        "repo": "https://github.com/avgupta456/statbotics",
+        "open_source": true,
+        "stars": 60,
+        "type": "Product",
+        "link": "https://statbotics.io/"
+    },
+    {
+        "title": "Code Companion AI",
+        "description": "AI coding assistant app",
+        "repo": "https://github.com/codecompanion-ai/code-companion",
+        "open_source": true,
+        "stars": 30,
+        "type": "Product",
+        "link": "https://codecompanion.ai/"
+    },
+    {
+        "title": "Scaleph",
+        "description": "Open data platform based on Kubernetes",
+        "repo": "https://github.com/flowerfine/scaleph",
+        "open_source": true,
+        "stars": 330,
+        "type": "Product",
+        "link": "https://flowerfine.github.io/scaleph-repress-site/en/"
+    },
+    {
+        "title": "Xata Form (Archived)",
+        "description": "Create, share and analyse your forms with Xata. Open Source alternative to Typeform.",
+        "repo": "https://github.com/xataio/xataform",
+        "open_source": true,
+        "stars": 70,
+        "type": "Product",
+        "link": "xataform.com"
+    },
+    {
+        "title": "Dash Player (Chinese)",
+        "description": "A video player tailored for English learners to help you easily improve your English by watching videos and immersing yourself in real context.",
+        "repo": "https://github.com/solidSpoon/DashPlayer",
+        "open_source": true,
+        "stars": 50,
+        "type": "Product",
+        "link": "https://solidspoon.xyz/app/dash-player/"
+    },
+    {
+        "title": "Relation Graph (Chinese)",
+        "description": "Use G6, X6, JsPlumb, etc. to implement the blood relationship map",
+        "repo": "https://github.com/zhou-fuhao/relation-graph-vue2",
+        "open_source": true,
+        "stars": 60,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "SUI Base",
+        "description": "Sui development environment and cookbook.",
+        "repo": "https://github.com/ChainMovers/suibase",
+        "open_source": true,
+        "stars": 25,
+        "type": "Itnegration",
+        "link": "suibase.io"
+    },
+    {
+        "title": "HSR Optimiizer",
+        "description": "A character optimizer, relic scorer, and various other tools for Honkai Star Rail",
+        "repo": "https://github.com/fribbels/hsr-optimizer",
+        "open_source": true,
+        "stars": 35,
+        "type": "Product",
+        "link": "fribbels.github.io/hsr-optimizer/"
+    },
+    {
+        "title": "MSAez",
+        "description": "MSA Easy is a comprehensive tool designed to assist in the analysis, design, implementation, and operation of microservices",
+        "repo": "https://github.com/msa-ez/platform",
+        "open_source": true,
+        "stars": 25,
+        "type": "Product",
+        "link": "https://www.msaez.io/"
+    },
+    {
+        "title": "Dominate AI",
+        "description": "Dominate A.I - The world's best open source CRM for Tech Founders",
+        "repo": "https://github.com/DominateAi/Dominate-AI",
+        "open_source": true,
+        "stars": 70,
+        "type": "Product",
+        "link": "dominate.ai/"
+    },
+    {
+        "title": "Parkour 2",
+        "description": "Parkour2: Laboratory Information Management System",
+        "repo": "https://github.com/maxplanck-ie/parkour2",
+        "open_source": true,
+        "stars": 20,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "Otter",
+        "description": "The Otter project is a highly modular framework whose goal is to provide a common platform to accelerate and facilitate the development of runtime customizable Angular based Web Applications",
+        "repo": "https://github.com/AmadeusITGroup/otter",
+        "open_source": true,
+        "stars": 45,
+        "type": "Integration",
+        "link": "https://amadeusitgroup.github.io/otter/"
+    },
+    {
+        "title": "Invoice Generator",
+        "description": "React-based invoice generator with PDF export",
+        "repo": "https://github.com/guranshdeol/Invoice-Generator",
+        "open_source": true,
+        "stars": 10,
+        "type": "Product",
+        "link": "https://invoice-generator-guransh.netlify.app/"
+    },
+    {
+        "title": "Devstar",
+        "description": "Maximize efficiency and productivity with our free online developer toolkit. Streamline workflows and unlock your full potential with our user-friendly platform.",
+        "repo": "https://github.com/hannansatopay/devstar",
+        "open_source": true,
+        "stars": 20,
+        "type": "Integration",
+        "link": "https://developerstar.com"
+    },
+    {
+        "title": "FortifyQL",
+        "description": "FortifyQL is an all-in-one security monitoring tool for GraphQL API's.",
+        "repo": "https://github.com/oslabs-beta/FortifyQL",
+        "open_source": true,
+        "stars": 40,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "Ciphyr",
+        "description": "GraphQL Security Monitoring Application",
+        "repo": "https://github.com/oslabs-beta/Ciphyr",
+        "open_source": true,
+        "stars": 30,
+        "type": "Product",
+        "link": "https://ciphyr.io"
+    },
+    {
+        "title": "L3AGI",
+        "description": "Open-source framework to make AI agents' team collaboration as effective as human collaboration.",
+        "repo": "https://github.com/l3vels/L3AGI",
+        "open_source": true,
+        "stars": 170,
+        "type": "Product",
+        "link": "https://l3agi.com"
+    },
+    {
+        "title": "Orbital",
+        "description": "Orbital automates integration between data sources (APIs, Databases, Queues and Functions). BFF's, API Composition and ETL pipelines that adapt as your specs change.",
+        "repo": "https://github.com/orbitalapi/orbital",
+        "open_source": true,
+        "stars": 280,
+        "type": "Product",
+        "link": "https://orbitalhq.com"
+    },
+    {
+        "title": "Allianz NG-Aquila",
+        "description": "Angular UI Component library for the Open Insurance Platform",
+        "repo": "https://github.com/allianz/ng-aquila",
+        "open_source": true,
+        "stars": 200,
+        "type": "Integration",
+        "link": "allianz.github.io/ng-aquila/"
+    },
+    {
+        "title": "Infineon Design System",
+        "description": "The Infineon Digital Design System supports designers, developers and project managers to build user interfaces faster and better",
+        "repo": "https://github.com/Infineon/infineon-design-system-stencil",
+        "open_source": true,
+        "stars": 10,
+        "type": "Product",
+        "link": "https://infineon.github.io/infineon-design-system-stencil/"
+    },
+    {
+        "title": "NextJS AirBnb Clone",
+        "description": "A clone of the AirBnb site using Next JS",
+        "repo": "https://github.com/koolkishan/nextjs-airbnb-clone-starter",
+        "open_source": true,
+        "stars": 40,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "",
+        "description": "",
+        "repo": "",
+        "open_source": true,
+        "stars": 0,
+        "type": "",
+        "link": ""
+    },
+    {
+        "title": "",
+        "description": "",
+        "repo": "",
+        "open_source": true,
+        "stars": 0,
+        "type": "",
+        "link": ""
+    }
+]

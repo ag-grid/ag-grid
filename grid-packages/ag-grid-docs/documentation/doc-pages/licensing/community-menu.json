@@ -47,6 +47,12 @@
             "url": "/community/meet-the-team/",
             "showInCollapsed": true,
             "absoluteUrl": true
+          },
+          {
+            "title": "Samples & Demos",
+            "url": "/community/samples-demos/",
+            "showInCollapsed": true,
+            "absoluteUrl": true
           }
         ]
       },
@@ -80,6 +86,12 @@
           {
             "title": "Friends & Partners",
             "url": "/community/friends-partners/",
+            "showInCollapsed": true,
+            "absoluteUrl": true
+          },
+          {
+            "title": "Sponsorships",
+            "url": "/community/sponsorships/",
             "showInCollapsed": true,
             "absoluteUrl": true
           }
