@@ -74,7 +74,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     text-align: center;
     gap: $spacing-size-2 $spacing-size-4;
     margin: 0 auto;
@@ -388,6 +388,11 @@
     height: 56px;
     padding-top: $spacing-size-4;
     z-index: 2;
+}
+@media screen and (max-width: $breakpoint-pricing-large) {
+    .fullWidthBar {
+        display: none;
+    }
 }
 
 .fullWidthBarContainer {

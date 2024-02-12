@@ -50,3 +50,13 @@ justify-content: space-between;
       }
     }
   }
+
+  @media screen and (max-width: $breakpoint-pricing-small) {
+ .question {
+    text-align: left;
+ }
+ .answer {
+    text-align: left;
+ }
+}
+
