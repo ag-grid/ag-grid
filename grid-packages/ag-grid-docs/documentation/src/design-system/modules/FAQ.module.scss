@@ -23,7 +23,9 @@
     line-height: var(--text-lh-2xl);
     color: var(--color-text-secondary);
     opacity: 0.8;
+    text-align: left;
 }
+
 
 .chevronDown {
     --icon-size: 24px;
@@ -49,7 +51,5 @@
         text-align: left;
     }
 
-    .answer {
-        text-align: left;
-    }
+
 }

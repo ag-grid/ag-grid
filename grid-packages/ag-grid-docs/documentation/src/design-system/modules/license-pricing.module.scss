@@ -340,6 +340,10 @@
     }
 }
 
+.faqSection {
+    text-align: center;
+    margin-top: $spacing-size-20;
+}
 .contactSales {
     text-align: center;
     margin-top: $spacing-size-20;
@@ -654,8 +658,13 @@ transition: all 0.3s ease-in;
     padding-left: $spacing-size-2;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border-secondary);
-
-        position: sticky;
-        top: 119px;
+    @media screen and (min-width: $breakpoint-pricing-large) { 
+    position: sticky;
+    top: 119px;
+}
     color: var(--color-text-secondary);
+
+    &:first-child {
+        margin-top: 0;
+    }
 }

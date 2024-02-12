@@ -164,7 +164,7 @@ export const LicensePricing = () => {
                             </div>
                         </div>
 
-                        <div className={styles.contactSales}>
+                        <div className={styles.faqSection}>
                             <h3 className="text-2xl">Frequently asked questions</h3>
 
                             <p className="text-regular">
