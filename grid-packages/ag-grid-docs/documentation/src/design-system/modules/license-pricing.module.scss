@@ -645,3 +645,10 @@ transition: all 0.3s ease-in;
 .videoPrompt {
     margin-bottom: $spacing-size-12;
 }
+
+.categoryTableHeader {
+    padding-top: $spacing-size-3;
+    background-color: var(--color-bg-secondary);
+    padding-bottom: $spacing-size-3;
+    padding-left: $spacing-size-2;
+}

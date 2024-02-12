@@ -125,7 +125,7 @@ export const LicensePricing = () => {
 
                         {featuresData.map((section, i) => {
                           return <div key={i}>
-                              <h4>{section.group.name}</h4>
+                              <h4 className={styles.categoryTableHeader}>{section.group.name}</h4>
 
                               <ComparisonTable
                                   data={section.items}
@@ -181,12 +181,12 @@ export const LicensePricing = () => {
                 <div className={styles.contactSales}>
                     <h3 className="text-2xl">Need help?</h3>
 
-                    <p className="text-secondary text-lg">
+                    <p className="text-secondary">
                         Email{' '}
                         <InfoEmailLink emailSubject="AG Grid Developer license query" trackingType="headerLink">
-                            info@ag-grid.com
+                            info@ag-grid.com 
                         </InfoEmailLink>{' '}
-                        and start a conversation. We can provide quotes, give bulk pricing, and answer any sales or
+                         and start a conversation. We can provide quotes, give bulk pricing, and answer any sales or
                         contract-related questions you may have.
                     </p>
 
