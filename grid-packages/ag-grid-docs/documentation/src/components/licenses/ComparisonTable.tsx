@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '@design-system/modules/ComparisonTable.scss';
 import { Icon } from '../../components/Icon';
-import {ChevronDown} from 'lucide-react';
-
 
 const data = [
   {
@@ -342,6 +340,7 @@ const ComparisonTable = ({ isChecked }) => {
               onClick={() => toggleCategory(categoryData.category)}
             >
               {categoryData.category}
+              {/* Need to remove lucide-react */}
               {/* <ChevronDown /> */}
             </div>
             {expandedCategories[categoryData.category] &&

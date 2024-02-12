@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import styles from '@design-system/modules/FAQ.module.scss';
-import {ChevronDown} from 'lucide-react';
-
 
 // Single FAQ item component
 const FAQItem = ({ question, answer }) => {
@@ -14,7 +12,9 @@ const FAQItem = ({ question, answer }) => {
       <div className={styles.faqItem}>
         <div className={styles.question} onClick={toggleOpen}>
           {question}
-          <ChevronDown className={`${styles.chevronDown} ${isOpen ? styles.chevronOpen : ''}`} />
+
+          {/* Need to remove lucide-react */}
+          {/* <ChevronDown className={`${styles.chevronDown} ${isOpen ? styles.chevronOpen : ''}`} /> */}
         </div>
         <div
           className={`${styles.answer} ${isOpen ? styles.open : ''}`}

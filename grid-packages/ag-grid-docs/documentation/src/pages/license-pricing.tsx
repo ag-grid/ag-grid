@@ -12,7 +12,7 @@ import { trackOnceInfoEmail } from '../utils/analytics';
 import SEO from './components/SEO';
 import ToggleBackground from '../images/inline-svgs/pricing/toggle-background.svg';
 import { ComparisonTable } from '../components/comparison-table/ComparisonTable';
-import featuresData from '../../doc-pages/licensing/featuresMatrix.json'
+import featuresData from '../../doc-pages/licensing/gridFeaturesMatrix.json'
 
 import FAQ from '../components/licenses/FAQ';
 
@@ -84,7 +84,7 @@ export const LicensePricing = () => {
             "answer": "One Deployment License needed for multi-tenant setups, serving multiple customers under one application instance."
         }
     ]
-    
+
     return (
         <>
             {showFullWidthBar && (
@@ -148,12 +148,13 @@ export const LicensePricing = () => {
                         <ComparisonTable
                             data={featuresData}
                             columns={{
-                                'name': '',
+                                'label': '',
                                 'community': '',
                                 'enterprise': '',
                                 'chartsGrid': '',
                               }}
                               cellRenderer={{
+                                'label': 'label',
                                 'community': "featuresTickCross",
                                 'enterprise': "featuresTickCross",
                                 'chartsGrid': "featuresTickCross",

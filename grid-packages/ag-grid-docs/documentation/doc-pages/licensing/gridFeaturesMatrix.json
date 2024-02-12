@@ -1,0 +1,29 @@
+[
+  {
+    "label": {
+      "name": "Community Integrated Charts",
+      "link": "https://example.com/column-groups"
+    },
+    "community": false,
+    "enterprise": true,
+    "chartsGrid": true
+  },
+  {
+    "label": {
+      "name": "Integrated Enterprise Charts",
+      "link": "https://example.com/column-groups"
+    },
+    "community": false,
+    "enterprise": false,
+    "chartsGrid": true
+  },
+  {
+    "label": {
+      "name": "AG Charts Enterprise ",
+      "link": "https://example.com/column-spanning"
+    },
+    "community": false,
+    "enterprise": false,
+    "chartsGrid": true
+  }
+]

@@ -4,10 +4,11 @@ import classnames from 'classnames';
 import React, { useMemo } from 'react';
 import { createRowDataFilter } from './utils/createRowDataFilter';
 import { FeaturesTickCross, TickCross } from './renderers/TickCross';
+import { Label } from './renderers/Label';
 
 type Columns = Record<string, string>;
 type Data = Record<string, any>;
-type CellRenderer = 'tickCross' | 'featuresTickCross' | 'group';
+type CellRenderer = 'tickCross' | 'featuresTickCross' | 'group' | 'label';
 type CellRendererDef = Record<string, CellRenderer>;
 
 // Added level field for rendering indentation
@@ -51,6 +52,8 @@ function CellValue({
         return <TickCross value={value} />;
     } else if (renderer === 'featuresTickCross') {
         return <FeaturesTickCross value={value} />;
+    } else if (renderer === 'label') {
+        return <Label value={value} />;
     }
 
     if (value === undefined) {
