@@ -80,7 +80,8 @@ export {
     ExcelRow,
     ExcelStyle,
     ExcelTable,
-    ExcelWorksheet
+    ExcelWorksheet,
+    ExcelSheetNameGetter,
 } from "./interfaces/iExcelCreator";
 
 // dragAndDrop
@@ -315,7 +316,7 @@ export { IDetailCellRendererParams, GetDetailRowData, GetDetailRowDataParams, ID
 
 // exporter
 export {
-    CsvExportParams, CsvCell, CsvCellData, CsvCustomContent, ExportParams, PackageFileParams,
+    CsvExportParams, CsvCell, CsvCellData, CsvCustomContent, ExportParams, ExportFileNameGetter, PackageFileParams,
     ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams,
     ProcessRowGroupForExportParams, ShouldRowBeSkippedParams, BaseExportParams
 } from "./interfaces/exportParams";
