@@ -143,7 +143,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             }
         }
 
-        this.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true);
+        this.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {

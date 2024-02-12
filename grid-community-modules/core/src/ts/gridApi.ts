@@ -1788,15 +1788,15 @@ export class GridApi<TData = any> {
     /** Same as `moveColumn` but works on list. */
     public moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) { this.columnModel.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
     /** Move the column to a new position in the row grouping order. */
-    public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnModel.moveRowGroupColumn(fromIndex, toIndex); }
+    public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnModel.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
     /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
-    public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.columnModel.setColumnAggFunc(key, aggFunc); }
+    public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.columnModel.setColumnAggFunc(key, aggFunc, 'api'); }
     /** Sets the column width on a single column. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
-    public setColumnWidth(key: string | ColDef | Column, newWidth: number, finished: boolean = true, source?: ColumnEventType): void {
+    public setColumnWidth(key: string | ColDef | Column, newWidth: number, finished: boolean = true, source: ColumnEventType = 'api'): void {
         this.columnModel.setColumnWidths([{ key, newWidth }], false, finished, source);
     }
     /** Sets the column widths on multiple columns. This method offers better performance than calling `setColumnWidth` multiple times. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
-    public setColumnWidths(columnWidths: { key: string | ColDef | Column, newWidth: number }[], finished: boolean = true, source?: ColumnEventType): void {
+    public setColumnWidths(columnWidths: { key: string | ColDef | Column, newWidth: number }[], finished: boolean = true, source: ColumnEventType = 'api'): void {
         this.columnModel.setColumnWidths(columnWidths, false, finished, source);
     }
 
@@ -1858,7 +1858,7 @@ export class GridApi<TData = any> {
      * the column sizing will happen asynchronously when row data is added. To always perform this synchronously,
      * set `cellDataType = false` on the default column definition.
      */
-    public autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void { return this.columnModel.autoSizeColumn(key, skipHeader, 'api'); }
+    public autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void { return this.columnModel.autoSizeColumn(key, 'api', skipHeader); }
 
     /**
      * Same as `autoSizeColumn`, but provide a list of column keys. If inferring cell data types with custom column types
@@ -1874,7 +1874,7 @@ export class GridApi<TData = any> {
      * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      */
-    public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); }
+    public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns('api', skipHeader); }
 
     /** Set the pivot result columns. */
     public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.columnModel.setSecondaryColumns(colDefs, 'api'); }

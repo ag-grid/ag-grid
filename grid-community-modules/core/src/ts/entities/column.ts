@@ -214,7 +214,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     // gets called when user provides an alternative colDef, eg
-    public setColDef(colDef: ColDef<any, TValue>, userProvidedColDef: ColDef<any, TValue> | null, source: ColumnEventType = 'api'): void {
+    public setColDef(colDef: ColDef<any, TValue>, userProvidedColDef: ColDef<any, TValue> | null, source: ColumnEventType): void {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
@@ -285,7 +285,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
             exists(this.colDef.tooltipComponent);
     }
 
-    public resetActualWidth(source: ColumnEventType = 'api'): void {
+    public resetActualWidth(source: ColumnEventType): void {
         const initialWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
         this.setActualWidth(initialWidth, source, true);
     }
@@ -438,7 +438,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return false;
     }
 
-    public setMoving(moving: boolean, source: ColumnEventType = "api"): void {
+    public setMoving(moving: boolean, source: ColumnEventType): void {
         this.moving = moving;
         this.eventService.dispatchEvent(this.createColumnEvent('movingChanged', source));
     }
@@ -461,7 +461,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return this.sort;
     }
 
-    public setSort(sort: SortDirection | undefined, source: ColumnEventType = "api"): void {
+    public setSort(sort: SortDirection | undefined, source: ColumnEventType): void {
         if (this.sort !== sort) {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent('sortChanged', source));
@@ -469,7 +469,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.dispatchStateUpdatedEvent('sort');
     }
 
-    public setMenuVisible(visible: boolean, source: ColumnEventType = "api"): void {
+    public setMenuVisible(visible: boolean, source: ColumnEventType): void {
         if (this.menuVisible !== visible) {
             this.menuVisible = visible;
             this.eventService.dispatchEvent(this.createColumnEvent('menuVisibleChanged', source));
@@ -531,7 +531,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return this.left + this.actualWidth;
     }
 
-    public setLeft(left: number | null, source: ColumnEventType = "api") {
+    public setLeft(left: number | null, source: ColumnEventType) {
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
@@ -545,7 +545,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     // additionalEventAttributes is used by provided simple floating filter, so it can add 'floatingFilter=true' to the event
-    public setFilterActive(active: boolean, source: ColumnEventType = "api", additionalEventAttributes?: any): void {
+    public setFilterActive(active: boolean, source: ColumnEventType, additionalEventAttributes?: any): void {
         if (this.filterActive !== active) {
             this.filterActive = active;
             this.eventService.dispatchEvent(this.createColumnEvent('filterActiveChanged', source));
@@ -573,14 +573,14 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.dispatchStateUpdatedEvent('pinned');
     }
 
-    public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType = "api"): void {
+    public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType): void {
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
             this.eventService.dispatchEvent(this.createColumnEvent('firstRightPinnedChanged', source));
         }
     }
 
-    public setLastLeftPinned(lastLeftPinned: boolean, source: ColumnEventType = "api"): void {
+    public setLastLeftPinned(lastLeftPinned: boolean, source: ColumnEventType): void {
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
             this.eventService.dispatchEvent(this.createColumnEvent('lastLeftPinnedChanged', source));
@@ -611,7 +611,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return this.pinned;
     }
 
-    public setVisible(visible: boolean, source: ColumnEventType = "api"): void {
+    public setVisible(visible: boolean, source: ColumnEventType): void {
         const newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;
@@ -730,7 +730,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return Math.max(rowSpan, 1);
     }
 
-    public setActualWidth(actualWidth: number, source: ColumnEventType = "api", silent: boolean = false): void {
+    public setActualWidth(actualWidth: number, source: ColumnEventType, silent: boolean = false): void {
         if (this.minWidth != null) {
             actualWidth = Math.max(actualWidth, this.minWidth);
         }
@@ -781,13 +781,13 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.dispatchStateUpdatedEvent('flex');
     }
 
-    public setMinimum(source: ColumnEventType = "api"): void {
+    public setMinimum(source: ColumnEventType): void {
         if (exists(this.minWidth)) {
             this.setActualWidth(this.minWidth, source);
         }
     }
 
-    public setRowGroupActive(rowGroup: boolean, source: ColumnEventType = "api"): void {
+    public setRowGroupActive(rowGroup: boolean, source: ColumnEventType): void {
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(this.createColumnEvent('columnRowGroupChanged', source));
@@ -800,7 +800,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return this.rowGroupActive;
     }
 
-    public setPivotActive(pivot: boolean, source: ColumnEventType = "api"): void {
+    public setPivotActive(pivot: boolean, source: ColumnEventType): void {
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
             this.eventService.dispatchEvent(this.createColumnEvent('columnPivotChanged', source));
@@ -821,7 +821,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return this.isAllowPivot() || this.isAllowRowGroup() || this.isAllowValue();
     }
 
-    public setValueActive(value: boolean, source: ColumnEventType = "api"): void {
+    public setValueActive(value: boolean, source: ColumnEventType): void {
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
             this.eventService.dispatchEvent(this.createColumnEvent('columnValueChanged', source));
