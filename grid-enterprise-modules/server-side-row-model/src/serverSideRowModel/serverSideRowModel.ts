@@ -314,7 +314,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         if (this.managingPivotResultColumns) {
             // if managing pivot columns, also reset secondary columns.
-            this.columnModel.setSecondaryColumns(null);
+            this.columnModel.setSecondaryColumns(null, 'api');
             this.managingPivotResultColumns = false;
         }
 
