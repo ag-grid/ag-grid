@@ -64,8 +64,7 @@ const GridExample = () => {
   }, []);
 
   return (
-    <div>
-      <div>
+    <div className="ag-theme-quartz" style={{ height: 500 }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefs}
@@ -75,7 +74,6 @@ const GridExample = () => {
           paginationPageSize={500}
           paginationPageSizeSelector={[200, 500, 1000]}
         />
-      </div>
     </div>
   );
 }

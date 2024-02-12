@@ -345,9 +345,21 @@ Rows and Columns are set as `ag-grid-vue` component attributes. Styling is appli
 
 </framework-specific-section>
 
+<framework-specific-section frameworks="angular">
+
+**6. Finished**
+
+</framework-specific-section>
+
+<framework-specific-section frameworks="react,vue,javascript">
+
+**5. Finished**
+
+</framework-specific-section>
+
 Below is a live example of the application running. Click `</> Code` to see the code.
 
-<grid-example title='Quick Start Example' name='quick-start-example' type='mixed' options='{ "exampleHeight": 176 }'></grid-example>
+<grid-example title='Quick Start Example' name='quick-start-example' type='mixed' options='{ "exampleHeight": 302 }'></grid-example>
 
 <note>To live-edit the code, open the example in CodeSandbox or Plunkr using the buttons to the lower-right.</note>
 
@@ -519,7 +531,7 @@ const gridOptions = {
 
 <div style="height:15px;"></div>
 
-<grid-example title='Showing Data Example' name='showing-data-example' type='mixed' options='{ "exampleHeight": 176 }'></grid-example>
+<grid-example title='Showing Data Example' name='showing-data-example' type='mixed' options='{ "exampleHeight": 302 }'></grid-example>
 
 ## Working with Data
 
@@ -642,6 +654,7 @@ HTML element of the grid.
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
 |import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
+|// import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
 | ...
 |return (
 |  &lt;div class="ag-theme-quartz"> // set Quartz Theme on parent div
@@ -654,6 +667,11 @@ HTML element of the grid.
 
 <framework-specific-section frameworks="javascript">
 
+<snippet transform={false} language="jsx">
+|import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
+|// import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
+</snippet>
+
 <snippet transform={false} language="html">
 |&lt;!-- Your grid container -->
 |&lt;div id="myGrid" class="ag-theme-quartz" style="height: 500px">&lt;/div>
@@ -665,6 +683,7 @@ HTML element of the grid.
 
 <snippet transform={false} language="jsx">
 |import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
+|// import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
 | // ...
 |  template: `&lt;div style="height: 100%; box-sizing: border-box;">
 |    &lt;ag-grid-angular
@@ -682,6 +701,7 @@ HTML element of the grid.
 
 <snippet transform={false} language="jsx">
 |import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
+|// import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
 |
 |const VueExample = {
 |  template: `
@@ -705,88 +725,32 @@ HTML element of the grid.
 
 </framework-specific-section>
 
-<div style="display: flex; margin-bottom: 10px;">
-    <image-caption
-        width="calc(50% - 48px)"
-        src="getting-started/resources/agThemeQuartz.png"
-        alt="AG Theme Quartz"
-        toggleDarkMode="false"
-    >
-    </image-caption>
-    <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeQuartzDark.png" alt="AG Theme Quartz Dark" toggleDarkMode="false"></image-caption>
+<div style="display: flex; margin-bottom: 40px; margin-top: 40px; text-align: center; font-weight: bold;">
+    <div style="width: 50%">
+        Quartz
+        <image-caption
+            src="getting-started/resources/themeQuartz.png"
+            alt="AG Theme Quartz"
+        ></image-caption>
+    </div>
+    <div style="width: 50%">
+        Quartz Dark
+        <image-caption
+            src="getting-started/resources/themeQuartzDark.png"
+            alt="AG Theme Quartz Dark"
+        ></image-caption>
+    </div>
 </div>
 
-<framework-specific-section frameworks="react">
-
-<snippet transform={false} language="jsx">
-|import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme
-| ...
-|return (
-|  &lt;div class="ag-theme-alpine"> // set Alpine Theme on parent div
-|    &lt;AgGridReact rowData={...} columnDefs={...} />
-|  &lt;/div>
-|)
-</snippet>
-
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-
-<snippet transform={false} language="html">
-|&lt;!-- Your grid container -->
-|&lt;div id="myGrid" class="ag-theme-alpine" style="height: 500px">&lt;/div>
-</snippet>
-</framework-specific-section>
-
-
-<framework-specific-section frameworks="angular">
-
-<snippet transform={false} language="jsx">
-|import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme
-| // ...
-|  template: `&lt;div style="height: 100%; box-sizing: border-box;">
-|    &lt;ag-grid-angular
-|      // ...
-|      [class]="themeClass"
-|    >&lt;/ag-grid-angular>
-|  &lt;/div>`,
-| // ...
-| public themeClass: string = "ag-theme-alpine";
-</snippet>
-
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-
-<snippet transform={false} language="jsx">
-|import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme
-|
-|const VueExample = {
-|  template: `
-|        &lt;div style="height: 100%">
-|            &lt;div style="height: 100%; box-sizing: border-box;">
-|                &lt;ag-grid-vue
-|                // ...
-|                :class="themeClass">&lt;/ag-grid-vue>
-|            &lt;/div>
-|        &lt;/div>
-|    `,
-|// ...
-|  data: function () {
-|    return {
-|      // ...
-|      themeClass: "ag-theme-alpine",
-|    };
-|  },
-| // ...
-</snippet>
-
-</framework-specific-section>
-
-
-<div style="display: flex; margin-bottom: 10px;">
-    <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeAlpine.png" alt="AG Theme Quartz" toggleDarkMode="false"></image-caption>
-    <image-caption width="calc(50% - 48px)" src="getting-started/resources/agThemeAlpineDark.png" alt="AG Theme Quartz Dark" toggleDarkMode="false"></image-caption>
+<div style="display: flex; margin-bottom: 10px; text-align: center; font-weight: bold;">
+    <div style="width: 50%">
+        Alpine
+        <image-caption src="getting-started/resources/themeAlpine.png" alt="AG Theme Alpine"></image-caption>
+    </div>
+    <div style="width: 50%">
+        Alpine Dark
+        <image-caption src="getting-started/resources/themeAlpineDark.png" alt="AG Theme Alpine Dark"></image-caption>
+    </div>
 </div>
 
 ### Customising a Theme
@@ -804,7 +768,9 @@ Customise themes using CSS variables.
 }
 </snippet>
 
-<image-caption centered="true"  src="getting-started/resources/customisingTheme.png" alt="Customising a Theme with CSS Variables" toggleDarkMode="false"></image-caption>
+<div style="width: 50%">
+<image-caption src="getting-started/resources/customisingThemeExample.png" alt="Customising a Theme with CSS Variables"></image-caption>
+</div>
 
 
 ### Figma
@@ -834,11 +800,6 @@ const gridOptions = {
     }],
 };
 </snippet>
-</div>
-<div style="min-width: 0;flex: 1">
-<image-caption src="getting-started/resources/cellClassRules.png" alt="Styling Cells with Cell Class Rules" toggleDarkMode="false"></image-caption>
-</div>
-</div>
 
 ### Row Style
 
@@ -859,7 +820,7 @@ const gridOptions = {
 };
 </snippet>
 
-<image-caption centered="true" src="getting-started/resources/rowClassRules.png" alt="Styling Rows with Row Class Rules" toggleDarkMode="false"></image-caption>
+<grid-example title='Theming Example' name='theming-example' type='generated'></grid-example>
 
 ## Next Steps
 

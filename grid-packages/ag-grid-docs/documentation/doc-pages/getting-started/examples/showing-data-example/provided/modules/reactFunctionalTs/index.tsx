@@ -4,8 +4,11 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';;
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { ColDef, ColGroupDef, ValueGetterParams } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, ValueGetterParams, ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 const CustomButtonComponent = () => {
     return <button onClick={() => window.alert('clicked') }>Push Me!</button>;
@@ -16,6 +19,9 @@ const GridExample = () => {
     { make: "Tesla", model: "Model Y", price: 64950, electric: true },
     { make: "Ford", model: "F-Series", price: 33850, electric: false },
     { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+    { make: 'Mercedes', model: 'EQA', price: 48890, electric: true },
+    { make: 'Fiat', model: '500', price: 15774, electric: false },
+    { make: 'Nissan', model: 'Juke', price: 20675, electric: false },
 ]);
     const [columnDefs, setColumnDefs] = useState<(ColDef<any, any> | ColGroupDef<any>)[]>([
     { headerName: "Make & Model", valueGetter: (p: ValueGetterParams) => p.data.make + ' ' + p.data.model, flex: 2 },
