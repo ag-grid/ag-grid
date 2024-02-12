@@ -1,29 +1,254 @@
 [
   {
-    "label": {
-      "name": "Community Integrated Charts",
-      "link": "https://example.com/column-groups"
+    "group": {
+      "name": "Charting"
     },
-    "community": false,
-    "enterprise": true,
-    "chartsGrid": true
+    "items": [
+      {
+        "label": {
+          "name": "AG Charts Enterprise ",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Integrated Enterprise Charts",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": false,
+        "chartsGrid": true
+      }
+    ]
   },
   {
-    "label": {
-      "name": "Integrated Enterprise Charts",
-      "link": "https://example.com/column-groups"
+    "group": {
+      "name": "Series"
     },
-    "community": false,
-    "enterprise": false,
-    "chartsGrid": true
-  },
-  {
-    "label": {
-      "name": "AG Charts Enterprise ",
-      "link": "https://example.com/column-spanning"
-    },
-    "community": false,
-    "enterprise": false,
-    "chartsGrid": true
+    "items": [
+      {
+        "label": {
+          "name": "Bar",
+          "icon": "chartsBar",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Line",
+          "icon": "chartsLine",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Area",
+          "icon": "chartsArea",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Scatter",
+          "icon": "chartsScatter",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Bubble",
+          "icon": "chartsBubble",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Pie",
+          "icon": "chartsPie",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Doughnut",
+          "icon": "chartsDoughnut",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Histogram",
+          "icon": "chartsHistogram",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Combination",
+          "icon": "chartsCombination",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Box Plot",
+          "icon": "Box chartsPlot",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Bullet",
+          "icon": "chartsBullet",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Heatmap",
+          "icon": "chartsHeatmap",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Nightingale",
+          "icon": "chartsNightingale",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Radar Area",
+          "icon": "Radar chartsArea",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Radar Line",
+          "icon": "Radar chartsLine",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Radial Bar",
+          "icon": "Radial chartsBar",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Radial Column",
+          "icon": "Radial chartsColumn",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Range Area",
+          "icon": "Range chartsArea",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Range Bar",
+          "icon": "Range chartsBar",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Sunburst",
+          "icon": "chartsSunburst",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Treemap",
+          "icon": "chartsTreemap",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Waterfall",
+          "icon": "chartsWaterfall",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      }
+    ]
   }
 ]

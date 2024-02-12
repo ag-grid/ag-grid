@@ -12,7 +12,8 @@ import { trackOnceInfoEmail } from '../utils/analytics';
 import SEO from './components/SEO';
 import ToggleBackground from '../images/inline-svgs/pricing/toggle-background.svg';
 import { ComparisonTable } from '../components/comparison-table/ComparisonTable';
-import featuresData from '../../doc-pages/licensing/gridFeaturesMatrix.json'
+import gridFeaturesData from '../../doc-pages/licensing/gridFeaturesMatrix.json'
+import chartsFeaturesData from '../../doc-pages/licensing/chartsFeaturesMatrix.json'
 
 import FAQ from '../components/licenses/FAQ';
 
@@ -83,7 +84,9 @@ export const LicensePricing = () => {
             "question": "How does licensing work for multi-tenant deployments?",
             "answer": "One Deployment License needed for multi-tenant setups, serving multiple customers under one application instance."
         }
-    ]
+    ];
+
+    const featuresData = !isChecked ? gridFeaturesData : chartsFeaturesData;
 
     return (
         <>
