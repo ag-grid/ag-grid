@@ -57,7 +57,8 @@
 }
 
 .statsOuter {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     background-color: #f9f9fb;
     #{$selector-darkmode} & {
         background: color-mix(in srgb, var(--color-fg-primary) , var(--color-bg-primary) 98% );
