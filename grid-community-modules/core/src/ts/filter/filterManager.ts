@@ -808,7 +808,7 @@ export class FilterManager extends BeanStub {
     }
 
     // destroys the filter, so it no longer takes part
-    public destroyFilter(column: Column, source: 'api' | 'columnChanged' = 'api'): void {
+    public destroyFilter(column: Column, source: 'api' | 'columnChanged' | 'paramsUpdated' = 'api'): void {
         const colId = column.getColId();
         const filterWrapper = this.allColumnFilters.get(colId);
 
@@ -834,7 +834,7 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled'): void {
+    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled' | 'paramsUpdated'): void {
         filterWrapper.filterPromise!.then(filter => {
             this.getContext().destroyBean(filter);
 
@@ -889,7 +889,7 @@ export class FilterManager extends BeanStub {
 
         // Case when filter component changes
         if (this.areFilterCompsDifferent(filterWrapper.compDetails, compDetails)) {
-            this.destroyFilter(column, 'columnChanged');
+            this.destroyFilter(column, 'paramsUpdated');
             return;
         }
 
@@ -897,7 +897,7 @@ export class FilterManager extends BeanStub {
         const newFilterParams = column.getColDef().filterParams;
         // When filter wrapper does not have promise to retrieve FilterComp, destroy
         if (!filterWrapper.filterPromise) {
-            this.destroyFilter(column, 'columnChanged');
+            this.destroyFilter(column, 'paramsUpdated');
             return;
         }
 
@@ -914,7 +914,7 @@ export class FilterManager extends BeanStub {
             }) : true;
             // framework wrapper always implements optional methods, but returns null if no underlying method
             if (shouldRefreshFilter === false) {
-                this.destroyFilter(column, 'columnChanged');
+                this.destroyFilter(column, 'paramsUpdated');
             }
         });
     }
