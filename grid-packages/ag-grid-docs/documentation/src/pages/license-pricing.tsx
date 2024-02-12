@@ -145,21 +145,27 @@ export const LicensePricing = () => {
                             <Licenses isChecked={isChecked} />
                         </div>
 
-                        <ComparisonTable
-                            data={featuresData[0].items}
-                            columns={{
-                                'label': '',
-                                'community': '',
-                                'enterprise': '',
-                                'chartsGrid': '',
-                              }}
-                              cellRenderer={{
-                                'label': 'label',
-                                'community': "featuresTickCross",
-                                'enterprise': "featuresTickCross",
-                                'chartsGrid': "featuresTickCross",
-                            }}
-                        />
+                        {featuresData.map((section) => {
+                          return <div>
+                              <h4>{section.group.name}</h4>
+
+                              <ComparisonTable
+                                  data={section.items}
+                                  columns={{
+                                      'label': '',
+                                      'community': '',
+                                      'enterprise': '',
+                                      'chartsGrid': '',
+                                    }}
+                                    cellRenderer={{
+                                      'label': 'label',
+                                      'community': "feature",
+                                      'enterprise': "feature",
+                                      'chartsGrid': "feature",
+                                  }}
+                              />
+                          </div>
+                        })}
 
                         <div className={styles.videoPrompt}>
                             <a href="#video-explainer" className={styles.thumbnail}>

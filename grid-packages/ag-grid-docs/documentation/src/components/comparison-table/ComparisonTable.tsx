@@ -5,6 +5,7 @@ import React, { useMemo } from 'react';
 import { createRowDataFilter } from './utils/createRowDataFilter';
 import { FeaturesTickCross, TickCross } from './renderers/TickCross';
 import { Label } from './renderers/Label';
+import { Feature } from './renderers/Feature';
 
 type Columns = Record<string, string>;
 type Data = Record<string, any>;
@@ -54,6 +55,8 @@ function CellValue({
         return <FeaturesTickCross value={value} />;
     } else if (renderer === 'label') {
         return <Label value={value} />;
+    } else if (renderer === 'feature') {
+      return <Feature value={value} />;
     }
 
     if (value === undefined) {
