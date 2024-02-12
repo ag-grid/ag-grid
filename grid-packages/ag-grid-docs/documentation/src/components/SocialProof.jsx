@@ -59,8 +59,8 @@ const SocialProof = () => {
                 </div>
 
                 <div className={styles.stat}>
-                    <h4 className="text-2xl">500,000+</h4>
-                    <p>Daily developers</p>
+                    <h4 className="text-2xl">150+</h4>
+                    <p>Contributers</p>
                 </div>
             </div>
 
