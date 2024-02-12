@@ -948,12 +948,18 @@ export class LazyCache extends BeanStub {
      * Client side sorting
      */
     public clientSideSortRows() {
+        const sortOptions = this.sortController.getSortOptions();
+        const isAnySort = sortOptions.some(opt => opt.sort != null);
+        if (!isAnySort) {
+            return;
+        }
+        
         // the node map does not need entirely recreated, only the indexes need updated.
         const allNodes = new Array(this.nodeMap.getSize());
         this.nodeMap.forEach(lazyNode => allNodes[lazyNode.index] = lazyNode.node);
         this.nodeMap.clear();
 
-        const sortedNodes = this.rowNodeSorter.doFullSort(allNodes, this.sortController.getSortOptions());
+        const sortedNodes = this.rowNodeSorter.doFullSort(allNodes, sortOptions);
         sortedNodes.forEach((node, index) => {
             this.nodeMap.set({
                 id: node.id!,
