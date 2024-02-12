@@ -1,16 +1,4 @@
-import { exists, toStringOrNull } from './generic';
-
-export function firstExistingValue<A>(...values: A[]): A | null {
-    for (let i = 0; i < values.length; i++) {
-        const value = values[i];
-
-        if (exists(value)) {
-            return value;
-        }
-    }
-
-    return null;
-}
+import { toStringOrNull } from './generic';
 
 export function existsAndNotEmpty<T>(value?: T[]): boolean {
     return value != null && value.length > 0;

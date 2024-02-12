@@ -70,9 +70,9 @@ const gridOptions = {
 As shown above, a custom function is registered with in the grid with the name 'mySum' and is referenced by name in 
 the column definition using the `aggFunc` property.
 
-Note that custom aggregation functions can also be registered using `gridApi.addAggFunc('mySum', mySumFunc)`.
+Note that custom aggregation functions can also be registered using `gridApi.addAggFuncs({ mySum: mySumFunc })`.
 
-<api-documentation source='grid-api/api.json' section='rowPivoting' names='["addAggFunc"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='rowPivoting' names='["addAggFuncs"]'></api-documentation>
 
 The example below uses the `aggFuncs` approach shown in the snippet above. Note the following:
 - Rows are grouped by the **Country** and **Year** columns by enabling the `rowGroup` column definition property.

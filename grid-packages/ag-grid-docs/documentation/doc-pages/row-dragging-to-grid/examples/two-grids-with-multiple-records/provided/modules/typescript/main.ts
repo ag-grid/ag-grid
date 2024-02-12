@@ -180,7 +180,7 @@ resetBtn.addEventListener('click', () => {
 });
 
 checkboxToggle.addEventListener('change', () => {
-    leftApi!.setColumnVisible('checkbox', checkboxToggle.checked);
+    leftApi!.setColumnsVisible(['checkbox'], checkboxToggle.checked);
     leftApi!.setGridOption('suppressRowClickSelection', checkboxToggle.checked);
 });
 

@@ -73,7 +73,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     // however because we are providing the columns in the grid options,
     // it will be to late (eg remove 'xyz' from aggFuncs, and you will
     // see the grid complains).
-    params.api.addAggFunc('xyz', xyzFunc)
+    params.api.addAggFuncs({xyz: xyzFunc})
   },
 }
 
