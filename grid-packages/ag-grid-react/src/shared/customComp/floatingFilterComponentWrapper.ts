@@ -1,4 +1,4 @@
-import { AgPromise, IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
+import { IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
 import { CustomComponentWrapper } from "./customComponentWrapper";
 import { updateFloatingFilterParent } from "./floatingFilterComponentProxy";
 import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./interfaces";
@@ -25,6 +25,7 @@ export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloa
     private updateModel(model: any): void {
         this.model = model;
         this.refreshProps();
+        // don't need to wait on `refreshProps` as not reliant on state maintained inside React
         updateFloatingFilterParent(this.sourceParams, model);
     }
 

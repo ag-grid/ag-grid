@@ -1,14 +1,11 @@
-import { AgPromise,  IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
+import { AgPromise, IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
 import { addOptionalMethods } from "./customComponentWrapper";
 import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./interfaces";
 
 export function updateFloatingFilterParent(params: IFloatingFilterParams, model: any): void {
     params.parentFilterInstance(instance => {
         (instance.setModel(model) || AgPromise.resolve()).then(() => {
-            setTimeout(() => {
-                // ensure prop updates have happened
-                params.filterParams.filterChangedCallback();
-            });
+            params.filterParams.filterChangedCallback();
         });
     });
 }

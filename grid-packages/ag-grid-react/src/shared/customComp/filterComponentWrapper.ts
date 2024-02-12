@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilter, IFilterParams } from "ag-grid-community";
+import { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from "ag-grid-community";
 import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomFilterProps, CustomFilterCallbacks } from "./interfaces";
 
@@ -19,9 +19,9 @@ export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams
         return this.model;
     }
 
-    public setModel(model: any): void {
+    public setModel(model: any): AgPromise<void> {
         this.model = model;
-        this.refreshProps();
+        return this.refreshProps();
     }
 
     public refresh(newParams: IFilterParams): boolean {
@@ -35,11 +35,7 @@ export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams
     }
 
     private updateModel(model: any): void {
-        this.setModel(model);
-        setTimeout(() => {
-            // ensure prop updates have happened
-            this.sourceParams.filterChangedCallback();
-        });
+        this.setModel(model).then(() => this.sourceParams.filterChangedCallback());
     }
 
     protected getProps(): CustomFilterProps {
@@ -47,7 +43,7 @@ export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams
             ...this.sourceParams,
             model: this.model,
             onModelChange: this.onModelChange,
-            onUiChange: () => this.onUiChange,
+            onUiChange: this.onUiChange,
             key: this.key
         } as any;
         // remove props in IFilterParams but not CustomFilterProps

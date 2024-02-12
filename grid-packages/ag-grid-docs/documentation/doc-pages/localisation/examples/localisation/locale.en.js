@@ -395,6 +395,7 @@ const AG_GRID_LOCALE_EN = {
     innerRadius: 'Inner Radius',
     startAngle: 'Start Angle',
     endAngle: 'End Angle',
+    reverseDirection: 'Reverse Direction',
     groupPadding: 'Group Padding',
     seriesPadding: 'Series Padding',
     group: 'Group',
