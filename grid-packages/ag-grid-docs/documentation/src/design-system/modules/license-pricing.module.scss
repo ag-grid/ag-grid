@@ -654,4 +654,8 @@ transition: all 0.3s ease-in;
     padding-left: $spacing-size-2;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border-secondary);
+
+        position: sticky;
+        top: 119px;
+    color: var(--color-text-secondary);
 }
