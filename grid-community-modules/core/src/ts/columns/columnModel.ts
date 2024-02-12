@@ -49,7 +49,7 @@ import { warnOnce } from '../utils/function';
 import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
-import { PropertyValueChangedEvent } from '../gridOptionsService';
+import { PropertyChangedSource } from '../gridOptionsService';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -112,10 +112,6 @@ export interface IColumnLimit {
     minWidth?: number;
     /** Defines a maximum width for this column (does not override the column maximum width) */
     maxWidth?: number;
-}
-
-export interface ColDefPropertyChangedEvent extends PropertyValueChangedEvent<any> {
-    source?: ColumnEventType;
 }
 
 export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
@@ -277,21 +273,21 @@ export class ColumnModel extends BeanStub {
             this.pivotMode = pivotMode;
         }
 
-        this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'], () => this.buildAutoGroupColumns());
+        this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'], (event) => this.buildAutoGroupColumns(convertSourceType(event.source)));
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
-        this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
-        this.addManagedPropertyListener('pivotMode', event => this.setPivotMode(this.gridOptionsService.get('pivotMode'), (event as any).source));
+        this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], event => this.onSharedColDefChanged(convertSourceType(event.source)));
+        this.addManagedPropertyListener('pivotMode', event => this.setPivotMode(this.gridOptionsService.get('pivotMode'), convertSourceType(event.source)));
         this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());
     }
 
-    private buildAutoGroupColumns() {
+    private buildAutoGroupColumns(source: ColumnEventType) {
         // Possible for update to be called before columns are present in which case there is nothing to do here.
         if (!this.columnDefs) { return; }
 
         this.autoGroupsNeedBuilding = true;
         this.forceRecreateAutoGroups = true;
         this.updateGridColumns();
-        this.updateDisplayedColumns('gridOptionsChanged');
+        this.updateDisplayedColumns(source);
     }
 
     private onAutoGroupColumnDefChanged() {
@@ -4402,4 +4398,9 @@ export class ColumnModel extends BeanStub {
             }
         });
     }
+}
+
+export function convertSourceType(source: PropertyChangedSource): ColumnEventType {
+    // unfortunately they do not match so need to perform conversion
+    return source === 'gridOptionsUpdated' ? 'gridOptionsChanged' : source;
 }

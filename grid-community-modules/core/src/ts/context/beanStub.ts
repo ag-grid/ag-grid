@@ -183,6 +183,7 @@ export class BeanStub implements IEventEmitter {
             const propertiesChangeEvent: PropertyChangedEvent = {
                 type: 'gridPropertyChanged',
                 changeSet: event.changeSet,
+                source: event.source
             };
             listener(propertiesChangeEvent);
         };
