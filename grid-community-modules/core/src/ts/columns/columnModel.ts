@@ -732,7 +732,7 @@ export class ColumnModel extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public autoSizeColumn(key: ColKey | null, source: ColumnEventType, skipHeader?: boolean): void {
+    public autoSizeColumn(key: Maybe<ColKey>, source: ColumnEventType, skipHeader?: boolean): void {
         if (key) {
             this.autoSizeColumns({ columns: [key], skipHeader, skipHeaderGroups: true, source });
         }
@@ -1782,7 +1782,7 @@ export class ColumnModel extends BeanStub {
         }, source);
     }
 
-    public setColumnsPinned(keys: (ColKey | undefined | null)[], pinned: ColumnPinnedType, source: ColumnEventType): void {
+    public setColumnsPinned(keys: Maybe<ColKey>[], pinned: ColumnPinnedType, source: ColumnEventType): void {
         if (!this.gridColumns) { return; }
 
         if (this.gridOptionsService.isDomLayout('print')) {
@@ -1825,7 +1825,7 @@ export class ColumnModel extends BeanStub {
     // with either one column (if it was just one col) or a list of columns
     // used by: autoResize, setVisible, setPinned
     private actionOnGridColumns(// the column keys this action will be on
-        keys: (ColKey | undefined | null)[],
+        keys: Maybe<ColKey>[],
         // the action to do - if this returns false, the column was skipped
         // and won't be included in the event
         action: (column: Column) => boolean,
@@ -2617,7 +2617,7 @@ export class ColumnModel extends BeanStub {
     }
 
     // used by growGroupPanel
-    public getColumnWithValidation(key: ColKey | undefined): Column | null {
+    public getColumnWithValidation(key: Maybe<ColKey>): Column | null {
         if (key == null) { return null; }
 
         const column = this.getGridColumn(key);
