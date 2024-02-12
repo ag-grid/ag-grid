@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { useState } from 'react';
 import styles from '@design-system/modules/FAQ.module.scss';
 import { Icon } from '../Icon';
+import { Collapsible } from '../Collapsible';
 
 // Single FAQ item component
 const FAQItem = ({ question, answer }) => {
@@ -10,17 +11,21 @@ const FAQItem = ({ question, answer }) => {
     // Function to toggle the FAQ item's open state
     const toggleOpen = () => setIsOpen(!isOpen);
   
+    const questionID = question.toLowerCase()
+        .replace(" ", "-")
+        .replace("?", "")
+        .substring(0, 16)
+
     return (
-        <div className={classNames(styles.faqItem, isOpen ? styles.isOpen : '')}>
-            <div className={styles.question} onClick={toggleOpen}>
+        <div className={classNames(styles.faqItem, isOpen ? styles.isOpen : '')} onClick={toggleOpen}>
+            <div className={styles.question}>
                 {question}
                 <Icon name="chevronDownAlt" svgClasses={styles.chevronDown}/>
             </div>
-            <div
-                className={styles.answer}
-                style={{ maxHeight: isOpen ? '1000px' : '0' }}
-            >
-                <div className={styles.answerContent}>{answer}</div>
+            <div className={styles.answer} >
+                <Collapsible id={questionID} isDisabled={false} isOpen={isOpen}>
+                    <div className={styles.answerContent}>{answer}</div>
+                </Collapsible> 
             </div>
         </div>
     );

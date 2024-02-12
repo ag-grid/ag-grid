@@ -7,8 +7,6 @@
     line-height: var(--text-lh-xl);
     font-weight: var(--text-semibold);
     color: var(--color-text-secondary);
-    user-select: none;
-    cursor: pointer;
 }
 
 .faqItem {
@@ -16,10 +14,11 @@
     padding-bottom: $spacing-size-6;
     border-bottom: 1px solid var(--color-border-secondary);
     color: var(--color-text-primary);
+    cursor: pointer;
 }
 
 .answer {
-    padding-top: $spacing-size-4;
+    padding-top: $spacing-size-2;
     font-size: 17px;
     line-height: var(--text-lh-2xl);
     color: var(--color-text-secondary);
@@ -43,16 +42,6 @@
     padding-bottom: $spacing-size-6;
     border-bottom: 1px solid var(--color-border-secondary);
     color: var(--color-text-primary);
-}
-
-.answer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 1s ease-in-out;
-
-    .isOpen & {
-        max-height: 1000px; // Adjust this value as per your content's maximum height
-    }
 }
 
 @media screen and (max-width: $breakpoint-pricing-small) {
