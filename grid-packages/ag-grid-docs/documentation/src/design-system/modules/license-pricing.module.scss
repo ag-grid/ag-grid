@@ -516,6 +516,14 @@
         display: none;
     }
 
+    #{$selector-darkmode} & {
+        .gridInactive {
+            display: none;
+        }
+        .gridActive {
+            display: inline;
+        }
+    }
 
 }
 
@@ -535,6 +543,9 @@ transition: all 0.3s ease-in;
     .chartsActive {
         display: inline;
     }
+    #{$selector-darkmode} & {
+        
+    }
 }
 .toggleCheckbox + .toggleContainer .gridToggle {
     margin-left: 0;
@@ -547,6 +558,9 @@ transition: all 0.3s ease-in;
     .gridActive {
         display: inline;
     }
+    #{$selector-darkmode} & {
+        
+    }
 }
 .toggleCheckbox + .toggleContainer .chartsToggle {
     border-radius: 32px;
@@ -558,6 +572,16 @@ transition: all 0.3s ease-in;
     .chartsActive {
         display: none;
     }
+    #{$selector-darkmode} & {
+        .chartsInactive {
+            display: none;
+        }
+        .chartsActive {
+            display: inline;
+        }
+    }
+
+
 }
 
 .toggleCheckbox:not(:checked) + .toggleContainer .chartsToggle:hover {
