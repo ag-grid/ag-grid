@@ -89,7 +89,7 @@
     --text-fs-3xl: 40px;
     --text-lh-3xl: 1.1;
 
-    --icon-size: $spacing-size-8;
+    --icon-size: #{$spacing-size-8};
 
     --color-scheme: light;
 

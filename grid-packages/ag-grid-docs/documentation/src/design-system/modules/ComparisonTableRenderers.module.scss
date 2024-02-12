@@ -1,0 +1,13 @@
+@use '../core' as *;
+
+.label {
+    svg {
+        margin-right: $spacing-size-4;
+    }
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,15 +1,15 @@
 import { type Framework } from '@ag-grid-types';
-import styles from '@design-system/modules/MatrixTable.module.scss';
+import styles from '@design-system/modules/ComparisonTable.module.scss';
 import classnames from 'classnames';
 import React, { useMemo } from 'react';
 import { createRowDataFilter } from './utils/createRowDataFilter';
-import { FeaturesTickCross, TickCross } from './renderers/TickCross';
 import { Label } from './renderers/Label';
 import { Feature } from './renderers/Feature';
+import { number } from 'yargs';
 
 type Columns = Record<string, string>;
 type Data = Record<string, any>;
-type CellRenderer = 'tickCross' | 'featuresTickCross' | 'group' | 'label';
+type CellRenderer = 'label' | 'feature';
 type CellRendererDef = Record<string, CellRenderer>;
 
 // Added level field for rendering indentation
@@ -24,18 +24,6 @@ const getColumnFields = (column: string) => column.split('||').map((col) => col.
  */
 const getAllColumnFields = (columns: Columns) => Object.keys(columns).flatMap(getColumnFields);
 
-function HeaderRow({ framework, columns }: { framework: Framework; columns: Columns }) {
-    return (
-        <tr>
-            {Object.entries(columns).map(([column, columnName]) => (
-                <th key={`header-column-${column}`} scope="col">
-                    <CellValue value={columnName} />
-                </th>
-            ))}
-        </tr>
-    );
-}
-
 function CellValue({
     framework,
     value,
@@ -49,11 +37,7 @@ function CellValue({
 }) {
     const renderer = cellRenderer[field] as CellRenderer;
 
-    if (renderer === 'tickCross') {
-        return <TickCross value={value} />;
-    } else if (renderer === 'featuresTickCross') {
-        return <FeaturesTickCross value={value} />;
-    } else if (renderer === 'label') {
+    if (renderer === 'label') {
         return <Label value={value} />;
     } else if (renderer === 'feature') {
       return <Feature value={value} />;
@@ -133,7 +117,7 @@ function TableRows({
     return data.map((datum: any, i: number) => {
         const { [LEVEL_FIELD]: level } = datum;
         return (
-            <tr key={i}>
+            <div className={styles.row} key={i}>
                 {Object.keys(columns).map((columnField, index) => {
                     const { field, value } = getColumnField({ datum, columnField });
                     const cellValue = (
@@ -147,7 +131,7 @@ function TableRows({
                     }
 
                     return (
-                        <td key={`column-${columnField}`}>
+                        <div className={styles.cell} key={`column-${columnField}`}>
                             {isFirstColumn ? (
                                 <TitleCell level={level}>
                                     {cellValue}
@@ -155,10 +139,10 @@ function TableRows({
                             ) : (
                                 cellValue
                             )}
-                        </td>
+                        </div>
                     );
                 })}
-            </tr>
+            </div>
         );
     });
 }
@@ -239,16 +223,11 @@ export function ComparisonTable({
         return filteredData;
     }, [data, filter]);
 
+    const numColumns = {"--num-columns": Object.keys(columns).length} as React.CSSProperties;
+
     return (
-        <div className={styles.outer}>
-            <table className={styles.matrix}>
-                <thead>
-                    <HeaderRow columns={columns} />
-                </thead>
-                <tbody>
-                    <TableRows data={tableData} columns={columns} cellRenderer={cellRenderer} />
-                </tbody>
-            </table>
+        <div className={styles.comparisonTable} style={numColumns}>
+            <TableRows data={tableData} columns={columns} cellRenderer={cellRenderer} />
         </div>
     );
 }
