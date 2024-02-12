@@ -1,16 +1,16 @@
 [
   {
     "group": {
-      "name": "Charting"
+      "name": "Grid"
     },
     "items": [
       {
         "label": {
-          "name": "AG Charts Enterprise ",
+          "name": "AG Grid Enterprise ",
           "link": "https://example.com/column-spanning"
         },
         "community": false,
-        "enterprise": true,
+        "enterprise": false,
         "chartsGrid": true
       },
       {
