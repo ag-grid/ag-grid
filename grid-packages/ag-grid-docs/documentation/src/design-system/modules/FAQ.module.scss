@@ -1,14 +1,14 @@
 @use '../../design-system/' as *;
 
 .question {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-fs-xl);
+    line-height: var(--text-lh-xl);
+    font-weight: var(--text-semibold);
     color: var(--color-text-secondary);
-font-size: var(--text-fs-xl);
-line-height: var(--text-lh-xl);
-font-weight: var(--text-semibold);
-cursor: pointer;
-user-select: none;
-display: flex;
-justify-content: space-between;
+    user-select: none;
+    cursor: pointer;
 }
 
 .faqItem {
@@ -19,21 +19,23 @@ justify-content: space-between;
 }
 
 .answer {
-    color: var(--color-text-secondary);
     padding-top: $spacing-size-4;
     font-size: 17px;
     line-height: var(--text-lh-2xl);
+    color: var(--color-text-secondary);
     opacity: 0.8;
-
 }
 
-.chevronDown { // This class should be applied to the ChevronDown icon directly
-    transition: transform 0.3s ease;
-}
+.chevronDown {
+    --icon-size: 24px;
 
-.chevronOpen {
-    transform: rotate(180deg);
-    transition: transform 0.3s ease;
+    fill: transparent;
+    stroke: var(--color-util-gray-400);
+    transition: transform 0.3s ease-in-out;
+
+    .isOpen & {
+        transform: rotate(180deg);
+    }
 }
 
 .faqItem {
@@ -41,22 +43,24 @@ justify-content: space-between;
     padding-bottom: $spacing-size-6;
     border-bottom: 1px solid var(--color-border-secondary);
     color: var(--color-text-primary);
-    .answer {
-      overflow: hidden;
-      transition: max-height 1s ease;
-      max-height: 0;
-      &.open {
-        max-height: 1000px; // Adjust this value as per your content's maximum height
-      }
-    }
-  }
-
-  @media screen and (max-width: $breakpoint-pricing-small) {
- .question {
-    text-align: left;
- }
- .answer {
-    text-align: left;
- }
 }
 
+.answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1s ease-in-out;
+
+    .isOpen & {
+        max-height: 1000px; // Adjust this value as per your content's maximum height
+    }
+}
+
+@media screen and (max-width: $breakpoint-pricing-small) {
+    .question {
+        text-align: left;
+    }
+
+    .answer {
+        text-align: left;
+    }
+}

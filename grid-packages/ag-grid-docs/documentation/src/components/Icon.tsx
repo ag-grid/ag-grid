@@ -1,4 +1,5 @@
 import * as CarbonIcon from '@carbon/icons-react';
+import * as LucideIcon from 'lucide-react';
 import classNames from 'classnames';
 import React from 'react';
 import ApiIcon from '../images/inline-svgs/api.svg';
@@ -31,6 +32,8 @@ const SOCIALS_ICON_MAP = {
     youtube: CarbonIcon.LogoYoutube,
     linkedin: CarbonIcon.LogoLinkedin,
 };
+
+console.log(LucideIcon);
 
 const DOCS_CATEGORIES_ICON_MAP = {
     'docs-api': ApiIcon,
@@ -120,6 +123,7 @@ export const ICON_MAP = {
     chevronRight: BoldChevronRight,
     chevronDown: BoldChevronDown,
     chevronLeft: BoldChevronLeft,
+    chevronDownAlt: LucideIcon.ChevronDown,
     replaydemo: ReplayDemoIcon,
     takeControl: TakeControlIcon,
     playCircle: CarbonIcon.PlayFilled,

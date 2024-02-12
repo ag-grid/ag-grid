@@ -93,6 +93,7 @@
     "gif-frames": "1.0.1",
     "graceful-fs": "4.2.4",
     "jquery": "3.6.0",
+    "lucide-react": "0.320.0",
     "popper.js": "1.16.1",
     "prismjs": "1.29.0",
     "public-ip": "4.0.3",
