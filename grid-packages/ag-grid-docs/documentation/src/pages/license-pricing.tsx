@@ -124,7 +124,7 @@ export const LicensePricing = () => {
                         </div>
 
                         {featuresData.map((section, i) => {
-                          return <div key={i}>
+                          return <div className={styles.tableContainer} key={i}>
                               <h4 className={styles.categoryTableHeader}>{section.group.name}</h4>
 
                               <ComparisonTable
