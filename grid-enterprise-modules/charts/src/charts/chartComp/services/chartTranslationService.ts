@@ -141,6 +141,7 @@ export class ChartTranslationService extends BeanStub {
         innerRadius: 'Inner Radius',
         startAngle: 'Start Angle',
         endAngle: 'End Angle',
+        reverseDirection: 'Reverse Direction',
         groupPadding: 'Group Padding',
         seriesPadding: 'Series Padding',
         group: 'Group',
