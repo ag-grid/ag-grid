@@ -31,6 +31,10 @@ const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
 
     cellFadeDelay: { version: '31.1', renamed: 'cellFadeDuration' },
     cellFlashDelay: { version: '31.1', renamed: 'cellFlashDuration' },
+
+    suppressServerSideInfiniteScroll: { version: '31.1' },
+    serverSideSortOnServer: { version: '31.1' },
+    serverSideFilterOnServer: { version: '31.1' },
 };
 
 // Leave untyped. so it can be inferred.

@@ -1470,8 +1470,6 @@ export class GridApi<TData = any> {
     /**
      * Applies row data to a server side store.
      * New rows will overwrite rows at the same index in the same way as if provided by a datasource success callback.
-     * 
-     * startRow is only applicable when `suppressServerSideInfiniteScroll=false`
     */
     public applyServerSideRowData(params: { successParams: LoadSuccessParams, route?: string[], startRow?: number }) {
         const startRow = params.startRow ?? 0;
@@ -2274,7 +2272,6 @@ export class GridApi<TData = any> {
 
     /**
      * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
-     * Updates the `cacheBlockSize` when requesting data from the server if `suppressServerSideInfiniteScroll` is not enabled.
      * 
      * Note this purges all the cached data and reloads all the rows of the grid.
      * */

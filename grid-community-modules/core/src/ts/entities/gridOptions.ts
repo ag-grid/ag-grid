@@ -1249,6 +1249,7 @@ export interface GridOptions<TData = any> {
      * When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
      * @default false
      * @initial
+     * @deprecated v31.1
      */
     suppressServerSideInfiniteScroll?: boolean;
     /**
@@ -1304,14 +1305,15 @@ export interface GridOptions<TData = any> {
      */
     serverSideFilterAllLevels?: boolean;
     /**
-     *
      * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * @default false
+     * @deprecated
      */
     serverSideSortOnServer?: boolean;
     /**
      * When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * @default false
+     * @deprecated
      */
     serverSideFilterOnServer?: boolean;
 
@@ -1780,7 +1782,7 @@ export interface GridOptions<TData = any> {
 
     // *** Sorting *** //
     /**
-     * Callback to perform additional sorting after the grid has sorted the rows. When used with SSRM, only applicable when `suppressServerSideInfiniteScroll=true`.
+     * Callback to perform additional sorting after the grid has sorted the rows.
      */
     postSortRows?: (params: PostSortRowsParams<TData>) => void;
 

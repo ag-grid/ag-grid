@@ -1488,9 +1488,6 @@
                 "url": "/server-side-model-configuration/#initial-scroll-position"
             }
         },
-        "suppressServerSideInfiniteScroll": {},
-        "serverSideSortOnServer": {},
-        "serverSideFilterOnServer": {},
         "getChildCount": {
             "more": {
                 "name": "Providing Child Counts",
