@@ -39,10 +39,10 @@ export interface SharedProps<TData = any> extends GridOptions<TData> {
     children?: any;
 }
 
+/** @deprecated v31.1 Use `AgGridReactProps` instead. */
 export interface AgReactUiProps<TData = any> extends SharedProps<TData> {
 }
 
-/** @deprecated v31.1 Use `AgReactUiProps` instead. */
 export interface AgGridReactProps<TData = any> extends SharedProps<TData> {
     /** @deprecated v31.1 No longer used. */
     disableStaticMarkup?: boolean;
