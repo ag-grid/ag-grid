@@ -1,6 +1,33 @@
 [
 
   {
+    "version": "31.1.0",
+    "date": "February 20th 2024",
+    "highlights": [
+      {
+        "text": "Integrated Charts use all AG Charts Enterprise features",
+        "url": "https://www.ag-grid.com/javascript-data-grid/grid-state/"
+      },
+      {
+        "text": "Column Menu Redesign",
+        "url": "https://www.ag-grid.com/example/?theme=ag-theme-quartz-auto-dark"
+      },
+      {
+        "text": "Custom Column/Context Menu Item Components",
+        "url": "https://www.ag-grid.com/javascript-data-grid/keyboard-navigation/#column-header-navigation"
+      },
+      {
+        "text": "Compressed Excel file",
+        "url": "https://www.ag-grid.com/javascript-data-grid/grouping-locking-group-columns/"
+      },
+      {
+        "text": "Client-side Sorting in Server-side row model",
+        "url": "https://blog.ag-grid.com/whats-new-in-ag-grid-31-1/"
+      }
+    ],
+    "majorMinor": false
+  },
+  {
     "version": "31.0.0",
     "date": "November 29th 2023",
     "highlights": [

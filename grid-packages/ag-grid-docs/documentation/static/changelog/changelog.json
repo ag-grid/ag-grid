@@ -4,6 +4,21 @@
     "issueType": "Bug",
     "summary": "Placeholder for 31.0.3",
     "versions": [
+      "31.1.0"
+    ],
+    "status": "Done",
+    "resolution": "Done",
+    "features": null,
+    "moreInformation": null,
+    "deprecationNotes": null,
+    "breakingChangesNotes": null,
+    "documentationUrl": null
+  },
+  {
+    "key": "AG-5839",
+    "issueType": "Bug",
+    "summary": "Placeholder for 31.0.3",
+    "versions": [
       "31.0.3"
     ],
     "status": "Done",
@@ -35,6 +50,21 @@
     "summary": "Placeholder for 31.0.1",
     "versions": [
       "31.0.1"
+    ],
+    "status": "Done",
+    "resolution": "Done",
+    "features": null,
+    "moreInformation": null,
+    "deprecationNotes": null,
+    "breakingChangesNotes": null,
+    "documentationUrl": null
+  },
+  {
+    "key": "AG-5839",
+    "issueType": "Bug",
+    "summary": "Placeholder for 30.2.1",
+    "versions": [
+      "31.0.0"
     ],
     "status": "Done",
     "resolution": "Done",
