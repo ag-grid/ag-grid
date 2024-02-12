@@ -10,6 +10,7 @@ import {
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
+import { get } from '../utils/object';
 
 export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: ChartProxy): AgChartTheme {
     const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
@@ -35,7 +36,7 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
     const isTitleEnabled = () => {
         const isTitleEnabled = (obj: any) => {
             if (!obj) { return false; }
-            return Object.keys(obj).some(key => _.get(obj[key], 'title.enabled', false));
+            return Object.keys(obj).some(key => get(obj[key], 'title.enabled', false));
         }
         return isTitleEnabled(gridOptionsThemeOverrides) || isTitleEnabled(apiThemeOverrides);
     }

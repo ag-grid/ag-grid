@@ -480,11 +480,21 @@ export class GridChartComp extends Component {
         return _.includes(availableChartThemes, chartThemeName) ? chartThemeName! : availableChartThemes[0];
     }
 
+    private getAllKeysInObjects(objects: any[]): string[] {
+        const allValues: any = {};
+    
+        objects.filter(obj => obj != null).forEach(obj => {
+            Object.keys(obj).forEach(key => allValues[key] = null);
+        });
+    
+        return Object.keys(allValues);
+    }
+
     private validateCustomThemes() {
         const suppliedThemes = this.getChartThemes();
         const customChartThemes = this.gridOptionsService.get('customChartThemes');
         if (customChartThemes) {
-            _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
+            this.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
                 if (!_.includes(suppliedThemes, customThemeName)) {
                     console.warn("AG Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
                         "supplied but not added to the 'chartThemes' list");
