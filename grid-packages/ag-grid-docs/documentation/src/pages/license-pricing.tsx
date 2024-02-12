@@ -146,7 +146,7 @@ export const LicensePricing = () => {
                         </div>
 
                         <ComparisonTable
-                            data={featuresData}
+                            data={featuresData[0].items}
                             columns={{
                                 'label': '',
                                 'community': '',

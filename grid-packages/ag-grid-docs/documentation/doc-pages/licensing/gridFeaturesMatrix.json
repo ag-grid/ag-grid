@@ -1,29 +1,382 @@
 [
   {
-    "label": {
-      "name": "Community Integrated Charts",
-      "link": "https://example.com/column-groups"
+    "group": {
+      "name": "Charting"
     },
-    "community": false,
-    "enterprise": true,
-    "chartsGrid": true
+    "items": [
+      {
+        "label": {
+          "name": "Integrated Community Charts",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Integrated Enterprise Charts",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": false,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "AG Charts Enterprise ",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": false,
+        "chartsGrid": true
+      }
+    ]
   },
   {
-    "label": {
-      "name": "Integrated Enterprise Charts",
-      "link": "https://example.com/column-groups"
+    "group": {
+      "name": "Selection"
     },
-    "community": false,
-    "enterprise": false,
-    "chartsGrid": true
+    "items": [
+      {
+        "label": {
+          "name": "Row Selection",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Range Selection",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Fill Handle",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      }
+    ]
   },
   {
-    "label": {
-      "name": "AG Charts Enterprise ",
-      "link": "https://example.com/column-spanning"
+    "group": {
+      "name": "Cell Editing"
     },
-    "community": false,
-    "enterprise": false,
-    "chartsGrid": true
+    "items": [
+      {
+        "label": {
+          "name": "Simple Cell Editors",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Rich Select Cell Editor",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      }
+    ]
+  },
+  {
+    "group": {
+      "name": "Filtering"
+    },
+    "items": [
+      {
+        "label": {
+          "name": "Simple Column Filters",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "External Filter",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Quick Filter",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Multi Filter",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Set Filter",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Advanced Filter",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      }
+    ]
+  },
+  {
+    "group": {
+      "name": "Server-side Data"
+    },
+    "items": [
+      {
+        "label": {
+          "name": "Sorting/Filtering/Selection/Pagination",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Row Grouping",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Client-side Sorting",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Pivoting",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Row Selection State",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Updating Data",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Load Retry",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Row Height",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Tree Data",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Master Detail",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      }
+    ]
+  },
+  {
+    "group": {
+      "name": "Group & Pivot"
+    },
+    "items": [
+      {
+        "label": {
+          "name": "Aggregation",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Row Grouping",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Pivoting",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Tree Data",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Master Detail",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      }
+    ]
+  },
+  {
+    "group": {
+      "name": "Accessories"
+    },
+    "items": [
+      {
+        "label": {
+          "name": "Column Menu",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Context Menu",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Columns Tool Panel",
+          "link": "https://example.com/column-spanning"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Filters Tool Panel",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Status Bar",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      }
+    ]
+  },
+  {
+    "group": {
+      "name": "Export"
+    },
+    "items": [
+      {
+        "label": {
+          "name": "CSV Export",
+          "link": "https://example.com/column-groups"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Excel Export",
+          "link": "https://example.com/column-groups"
+        },
+        "community": false,
+        "enterprise": true,
+        "chartsGrid": true
+      }
+    ]
   }
 ]
