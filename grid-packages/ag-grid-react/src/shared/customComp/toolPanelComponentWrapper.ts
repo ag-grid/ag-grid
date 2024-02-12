@@ -19,6 +19,7 @@ export class ToolPanelComponentWrapper extends CustomComponentWrapper<IToolPanel
     private updateState(state: any): void {
         this.state = state;
         this.refreshProps();
+        // don't need to wait on `refreshProps` as not reliant on state maintained inside React
         this.sourceParams.onStateUpdated();
     }
 

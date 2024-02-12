@@ -26,6 +26,7 @@ export class DateComponentWrapper extends CustomComponentWrapper<IDateParams, Cu
 
     private updateDate(date: Date | null): void {
         this.setDate(date);
+        // don't need to wait on `refreshProps` as not reliant on state maintained inside React
         this.sourceParams.onDateChanged();
     }
 
