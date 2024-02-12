@@ -1,5 +1,6 @@
 import {
     _,
+    AgCheckbox,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSelect,
@@ -21,6 +22,7 @@ export class GradientLegendPanel extends Component {
         `<div>
             <ag-group-component ref="legendGroup">
                 <ag-select ref="legendPositionSelect"></ag-select>
+                <ag-checkbox ref="gradientReverseCheckbox"></ag-checkbox>
                 <ag-slider ref="gradientThicknessSlider"></ag-slider>
                 <ag-slider ref="gradientPreferredLengthSlider"></ag-slider>
                 <ag-slider ref="legendSpacingSlider"></ag-slider>
@@ -28,6 +30,7 @@ export class GradientLegendPanel extends Component {
         </div>`;
 
     @RefSelector('legendGroup') private legendGroup: AgGroupComponent;
+    @RefSelector('gradientReverseCheckbox') private gradientReverseCheckbox: AgCheckbox;
     @RefSelector('legendPositionSelect') private legendPositionSelect: AgSelect;
     @RefSelector('gradientThicknessSlider') private gradientThicknessSlider: AgSlider;
     @RefSelector('gradientPreferredLengthSlider') private gradientPreferredLengthSlider: AgSlider;
@@ -90,6 +93,12 @@ export class GradientLegendPanel extends Component {
     }
 
     private initLegendGradient() {
+        this.gradientReverseCheckbox
+            .setLabel(this.chartTranslationService.translate("reverseDirection"))
+            .setLabelWidth("flex")
+            .setValue(this.chartOptionsService.getChartOption<boolean>("gradientLegend.reverseOrder"))
+            .onValueChange(newValue => this.chartOptionsService.setChartOption("gradientLegend.reverseOrder", newValue));
+            
         const initSlider = (expression: string, labelKey: string, input: AgSlider, defaultMaxValue: number) => {
             const currentValue = this.chartOptionsService.getChartOption<number | undefined>(expression) ?? 0;
             input.setLabel(this.chartTranslationService.translate(labelKey))
