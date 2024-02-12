@@ -146,7 +146,8 @@ function migrateV26_2(model: ChartModel) {
     // At 26.2.0 combination charts weren't supported, so we can safely assume a single series type.
     // We can't rely on the `series.type` field as it was incorrect (in v25.0.0 line chart has an
     // `area` series).
-    const seriesTypes = [getSeriesType(chartType)];
+    // Note that in v31.1.0, the canonical name for the 'doughnut' chart type changed to 'donut'.
+    const seriesTypes = [getSeriesType(chartType === 'doughnut' ? 'donut' : chartType)];
 
     const chartTypeMixin: any = {};
     if (!seriesTypes.includes('pie')) {

@@ -44,7 +44,7 @@ export class UpdateParamsValidator {
         'scatter',
         'bubble',
         'pie',
-        'doughnut',
+        'donut',
         'area',
         'stackedArea',
         'normalizedArea',

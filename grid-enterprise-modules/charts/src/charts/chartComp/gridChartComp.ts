@@ -241,7 +241,7 @@ export class GridChartComp extends Component {
             case 'normalizedBar':
                 return new BarChartProxy(chartProxyParams);
             case 'pie':
-            case 'doughnut':
+            case 'donut':
                 return new PieChartProxy(chartProxyParams);
             case 'area':
             case 'stackedArea':

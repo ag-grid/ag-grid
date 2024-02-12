@@ -155,7 +155,7 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'sunburst':
             return 'sunburst';
         case 'pie':
-        case 'doughnut':
+        case 'donut':
             return 'pie';
         case 'heatmap':
             return 'heatmap';

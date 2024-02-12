@@ -217,7 +217,7 @@ const AG_GRID_LOCALE_EN = {
 
     pieChart: 'Pie',
     pie: 'Pie',
-    doughnut: 'Doughnut',
+    donut: 'Donut',
 
     line: 'Line',
 
@@ -369,7 +369,7 @@ const AG_GRID_LOCALE_EN = {
     stackedBarTooltip: 'Stacked',
     normalizedBarTooltip: '100% Stacked',
     pieTooltip: 'Pie',
-    doughnutTooltip: 'Doughnut',
+    donutTooltip: 'Donut',
     lineTooltip: 'Line',
     groupedAreaTooltip: 'Area',
     stackedAreaTooltip: 'Stacked',

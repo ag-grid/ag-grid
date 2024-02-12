@@ -115,7 +115,7 @@ export class ChartTranslationService extends BeanStub {
         stackedBarTooltip: 'Stacked',
         normalizedBarTooltip: '100% Stacked',
         pieTooltip: 'Pie',
-        doughnutTooltip: 'Doughnut',
+        donutTooltip: 'Donut',
         lineTooltip: 'Line',
         groupedAreaTooltip: 'Area',
         stackedAreaTooltip: 'Stacked',

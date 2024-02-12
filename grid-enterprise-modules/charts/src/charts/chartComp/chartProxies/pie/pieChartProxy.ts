@@ -4,7 +4,7 @@ import { AgCharts, AgDonutSeriesOptions, AgPieSeriesOptions, AgPolarChartOptions
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
 
-interface DoughnutOffset {
+interface DonutOffset {
     offsetAmount: number;
     currentOffset: number;
 }
@@ -38,7 +38,7 @@ export class PieChartProxy extends ChartProxy {
         };
 
         const series: (AgPieSeriesOptions | AgDonutSeriesOptions)[] = this.getFields(params).map((f: FieldDefinition) => {
-            // options shared by 'pie' and 'doughnut' charts
+            // options shared by 'pie' and 'donut' charts
             const options = {
                 type: this.standaloneChartType as AgPieSeriesOptions['type'],
                 angleKey: f.colId,
@@ -48,13 +48,13 @@ export class PieChartProxy extends ChartProxy {
                 calloutLabelKey: category.id,
             }
 
-            if (this.chartType === 'doughnut') {
+            if (this.chartType === 'donut') {
                 const { outerRadiusOffset, innerRadiusOffset } = PieChartProxy.calculateOffsets(offset);
                 const title = f.displayName ? {
                     title: { text: f.displayName, showInLegend: numFields > 1 },
                 } : undefined;
 
-                // augment shared options with 'doughnut' specific options
+                // augment shared options with 'donut' specific options
                 return {
                     ...options,
                     type: 'donut',
@@ -115,7 +115,7 @@ export class PieChartProxy extends ChartProxy {
             };
         }
 
-        // currently, only single 'doughnut' cross-filter series are supported
+        // currently, only single 'donut' cross-filter series are supported
         const primarySeries = series[0];
 
         // update primary series
@@ -128,7 +128,7 @@ export class PieChartProxy extends ChartProxy {
         ];
     }
 
-    private static calculateOffsets(offset: DoughnutOffset) {
+    private static calculateOffsets(offset: DonutOffset) {
         const outerRadiusOffset = offset.currentOffset;
         offset.currentOffset -= offset.offsetAmount;
 
