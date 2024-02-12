@@ -368,6 +368,10 @@ export class GridApi<TData = any> {
         console.error(`AG Grid: api.${apiMethod} can only be called when gridOptions.rowModelType is ${requiredRowModels.join(' or ')}`);
     }
 
+    private logDeprecation(version: string, apiMethod: StartsWithGridApi, replacement: StartsWithGridApi, message?: string) {
+        warnOnce(`Since ${version} api.${apiMethod} is deprecated. Please use ${replacement} instead. ${message}`);
+    }
+
     /** Gets the number of top pinned rows. */
     public getPinnedTopRowCount(): number {
         return this.pinnedRowModel.getPinnedTopRowCount();
@@ -455,15 +459,11 @@ export class GridApi<TData = any> {
      * From here you can see the original rows, rows after filter has been applied,
      * rows after aggregation has been applied, and the final set of 'to be displayed' rows.
      *
-     * @deprecated As of v31.1.0, getModel() is deprecated and will not be available in future versions.
+     * @deprecated As of v31.1, getModel() is deprecated and will not be available in future versions.
      * Please use the appropriate grid API methods instead
      */
     public getModel(): IRowModel {
-        warnOnce(
-            'getModel() is deprecated and will be removed in a future release. ' +
-            'Please use the appropriate grid API methods instead.'
-        );
-
+        warnOnce('Since v31.1 getModel() is deprecated. Please use the appropriate grid API methods instead.');
         return this.rowModel;
     }
 
@@ -1427,10 +1427,11 @@ export class GridApi<TData = any> {
         cell.startRowOrCellEdit(params.key);
     }
 
-    /** Add an aggregation function with the specified key. */
+    /** @deprecated v31.1 addAggFunc(key, func) is  deprecated, please use addAggFuncs({ key: func }) instead. */
     public addAggFunc(key: string, aggFunc: IAggFunc): void {
+        this.logDeprecation('v31.1', 'addAggFunc(key, func)', 'addAggFuncs({ key: func })');
         if (this.aggFuncService) {
-            this.aggFuncService.addAggFunc(key, aggFunc);
+            this.aggFuncService.addAggFuncs({ key: aggFunc });
         }
     }
 
@@ -1608,7 +1609,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v31.1 `getFirstDisplayedRow` is deprecated. Please use `getFirstDisplayedRowIndex` instead. */
     public getFirstDisplayedRow(): number {
-        warnOnce('Since v31.1 getFirstDisplayedRow is deprecated. Please use getFirstDisplayedRowIndex instead.');
+        this.logDeprecation('v31.1', 'getFirstDisplayedRow', 'getFirstDisplayedRowIndex');
         return this.getFirstDisplayedRowIndex();
     }
     /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
@@ -1618,7 +1619,7 @@ export class GridApi<TData = any> {
 
     /** @deprecated v31.1 `getLastDisplayedRow` is deprecated. Please use `getLastDisplayedRowIndex` instead. */
     public getLastDisplayedRow(): number {
-        warnOnce('Since v31.1 getLastDisplayedRow is deprecated. Please use getLastDisplayedRowIndex instead.');
+        this.logDeprecation('v31.1', 'getLastDisplayedRow', 'getLastDisplayedRowIndex');
         return this.getLastDisplayedRowIndex();
     }
     /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */
@@ -1751,13 +1752,19 @@ export class GridApi<TData = any> {
     public getDisplayedColAfter(col: Column): Column | null { return this.columnModel.getDisplayedColAfter(col); }
     /** Same as `getVisibleColAfter` except gives column to the left. */
     public getDisplayedColBefore(col: Column): Column | null { return this.columnModel.getDisplayedColBefore(col); }
-    /** Sets the visibility of a column. Key can be the column ID or `Column` object. */
-    public setColumnVisible(key: string | Column, visible: boolean): void { this.columnModel.setColumnVisible(key, visible, 'api'); }
-    /** Same as `setColumnVisible`, but provide a list of column keys. */
+    /** @deprecated v31.1 setColumnVisible(key, visible) deprecated, please use setColumnsVisible([key], visible) instead. */
+    public setColumnVisible(key: string | Column, visible: boolean): void { 
+        this.logDeprecation('v31.1', 'setColumnVisible(key,visible)', 'setColumnsVisible([key],visible)');
+        this.columnModel.setColumnsVisible([key], visible, 'api'); 
+    }
+    /** Sets the visibility of columns. Key can be the column ID or `Column` object. */
     public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.columnModel.setColumnsVisible(keys, visible, 'api'); }
-    /** Sets the column pinned / unpinned. Key can be the column ID, field, `ColDef` object or `Column` object. */
-    public setColumnPinned(key: string | ColDef | Column, pinned: ColumnPinnedType): void { this.columnModel.setColumnPinned(key, pinned, 'api'); }
-    /** Same as `setColumnPinned`, but provide a list of column keys. */
+    /** @deprecated v31.1 setColumnPinned(key, pinned) deprecated, please use setColumnsPinned([key], pinned) instead. */
+    public setColumnPinned(key: string | ColDef | Column, pinned: ColumnPinnedType): void { 
+        this.logDeprecation('v31.1', 'setColumnPinned(key,pinned)', 'setColumnsPinned([key],pinned)');
+        this.columnModel.setColumnsPinned([key], pinned, 'api'); 
+    }
+    /** Set a column's pinned / unpinned state. Key can be the column ID, field, `ColDef` object or `Column` object. */
     public setColumnsPinned(keys: (string | ColDef |Column)[], pinned: ColumnPinnedType): void { this.columnModel.setColumnsPinned(keys, pinned, 'api'); }
 
     /**
@@ -1779,13 +1786,14 @@ export class GridApi<TData = any> {
     /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
     public getAllDisplayedVirtualColumns(): Column[] { return this.columnModel.getViewportColumns(); }
 
-    /** Moves a column to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
+    /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
     public moveColumn(key: string | ColDef | Column, toIndex: number): void {
-        this.columnModel.moveColumn(key, toIndex, 'api');
+        this.logDeprecation('v31.1', 'moveColumn(key, toIndex)', 'moveColumns([key], toIndex)');
+        this.columnModel.moveColumns([key], toIndex, 'api');
     }
-    /** Same as `moveColumn` but works on index locations. */
+    /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
     public moveColumnByIndex(fromIndex: number, toIndex: number): void { this.columnModel.moveColumnByIndex(fromIndex, toIndex, 'api'); }
-    /** Same as `moveColumn` but works on list. */
+    /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
     public moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) { this.columnModel.moveColumns(columnsToMoveKeys, toIndex, 'api'); }
     /** Move the column to a new position in the row grouping order. */
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnModel.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
@@ -1810,37 +1818,55 @@ export class GridApi<TData = any> {
     public setValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setValueColumns(colKeys, 'api'); }
     /** Get a list of the existing value columns. */
     public getValueColumns(): Column[] { return this.columnModel.getValueColumns(); }
-    /** Remove the given column from the existing set of value columns. */
-    public removeValueColumn(colKey: (string | ColDef | Column)): void { this.columnModel.removeValueColumn(colKey, 'api'); }
-    /** Like `removeValueColumn` but remove the given list of columns from the existing set of value columns. */
+    /** @deprecated v31.1 removeValueColumn(colKey) deprecated, please use removeValueColumns([colKey]) instead. */
+    public removeValueColumn(colKey: (string | ColDef | Column)): void {
+        this.logDeprecation('v31.1', 'removeValueColumn(colKey)', 'removeValueColumns([colKey])');
+        this.columnModel.removeValueColumns([colKey], 'api'); 
+    }
+    /** Remove the given list of columns from the existing set of value columns. */
     public removeValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removeValueColumns(colKeys, 'api'); }
-    /** Add the given column to the set of existing value columns. */
-    public addValueColumn(colKey: (string | ColDef | Column)): void { this.columnModel.addValueColumn(colKey, 'api'); }
-    /** Like `addValueColumn` but add the given list of columns to the existing set of value columns. */
+    /** @deprecated v31.1 addValueColumn(colKey) deprecated, please use addValueColumns([colKey]) instead. */
+    public addValueColumn(colKey: (string | ColDef | Column)): void {
+        this.logDeprecation('v31.1', 'addValueColumn(colKey)', 'addValueColumns([colKey])');
+        this.columnModel.addValueColumns([colKey], 'api');
+    }
+    /** Add the given list of columns to the existing set of value columns. */
     public addValueColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addValueColumns(colKeys, 'api'); }
 
     /** Set the row group columns. */
     public setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setRowGroupColumns(colKeys, 'api'); }
-    /** Remove a column from the row groups. */
-    public removeRowGroupColumn(colKey: string | ColDef | Column): void { this.columnModel.removeRowGroupColumn(colKey, 'api'); }
-    /** Same as `removeRowGroupColumn` but provide a list of columns. */
+    /** @deprecated v31.1 removeRowGroupColumn(colKey) deprecated, please use removeRowGroupColumns([colKey]) instead. */
+    public removeRowGroupColumn(colKey: string | ColDef | Column): void {
+        this.logDeprecation('v31.1', 'removeRowGroupColumn(colKey)', 'removeRowGroupColumns([colKey])');
+        this.columnModel.removeRowGroupColumns([colKey], 'api');
+    }
+    /** Remove columns from the row groups. */
     public removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removeRowGroupColumns(colKeys, 'api'); }
-    /** Add a column to the row groups. */
-    public addRowGroupColumn(colKey: string | ColDef | Column): void { this.columnModel.addRowGroupColumn(colKey, 'api'); }
-    /** Same as `addRowGroupColumn` but provide a list of columns. */
+    /** @deprecated v31.1 addRowGroupColumn(colKey) deprecated, please use addRowGroupColumns([colKey]) instead. */
+    public addRowGroupColumn(colKey: string | ColDef | Column): void { 
+        this.logDeprecation('v31.1', 'addRowGroupColumn(colKey)', 'addRowGroupColumns([colKey])');
+        this.columnModel.addRowGroupColumns([colKey], 'api');
+    }
+    /** Add columns to the row groups. */
     public addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addRowGroupColumns(colKeys, 'api'); }
     /** Get row group columns. */
     public getRowGroupColumns(): Column[] { return this.columnModel.getRowGroupColumns(); }
 
     /** Set the pivot columns. */
     public setPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.setPivotColumns(colKeys, 'api'); }
-    /** Remove a pivot column. */
-    public removePivotColumn(colKey: string | ColDef | Column): void { this.columnModel.removePivotColumn(colKey, 'api'); }
-    /** Same as `removePivotColumn` but provide a list of columns. */
+    /** @deprecated v31.1 removePivotColumn(colKey) deprecated, please use removePivotColumns([colKey]) instead. */
+    public removePivotColumn(colKey: string | ColDef | Column): void {
+        this.logDeprecation('v31.1', 'removePivotColumn(colKey)', 'removePivotColumns([colKey])');
+        this.columnModel.removePivotColumns([colKey], 'api');
+    }
+    /** Remove pivot columns. */
     public removePivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.removePivotColumns(colKeys, 'api'); }
-    /** Add a pivot column. */
-    public addPivotColumn(colKey: string | ColDef | Column): void { this.columnModel.addPivotColumn(colKey, 'api'); }
-    /** Same as `addPivotColumn` but provide a list of columns. */
+    /** @deprecated v31.1 addPivotColumn(colKey) deprecated, please use addPivotColumns([colKey]) instead. */
+    public addPivotColumn(colKey: string | ColDef | Column): void {
+        this.logDeprecation('v31.1', 'addPivotColumn(colKey)', 'addPivotColumns([colKey])');
+        this.columnModel.addPivotColumns([colKey], 'api');
+    }
+    /** Add pivot columns. */
     public addPivotColumns(colKeys: (string | ColDef | Column)[]): void { this.columnModel.addPivotColumns(colKeys, 'api'); }
     /** Get the pivot columns. */
     public getPivotColumns(): Column[] { return this.columnModel.getPivotColumns(); }
@@ -1853,20 +1879,19 @@ export class GridApi<TData = any> {
     public getRightDisplayedColumnGroups(): IHeaderColumn[] { return this.columnModel.getDisplayedTreeRight(); }
     /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
     public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.columnModel.getAllDisplayedTrees(); }
-    /**
-     * Auto-sizes a column based on its contents. If inferring cell data types with custom column types and row data is provided asynchronously,
-     * the column sizing will happen asynchronously when row data is added. To always perform this synchronously,
-     * set `cellDataType = false` on the default column definition.
-     */
-    public autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void { return this.columnModel.autoSizeColumn(key, 'api', skipHeader); }
+    /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
+    public autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void {
+        this.logDeprecation('v31.1', 'autoSizeColumn(key, skipHeader)', 'autoSizeColumns([key], skipHeader)');
+        return this.columnModel.autoSizeColumns({ columns: [key], skipHeader: skipHeader, source: 'api'});
+    }
 
     /**
-     * Same as `autoSizeColumn`, but provide a list of column keys. If inferring cell data types with custom column types
+     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
      * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      */
     public autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void {
-        this.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader });
+        this.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader, source: 'api'});
     }
 
     /**
@@ -2602,3 +2627,6 @@ export class GridApi<TData = any> {
         this.deprecatedUpdateGridOption('getRowHeight', rowHeightFunc);
     }
 }
+
+/** Utility type to support adding params to a grid api method. */
+type StartsWithGridApi = `${keyof GridApi}${string}`;
