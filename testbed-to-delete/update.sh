@@ -27,7 +27,7 @@ function packModules() {
 COMMUNITY_MODULES=("core" "client-side-row-model" "styles")
 packModules "../community-modules" "${COMMUNITY_MODULES[@]}"
 
-ENTERPRISE_MODULES=("core" "status-bar")
+ENTERPRISE_MODULES=("core" "status-bar" "excel-export" "menu" "column-tool-panel" "range-selection" "clipboard")
 packModules "../enterprise-modules" "${ENTERPRISE_MODULES[@]}"
 
 if [ -d "./node_modules" ]; then

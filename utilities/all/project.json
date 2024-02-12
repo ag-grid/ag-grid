@@ -106,11 +106,31 @@
     "clean": { "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/'" }
   },
   "implicitDependencies": [
-    "@ag-grid-community/core",
-    "@ag-grid-community/client-side-row-model",
-    "@ag-grid-community/styles",
-    "@ag-grid-enterprise/core",
-    "@ag-grid-enterprise/status-bar"
+    "community-modules/core",
+    "community-modules/client-side-row-model",
+    "community-modules/styles",
+    "community-modules/csv-export",
+    "community-modules/infinite-row-model",
+    "enterprise-modules/core",
+    "enterprise-modules/advanced-filter",
+    "enterprise-modules/charts",
+    "enterprise-modules/charts-enterprise",
+    "enterprise-modules/clipboard",
+    "enterprise-modules/column-tool-panel",
+    "enterprise-modules/excel-export",
+    "enterprise-modules/filter-tool-panel",
+    "enterprise-modules/master-detail",
+    "enterprise-modules/menu",
+    "enterprise-modules/multi-filter",
+    "enterprise-modules/range-selection",
+    "enterprise-modules/rich-select",
+    "enterprise-modules/row-grouping",
+    "enterprise-modules/server-side-row-model",
+    "enterprise-modules/set-filter",
+    "enterprise-modules/side-bar",
+    "enterprise-modules/sparklines",
+    "enterprise-modules/viewport-row-model",
+    "enterprise-modules/status-bar"
   ],
   "tags": []
 }

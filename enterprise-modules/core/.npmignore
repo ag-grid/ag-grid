@@ -1,11 +1,12 @@
 node_modules
 src
 .npmignore
-gulpfile.js
-jest.config.js
 tsconfig.json
-tsconfig.es6.json
-tsconfig.json
-
+tsconfig.lib.json
+tsconfig.spec.json
+tsconfig.types.json
+tsconfig.types.watch.json
+tsconfig.watch.json
 !dist
 dist/**/*.test.*
+project.json

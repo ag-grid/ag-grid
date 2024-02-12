@@ -1,0 +1,90 @@
+{
+  "name": "@ag-grid-enterprise/set-filter",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "enterprise-modules/set-filter/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "build:types",
+        "build:package",
+        "build:umd"
+      ]
+    },
+    "build:types": {
+      "executor": "@nx/js:tsc",
+      "dependsOn": [
+        "^build:types"
+      ],
+      "inputs": [
+        "tsDefaults"
+      ],
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "enterprise-modules/set-filter/dist/types",
+        "main": "enterprise-modules/set-filter/src/main.ts",
+        "tsConfig": "enterprise-modules/set-filter/tsconfig.types.json",
+        "compiler": "tsc"
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "enterprise-modules/set-filter/tsconfig.types.watch.json"
+        },
+        "production": {}
+      }
+    },
+    "build:package": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": [
+        "^build"
+      ],
+      "inputs": [
+        "tsDefaults"
+      ],
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "enterprise-modules/set-filter/dist/package",
+        "main": "enterprise-modules/set-filter/src/main.ts",
+        "tsConfig": "enterprise-modules/set-filter/tsconfig.lib.json",
+        "esbuildConfig": "esbuild.config.cjs",
+        "external": ["@ag-grid-community/core", "@ag-grid-enterprise/core"],
+        "platform": "browser",
+        "target": "es6",
+        "format": [
+          "cjs",
+          "esm"
+        ],
+        "sourcemap": true
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "enterprise-modules/set-filter/tsconfig.watch.json"
+        },
+        "production": {
+          "sourcemap": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "enterprise-modules/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

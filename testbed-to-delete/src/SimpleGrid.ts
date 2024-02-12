@@ -1,9 +1,14 @@
-import {createGrid, ModuleRegistry, GridOptions} from "@ag-grid-community/core";
+import {createGrid, GridOptions, ModuleRegistry} from "@ag-grid-community/core";
 import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
-
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
-
+import {StatusBarModule} from "@ag-grid-enterprise/status-bar";
+import {ClipboardModule} from '@ag-grid-enterprise/clipboard';
+import {ExcelExportModule} from '@ag-grid-enterprise/excel-export';
+import {MenuModule} from '@ag-grid-enterprise/menu';
+import {RangeSelectionModule} from '@ag-grid-enterprise/range-selection';
 import './styles.scss';
+
+debugger
+ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, ExcelExportModule, MenuModule, RangeSelectionModule, ClipboardModule]);
 
 class SimpleGrid {
     private gridOptions: GridOptions = <GridOptions>{};
@@ -11,7 +16,8 @@ class SimpleGrid {
     constructor() {
         this.gridOptions = {
             columnDefs: this.createColumnDefs(),
-            rowData: this.createRowData()
+            rowData: this.createRowData(),
+            enableRangeSelection: true
         };
 
         let eGridDiv: HTMLElement = <HTMLElement>document.querySelector('#myGrid');

@@ -36,6 +36,7 @@
         "main": "community-modules/client-side-row-model/src/main.ts",
         "tsConfig": "community-modules/client-side-row-model/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
+        "external": ["@ag-grid-community/core"],
         "platform": "browser",
         "target": "es6",
         "format": ["cjs", "esm"],

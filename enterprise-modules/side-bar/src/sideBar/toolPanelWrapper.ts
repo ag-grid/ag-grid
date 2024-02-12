@@ -1,0 +1,100 @@
+import {
+    Autowired,
+    Component,
+    UserComponentFactory,
+    IToolPanelComp,
+    IToolPanelParams,
+    ToolPanelDef,
+    PostConstruct,
+    WithoutGridCommon
+} from "@ag-grid-community/core";
+import { HorizontalResizeComp } from "./horizontalResizeComp";
+
+export class ToolPanelWrapper extends Component {
+
+    @Autowired("userComponentFactory") private userComponentFactory: UserComponentFactory;
+
+    private static TEMPLATE = /* html */
+        `<div class="ag-tool-panel-wrapper" role="tabpanel"/>`;
+
+    private toolPanelCompInstance: IToolPanelComp;
+    private toolPanelId: string;
+    private resizeBar: HorizontalResizeComp;
+    private width: number | undefined;
+    private params: IToolPanelParams;
+
+    constructor() {
+        super(ToolPanelWrapper.TEMPLATE);
+    }
+
+    @PostConstruct
+    private setupResize(): void {
+        const eGui = this.getGui();
+        const resizeBar = this.resizeBar = this.createManagedBean(new HorizontalResizeComp());
+
+        eGui.setAttribute('id', `ag-${this.getCompId()}`);
+
+        resizeBar.setElementToResize(eGui);
+        this.appendChild(resizeBar);
+    }
+
+    public getToolPanelId(): string {
+        return this.toolPanelId;
+    }
+
+    public setToolPanelDef(toolPanelDef: ToolPanelDef, params: WithoutGridCommon<IToolPanelParams>): void {
+        const { id, minWidth, maxWidth, width } = toolPanelDef;
+
+        this.toolPanelId = id;
+        this.width = width;
+
+        const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
+        const componentPromise = compDetails.newAgStackInstance();
+
+        this.params = compDetails.params;
+
+        if (componentPromise == null) {
+            console.warn(`AG Grid: error processing tool panel component ${id}. You need to specify 'toolPanel'`);
+            return;
+        }
+        componentPromise.then(this.setToolPanelComponent.bind(this));
+
+        if (minWidth != null) {
+            this.resizeBar.setMinWidth(minWidth);
+        }
+
+        if (maxWidth != null) {
+            this.resizeBar.setMaxWidth(maxWidth);
+        }
+    }
+
+    private setToolPanelComponent(compInstance: IToolPanelComp): void {
+        this.toolPanelCompInstance = compInstance;
+
+        this.appendChild(compInstance.getGui());
+        this.addDestroyFunc(() => {
+            this.destroyBean(compInstance);
+        });
+
+        if (this.width) {
+            this.getGui().style.width = `${this.width}px`;
+        }
+    }
+
+    public getToolPanelInstance(): IToolPanelComp {
+        return this.toolPanelCompInstance;
+    }
+
+    public setResizerSizerSide(side: 'right' | 'left') {
+        const isRtl = this.gridOptionsService.get('enableRtl');
+        const isLeft = side === 'left';
+        const inverted = isRtl ? isLeft : !isLeft;
+
+        this.resizeBar.setInverted(inverted);
+    }
+
+    public refresh(): void {
+        this.toolPanelCompInstance.refresh(this.params);
+    }
+
+}

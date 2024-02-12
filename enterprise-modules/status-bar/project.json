@@ -36,6 +36,7 @@
         "main": "enterprise-modules/status-bar/src/main.ts",
         "tsConfig": "enterprise-modules/status-bar/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
+        "external": ["@ag-grid-community/core", "@ag-grid-enterprise/core"],
         "platform": "browser",
         "target": "es6",
         "format": ["cjs", "esm"],

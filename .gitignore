@@ -44,8 +44,10 @@ grid-packages/ag-grid-docs/documentation/cypress.config.AUTO.json
 
 # compiled CSS files
 grid-community-modules/styles/*.css
+community-modules/styles/*.css
 # compiled css files as SCSS
 grid-community-modules/styles/_css-content.scss
+community-modules/styles/_css-content.scss
 
 charts-community-modules/**/dist
 grid-community-modules/**/dist
