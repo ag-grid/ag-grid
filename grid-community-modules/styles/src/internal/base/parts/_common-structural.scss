@@ -425,10 +425,6 @@
         opacity: 0;
     }
 
-    .ag-header-menu-icon {
-        @include ag.unthemed-rtl(( margin-left: var(--ag-grid-size) ));
-    }
-
     .ag-header-group-cell-label, .ag-header-cell-label {
         display: flex;
         flex: 1 1 auto;
