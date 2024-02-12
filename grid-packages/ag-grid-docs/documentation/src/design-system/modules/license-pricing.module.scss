@@ -647,6 +647,7 @@ transition: all 0.3s ease-in;
 }
 
 .categoryTableHeader {
+    margin-top: $spacing-size-3;
     padding-top: $spacing-size-3;
     background-color: var(--color-bg-secondary);
     padding-bottom: $spacing-size-3;
