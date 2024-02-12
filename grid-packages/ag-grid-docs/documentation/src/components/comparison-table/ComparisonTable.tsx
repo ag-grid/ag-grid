@@ -130,10 +130,10 @@ function TableRows({
 }) {
     const columnFields = getAllColumnFields(columns);
 
-    return data.map((datum: any) => {
+    return data.map((datum: any, i: number) => {
         const { [LEVEL_FIELD]: level } = datum;
         return (
-            <tr>
+            <tr key={i}>
                 {Object.keys(columns).map((columnField, index) => {
                     const { field, value } = getColumnField({ datum, columnField });
                     const cellValue = (

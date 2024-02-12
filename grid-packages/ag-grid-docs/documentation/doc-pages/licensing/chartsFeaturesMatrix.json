@@ -92,7 +92,7 @@
       {
         "label": {
           "name": "Doughnut",
-          "icon": "chartsDoughnut",
+          "icon": "chartsDonut",
           "link": "https://example.com/column-groups"
         },
         "community": true,
@@ -122,7 +122,7 @@
       {
         "label": {
           "name": "Box Plot",
-          "icon": "Box chartsPlot",
+          "icon": "chartsBoxPlot",
           "link": "https://example.com/column-groups"
         },
         "community": false,
@@ -162,7 +162,7 @@
       {
         "label": {
           "name": "Radar Area",
-          "icon": "Radar chartsArea",
+          "icon": "chartsRadar",
           "link": "https://example.com/column-groups"
         },
         "community": false,
@@ -172,7 +172,7 @@
       {
         "label": {
           "name": "Radar Line",
-          "icon": "Radar chartsLine",
+          "icon": "chartsRadar",
           "link": "https://example.com/column-groups"
         },
         "community": false,
@@ -182,7 +182,7 @@
       {
         "label": {
           "name": "Radial Bar",
-          "icon": "Radial chartsBar",
+          "icon": "chartsRadialBar",
           "link": "https://example.com/column-groups"
         },
         "community": false,
@@ -192,7 +192,7 @@
       {
         "label": {
           "name": "Radial Column",
-          "icon": "Radial chartsColumn",
+          "icon": "chartsRadialColumn",
           "link": "https://example.com/column-groups"
         },
         "community": false,
@@ -202,7 +202,7 @@
       {
         "label": {
           "name": "Range Area",
-          "icon": "Range chartsArea",
+          "icon": "chartsRangeArea",
           "link": "https://example.com/column-groups"
         },
         "community": false,
@@ -212,7 +212,7 @@
       {
         "label": {
           "name": "Range Bar",
-          "icon": "Range chartsBar",
+          "icon": "chartsRangeBar",
           "link": "https://example.com/column-groups"
         },
         "community": false,

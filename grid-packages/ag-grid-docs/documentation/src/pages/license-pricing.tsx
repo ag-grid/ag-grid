@@ -148,8 +148,8 @@ export const LicensePricing = () => {
                             <Licenses isChecked={isChecked} />
                         </div>
 
-                        {featuresData.map((section) => {
-                          return <div>
+                        {featuresData.map((section, i) => {
+                          return <div key={i}>
                               <h4>{section.group.name}</h4>
 
                               <ComparisonTable
