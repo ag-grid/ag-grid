@@ -24,8 +24,8 @@ const gridOptions: GridOptions = {
     },
   },
   rowData: createRowData(),
-  cellFlashDelay: 2000,
-  cellFadeDelay: 500,
+  cellFlashDuration: 2000,
+  cellFadeDuration: 500,
 }
 
 function onUpdateSomeValues() {
@@ -46,8 +46,8 @@ function onFlashTwoRows() {
   // flash whole row, so leave column selection out
   gridApi!.flashCells({
     rowNodes: [rowNode1, rowNode2],
-    flashDelay: 3000,
-    fadeDelay: 2000,
+    flashDuration: 3000,
+    fadeDuration: 2000,
   })
 }
 

@@ -77,7 +77,7 @@ this.masterGridApi.removeDetailGridInfo(detailId);
 <framework-specific-section frameworks="react">
 |If the grid option `reactiveCustomComponents` is enabled, when data is updated in the grid using [Transaction Updates](/data-update-transactions/), Detail Cell Renderers will be refreshed with updated props.
 |
-|If `reactiveCustomComponents` is not enabled, Detail Cell Renderers will be destroyed and recreated on update, unless the `refresh()` method is implemented (via `useImperativeHandle`) and returns `true`.
+|If `reactiveCustomComponents` is not enabled, Detail Cell Renderers will be destroyed and recreated on update, unless the `refresh()` method is implemented (via `useImperativeHandle`) and returns `true`. This behaviour is deprecated, and in v32, `reactiveCustomComponents` will default to true.
 |
 |The example below demonstrates Detail Cell Renderers refreshing when `reactiveCustomComponents` is enabled.
 </framework-specific-section>

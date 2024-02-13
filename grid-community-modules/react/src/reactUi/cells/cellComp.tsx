@@ -8,6 +8,7 @@ import { createSyncJsComp } from '../jsComp';
 import { CellEditorComponentProxy } from '../../shared/customComp/cellEditorComponentProxy';
 import { CustomContext } from '../../shared/customComp/customContext';
 import { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
+import { warnReactiveCustomComponents } from '../../shared/customComp/util';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -406,6 +407,8 @@ const CellComp = (props: {
                     let compProxy = undefined;
                     if (reactiveCustomComponents) {
                         compProxy = new CellEditorComponentProxy(compDetails.params!, () => setRenderKey( prev => prev + 1 ));
+                    } else if (compDetails.componentFromFramework) {
+                        warnReactiveCustomComponents();
                     }
                     // start editing
                     setEditDetails({

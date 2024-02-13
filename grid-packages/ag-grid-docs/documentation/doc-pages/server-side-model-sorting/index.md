@@ -52,8 +52,8 @@ The example below demonstrates sorting using the SSRM. Note the following:
 
 ## Client-side Sorting
 
-The Server-Side Row Model supports client-side sorting. This is achieved by enabling the property `serverSideEnableClientSideSort`.
-With this property enabled, if the grid has all of the rows belonging to the impacted group, the grid can sort these rows on the client-side. This can be useful for reducing the load on the server, and improving user experience by reducing loading view time.
+The Server-Side Row Model supports client-side sorting, which can be enabled using the property `serverSideEnableClientSideSort`.
+With this property enabled, if the grid has all of the rows belonging to a group, the grid can sort these rows on the client-side.
 
 The example below demonstrates client-side sorting using the SSRM. Note the following:
 

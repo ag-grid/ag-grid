@@ -134,7 +134,7 @@ export type PivotMenuOptionName =
     'pivotChart' |
     'pivotColumnChart' | 'pivotGroupedColumn' | 'pivotStackedColumn' | 'pivotNormalizedColumn' |
     'pivotBarChart' | 'pivotGroupedBar' | 'pivotStackedBar' | 'pivotNormalizedBar' |
-    'pivotPieChart' | 'pivotPie' | 'pivotDoughnut' |
+    'pivotPieChart' | 'pivotPie' | 'pivotDonut' |
     'pivotLineChart' |
     'pivotXYChart' | 'pivotScatter' | 'pivotBubble' |
     'pivotAreaChart' | 'pivotArea' | 'pivotStackedArea' | 'pivotNormalizedArea' |
@@ -181,7 +181,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: [
                         getMenuItem('pie', 'Pie&lrm;', 'pie', 'pivotPie'),
-                        getMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut', 'pivotDoughnut')
+                        getMenuItem('donut', 'Donut&lrm;', 'donut', 'pivotDonut')
                     ]
                 },
                 getMenuItem('line', 'Line&lrm;', 'line', 'pivotLineChart'),
@@ -233,7 +233,8 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
             pieGroup: {
                 _key: 'pivotPieChart',
                 pie: 'pivotPie',
-                doughnut: 'pivotDoughnut',
+                donut: 'pivotDonut',
+                doughnut: 'pivotDonut',
             },
             lineGroup: {
                 _key: 'pivotLineChart',
@@ -272,14 +273,14 @@ export type RangeMenuOptionName =
     'chartRange' |
     'rangeColumnChart' | 'rangeGroupedColumn' | 'rangeStackedColumn' | 'rangeNormalizedColumn' |
     'rangeBarChart' | 'rangeGroupedBar' | 'rangeStackedBar' | 'rangeNormalizedBar' |
-    'rangePieChart' | 'rangePie' | 'rangeDoughnut' |
+    'rangePieChart' | 'rangePie' | 'rangeDonut' |
     'rangeLineChart' |
     'rangeXYChart' | 'rangeScatter' | 'rangeBubble' |
     'rangeAreaChart' | 'rangeArea' | 'rangeStackedArea' | 'rangeNormalizedArea' |
     'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' | 'rangeRadialColumn' | 'rangeRadialBar' |
     'rangeStatisticalChart' | 'rangeBoxPlot' | 'rangeHistogramChart' |'rangeRangeBar' | 'rangeRangeArea' |
-    'rangeHierarchicalChart' | 'rangeTreemap' |
-    'rangeSpecializedChart' | 'rangeWaterfall' |
+    'rangeHierarchicalChart' | 'rangeTreemap' | 'rangeSunburst' |
+    'rangeSpecializedChart' | 'rangeWaterfall' | 'rangeHeatmap' |
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
@@ -323,7 +324,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     name: localeTextFunc('pieChart', 'Pie'),
                     subMenu: [
                         getMenuItem('pie', 'Pie&lrm;', 'pie', 'rangePie'),
-                        getMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut', 'rangeDoughnut')
+                        getMenuItem('donut', 'Donut&lrm;', 'donut', 'rangeDonut')
                     ],
                     _key: 'rangePieChart'
                 },
@@ -376,6 +377,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     subMenu:
                         [
                             getMenuItem('treemap', 'Treemap&lrm;', 'treemap', 'rangeTreemap'),
+                            getMenuItem('sunburst', 'Sunburst&lrm;', 'sunburst', 'rangeSunburst'),
                         ],
                     _key: 'rangeHierarchicalChart',
                     _enterprise: true,
@@ -384,6 +386,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     name: localeTextFunc('specializedChart', 'Specialized'),
                     subMenu:
                         [
+                            getMenuItem('heatmap', 'Heatmap&lrm;', 'heatmap', 'rangeHeatmap'),
                             getMenuItem('waterfall', 'Waterfall&lrm;', 'waterfall', 'rangeWaterfall'),
                         ],
                     _key: 'rangeSpecializedChart',
@@ -419,7 +422,8 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
             pieGroup: {
                 _key: 'rangePieChart',
                 pie: 'rangePie',
-                doughnut: 'rangeDoughnut',
+                donut: 'rangeDonut',
+                doughnut: 'rangeDonut',
             },
             lineGroup: {
                 _key: 'rangeLineChart',
@@ -454,9 +458,11 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
             hierarchicalGroup: {
                 _key: 'rangeHierarchicalChart',
                 treemap: 'rangeTreemap',
+                sunburst: 'rangeSunburst',
             },
             specializedGroup: {
                 _key: 'rangeSpecializedChart',
+                heatmap: 'rangeHeatmap',
                 waterfall: 'rangeWaterfall',
             },
             combinationGroup: {

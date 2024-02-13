@@ -28,6 +28,13 @@ const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
 
     advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.'},
     suppressAsyncEvents: { version: '31', message: 'Events should be handled asynchronously.'},
+
+    cellFadeDelay: { version: '31.1', renamed: 'cellFadeDuration' },
+    cellFlashDelay: { version: '31.1', renamed: 'cellFlashDuration' },
+
+    suppressServerSideInfiniteScroll: { version: '31.1' },
+    serverSideSortOnServer: { version: '31.1' },
+    serverSideFilterOnServer: { version: '31.1' },
 };
 
 // Leave untyped. so it can be inferred.
@@ -117,7 +124,9 @@ export const GRID_OPTION_DEFAULTS = {
     animateRows: true,
     enableCellChangeFlash: false,
     cellFlashDelay: 500,
+    cellFlashDuration: 500,
     cellFadeDelay: 1000,
+    cellFadeDuration: 1000,
     allowShowChangeAfterFilter: false,
     domLayout: 'normal',
     ensureDomOrder: false,
@@ -180,6 +189,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressRowDeselection: false,
     suppressRowClickSelection: false,
     suppressCellFocus: false,
+    suppressHeaderFocus: false,
     suppressMultiRangeSelection: false,
     enableCellTextSelection: false,
     enableRangeSelection: false,

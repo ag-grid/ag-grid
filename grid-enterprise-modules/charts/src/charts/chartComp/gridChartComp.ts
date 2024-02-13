@@ -37,12 +37,15 @@ import {RangeChartProxy} from "./chartProxies/statistical/rangeChartProxy";
 import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
 import {BoxPlotChartProxy} from "./chartProxies/statistical/boxPlotChartProxy";
 import {TreemapChartProxy} from "./chartProxies/hierarchical/treemapChartProxy";
+import {SunburstChartProxy} from "./chartProxies/hierarchical/sunburstChartProxy";
+import {HeatmapChartProxy} from './chartProxies/specialized/heatmapChartProxy';
 import {WaterfallChartProxy} from './chartProxies/cartesian/waterfallChartProxy';
 import {ChartTranslationService} from "./services/chartTranslationService";
 import {ChartCrossFilterService} from "./services/chartCrossFilterService";
 import {CrossFilteringContext} from "../chartService";
 import {ChartOptionsService} from "./services/chartOptionsService";
 import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
+import {getCanonicalChartType, isHierarchical} from "./utils/seriesTypeMapper";
 
 export interface GridChartParams {
     chartId: string;
@@ -111,7 +114,7 @@ export class GridChartComp extends Component {
         const modelParams: ChartModelParams = {
             chartId: this.params.chartId,
             pivotChart: this.params.pivotChart,
-            chartType: this.params.chartType,
+            chartType: getCanonicalChartType(this.params.chartType),
             chartThemeName: this.getThemeName(),
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
@@ -238,6 +241,7 @@ export class GridChartComp extends Component {
             case 'normalizedBar':
                 return new BarChartProxy(chartProxyParams);
             case 'pie':
+            case 'donut':
             case 'doughnut':
                 return new PieChartProxy(chartProxyParams);
             case 'area':
@@ -265,6 +269,10 @@ export class GridChartComp extends Component {
                 return new BoxPlotChartProxy(chartProxyParams);
             case 'treemap':
                 return new TreemapChartProxy(chartProxyParams);
+            case 'sunburst':
+                return new SunburstChartProxy(chartProxyParams);
+            case 'heatmap':
+                return new HeatmapChartProxy(chartProxyParams);
             case 'waterfall':
                 return new WaterfallChartProxy(chartProxyParams);
             case 'columnLineCombo':
@@ -384,7 +392,7 @@ export class GridChartComp extends Component {
 
     private chartTypeChanged(updateParams?: UpdateChartParams): boolean {
         const [currentType, updatedChartType] = [this.chartController.getChartType(), updateParams?.chartType];
-        return this.chartType !== currentType || (!!updatedChartType && this.chartType !== updatedChartType);
+        return this.chartType !== currentType || (!!updatedChartType && this.chartType !== getCanonicalChartType(updatedChartType));
     }
 
     public getChartModel(): ChartModel {
@@ -397,11 +405,16 @@ export class GridChartComp extends Component {
 
     private handleEmptyChart(data: any[], fields: any[]): boolean {
         const pivotModeDisabled = this.chartController.isPivotChart() && !this.chartController.isPivotMode();
+        
+        // Determine the minimum number of fields based on the chart type
+        const chartType = this.chartController.getChartType();
         let minFieldsRequired = 1;
-
         if (this.chartController.isActiveXYChart()) {
-            minFieldsRequired = this.chartController.getChartType() === 'bubble' ? 3 : 2;
+            minFieldsRequired = chartType === 'bubble' ? 3 : 2;
+        } else if (isHierarchical(chartType)) {
+            minFieldsRequired = 0;
         }
+
         const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
 
         if (this.eChart) {
@@ -468,11 +481,21 @@ export class GridChartComp extends Component {
         return _.includes(availableChartThemes, chartThemeName) ? chartThemeName! : availableChartThemes[0];
     }
 
+    private getAllKeysInObjects(objects: any[]): string[] {
+        const allValues: any = {};
+    
+        objects.filter(obj => obj != null).forEach(obj => {
+            Object.keys(obj).forEach(key => allValues[key] = null);
+        });
+    
+        return Object.keys(allValues);
+    }
+
     private validateCustomThemes() {
         const suppliedThemes = this.getChartThemes();
         const customChartThemes = this.gridOptionsService.get('customChartThemes');
         if (customChartThemes) {
-            _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
+            this.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
                 if (!_.includes(suppliedThemes, customThemeName)) {
                     console.warn("AG Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
                         "supplied but not added to the 'chartThemes' list");

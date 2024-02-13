@@ -28,9 +28,15 @@ Pressing the <kbd>↵ Enter</kbd> key on a cell will put the cell into edit mode
 
 Pressing the <kbd>␣ Space</kbd> key on a cell will select the cells row, or deselect the row if already selected. If multi-select is enabled, then the selection will not remove any previous selections.
 ``
-## Suppress Cell Focus
+## Suppress Focus
 
-If you want keyboard navigation turned off, then set `suppressCellFocus=true` in the gridOptions.
+If you want keyboard navigation turned off, there are two properties that need to be turned off.
+
+### Suppress Cell Focus
+Set `suppressCellFocus=true` in the gridOptions, and Grid Cell Focus will be disabled.
+
+### Suppress Header Focus
+Set `suppressHeaderFocus=true` in the gridOptions, and Grid Header Focus will be disabled.
 
 
 ## Column Header Navigation
@@ -53,7 +59,8 @@ Regular Column Headers may have selection checkboxes, sorting functions and menu
 - Press <kbd>␣ Space</kbd> to toggle the Column Header checkbox selection.
 - Press <kbd>↵ Enter</kbd> to toggle the sorting state of that column.
 - Press <kbd>⇧ Shift</kbd>+<kbd>↵ Enter</kbd> to toggle multi-sort for that column.
-- Press <kbd>^ Ctrl</kbd>+<kbd>↵ Enter</kbd> to open the menu for the focused Column Header.
+- Press <kbd>⌥ Alt</kbd>+<kbd>↓</kbd> to open the menu for the focused Column Header.
+- Press <kbd>^ Ctrl</kbd>+<kbd>↵ Enter</kbd> to either open the menu for the focused Column Header (if `columnMenu = 'legacy'`) or open the filter for the focused Column Header (if `columnMenu = 'new'`).
 - When a menu is open, simply press <kbd>⎋ Esc</kbd> to close it and the focus will return to the Column Header.
 
 ### Floating Filter Headers

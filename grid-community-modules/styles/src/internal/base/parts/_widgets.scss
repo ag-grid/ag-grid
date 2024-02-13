@@ -509,11 +509,11 @@
     }
 
     .ag-panel {
-        background-color: var(--ag-background-color);
+        background-color: var(--ag-panel-background-color);
+        border-color: var(--ag-panel-border-color);
     }
 
     .ag-panel-title-bar {
-        background-color: var(--ag-header-background-color);
         color: var(--ag-header-foreground-color);
         height: var(--ag-header-height);
         padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);

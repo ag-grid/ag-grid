@@ -89,6 +89,7 @@ import {
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderClickedEvent,
     ColumnHeaderContextMenuEvent,
+    ColumnMenuVisibleChangedEvent
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -192,7 +193,7 @@ export interface GridOptions<TData = any> {
     columnMenu?: 'legacy' | 'new';
     /**
      * Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
-     * If `columnMenu = true`, this will default to `true` instead of `false`.
+     * If `columnMenu = 'new'`, this will default to `true` instead of `false`.
      * @default false
      */
     suppressMenuHide?: boolean;
@@ -934,13 +935,21 @@ export interface GridOptions<TData = any> {
      */
     enableCellChangeFlash?: boolean;
     /**
-     * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its "flashed" state.
+     * To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long a cell should remain in its "flashed" state.
      * @default 500
+     */
+    cellFlashDuration?: number;
+    /**
+     * @deprecated v31.1 - use `cellFlashDuration` instead.
      */
     cellFlashDelay?: number;
     /**
-     * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
+     * To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
      * @default 1000
+     */
+    cellFadeDuration?: number;
+    /**
+     * @deprecated v31.1 - use `cellFadeDuration` instead.
      */
     cellFadeDelay?: number;
     /**
@@ -1240,6 +1249,7 @@ export interface GridOptions<TData = any> {
      * When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
      * @default false
      * @initial
+     * @deprecated v31.1
      */
     suppressServerSideInfiniteScroll?: boolean;
     /**
@@ -1295,14 +1305,15 @@ export interface GridOptions<TData = any> {
      */
     serverSideFilterAllLevels?: boolean;
     /**
-     *
      * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * @default false
+     * @deprecated
      */
     serverSideSortOnServer?: boolean;
     /**
      * When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * @default false
+     * @deprecated
      */
     serverSideFilterOnServer?: boolean;
 
@@ -1409,6 +1420,12 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressCellFocus?: boolean;
+    /**
+     * If `true`, header cells won't be focusable. This means keyboard navigation will be disabled for grid header cells, but remain enabled in other elements of the grid such as grid cells and tool panels.
+     * @default false
+     */
+    suppressHeaderFocus?: boolean;
+    
     /**
      * If `true`, only a single range can be selected.
      * @default false
@@ -1561,8 +1578,10 @@ export interface GridOptions<TData = any> {
      * 
      * If enabled, makes it easier to set up custom components.
      * If disabled, custom components will either need to have methods declared imperatively,
-     * or the component props will not update reactively.
+     * or the component props will not update reactively. The behaviour with this disabled is deprecated,
+     * and in v32 this will default to `true`.
      * @initial
+     * @default false
      */
     reactiveCustomComponents?: boolean;
 
@@ -1769,7 +1788,7 @@ export interface GridOptions<TData = any> {
 
     // *** Sorting *** //
     /**
-     * Callback to perform additional sorting after the grid has sorted the rows. When used with SSRM, only applicable when `suppressServerSideInfiniteScroll=true`.
+     * Callback to perform additional sorting after the grid has sorted the rows.
      */
     postSortRows?: (params: PostSortRowsParams<TData>) => void;
 
@@ -1805,6 +1824,10 @@ export interface GridOptions<TData = any> {
      * The tool panel size has been changed.
      */
     onToolPanelSizeChanged?(event: ToolPanelSizeChangedEvent<TData>): void;
+    /**
+     * The column menu visibility has changed. Fires twice if switching between tabs - once with the old tab and once with the new tab.
+     */
+    onColumnMenuVisibleChanged?(event: ColumnMenuVisibleChangedEvent<TData>): void;
 
     // *** Clipboard *** //
     /**

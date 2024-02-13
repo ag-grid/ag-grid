@@ -10,7 +10,6 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const { gridOptionsService } = useContext(BeansContext);
     const { ctrl } = props;
     
-    const [ getTransform, setTransform ] = createSignal<string | undefined>(ctrl.getTransform()!);
     const [ getHeight, setHeight ] = createSignal<string>();
     const [ getTop, setTop ] = createSignal<string>();
     const [ getWidth, setWidth ] = createSignal<string>();
@@ -52,7 +51,6 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     });
 
     const style = createMemo( ()=> ({
-        transform: getTransform(),
         height: getHeight(),
         top: getTop(),
         width: getWidth()

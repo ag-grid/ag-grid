@@ -4,7 +4,7 @@ frameworks: ["react"]
 ---
 
 <warning>
-|This page describes the old imperative way of declaring custom filter components when the grid option `reactiveCustomComponents` is not set. It is strongly recommended to instead use the new behaviour described on the [Custom Filter](../component-filter) page.
+|This page describes the old imperative way of declaring custom filter components when the grid option `reactiveCustomComponents` is not set. This behaviour is deprecated, and you should instead use the new behaviour described on the [Custom Filter](../component-filter) page.
 </warning>
 
 An example filter component looks like this:
@@ -60,7 +60,7 @@ The example below shows two custom filters. The first is on the `Athlete` column
 The interface for a custom filter component is as follows:
 
 <snippet transform={false} language="ts">
-|interface IFilterReactComp {
+|interface IFilter {
 |    // Return true if the filter is active. If active then 1) the grid will show the filter icon in the column
 |    // header and 2) the filter will be included in the filtering of the data.
 |    isFilterActive(): boolean;

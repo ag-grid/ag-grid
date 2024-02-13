@@ -36,8 +36,8 @@ export class LazyBlockLoader extends BeanStub {
     }
 
     private getBlockToLoad() {
-        const firstRowInViewport = this.api.getFirstDisplayedRow();
-        const lastRowInViewport = this.api.getLastDisplayedRow();
+        const firstRowInViewport = this.api.getFirstDisplayedRowIndex();
+        const lastRowInViewport = this.api.getLastDisplayedRowIndex();
 
         // quick look-up for priority rows needing loading in viewport.
         for (let i = firstRowInViewport; i <= lastRowInViewport; i++) {

@@ -1,14 +1,14 @@
-import { IMenuItem, IMenuItemParams } from "@ag-grid-community/core";
+import { AgPromise, IMenuItem, IMenuItemParams } from "@ag-grid-community/core";
 import { CustomComponentWrapper } from "./customComponentWrapper";
 import { CustomMenuItemProps, CustomMenuItemCallbacks } from "./interfaces";
 
 export class MenuItemComponentWrapper extends CustomComponentWrapper<IMenuItemParams, CustomMenuItemProps, CustomMenuItemCallbacks> implements IMenuItem {
     private active: boolean = false;
     private expanded: boolean = false;
+    private readonly onActiveChange = (active: boolean) => this.updateActive(active);
 
     public setActive(active: boolean): void {
-        this.active = active;
-        this.refreshProps();
+        this.awaitSetActive(active);
     }
 
     public setExpanded(expanded: boolean): void {
@@ -20,13 +20,15 @@ export class MenuItemComponentWrapper extends CustomComponentWrapper<IMenuItemPa
         return ['select', 'configureDefaults'];
     }
 
+    private awaitSetActive(active: boolean): AgPromise<void> {
+        this.active = active;
+        return this.refreshProps();
+    }
+
     private updateActive(active: boolean): void {
-        this.setActive(active);
-        if (active) {
-            setTimeout(() => {
-                // ensure prop updates have happened
-                this.sourceParams.onItemActivated();
-            });
+        const result = this.awaitSetActive(active);
+        if (active){
+            result.then(() => this.sourceParams.onItemActivated());
         }
     }
 
@@ -35,7 +37,7 @@ export class MenuItemComponentWrapper extends CustomComponentWrapper<IMenuItemPa
             ...this.sourceParams,
             active: this.active,
             expanded: this.expanded,
-            onActiveChange: (active: boolean) => this.updateActive(active),
+            onActiveChange: this.onActiveChange,
             key: this.key
         } as any;
         // remove props in IMenuItemParams but not CustomMenuItemProps

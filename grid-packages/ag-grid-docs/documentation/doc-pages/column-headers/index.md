@@ -210,9 +210,9 @@ const gridOptions = {
 
 Note that specifying your own templates is compatible with other configurations:
 
-- `suppressMenu` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
+- `suppressHeaderMenuButton` is specified in: **Athlete**, **Country**, **Date** and **Bronze** columns
 - `sortable=false` is specified in: **Age**, **Year**, **Sport**, **Silver** and **Total** columns
-- **Gold** is the only column that doesn't have `sortable=false` or `suppressMenu`
+- **Gold** is the only column that doesn't have `sortable=false` or `suppressHeaderMenuButton`
 
 <grid-example title='Header template' name='header-template' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
 

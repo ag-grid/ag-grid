@@ -84,12 +84,10 @@ export class AggFuncService extends BeanStub implements IAggFuncService {
     }
 
     public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc; }): void {
-        _.iterateObject(aggFuncs, this.addAggFunc.bind(this));
-    }
-
-    public addAggFunc(key: string, aggFunc: IAggFunc): void {
         this.init();
-        this.aggFuncsMap[key] = aggFunc;
+        _.iterateObject(aggFuncs, (key: string, aggFunc: IAggFunc) => {
+            this.aggFuncsMap[key] = aggFunc;
+        });
     }
 
     public getAggFunc(name: string): IAggFunc {

@@ -54,7 +54,6 @@
     }
 
     .ag-menu {
-        background-color: var(--ag-control-panel-background-color);
         color: color-mix(in srgb, transparent, var(--ag-foreground-color) 95%);
 
         &.ag-tabs {
@@ -370,6 +369,7 @@
     .ag-chart-menu-icon,
     .ag-chart-menu-close {
         --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+        
         &:hover {
             border-radius: 1px;
             background-color: var(--ag-quartz-icon-hover-color);
@@ -379,10 +379,28 @@
     }
 
     .ag-filter-active {
-        --ag-quartz-icon-active-color: color-mix(in srgb, transparent, var(--ag-active-color) 30%);
+        --ag-quartz-icon-active-color: color-mix(in srgb, transparent, var(--ag-active-color) 14%);
+        --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 28%);
+        
+        position: relative;
         border-radius: 1px;
         background-color: var(--ag-quartz-icon-active-color);
         box-shadow: 0 0 0 4px var(--ag-quartz-icon-active-color);
+
+        &::after {
+            content: "";
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            top: -1px;
+            right: -1px;
+            border-radius: 50%;
+            background-color: var(--ag-active-color);
+        }
+
+        .ag-icon-filter {
+            clip-path: path('M8,0C8,4.415 11.585,8 16,8L16,16L0,16L0,0L8,0Z');
+        }
     }
 
     .ag-chart-menu-close {

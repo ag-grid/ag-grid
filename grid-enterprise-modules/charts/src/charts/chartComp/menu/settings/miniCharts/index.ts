@@ -7,7 +7,7 @@ export * from "./bar/miniStackedBar";
 export * from "./bar/miniNormalizedBar";
 
 export * from "./pie/miniPie";
-export * from "./pie/miniDoughnut";
+export * from "./pie/miniDonut";
 
 export * from "./line/miniLine";
 
@@ -31,8 +31,10 @@ export * from './statistical/miniRangeArea';
 export * from './statistical/miniBoxPlot';
 
 export * from './hierarchical/miniTreemap';
+export * from './hierarchical/miniSunburst';
 
-export * from './cumulative/miniWaterfall';
+export * from './specialized/miniHeatmap';
+export * from './specialized/miniWaterfall';
 
 export * from "./combo/miniColumnLineCombo";
 export * from "./combo/miniAreaColumnCombo";

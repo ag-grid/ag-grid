@@ -35,8 +35,6 @@ export class HeaderRowComp extends Component {
     //noinspection JSUnusedLocalSymbols
     @PostConstruct
     private init(): void {
-
-        this.getGui().style.transform = this.ctrl.getTransform()!;
         setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
 
         const compProxy: IHeaderRowComp = {

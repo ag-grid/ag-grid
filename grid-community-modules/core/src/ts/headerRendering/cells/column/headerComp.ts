@@ -3,7 +3,6 @@ import { Column } from "../../../entities/column";
 import { IComponent } from "../../../interfaces/iComponent";
 import { AgGridCommon } from "../../../interfaces/iCommon";
 import { SortController } from "../../../sortController";
-import { firstExistingValue } from "../../../utils/array";
 import { removeFromParent, setDisplayed } from "../../../utils/dom";
 import { exists } from "../../../utils/generic";
 import { createIconNoSpan } from "../../../utils/icon";
@@ -158,10 +157,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutTemplate(): string | null | undefined {
-        let template: string | null | undefined = firstExistingValue(
-            this.params.template,
-            HeaderComp.TEMPLATE
-        );
+        let template: string | null | undefined = this.params.template ?? HeaderComp.TEMPLATE;
 
         // take account of any newlines & whitespace before/after the actual template
         template = template && template.trim ? template.trim() : template;
@@ -282,7 +278,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.params.showFilter(this.eFilterButton ?? this.eMenu ?? this.getGui());
                 return true;
             }
-        } else if (this.params.enableMenu || (!isLegacyMenuEnabled && this.menuService.isHeaderContextMenuEnabled(column))) {
+        } else if (this.params.enableMenu) {
             this.params.showColumnMenu(this.eMenu ?? this.eFilterButton ?? this.getGui());
             return true;
         }

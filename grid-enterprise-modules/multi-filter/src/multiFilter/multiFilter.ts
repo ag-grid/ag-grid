@@ -23,7 +23,8 @@ import {
     MenuItemActivatedEvent,
     PostConstruct,
     IMultiFilter,
-    _
+    _,
+    KeyCode
 } from '@ag-grid-community/core';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
@@ -105,10 +106,6 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         this.destroyChildren();
 
         return AgPromise.all(this.filters!.map((filter, index) => {
-            if (index > 0) {
-                this.appendChild(_.loadTemplate(/* html */`<div class="ag-filter-separator"></div>`));
-            }
-
             const filterDef = this.filterDefs[index];
             const filterTitle = this.getFilterTitle(filter, filterDef);
             let filterGuiPromise: AgPromise<HTMLElement>;
@@ -128,7 +125,10 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
 
             return filterGuiPromise;
         })).then((filterGuis) => {
-            filterGuis!.forEach(filterGui => {
+            filterGuis!.forEach((filterGui, index) => {
+                if (index > 0) {
+                    this.appendChild(_.loadTemplate(/* html */`<div class="ag-filter-separator"></div>`));
+                }
                 this.appendChild(filterGui!);
             });
             this.filterGuis = filterGuis as HTMLElement[];
@@ -185,9 +185,24 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             });
 
             const menuItemGui = menuItem.getGui();
+            // `AgMenuList` normally handles keyboard navigation, so need to do here
+            menuItem.addManagedListener(menuItemGui, 'keydown', (e: KeyboardEvent) => {
+                const { key } = e;
+                switch (key) {
+                    case KeyCode.UP:
+                    case KeyCode.RIGHT:
+                    case KeyCode.DOWN:
+                    case KeyCode.LEFT:
+                        e.preventDefault();
+                        if (key === KeyCode.RIGHT) {
+                            menuItem.openSubMenu(true);
+                        }
+                        break;
+                }
+            });
             menuItem.addManagedListener(menuItemGui, 'focusin', () => menuItem.activate());
             menuItem.addManagedListener(menuItemGui, 'focusout', () => {
-                if (!menuItem.isSubMenuOpen()) {
+                if (!menuItem.isSubMenuOpen() && !menuItem.isSubMenuOpening()) {
                     menuItem.deactivate();
                 }
             });

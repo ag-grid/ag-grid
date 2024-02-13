@@ -9,7 +9,7 @@ import { IHeaderGroupComp } from "./headerGroupComp";
 export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellCtrl> {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
+        `<div class="ag-header-group-cell" role="columnheader">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
@@ -23,7 +23,6 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
     @PostConstruct
     private postConstruct(): void {
-
         const eGui = this.getGui();
 
         const setAttribute = (key: string, value: string | undefined) =>

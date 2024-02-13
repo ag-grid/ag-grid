@@ -22,23 +22,23 @@ import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponent
 import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverlayComponentWrapper';
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
-import { AgReactUiProps } from '../shared/interfaces';
+import { AgGridReactProps } from '../shared/interfaces';
 import { ReactComponent } from '../shared/reactComponent';
 import { PortalManager } from '../shared/portalManager';
 import { BeansContext } from "./beansContext";
 import { CssClasses } from "./utils";
-
 import GroupCellRenderer from "../reactUi/cellRenderer/groupCellRenderer";
 import GridComp from './gridComp';
+import { warnReactiveCustomComponents } from '../shared/customComp/util';
 
 
-export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
+export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager | null>(null);
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
-    const prevProps = useRef<AgReactUiProps<any>>(props);
+    const prevProps = useRef<AgGridReactProps<any>>(props);
 
     const ready = useRef<boolean>(false);
 
@@ -205,6 +205,19 @@ class ReactFrameworkComponentWrapper
             const ComponentClass = getComponentClass(componentType.propertyName);
             if (ComponentClass) {
                 return new ComponentClass(UserReactComponent, this.parent, componentType);
+            }
+        } else {
+            switch (componentType.propertyName) {
+                case 'filter':
+                case 'floatingFilterComponent':
+                case 'dateComponent':
+                case 'loadingOverlayComponent':
+                case 'noRowsOverlayComponent':
+                case 'statusPanel':
+                case 'toolPanel':
+                case 'menuItem':
+                    warnReactiveCustomComponents();
+                    break;
             }
         }
         // only cell renderers and tool panel should use fallback methods

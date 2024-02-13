@@ -57,7 +57,6 @@ class GridWithStatelessFunction extends Component {
                     suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
-                    disableStaticMarkup={true}
                     rowData={this.state.rowData} />
             </div>
         );

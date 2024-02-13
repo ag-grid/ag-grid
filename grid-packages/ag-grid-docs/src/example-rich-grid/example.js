@@ -4110,7 +4110,7 @@ function createRowData() {
             width: 70,
             checkboxSelection: true,
             sortable: false,
-            suppressMenu: true
+            suppressHeaderMenuButton: true
         },
         {
             headerName: "Employee",

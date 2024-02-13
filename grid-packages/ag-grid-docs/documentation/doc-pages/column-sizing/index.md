@@ -154,7 +154,7 @@ const gridOptions = {
 
 This can also be performed on demand via the following API methods:
 
-<api-documentation source='grid-api/api.json' section='columnSizing' names='["autoSizeColumn", "autoSizeColumns", "autoSizeAllColumns"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='columnSizing' names='["autoSizeColumns", "autoSizeAllColumns"]'></api-documentation>
 
 Note that using `autoSizeStrategy` to fit cell contents only works for the Client-Side Row Model and Server-Side Row Model, but the API methods work for all row models.
 

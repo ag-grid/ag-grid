@@ -20,7 +20,8 @@ import {
     MiniColumn,
     MiniColumnLineCombo,
     MiniCustomCombo,
-    MiniDoughnut,
+    MiniDonut,
+    MiniHeatmap,
     MiniHistogram,
     MiniLine,
     MiniNightingale,
@@ -39,6 +40,7 @@ import {
     MiniStackedArea,
     MiniStackedBar,
     MiniStackedColumn,
+    MiniSunburst,
     MiniTreemap,
 } from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
 
@@ -58,7 +60,7 @@ const miniChartMapping = {
         enterprise: false,
         chartTypes: {bar: MiniBar, stackedBar: MiniStackedBar, normalizedBar: MiniNormalizedBar}
     },
-    pieGroup: {enterprise: false, chartTypes: {pie: MiniPie, doughnut: MiniDoughnut}},
+    pieGroup: {enterprise: false, chartTypes: {pie: MiniPie, donut: MiniDonut, doughnut: MiniDonut}},
     lineGroup: {enterprise: false, chartTypes: {line: MiniLine}},
     scatterGroup: {enterprise: false, chartTypes: {scatter: MiniScatter, bubble: MiniBubble}},
     areaGroup: {
@@ -75,9 +77,12 @@ const miniChartMapping = {
     },
     hierarchicalGroup: {
         enterprise: true,
-        chartTypes: {treemap: MiniTreemap}
+        chartTypes: {treemap: MiniTreemap, sunburst: MiniSunburst}
     },
-    specializedGroup: {enterprise: true, chartTypes: {waterfall: MiniWaterfall}},
+    specializedGroup: {
+        enterprise: true,
+        chartTypes: {heatmap: MiniHeatmap, waterfall: MiniWaterfall}
+    },
     combinationGroup: {
         enterprise: false,
         chartTypes: {

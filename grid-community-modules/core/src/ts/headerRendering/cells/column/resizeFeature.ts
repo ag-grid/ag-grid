@@ -68,7 +68,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
                 const skipHeaderOnAutoSize = this.gridOptionsService.get('skipHeaderOnAutoSize');
 
                 const autoSizeColListener = () => {
-                    this.columnModel.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
+                    this.columnModel.autoSizeColumn(this.column, "uiColumnResized", skipHeaderOnAutoSize);
                 };
 
                 this.eResize.addEventListener('dblclick', autoSizeColListener);

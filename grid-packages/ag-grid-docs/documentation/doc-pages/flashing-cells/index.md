@@ -6,7 +6,7 @@ The grid can flash cells to highlight data changes. This is a great visual indic
 
 To enable cell flashing on data changes for a particular column, set the attribute `enableCellChangeFlash=true` on the column definition.
 
-You can also explicitly flash cells using the grid API `flashCells(params)`. The params takes a list of columns and rows to flash, the flashDelay and the fadeDelay values e.g. to flash one cell pass in one column and one row that identifies that cell.
+You can also explicitly flash cells using the grid API `flashCells(params)`. The params takes a list of columns and rows to flash, the flashDuration and the fadeDuration values e.g. to flash one cell pass in one column and one row that identifies that cell.
 
 <api-documentation source='grid-api/api.json' section='refresh' names='["flashCells"]'></api-documentation>
 
@@ -26,16 +26,16 @@ Each time the call value is changed, the grid adds the CSS class `ag-cell-data-c
 
 If you want to override the flash background color, this has to be done by overriding the relevant CSS class. There are two ways to change how long a cell remains "flashed".
 
-1. Change the `cellFlashDelay` and `cellFadeDelay` configs in the gridOptions
-1. When calling `flashCells()`, pass the `flashDelay` and `fadeDelay` values (in milliseconds) as params.
+1. Change the `cellFlashDuration` and `cellFadeDuration` configs in the gridOptions
+1. When calling `flashCells()`, pass the `flashDuration` and `fadeDuration` values (in milliseconds) as params.
 
 The example below demonstrates flashing delay changes. The following can be noted:
 
 
-- The `cellFlashDelay` value has been changed to 2000ms, so cells will remain in their "flashed" state for 2 seconds.
-- The `cellFadeDelay` value has been changed to 500ms, so the fading animation will happen faster than what it normally would (1 second).
+- The `cellFlashDuration` value has been changed to 2000ms, so cells will remain in their "flashed" state for 2 seconds.
+- The `cellFadeDuration` value has been changed to 500ms, so the fading animation will happen faster than what it normally would (1 second).
 - Clicking **Update Some Data** will update some data to demonstrate the changes mentioned above.
-- Clicking **Flash Two Rows** will pass a custom `flashDelay` of 3000ms and a custom `fadeDelay` delay of 2000ms to demonstrate default values can be overridden.
+- Clicking **Flash Two Rows** will pass a custom `flashDuration` of 3000ms and a custom `fadeDuration` delay of 2000ms to demonstrate default values can be overridden.
 - The example demonstrates how to change the default colour of the flash using the `--ag-value-change-value-highlight-background-color` CSS variable.
 
 <grid-example title='Changing Flashing Delay' name='flashing-delay-changes' type='generated' options='{  }'></grid-example>

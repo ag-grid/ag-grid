@@ -121,4 +121,50 @@ describe(createCategoryHierarchy, () => {
         ];
         expect(actual).toEqual(expected);
     });
+
+    it('should format numeric category labels as strings', () => {
+        const input = [
+            { x: 1, y: 3, },
+            { x: 1, y: 4, },
+            { x: 2, y: 5, },
+        ];
+        const categoryKeys: Array<keyof (typeof input)[number]> = ['x', 'y'];
+        const actual = createCategoryHierarchy(input, categoryKeys);
+        const expected = [
+            {
+                'AG-GRID-DEFAULT-LABEL-KEY': '1',
+                children: [
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': '3', x: 1, y: 3 },
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': '4', x: 1, y: 4 },
+                ],
+            },
+            { 'AG-GRID-DEFAULT-LABEL-KEY': '2', children: [{ 'AG-GRID-DEFAULT-LABEL-KEY': '5', x: 2, y: 5 }] },
+        ];
+        expect(actual).toEqual(expected);
+    });
+
+    it('should retain null category labels', () => {
+        const input = [
+            { x: null, y: 1 },
+            { x: null, y: 2 },
+            { x: undefined, y: 3 },
+            { x: undefined, y: 4 },
+            { x: 'foo', y: 5 },
+        ];
+        const categoryKeys: Array<keyof (typeof input)[number]> = ['x', 'y'];
+        const actual = createCategoryHierarchy(input, categoryKeys);
+        const expected = [
+            {
+                'AG-GRID-DEFAULT-LABEL-KEY': null,
+                children: [
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': '1', x: null, y: 1 },
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': '2', x: null, y: 2 },
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': '3', x: undefined, y: 3 },
+                    { 'AG-GRID-DEFAULT-LABEL-KEY': '4', x: undefined, y: 4 },
+                ],
+            },
+            { 'AG-GRID-DEFAULT-LABEL-KEY': 'foo', children: [{ 'AG-GRID-DEFAULT-LABEL-KEY': '5', x: 'foo', y: 5 }] },
+        ];
+        expect(actual).toEqual(expected);
+    });
 });

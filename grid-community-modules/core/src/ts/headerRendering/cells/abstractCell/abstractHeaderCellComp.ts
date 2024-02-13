@@ -8,6 +8,11 @@ export abstract class AbstractHeaderCellComp<T extends AbstractHeaderCellCtrl> e
     constructor(template: string, ctrl: T) {
         super(template);
         this.ctrl = ctrl;
+
+        const tabIndex = ctrl.getTabIndex();
+        if (tabIndex !== undefined) {
+            this.getGui().setAttribute('tabindex', tabIndex.toString());
+        }
     }
 
     public getCtrl(): T {

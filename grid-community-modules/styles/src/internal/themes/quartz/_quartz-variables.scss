@@ -7,7 +7,7 @@
     --ag-active-color: #2196f3;
     --ag-background-color: #fff;
     --ag-foreground-color: #181d1f;
-    --ag-border-color: #dddddd;
+    --ag-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 15%);
     --ag-secondary-border-color: var(--ag-border-color);
     --ag-header-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 2%);
     --ag-tooltip-background-color: var(--ag-header-background-color);
@@ -21,6 +21,11 @@
     --ag-advanced-filter-value-pill-color: #85c0e4;
     --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
     --ag-icon-font-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 90%);
+
+    --ag-panel-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 3%);
+    --ag-panel-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 20%);
+    --ag-menu-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 3%);
+    --ag-menu-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 20%);
     
     // derived colours (no color blending - these are shared by dark mode)
     --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 8%);
@@ -85,7 +90,7 @@
     --ag-tab-min-width: 0;
 
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
-    --ag-popup-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    --ag-popup-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.15);
     --ag-side-bar-panel-width: 250px;
 };
 
@@ -105,13 +110,18 @@
     --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
     --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
     --ag-selected-row-background-color: var(--ag-row-hover-color);
+    
+    --ag-panel-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
+    --ag-panel-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+    --ag-menu-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
+    --ag-menu-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
 
     --ag-advanced-filter-join-pill-color: #7a3a37;
     --ag-advanced-filter-column-pill-color: #355f2d;
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
 
-    --ag-popup-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+    --ag-popup-shadow: 0 0px 20px rgba(0, 0, 0, 0.30);
 
     color-scheme: dark;
 }

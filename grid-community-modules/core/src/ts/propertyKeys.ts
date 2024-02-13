@@ -160,11 +160,11 @@ export class PropertyKeys {
         'viewportRowModelBufferSize', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests', 'tooltipShowDelay',
         'tooltipHideDelay', 'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount', 'serverSideInitialRowCount',
         'scrollbarWidth', 'asyncTransactionWaitMillis', 'blockLoadDebounceMillis', 'keepDetailRowsCount', 'undoRedoCellEditingLimit',
-        'cellFlashDelay', 'cellFadeDelay', 'tabIndex'
+        'cellFlashDelay', 'cellFadeDelay', 'cellFlashDuration', 'cellFadeDuration', 'tabIndex'
     ];
 
     public static BOOLEAN_PROPERTIES: KeysOfType<boolean>[] = [
-        'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellFocus', 'suppressHorizontalScroll', 'groupSelectsChildren',
+        'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellFocus', 'suppressHeaderFocus', 'suppressHorizontalScroll', 'groupSelectsChildren',
         'alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll', 'debug', 'enableBrowserTooltips', 'enableCellExpressions', 'groupIncludeTotalFooter',
         'groupSuppressBlankHeader', 'suppressMenuHide', 'suppressRowDeselection', 'unSortIcon', 'suppressMultiSort', 'alwaysMultiSort', 'singleClickEdit',
         'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize', 'skipHeaderOnAutoSize', 'suppressParentsInRowNodes', 'suppressColumnMoveAnimation',

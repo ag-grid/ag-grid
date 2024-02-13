@@ -22,7 +22,7 @@ import {
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
 import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
-import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
+import { ChartSeriesType, getSeriesType, isHierarchical } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
 import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
 
@@ -70,10 +70,15 @@ export class ChartController extends BeanStub {
     }
 
     public update(params: UpdateChartParams): boolean {
-        if (!this.validUpdateType(params) || !UpdateParamsValidator.validateChartParams(params)) {
-            return false;
-        }
+        if (!this.validUpdateType(params)) return false;
+        const validationResult = UpdateParamsValidator.validateChartParams(params);
+        if (!validationResult) return false;
+        const validParams = validationResult === true ? params : validationResult;
+        this.applyValidatedChartParams(validParams);
+        return true;
+    }
 
+    private applyValidatedChartParams(params: UpdateChartParams): void {
         const { chartId, chartType, chartThemeName, unlinkChart } = params;
 
         // create a common base for the chart model parameters (this covers pivot chart updates)
@@ -113,8 +118,6 @@ export class ChartController extends BeanStub {
         // if the chart should be unlinked or chart ranges suppressed, remove all cell ranges; otherwise, set the chart range
         const removeChartCellRanges = chartModelParams.unlinkChart || chartModelParams.suppressChartRanges;
         removeChartCellRanges ? this.rangeService?.setCellRanges([]) : this.setChartRange();
-
-        return true;
     }
 
     public updateForGridChange(): void {
@@ -203,6 +206,18 @@ export class ChartController extends BeanStub {
     }
 
     public setChartType(chartType: ChartType): void {
+        // If we are changing from a multi-dimensional chart type to a single-dimensional chart type,
+        // ensure that only the first selected dimension column remains selected
+        const previousChartType = this.model.chartType;
+        if (isHierarchical(previousChartType) && !isHierarchical(chartType)) {
+            let hasSelectedDimension = false;
+            for (const colState of this.model.dimensionColState) {
+                if (!colState.selected) continue;
+                if (hasSelectedDimension) colState.selected = false;
+                hasSelectedDimension = true;
+            }
+        }
+
         this.model.chartType = chartType;
 
         this.model.comboChartModel.updateSeriesChartTypes();

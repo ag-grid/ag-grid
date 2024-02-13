@@ -100,14 +100,8 @@ export class StateService extends BeanStub {
 
     private setupStateOnColumnsInitialised(): void {
         const initialState = this.gridOptionsService.get('initialState') ?? {};
-        const {
-            columnGroup: columnGroupState
-        } = initialState;
-
         this.setColumnState(initialState);
-        if (columnGroupState) {
-            this.setColumnGroupState(columnGroupState);
-        }
+        this.setColumnGroupState(initialState);
 
         this.updateColumnState([
             'aggregation', 'columnOrder', 'columnPinning', 'columnSizing', 'columnVisibility', 'pivot', 'pivot', 'rowGroup', 'sort'
@@ -406,13 +400,14 @@ export class StateService extends BeanStub {
         return openColumnGroups.length ? { openColumnGroupIds: openColumnGroups } : undefined;
     }
 
-    private setColumnGroupState(columnGroupState: ColumnGroupState): void {
-        const { openColumnGroupIds: openColumnGroups } = columnGroupState;
-        const openColumnGroupSet = new Set(openColumnGroups);
+    private setColumnGroupState(initialState: GridState): void {
+        if (!initialState.hasOwnProperty('columnGroup')) { return; }
+
+        const openColumnGroups =  new Set(initialState.columnGroup?.openColumnGroupIds);
         const existingColumnGroupState = this.columnModel.getColumnGroupState();
         const stateItems = existingColumnGroupState.map(({ groupId }) => ({
             groupId,
-            open: openColumnGroupSet.has(groupId)
+            open: openColumnGroups.has(groupId)
         }));
         this.columnModel.setColumnGroupState(stateItems, 'gridInitializing');
     }

@@ -129,7 +129,7 @@ const gridOptions = {
         dateColumn: {
             filter: 'agDateColumnFilter',
             filterParams: { comparator: myDateComparator },
-            suppressMenu: true
+            suppressHeaderMenuButton: true
         }
     }
 }

@@ -91,17 +91,17 @@ const VueExample = {
     methods: {
         onCbAthlete(value) {
             // we only need to update one grid, as the other is a slave
-            this.topGridApi.setColumnVisible('athlete', value);
+            this.topGridApi.setColumnsVisible(['athlete'], value);
         },
 
         onCbAge(value) {
             // we only need to update one grid, as the other is a slave
-            this.topGridApi.setColumnVisible('age', value);
+            this.topGridApi.setColumnsVisible(['age'], value);
         },
 
         onCbCountry(value) {
             // we only need to update one grid, as the other is a slave
-            this.topGridApi.setColumnVisible('country', value);
+            this.topGridApi.setColumnsVisible(['country'], value);
         },
 
         onGridReady(params) {
