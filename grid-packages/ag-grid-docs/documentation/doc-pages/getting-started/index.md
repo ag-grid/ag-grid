@@ -760,11 +760,11 @@ Customise themes using CSS variables.
 <snippet transform={false} language="jsx">
 .ag-theme-quartz {
     /* Changes the color of the grid text */
-    --ag-foreground-color: rgb(126, 46, 132);
+    --ag-foreground-color: rgb(163, 64, 64);
     /* Changes the color of the grid background */
-    --ag-background-color: rgb(174 215 252);
+    --ag-background-color: rgba(215, 245, 231, 0.212);
     /* Changes the background color of selected rows */
-    --ag-selected-row-background-color: rgb(0, 255, 0, 0.1);
+    --ag-selected-row-background-color: rgba(0, 38, 255, 0.1);
 }
 </snippet>
 
