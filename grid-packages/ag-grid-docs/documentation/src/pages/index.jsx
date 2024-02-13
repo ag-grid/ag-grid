@@ -101,7 +101,7 @@ const Default = () => {
 
             <div className={styles.homepageCustomers}>
                 <div className={classNames(styles.customersInner, 'layout-max-width-small')}>
-                    <h2>Used by 90% of Fortune 500 companies</h2>
+                    <h2>Used by 90% of the Fortune 500</h2>
                     <p className="text-tertiary">
                         Trusted by the finest teams globally, an unmatched experience for developers and users alike.
                     </p>
@@ -114,15 +114,7 @@ const Default = () => {
                     <Quotes data={quotesData} />
                 </div>
             </div>
-
-            <div className={styles.homepageCustomers}>
-                <div className={classNames(styles.customersInner, 'layout-max-width-small')}>
-                    <h2>Used by 90% of the Fortune 500</h2>
-                    <p className='text-tertiary'>Trusted by the finest teams globally, an unmatched experience for developers and users alike.</p>
-                    <div className={styles.customerLogos}></div>
-                </div>
-            </div>
-
+            
             <div className={styles.homepageCharts}>
                 <div className={classNames(styles.chartsInner, 'layout-max-width-small')}>
                     <div className={styles.chartsCopy}>
