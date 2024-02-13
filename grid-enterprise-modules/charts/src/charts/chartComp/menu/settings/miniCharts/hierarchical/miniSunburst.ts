@@ -8,22 +8,24 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
 
     // Hierarchical data using multidimensional array
     private data = [
-        [[], [], []],
+        [[], []],
+        [[], []],
         [[], []],
     ];
 
     // Rotate the chart by the given angle (-90 degrees)
     private angleOffset = -Math.PI / 2;
 
+    private innerRadiusRatio = 0;
+
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
         super(container, 'sunburstTooltip');
 
         this.showRadiusAxisLine = false;
         
-        const { data, size, padding, angleOffset } = this;
+        const { data, size, padding, angleOffset, innerRadiusRatio } = this;
 
         const radius = (size - padding * 2) / 2;
-        const innerRadiusRatio = 0.3;
 
         const angleRange = [angleOffset + 0, angleOffset + 2 * Math.PI];
         const angleExtent = Math.abs(angleRange[1] - angleRange[0]);
