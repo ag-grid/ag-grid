@@ -542,9 +542,11 @@ export class FocusService extends BeanStub {
         // navigate between the cells using tab. Instead, we put focus on either
         // the header or after the grid, depending on whether tab or shift-tab was pressed.
         if (this.gridOptionsService.get('suppressCellFocus')) {
-
             if (backwards) {
-                return this.focusLastHeader();
+                if (!this.gridOptionsService.get('suppressHeaderFocus')) {
+                    return this.focusLastHeader();
+                }
+                return this.focusNextGridCoreContainer(true, true);
             }
 
             return this.focusNextGridCoreContainer(false);

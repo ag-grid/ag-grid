@@ -142,7 +142,14 @@ export class GridCtrl extends BeanStub {
         }
 
         if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
-            return this.focusService.focusGridView(allColumns[0]);
+            if (!this.focusService.focusGridView(allColumns[0])) {
+                for (let i = 1; i < focusableContainers.length; i++) {
+                    if (this.focusService.focusInto(focusableContainers[i])) {
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
 
         return this.focusService.focusFirstHeader();
