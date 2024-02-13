@@ -5,19 +5,6 @@ import { IPopupComponent } from "./iPopupComponent";
 import { IRowNode } from "./iRowNode";
 
 export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
-    /** Optional: Gets called once after initialised. If you return true, the editor will
-     * appear in a popup, so is not constrained to the boundaries of the cell.
-     * This is great if you want to, for example, provide you own custom dropdown list
-     * for selection. Default is false (ie if you don't provide the method).
-     */
-    isPopup?(): boolean;
-
-    /** Optional: Gets called once, only if isPopup() returns true. Return "over" if the popup
-     * should cover the cell, or "under" if it should be positioned below leaving the
-     * cell value visible. If this method is not present, the default is "over".
-     */
-    getPopupPosition?(): 'over' | 'under' | undefined;
-
     /** Optional: Gets called once after initialised. If you return true, the editor will not be
      * used and the grid will continue editing. Use this to make a decision on editing
      * inside the init() function, eg maybe you want to only start editing if the user
@@ -59,6 +46,19 @@ export interface ICellEditor<TValue = any> extends BaseCellEditor<any, TValue> {
      * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
      */
     afterGuiAttached?(): void;
+
+    /** Optional: Gets called once after initialised. If you return true, the editor will
+     * appear in a popup, so is not constrained to the boundaries of the cell.
+     * This is great if you want to, for example, provide you own custom dropdown list
+     * for selection. Default is false (ie if you don't provide the method).
+     */
+    isPopup?(): boolean;
+
+    /** Optional: Gets called once, only if isPopup() returns true. Return "over" if the popup
+     * should cover the cell, or "under" if it should be positioned below leaving the
+     * cell value visible. If this method is not present, the default is "over".
+     */
+    getPopupPosition?(): 'over' | 'under' | undefined;
 }
 
 export interface ICellEditorParams<TData = any, TValue = any, TContext = any> extends AgGridCommon<TData, TContext> {
