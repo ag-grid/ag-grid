@@ -6,7 +6,7 @@ import { IRowNode } from "./iRowNode";
 
 export interface ExportFileNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
-export type ExportFileNameGetter = (params: ExportFileNameGetterParams) => string;
+export type ExportFileNameGetter = (params?: ExportFileNameGetterParams) => string;
 
 export interface BaseExportParams {
     /**

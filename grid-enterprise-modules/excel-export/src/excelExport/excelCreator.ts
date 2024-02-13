@@ -13,7 +13,6 @@ import {
     ValueService,
     ExcelExportMultipleSheetParams,
     ExcelRow,
-    ExportFileNameGetterParams,
     CssClassApplier,
     ColumnGroup,
     ValueFormatterService,
@@ -107,16 +106,13 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
     return ZipContainer.getUncompressedZipFile(mimeType);
 };
 
-export const exportMultipleSheetsAsExcel = (
-    params: ExcelExportMultipleSheetParams,
-    fileNameGetterParams: ExportFileNameGetterParams,
-) => {
+export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
     const { fileName = 'export.xlsx' } = params;
 
     getMultipleSheetsAsExcelCompressed(params).then(contents => {
         if (contents) {
             const downloadFileName = typeof fileName === 'function'
-                ? fileName(fileNameGetterParams)
+                ? fileName()
                 : fileName;
 
             Downloader.download(downloadFileName, contents);
@@ -226,10 +222,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     }
 
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        exportMultipleSheetsAsExcel(
-            params,
-            this.gridOptionsService.getGridCommonParams()
-        );
+        exportMultipleSheetsAsExcel(params);
     }
 
     public getDefaultFileExtension(): 'xlsx' {

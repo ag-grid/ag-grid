@@ -347,7 +347,7 @@ export enum ExcelFactoryMode { SINGLE_SHEET, MULTI_SHEET }
 
 export interface ExcelSheetNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
-export type ExcelSheetNameGetter = (params: ExcelSheetNameGetterParams) => string;
+export type ExcelSheetNameGetter = (params?: ExcelSheetNameGetterParams) => string;
 
 export interface ColumnWidthCallbackParams {
     column: Column | null;
