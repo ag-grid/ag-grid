@@ -33,6 +33,7 @@ export class TabGuardCtrl extends BeanStub {
     private readonly providedHandleKeyDown?: (e: KeyboardEvent) => void;
 
     private skipTabGuardFocus: boolean = false;
+    private forcingFocusOut: boolean = false;
 
     constructor(params: {
         comp: ITabGuard,
@@ -116,6 +117,8 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private activateTabGuards(): void {
+        // Do not activate tabs while focus is being forced out
+        if (this.forcingFocusOut) { return; }
         const tabIndex = this.gridOptionsService.get('tabIndex');
         this.comp.setTabIndex(tabIndex.toString());
     }
@@ -178,7 +181,7 @@ export class TabGuardCtrl extends BeanStub {
             return indexA - indexB;
         });
 
-        focusableRange[0].focus();
+        focusableRange[up ? (focusableRange.length - 1) : 0].focus();
     }
 
     private onFocusIn(e: FocusEvent): void {
@@ -251,14 +254,20 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     public forceFocusOutOfContainer(up: boolean = false): void {
+        // avoid multiple calls to `forceFocusOutOfContainer`
+        if (this.forcingFocusOut) { return; }
+
         const tabGuardToFocus = up ? this.eTopGuard : this.eBottomGuard;
 
         this.activateTabGuards();
         this.skipTabGuardFocus = true;
+        this.forcingFocusOut = true;
 
+        // this focus will set `this.skipTabGuardFocus` to false;
         tabGuardToFocus.focus();
 
         window.setTimeout(() => {
+            this.forcingFocusOut = false;
             this.activateTabGuards();
         });
     }
