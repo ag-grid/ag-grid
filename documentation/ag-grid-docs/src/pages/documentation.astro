@@ -1,0 +1,32 @@
+---
+import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@features/docs/constants';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
+import { DEFAULT_FRAMEWORK } from '@constants';
+
+const defaultFramework = DEFAULT_FRAMEWORK;
+const docsRedirectPage = DOCS_FRAMEWORK_REDIRECT_PAGE;
+---
+
+<!-- Redirect for crawlers -->
+<noscript>
+    <meta
+        http-equiv="refresh"
+        content={`0;url=${urlWithPrefix({
+            framework: defaultFramework,
+            url: docsRedirectPage,
+        })}`}
+    />
+</noscript>
+
+<div id="docsRedirectPage" data-docs-redirect-page={docsRedirectPage}></div>
+<script>
+    import { $internalFramework } from '@stores/frameworkStore';
+    import { getFrameworkFromInternalFramework } from '@utils/framework';
+    import { urlWithPrefix } from '@utils/urlWithPrefix';
+
+    const framework = getFrameworkFromInternalFramework($internalFramework.get());
+    const docsRedirectPage = document.getElementById('docsRedirectPage')?.dataset.docsRedirectPage;
+    const redirectUrl = urlWithPrefix({ framework, url: docsRedirectPage! });
+
+    window.location.replace(redirectUrl);
+</script>

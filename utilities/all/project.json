@@ -130,7 +130,8 @@
     "enterprise-modules/side-bar",
     "enterprise-modules/sparklines",
     "enterprise-modules/viewport-row-model",
-    "enterprise-modules/status-bar"
+    "enterprise-modules/status-bar",
+    "documentation/ag-grid-docs"
   ],
   "tags": []
 }

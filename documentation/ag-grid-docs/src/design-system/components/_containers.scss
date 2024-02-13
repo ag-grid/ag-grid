@@ -1,0 +1,140 @@
+@use '../core' as *;
+
+.card {
+    --card-color: var(--color-border-primary);
+    --header-tint: 77.5%;
+    --content-tint: 95%;
+
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-md);
+    border: 3px solid var(--card-color);
+    background-color: var(--card-color);
+    overflow: hidden;
+
+    header,
+    .header,
+    .top {
+        padding: $spacing-size-2 $spacing-size-4;
+        background-color: color-mix(in srgb, var(--color-bg-primary) var(--header-tint), var(--card-color));
+    }
+
+    .content,
+    .bottom {
+        flex-grow: 1;
+        padding: $spacing-size-4;
+        background-color: color-mix(in srgb, var(--color-bg-primary) var(--content-tint), var(--card-color));
+    }
+}
+
+.tabs-outer {
+    header,
+    .tabs-header {
+        display: flex;
+        gap: 0 $spacing-size-8;
+        width: 100%;
+        border-top-right-radius: var(--radius-sm);
+        border-top-left-radius: var(--radius-sm);
+        border-top: 1px solid var(--color-border-secondary);
+        border-right: 1px solid var(--color-border-secondary);
+        border-left: 1px solid var(--color-border-secondary);
+        box-shadow: inset 0 -1px 0 0 var(--color-border-secondary);
+        overflow-x: auto;
+
+        #{$selector-darkmode} & {
+            border-top-right-radius: 8px;
+            border-top-left-radius: 8px;
+            box-shadow: inset 0 0px 0 0;
+            border: 1px solid var(--color-border-secondary);
+        }
+    }
+
+    pre.code {
+        margin-bottom: 0;
+    }
+
+    // If the only item in a tab is a code snippet ignore padding & remove border
+    div[tab-label] pre.code:only-child {
+        margin: -$spacing-size-4;
+        border: none;
+    }
+}
+
+.tabs-nav-list {
+    display: flex;
+    flex-shrink: 0;
+    margin: 0;
+    padding-left: 0px;
+    list-style-type: none;
+    border-bottom: none;
+}
+
+.tabs-nav-item {
+    margin-bottom: 0;
+    padding-left: $spacing-size-2;
+    padding-right: $spacing-size-2;
+}
+
+.tabs-nav-link {
+    position: relative;
+    display: inline-block;
+    padding: ($spacing-size-2 + $spacing-size-1) $spacing-size-1;
+    line-height: var(--text-lh-tight);
+    color: var(--color-fg-tertiary);
+    transition: color $transition-default-timing;
+    cursor: pointer;
+
+    &:hover {
+        color: var(--color-link);
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        opacity: 0;
+        background-color: var(--color-link);
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    &:hover::after {
+        opacity: 0.6666;
+    }
+
+    svg {
+        --icon-size: #{$spacing-size-6};
+
+        margin: -0.125em 0 0;
+        transition: fill $transition-default-timing;
+    }
+}
+
+.tabs-nav-link.active {
+    color: var(--color-fg-primary);
+    pointer-events: none;
+
+    &::after {
+        opacity: 1;
+    }
+
+    svg {
+        transition: none;
+    }
+}
+
+.tabs-content {
+    position: relative;
+    border-bottom-right-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+    border-right: 1px solid var(--color-border-secondary);
+    border-bottom: 1px solid var(--color-border-secondary);
+    border-left: 1px solid var(--color-border-secondary);
+    padding: $spacing-size-4;
+
+    pre {
+        border-radius: var(--radius-none);
+    }
+}

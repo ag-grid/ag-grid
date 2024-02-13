@@ -1,0 +1,32 @@
+---
+interface Props {
+    direction?: 'row' | 'column';
+    alignItems?: 'center' | 'start' | 'end' | 'self-start' | 'self-end' | 'flex-start' | 'flex-end';
+    justifyContent?: 'center' | 'start' | 'end' | 'self-start' | 'self-end' | 'flex-start' | 'flex-end';
+}
+
+const { direction, alignItems, justifyContent } = Astro.props as Props;
+
+const style = {
+    ...(alignItems && { 'align-items': alignItems }),
+    ...(justifyContent && { 'justify-content': justifyContent }),
+};
+---
+
+<div class:list={['flexContainer', direction]} style={style}>
+    <slot />
+</div>
+
+<style>
+    .flexContainer {
+        display: flex;
+
+        &.row {
+            flex-direction: row;
+        }
+
+        &.column {
+            flex-direction: column;
+        }
+    }
+</style>
