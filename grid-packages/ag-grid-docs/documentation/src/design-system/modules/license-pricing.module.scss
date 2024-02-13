@@ -681,6 +681,7 @@ transition: all 0.3s ease-in;
         display: flex;
         flex-direction: column;
         gap: $spacing-size-8;
+        padding-top: $spacing-size-3;
     }
 
     .desktopTableContainer {
