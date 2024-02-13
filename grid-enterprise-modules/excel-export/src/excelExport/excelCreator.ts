@@ -13,6 +13,7 @@ import {
     ValueService,
     ExcelExportMultipleSheetParams,
     ExcelRow,
+    ExportFileNameGetterParams,
     CssClassApplier,
     ColumnGroup,
     ValueFormatterService,
@@ -106,12 +107,18 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
     return ZipContainer.getUncompressedZipFile(mimeType);
 };
 
-export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
+export const exportMultipleSheetsAsExcel = (
+    params: ExcelExportMultipleSheetParams,
+    fileNameGetterParams: ExportFileNameGetterParams,
+) => {
     const { fileName = 'export.xlsx' } = params;
 
     getMultipleSheetsAsExcelCompressed(params).then(contents => {
         if (contents) {
-            const downloadFileName = typeof fileName === 'function' ? fileName() : fileName;
+            const downloadFileName = typeof fileName === 'function'
+                ? fileName(fileNameGetterParams)
+                : fileName;
+
             Downloader.download(downloadFileName, contents);
         }
     });
@@ -172,7 +179,10 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
         this.packageCompressedFile(exportParams).then(packageFile => {
             if (packageFile) {
                 const { fileName } = mergedParams;
-                const providedFileName = typeof fileName === 'function' ? fileName() : fileName;
+                const providedFileName = typeof fileName === 'function'
+                    ? fileName(this.gridOptionsService.getGridCommonParams())
+                    : fileName;
+
                 Downloader.download(this.getFileName(providedFileName), packageFile);
             }
         });
@@ -216,7 +226,10 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
     }
 
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        exportMultipleSheetsAsExcel(params);
+        exportMultipleSheetsAsExcel(
+            params,
+            this.gridOptionsService.getGridCommonParams()
+        );
     }
 
     public getDefaultFileExtension(): 'xlsx' {
@@ -229,7 +242,10 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
         let sheetName: string;
         if (params.sheetName != null) {
             const {sheetName: sheetNameParam } = params;
-            const sheetNameValue = typeof sheetNameParam === 'function' ? sheetNameParam() : sheetNameParam;
+            const sheetNameValue = typeof sheetNameParam === 'function'
+                ? sheetNameParam(this.gridOptionsService.getGridCommonParams())
+                : sheetNameParam;
+
             sheetName = String(sheetNameValue).substring(0, 31);
         } else {
             sheetName = 'ag-grid';
