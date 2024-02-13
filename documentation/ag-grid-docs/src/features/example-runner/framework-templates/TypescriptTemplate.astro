@@ -1,0 +1,79 @@
+---
+import { MetaData } from './lib/MetaData';
+import { ExampleStyle } from './lib/ExampleStyle';
+import { Styles } from './lib/Styles';
+import { SystemJs } from './lib/SystemJs';
+import { pathJoin } from '@utils/pathJoin';
+import { getCacheBustingUrl } from '@utils/chartLibraryPaths';
+
+interface Props {
+    isDev: boolean;
+    title: string;
+
+    modifiedTimeMs: number;
+    entryFileName: string;
+
+    styleFiles?: string[];
+    indexFragment: string;
+    appLocation: string;
+    boilerplatePath: string;
+    extraStyles?: string;
+    children?: any;
+}
+
+const {
+    title,
+    isDev,
+    modifiedTimeMs,
+    appLocation,
+    entryFileName,
+    styleFiles,
+    indexFragment,
+    boilerplatePath,
+    extraStyles,
+} = Astro.props as Props;
+
+const startFile = pathJoin(appLocation, entryFileName);
+---
+
+<html lang="en">
+    <head>
+        <MetaData isDev={isDev} title={`Typescript Example - ${title}`} modifiedTimeMs={modifiedTimeMs} />
+        <ExampleStyle extraStyles={extraStyles} />
+        <Styles
+            baseUrl={appLocation}
+            files={isDev && styleFiles
+                ? styleFiles
+                      .filter((file: string) => !file.includes('style.css') && !file.includes('styles.css'))
+                      .map((file: string) => getCacheBustingUrl(file, modifiedTimeMs))
+                : []}
+        />
+    </head>
+    <body>
+        <Fragment set:html={indexFragment} />
+
+        <script
+            is:inline
+            define:vars={{
+                appLocation,
+            }}
+        >
+            window.__basePath = appLocation;
+        </script>
+
+        <SystemJs
+            isDev={isDev}
+            boilerplatePath={boilerplatePath}
+            appLocation={appLocation}
+            startFile={startFile}
+            internalFramework={'typescript'}
+        />
+        <Styles
+            baseUrl={appLocation}
+            files={styleFiles
+                ? styleFiles.filter((file: string) => file.includes('style.css') || file.includes('styles.css'))
+                : []}
+        />
+        <slot />
+    </body>
+</html>

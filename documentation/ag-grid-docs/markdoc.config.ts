@@ -86,7 +86,7 @@ export default defineMarkdocConfig({
         },
         // TODO: Implement
         gridExampleRunner: {
-            render: 'pre',
+            render: component('./src/features/docs/components/DocsExampleRunner.astro'),
             attributes: {
                 title: { type: String, required: true },
                 name: { type: String, required: true },
