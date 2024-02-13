@@ -748,7 +748,7 @@ export class GridApi<TData = any> {
      * - `end` - Scrolls the column to the end of the viewport.
     */
     public ensureColumnVisible(key: string | Column, position: 'auto' | 'start' | 'middle' | 'end' = 'auto') {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position));
+        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position), 'ensureVisible');
     }
 
     /**
@@ -757,7 +757,7 @@ export class GridApi<TData = any> {
      * This will have no effect before the firstDataRendered event has fired.
      */
     public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position));
+        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position), 'ensureVisible');
     }
 
     /**
@@ -769,7 +769,7 @@ export class GridApi<TData = any> {
         nodeSelector: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
         position: 'top' | 'bottom' | 'middle' | null = null
     ) {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position));
+        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position), 'ensureVisible');
     }
 
     /**
@@ -1416,7 +1416,7 @@ export class GridApi<TData = any> {
         };
         const notPinned = params.rowPinned == null;
         if (notPinned) {
-            this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(params.rowIndex);
+            this.ensureIndexVisible(params.rowIndex);
         }
 
         const cell = this.navigationService.getCellByPosition(cellPosition);
