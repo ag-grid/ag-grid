@@ -34,7 +34,7 @@ const FAQItem = ({ question, answer }) => {
 // FAQ component to display a list of FAQs
 const FAQ = ({ faqs }) => {
     return (
-        <div className="faq">
+        <div className={styles.faq}>
             {faqs.map((faq, index) => (
                 <FAQItem key={index} question={faq.question} answer={faq.answer} />
             ))}
