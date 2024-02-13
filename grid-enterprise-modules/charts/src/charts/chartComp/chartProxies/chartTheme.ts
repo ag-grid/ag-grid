@@ -8,7 +8,7 @@ import {
     AgChartThemePalette,
 } from 'ag-charts-community';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
-import { getSeriesType } from '../utils/seriesTypeMapper';
+import { ChartSeriesType, getSeriesType, isPieChartSeries } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
 import { get } from '../utils/object';
 
@@ -25,7 +25,7 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
     const apiThemeOverrides = chartProxyParams.apiChartThemeOverrides;
 
     const standaloneChartType = getSeriesType(chartProxyParams.chartType);
-    const crossFilterThemeOverridePoint = standaloneChartType === 'pie' ? 'pie' : 'cartesian';
+    const crossFilterThemeOverridePoint = isPieChartSeries(standaloneChartType) ? standaloneChartType : 'cartesian';
     const crossFilteringOverrides = chartProxyParams.crossFiltering
         ? createCrossFilterThemeOverrides(proxy, chartProxyParams, crossFilterThemeOverridePoint)
         : undefined;
@@ -110,7 +110,7 @@ export function isStockTheme(themeName: string): boolean {
 function createCrossFilterThemeOverrides(
     proxy: ChartProxy,
     chartProxyParams: ChartProxyParams,
-    overrideType: 'cartesian' | 'pie'
+    overrideType: Extract<ChartSeriesType, 'cartesian' | 'pie' | 'donut'>,
 ): AgChartThemeOverrides {
     const legend = {
         listeners: {
@@ -158,6 +158,16 @@ function inbuiltStockThemeOverrides(params: ChartProxyParams, titleEnabled: bool
             },
         },
         pie: {
+            series: {
+                title: { _enabledFromTheme: true },
+                calloutLabel: { _enabledFromTheme: true },
+                sectorLabel: {
+                    enabled: false,
+                    _enabledFromTheme: true,
+                },
+            } as any,
+        },
+        donut: {
             series: {
                 title: { _enabledFromTheme: true },
                 calloutLabel: { _enabledFromTheme: true },

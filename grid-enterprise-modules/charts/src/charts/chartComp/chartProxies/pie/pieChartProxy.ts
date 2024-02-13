@@ -139,6 +139,7 @@ export class PieChartProxy extends ChartProxy {
     }
 
     private getFields(params: UpdateParams): FieldDefinition[] {
+        // pie charts only support a single series, donut charts support multiple series
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
     }
 

@@ -12,6 +12,7 @@ export type ChartSeriesType =
     'histogram' |
     'polar' |
     'pie' |
+    'donut' |
     'hierarchy' |
     'bubble' |
     'radial-column' |
@@ -35,6 +36,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'histogram',
     'line',
     'pie',
+    'donut',
     'scatter',
     'bubble',
     'radial-column',
@@ -159,13 +161,26 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'sunburst':
             return 'sunburst';
         case 'pie':
-        case 'donut':
             return 'pie';
+        case 'donut':
+            return 'donut';
         case 'heatmap':
             return 'heatmap';
         case 'waterfall':
             return 'waterfall';
         default:
             return 'cartesian';
+    }
+}
+
+export type PieChartSeriesType = Extract<ChartSeriesType, 'pie' | 'donut'>;
+
+export function isPieChartSeries(seriesType: ChartSeriesType): seriesType is PieChartSeriesType {
+    switch (seriesType) {
+        case 'pie':
+        case 'donut':
+            return true;
+        default:
+            return false;
     }
 }

@@ -20,7 +20,7 @@ import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
-import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
+import { ChartSeriesType, getSeriesType, isPieChartSeries } from "../../../utils/seriesTypeMapper";
 import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import { CalloutPanel } from "./calloutPanel";
 import { CapsPanel } from "./capsPanel";
@@ -73,6 +73,7 @@ export class SeriesPanel extends Component {
         'column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'donut': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'scatter': ['tooltips', 'markers', 'labels'],
         'bubble': ['tooltips', 'markers', 'labels'],
@@ -252,8 +253,9 @@ export class SeriesPanel extends Component {
     }
 
     private initLabels() {
-        const seriesOptionLabelProperty = this.seriesType === 'pie' ? 'calloutLabel' : 'label';
-        const labelName = this.seriesType === 'pie'
+        const isPieChart = isPieChartSeries(this.seriesType);
+        const seriesOptionLabelProperty = isPieChart ? 'calloutLabel' : 'label';
+        const labelName = isPieChart
             ? this.chartTranslationService.translate('calloutLabels')
             : this.chartTranslationService.translate('labels');
         const labelParams = initFontPanelParams({
@@ -264,7 +266,7 @@ export class SeriesPanel extends Component {
         });
         const labelPanelComp = this.createBean(new FontPanel(labelParams));
 
-        if (this.seriesType === 'pie') {
+        if (isPieChart) {
             const calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsService, () => this.seriesType));
             labelPanelComp.addCompToPanel(calloutPanelComp);
             this.activePanels.push(calloutPanelComp);
@@ -272,7 +274,7 @@ export class SeriesPanel extends Component {
 
         this.addWidget(labelPanelComp);
 
-        if (this.seriesType === 'pie') {
+        if (isPieChart) {
             const sectorParams = initFontPanelParams({
                 labelName: this.chartTranslationService.translate('sectorLabels'),
                 chartOptionsService: this.chartOptionsService,
@@ -435,6 +437,7 @@ export class SeriesPanel extends Component {
                 ['waterfall', {value: 'waterfall', text: this.translate('waterfall', 'Waterfall')}],
                 ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],
+                ['donut', {value: 'donut', text: this.translate('donut', 'Donut')}],
             ]);
         }
 
