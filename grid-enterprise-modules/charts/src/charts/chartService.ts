@@ -16,6 +16,7 @@ import {
     IAggFunc,
     IChartService,
     IRangeService,
+    ModuleRegistry,
     OpenChartToolPanelParams,
     Optional,
     PreDestroy,
@@ -24,7 +25,7 @@ import {
 } from "@ag-grid-community/core";
 import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION, _ModuleSupport} from "ag-charts-community";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
-import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
+import { getCanonicalChartType, isEnterpriseChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from "./chartModelMigration";
 import { VERSION as GRID_VERSION } from "../version";
 
@@ -53,6 +54,12 @@ export class ChartService extends BeanStub implements IChartService {
     public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
 
     public updateChart(params: UpdateChartParams): void {
+        const chartType = params.chartType;
+        if (chartType && isEnterpriseChartType(chartType) && !this.isEnterprise()) {
+            ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+            return;
+        }
+
         if (this.activeChartComps.size === 0) {
             console.warn(`AG Grid - No active charts to update.`);
             return;
@@ -309,6 +316,11 @@ export class ChartService extends BeanStub implements IChartService {
         chartOptionsToRestore?: AgChartThemeOverrides,
         chartPaletteToRestore?: AgChartThemePalette,
         seriesChartTypes?: SeriesChartType[]): ChartRef | undefined {
+        
+        if (isEnterpriseChartType(chartType) && !this.isEnterprise()) {
+            ModuleRegistry.__warnEnterpriseChartDisabled(chartType);
+            return undefined;
+        }
 
         const createChartContainerFunc = this.gridOptionsService.getCallback('createChartContainer');
 

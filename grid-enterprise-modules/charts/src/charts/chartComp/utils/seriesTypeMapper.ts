@@ -52,6 +52,26 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'waterfall',
 ];
 
+export function isEnterpriseChartType(chartType: ChartType): boolean {
+    switch (chartType) {
+        case 'rangeBar':
+        case 'rangeArea':
+        case 'waterfall':
+        case 'boxPlot':
+        case 'radarLine':
+        case 'radarArea':
+        case 'nightingale':
+        case 'radialColumn':
+        case 'radialBar':
+        case 'sunburst':
+        case 'treemap':
+        case 'heatmap':
+            return true;
+        default:
+            return false;
+    }
+}
+
 const horizontalChartTypes = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
 export function isHorizontal(chartType: ChartType): boolean {
     return horizontalChartTypes.has(chartType);
