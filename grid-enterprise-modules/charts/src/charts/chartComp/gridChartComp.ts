@@ -13,7 +13,6 @@ import {
     Events,
     GridApi,
     IAggFunc,
-    LegacyChartType,
     PopupService,
     PostConstruct,
     RefSelector,
@@ -52,7 +51,7 @@ export interface GridChartParams {
     chartId: string;
     pivotChart: boolean;
     cellRange: CellRange;
-    chartType: ChartType | LegacyChartType;
+    chartType: ChartType;
     chartThemeName?: string;
     insideDialog: boolean;
     suppressChartRanges: boolean;
@@ -243,6 +242,7 @@ export class GridChartComp extends Component {
                 return new BarChartProxy(chartProxyParams);
             case 'pie':
             case 'donut':
+            case 'doughnut':
                 return new PieChartProxy(chartProxyParams);
             case 'area':
             case 'stackedArea':

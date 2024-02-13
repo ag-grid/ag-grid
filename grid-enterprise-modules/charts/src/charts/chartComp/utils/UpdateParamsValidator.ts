@@ -3,7 +3,6 @@ import {
     ChartParamsCellRange,
     ChartType,
     IAggFunc,
-    LegacyChartType,
     UpdateChartParams,
     UpdateCrossFilterChartParams,
     UpdatePivotChartParams,
@@ -31,12 +30,6 @@ interface ValidationFunction<T, K extends keyof T = keyof T, V = T[K]> {
     validationFn: (value: T[K]) => boolean | V;
     warnMessage: (value: T[K]) => string;
 }
-
-export type ValidatedChartType = Exclude<UpdateChartParams['chartType'], LegacyChartType | undefined>;
-
-export type ValidatedUpdateChartParams = UpdateChartParams & {
-    chartType: ValidatedChartType;
-};
 
 export class UpdateParamsValidator {
     private static validChartTypes: ChartType[] = [
@@ -74,7 +67,7 @@ export class UpdateParamsValidator {
         'customCombo'
     ];
 
-    private static legacyChartTypes: LegacyChartType[] = [
+    private static legacyChartTypes: ChartType[] = [
         'doughnut',
     ];
 
@@ -82,11 +75,11 @@ export class UpdateParamsValidator {
         return UpdateParamsValidator.validChartTypes.includes(value as ChartType);
     }
 
-    private static isLegacyChartType(value: string): value is LegacyChartType {
-        return UpdateParamsValidator.legacyChartTypes.includes(value as LegacyChartType);
+    private static isLegacyChartType(value: string): value is ChartType {
+        return UpdateParamsValidator.legacyChartTypes.includes(value as ChartType);
     }
 
-    private static validateChartType = validateIfDefined<UpdateChartParams['chartType'], ValidatedChartType>((chartType) => {
+    private static validateChartType = validateIfDefined<UpdateChartParams['chartType'], Exclude<ChartType, 'doughnut'>>((chartType) => {
         if (this.isValidChartType(chartType)) return true;
         if (this.isLegacyChartType(chartType)) {
             const renamedChartType = getCanonicalChartType(chartType)
@@ -149,7 +142,7 @@ export class UpdateParamsValidator {
         },
     ];
 
-    public static validateChartParams(params: UpdateChartParams): boolean | ValidatedUpdateChartParams {
+    public static validateChartParams(params: UpdateChartParams): boolean | UpdateChartParams {
         let paramsToValidate = params as UpdateChartParams;
         switch (paramsToValidate.type) {
             case 'rangeChartUpdate':
@@ -164,7 +157,7 @@ export class UpdateParamsValidator {
         }
     }
 
-    private static validateUpdateRangeChartParams(params: UpdateRangeChartParams): boolean | ValidatedUpdateChartParams {
+    private static validateUpdateRangeChartParams(params: UpdateRangeChartParams): boolean | UpdateRangeChartParams {
         const validations: ValidationFunction<any>[] = [
             ...UpdateParamsValidator.commonValidations,
             ...UpdateParamsValidator.cellRangeValidations,
@@ -178,7 +171,7 @@ export class UpdateParamsValidator {
         return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart', 'cellRange', 'suppressChartRanges', 'aggFunc', 'seriesChartTypes'], 'UpdateRangeChartParams');
     }
 
-    private static validateUpdatePivotChartParams(params: UpdatePivotChartParams): boolean | ValidatedUpdateChartParams {
+    private static validateUpdatePivotChartParams(params: UpdatePivotChartParams): boolean | UpdatePivotChartParams {
         const validations: ValidationFunction<any>[] = [
             ...UpdateParamsValidator.commonValidations,
         ];
@@ -186,7 +179,7 @@ export class UpdateParamsValidator {
         return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart'], 'UpdatePivotChartParams');
     }
 
-    private static validateUpdateCrossFilterChartParams(params: UpdateCrossFilterChartParams): boolean | ValidatedUpdateChartParams {
+    private static validateUpdateCrossFilterChartParams(params: UpdateCrossFilterChartParams): boolean | UpdateCrossFilterChartParams {
         const validations: ValidationFunction<any>[] = [
             ...UpdateParamsValidator.commonValidations,
             ...UpdateParamsValidator.cellRangeValidations,

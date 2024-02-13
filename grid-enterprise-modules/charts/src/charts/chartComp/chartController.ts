@@ -24,7 +24,7 @@ import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
 import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
 import { ChartSeriesType, getSeriesType, isHierarchical } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
-import { UpdateParamsValidator, ValidatedUpdateChartParams } from "./utils/UpdateParamsValidator";
+import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
 
 export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 
@@ -73,12 +73,12 @@ export class ChartController extends BeanStub {
         if (!this.validUpdateType(params)) return false;
         const validationResult = UpdateParamsValidator.validateChartParams(params);
         if (!validationResult) return false;
-        const validParams = validationResult === true ? params as ValidatedUpdateChartParams : validationResult;
+        const validParams = validationResult === true ? params : validationResult;
         this.applyValidatedChartParams(validParams);
         return true;
     }
 
-    private applyValidatedChartParams(params: ValidatedUpdateChartParams): void {
+    private applyValidatedChartParams(params: UpdateChartParams): void {
         const { chartId, chartType, chartThemeName, unlinkChart } = params;
 
         // create a common base for the chart model parameters (this covers pivot chart updates)

@@ -48,7 +48,7 @@ export class PieChartProxy extends ChartProxy {
                 calloutLabelKey: category.id,
             }
 
-            if (this.chartType === 'donut') {
+            if (this.chartType === 'donut' || this.chartType === 'doughnut') {
                 const { outerRadiusOffset, innerRadiusOffset } = PieChartProxy.calculateOffsets(offset);
                 const title = f.displayName ? {
                     title: { text: f.displayName, showInLegend: numFields > 1 },

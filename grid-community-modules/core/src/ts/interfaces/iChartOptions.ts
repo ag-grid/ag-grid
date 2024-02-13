@@ -125,6 +125,7 @@ export type ChartType =
     | 'bubble'
     | 'pie'
     | 'donut'
+    | 'doughnut'
     | 'area'
     | 'stackedArea'
     | 'normalizedArea'
@@ -154,6 +155,7 @@ export type CrossFilterChartType =
     | 'bubble'
     | 'pie'
     | 'donut'
+    | 'doughnut'
     | 'area';
 
 export type ChartToolPanelMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat';

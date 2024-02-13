@@ -1,4 +1,3 @@
-import { LegacyChartType } from '@ag-grid-community/core';
 import { ChartType } from "@ag-grid-community/core";
 
 // these values correspond to top level object names in `AgChartThemeOverrides`
@@ -107,7 +106,7 @@ export function hasGradientLegend(chartType: ChartType): boolean {
     }
 }
 
-export function getCanonicalChartType(chartType: ChartType | LegacyChartType): ChartType {
+export function getCanonicalChartType(chartType: ChartType): Exclude<ChartType, 'doughnut'> {
     switch (chartType) {
         case 'doughnut':
             return 'donut';
@@ -163,6 +162,7 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'pie':
             return 'pie';
         case 'donut':
+        case 'doughnut':
             return 'donut';
         case 'heatmap':
             return 'heatmap';

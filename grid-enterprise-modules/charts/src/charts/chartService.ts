@@ -16,7 +16,6 @@ import {
     IAggFunc,
     IChartService,
     IRangeService,
-    LegacyChartType,
     OpenChartToolPanelParams,
     Optional,
     PreDestroy,
@@ -298,7 +297,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     private createChart(
         cellRange: CellRange,
-        chartType: ChartType | LegacyChartType,
+        chartType: ChartType,
         chartThemeName?: string,
         pivotChart = false,
         suppressChartRanges = false,
