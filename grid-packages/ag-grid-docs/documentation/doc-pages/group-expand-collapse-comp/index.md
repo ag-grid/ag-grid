@@ -72,8 +72,8 @@ const gridOptions = {
 
 This example demonstrates Dynamic Selection.
 
-- The `autoGroupColumnDef` contains a `cellRendererSelector` to conditionally select the Cell Renderer.
-- The **Australia** and **Norway** group cells are using the Default Cell Renderer.
+- The `autoGroupColumnDef` contains a `cellRendererSelector` to conditionally select the Group Cell Component.
+- The **Australia** and **Norway** group cells are using the Default Group Cell Component.
 
 <grid-example title='Conditionally Show Group Cell Renderer' name='custom-expand-collapse-cell' type='mixed' options='{"enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>
 
