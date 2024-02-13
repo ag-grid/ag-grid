@@ -1421,6 +1421,12 @@ export interface GridOptions<TData = any> {
      */
     suppressCellFocus?: boolean;
     /**
+     * If `true`, header cells won't be focusable. This means keyboard navigation will be disabled for grid header cells, but remain enabled in other elements of the grid such as grid cells and tool panels.
+     * @default false
+     */
+    suppressHeaderFocus?: boolean;
+    
+    /**
      * If `true`, only a single range can be selected.
      * @default false
      */

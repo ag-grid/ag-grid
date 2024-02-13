@@ -164,7 +164,7 @@ export class PropertyKeys {
     ];
 
     public static BOOLEAN_PROPERTIES: KeysOfType<boolean>[] = [
-        'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellFocus', 'suppressHorizontalScroll', 'groupSelectsChildren',
+        'suppressMakeColumnVisibleAfterUnGroup', 'suppressRowClickSelection', 'suppressCellFocus', 'suppressHeaderFocus', 'suppressHorizontalScroll', 'groupSelectsChildren',
         'alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll', 'debug', 'enableBrowserTooltips', 'enableCellExpressions', 'groupIncludeTotalFooter',
         'groupSuppressBlankHeader', 'suppressMenuHide', 'suppressRowDeselection', 'unSortIcon', 'suppressMultiSort', 'alwaysMultiSort', 'singleClickEdit',
         'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize', 'skipHeaderOnAutoSize', 'suppressParentsInRowNodes', 'suppressColumnMoveAnimation',

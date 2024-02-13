@@ -122,9 +122,8 @@ export class CellCtrl extends BeanStub {
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = column.getId() + '-' + instanceIdSequence++;
 
-        const colDef = this.column.getColDef();
         this.colIdSanitised = escapeString(this.column.getId())!;
-        if (!this.beans.gridOptionsService.get('suppressCellFocus')) {
+        if (!beans.gridOptionsService.get('suppressCellFocus')) {
             this.tabIndex = -1;
         }
 

@@ -10,7 +10,7 @@ import { IHeaderComp } from "./headerComp";
 export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-header-cell" role="columnheader" tabindex="-1">
+        `<div class="ag-header-cell" role="columnheader">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
             <div ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
         </div>`;
@@ -33,7 +33,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
     @PostConstruct
     private postConstruct(): void {
-
         const eGui = this.getGui();
 
         const setAttribute = (name: string, value: string | null | undefined) => {

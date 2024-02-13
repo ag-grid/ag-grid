@@ -28,9 +28,15 @@ Pressing the <kbd>↵ Enter</kbd> key on a cell will put the cell into edit mode
 
 Pressing the <kbd>␣ Space</kbd> key on a cell will select the cells row, or deselect the row if already selected. If multi-select is enabled, then the selection will not remove any previous selections.
 ``
-## Suppress Cell Focus
+## Suppress Focus
 
-If you want keyboard navigation turned off, then set `suppressCellFocus=true` in the gridOptions.
+If you want keyboard navigation turned off, there are two properties that need to be turned off.
+
+### Suppress Cell Focus
+Set `suppressCellFocus=true` in the gridOptions, and Grid Cell Focus will be disabled.
+
+### Suppress Header Focus
+Set `suppressHeaderFocus=true` in the gridOptions, and Grid Header Focus will be disabled.
 
 
 ## Column Header Navigation

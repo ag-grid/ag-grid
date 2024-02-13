@@ -31,6 +31,7 @@ import { HorizontalDirection } from "../../../constants/direction";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HeaderPosition } from "../../common/headerPosition";
 import { WithoutGridCommon } from "../../../interfaces/iCommon";
+import { Beans } from "../../../rendering/beans";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     setResizableDisplayed(displayed: boolean): void;
@@ -42,13 +43,11 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
 
 export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCellComp, ColumnGroup, GroupResizeFeature> {
 
-    @Autowired('columnModel') private readonly columnModel: ColumnModel;
-
     private expandable: boolean;
     private displayName: string | null;
 
-    constructor(columnGroup: ColumnGroup, parentRowCtrl: HeaderRowCtrl) {
-        super(columnGroup, parentRowCtrl);
+    constructor(columnGroup: ColumnGroup, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
+        super(columnGroup, beans, parentRowCtrl);
         this.column = columnGroup;
     }
 
@@ -56,7 +55,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         this.comp = comp;
         this.setGui(eGui);
 
-        this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
+        this.displayName = this.beans.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
 
         this.addClasses();
         this.setupMovingCss();
@@ -99,7 +98,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { eGui, column, columnModel, gridOptionsService, ctrlsService } = this;
+        const { beans, eGui, column, gridOptionsService, ctrlsService } = this;
         const isRtl = gridOptionsService.get('enableRtl');
         const isLeft = hDirection === HorizontalDirection.Left;
 
@@ -128,7 +127,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             fromEnter: false,
             fakeEvent: false,
             gridOptionsService: gridOptionsService,
-            columnModel
+            columnModel: beans.columnModel
         });
 
         const displayedLeafColumns = column.getDisplayedLeafColumns();
@@ -179,7 +178,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             displayName: this.displayName!,
             columnGroup: this.column,
             setExpanded: (expanded: boolean) => {
-                this.columnModel.setColumnGroupOpened(this.column.getProvidedColumnGroup(), expanded, "gridInitializing");
+                this.beans.columnModel.setColumnGroupOpened(this.column.getProvidedColumnGroup(), expanded, "gridInitializing");
             }
         });
 
@@ -320,7 +319,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             const column = this.column;
             const newExpandedValue = !column.isExpanded();
 
-            this.columnModel.setColumnGroupOpened(column.getProvidedColumnGroup(), newExpandedValue, "uiColumnExpanded");
+            this.beans.columnModel.setColumnGroupOpened(column.getProvidedColumnGroup(), newExpandedValue, "uiColumnExpanded");
         }
     }
 
@@ -337,7 +336,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             return;
         }
 
-        const { column, columnModel, displayName, gridOptionsService, dragAndDropService } = this;
+        const { beans, column, displayName, gridOptionsService, dragAndDropService } = this;
+        const { columnModel } = beans;
+
         const allLeafColumns = column.getProvidedColumnGroup().getLeafColumns();
         let hideColumnOnExit = !gridOptionsService.get('suppressDragLeaveHidesColumns');
 
@@ -380,7 +381,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
 
         const allColumnsCurrentOrder: Column[] = [];
-        this.columnModel.getAllDisplayedColumns().forEach(column => {
+        this.beans.columnModel.getAllDisplayedColumns().forEach(column => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
                 removeFromArray(allColumnsOriginalOrder, column);

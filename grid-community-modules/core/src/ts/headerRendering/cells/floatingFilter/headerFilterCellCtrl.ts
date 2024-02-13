@@ -16,6 +16,7 @@ import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { setAriaLabel } from "../../../utils/aria";
 import { warnOnce } from "../../../utils/function";
+import { Beans } from "../../../rendering/beans";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveBodyCssClass(cssClassName: string, on: boolean): void;
@@ -27,9 +28,6 @@ export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
 }
 
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, Column> {
-
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
 
     private eButtonShowMainFilter: HTMLElement;
     private eFloatingFilterBody: HTMLElement;
@@ -43,8 +41,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private destroySyncListener: (() => null) | undefined;
     private destroyFilterChangedListener: (() => null) | undefined;
 
-    constructor(column: Column, parentRowCtrl: HeaderRowCtrl) {
-        super(column, parentRowCtrl);
+    constructor(column: Column, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
+        super(column, beans, parentRowCtrl);
         this.column = column;
     }
 
@@ -222,7 +220,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         const listener = () => {
             if (!this.gridOptionsService.get('columnHoverHighlight')) { return; }
-            const hovered = this.columnHoverService.isHovered(this.column);
+            const hovered = this.beans.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', hovered);
         };
 
@@ -243,7 +241,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private setupUserComp(): void {
         if (!this.active) { return; }
 
-        const compDetails = this.filterManager.getFloatingFilterCompDetails(
+        const compDetails = this.beans.filterManager.getFloatingFilterCompDetails(
             this.column,
             () => this.showParentFilter()
         );
@@ -270,6 +268,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private setupSyncWithFilter(): void {
         if (!this.active) { return; }
+        const { filterManager } = this.beans;
 
         const syncWithFilter = (filterChangedEvent: FilterChangedEvent | null) => {
             const compPromise = this.comp.getFloatingFilterComp();
@@ -278,7 +277,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
             compPromise.then(comp => {
                 if (comp) {
-                    const parentModel = this.filterManager.getCurrentFloatingFilterParentModel(this.column);
+                    const parentModel = filterManager.getCurrentFloatingFilterParentModel(this.column);
                     comp.onParentModelChanged(parentModel, filterChangedEvent);
                 }
             });
@@ -286,7 +285,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         this.destroySyncListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
 
-        if (this.filterManager.isFilterActive(this.column)) {
+        if (filterManager.isFilterActive(this.column)) {
             syncWithFilter(null);
         }
     }
@@ -309,7 +308,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private updateFilterButton(): void {
         if (!this.suppressFilterButton && this.comp) {
-            const isFilterAllowed = this.filterManager.isFilterAllowed(this.column);
+            const isFilterAllowed = this.beans.filterManager.isFilterAllowed(this.column);
             this.comp.setButtonWrapperDisplayed(isFilterAllowed);
             if (this.highlightFilterButtonWhenActive && isFilterAllowed) {
                 this.eButtonShowMainFilter.classList.toggle('ag-filter-active', this.column.isFilterActive());
@@ -327,7 +326,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         }
 
         const newCompDetails = this.active
-            ? this.filterManager.getFloatingFilterCompDetails(
+            ? this.beans.filterManager.getFloatingFilterCompDetails(
                 this.column,
                 () => this.showParentFilter()
             )
@@ -338,7 +337,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
             this.updateCompDetails(newCompDetails, becomeActive);
         } else {
             compPromise.then(compInstance => {
-                if (!compInstance || this.filterManager.areFilterCompsDifferent(this.userCompDetails ?? null, newCompDetails)) {
+                if (!compInstance || this.beans.filterManager.areFilterCompsDifferent(this.userCompDetails ?? null, newCompDetails)) {
                     this.updateCompDetails(newCompDetails, becomeActive);
                 } else {
                     this.updateFloatingFilterParams(newCompDetails);

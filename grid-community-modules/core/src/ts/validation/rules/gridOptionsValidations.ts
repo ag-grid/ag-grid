@@ -189,6 +189,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressRowDeselection: false,
     suppressRowClickSelection: false,
     suppressCellFocus: false,
+    suppressHeaderFocus: false,
     suppressMultiRangeSelection: false,
     enableCellTextSelection: false,
     enableRangeSelection: false,

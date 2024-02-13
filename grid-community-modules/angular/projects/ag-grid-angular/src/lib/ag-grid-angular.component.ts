@@ -1293,6 +1293,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public suppressCellFocus: boolean | undefined = undefined;
+    /** If `true`, header cells won't be focusable. This means keyboard navigation will be disabled for grid header cells, but remain enabled in other elements of the grid such as grid cells and tool panels.
+         * @default false
+         */
+    @Input() public suppressHeaderFocus: boolean | undefined = undefined;
     /** If `true`, only a single range can be selected.
          * @default false
          */
@@ -1825,6 +1829,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressMakeColumnVisibleAfterUnGroup: boolean | null | '';
     static ngAcceptInputType_suppressRowClickSelection: boolean | null | '';
     static ngAcceptInputType_suppressCellFocus: boolean | null | '';
+    static ngAcceptInputType_suppressHeaderFocus: boolean | null | '';
     static ngAcceptInputType_suppressHorizontalScroll: boolean | null | '';
     static ngAcceptInputType_groupSelectsChildren: boolean | null | '';
     static ngAcceptInputType_alwaysShowHorizontalScroll: boolean | null | '';

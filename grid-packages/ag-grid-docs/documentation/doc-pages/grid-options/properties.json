@@ -1678,6 +1678,12 @@
                 "url": "/keyboard-navigation/#suppress-cell-focus"
             }
         },
+        "suppressHeaderFocus":{
+            "more": {
+                "name": "Suppress Header Focus",
+                "url": "/keyboard-navigation/#suppress-header-focus"
+            }
+        },
         "suppressMultiRangeSelection": {
             "more": {
                 "name": "Suppress Multi Range Selection",

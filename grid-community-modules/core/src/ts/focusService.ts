@@ -326,6 +326,8 @@ export class FocusService extends BeanStub {
         fromCell?: boolean;
         resetHeaderRowWithoutSpan?: boolean;
     }): boolean {
+        if (this.gridOptionsService.get('suppressHeaderFocus')) { return false; }
+
         const { direction, fromTab, allowUserOverride, event, fromCell, resetHeaderRowWithoutSpan } = params;
         let { headerPosition } = params;
 
