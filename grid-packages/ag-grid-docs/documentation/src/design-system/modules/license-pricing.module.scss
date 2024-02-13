@@ -668,6 +668,9 @@ transition: all 0.3s ease-in;
         margin-top: 0;
     }
     z-index: 1;
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+    }
 }
 
 .tableContainer {

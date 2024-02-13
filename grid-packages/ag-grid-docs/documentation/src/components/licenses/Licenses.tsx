@@ -105,6 +105,9 @@ const makeNonBreaking = (text: string) => {
 const Price = ({ priceFullDollars, launchPrice }) => {
     return (
         <div className={styles.price}>
+             <span className={styles.developerText}>
+                    Starting from
+                </span>
             <p><b></b></p>
             <p className={styles.priceFullDollars}>
                 {launchPrice ? launchPrice : priceFullDollars}
@@ -135,21 +138,21 @@ const License = (props: LicenseData) => {
                     <p className="">{description}</p>
                 </div>
 
-                <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
-                <div className={styles.licenseActions}>
-                    <a
-                        className={`${id === 'community' ? 'button-tertiary' : 'button'} ${styles.pricing}`}
-                        href={buyLink}
-                        target="_blank"
-                        onClick={() => {
-                            trackBuyButton({
-                                type: id,
-                            });
-                        }}
-                    >
-                        {id === 'community' ? 'Start for free' : 'Buy now'}
-                    </a>
-                </div>
+                    <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
+                    <div className={styles.licenseActions}>
+                        <a
+                            className={`${id === 'community' ? 'button-tertiary' : 'button'} ${styles.pricing}`}
+                            href={buyLink}
+                            target="_blank"
+                            onClick={() => {
+                                trackBuyButton({
+                                    type: id,
+                                });
+                            }}
+                        >
+                            {id === 'community' ? 'Start for free' : 'Buy now'}
+                        </a>
+                    </div>
 
                 <div className={styles.licenseBenefits}>
                     <ul className="list-style-none">

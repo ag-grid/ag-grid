@@ -41,7 +41,7 @@
 .licenseMeta {
     display: flex;
     flex-direction: column;
-    margin-bottom: $spacing-size-8;
+    margin-bottom: $spacing-size-12;
     color: var(--color-text-tertiary);
 
     :global(.icon) {
@@ -170,6 +170,8 @@ p.name {
     }
 }
 
+
+
 .launchExplainer {
     margin-top: $spacing-size-2;
     min-height: 36px;
@@ -188,6 +190,7 @@ p.name {
         width: 100%;
         text-align: center;
     }
+
 }
 
 .learnMoreLink {
@@ -239,8 +242,7 @@ p.name {
 @media screen and (min-width: $breakpoint-pricing-medium) {
   
     .license:nth-child(3) {
-        background-color: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 65%);
-        border: 1px solid var(--color-border-secondary);
+        // border: 1px solid var(--color-border-secondary);
         border-bottom: none;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
@@ -277,3 +279,4 @@ p.name {
    padding-left: $spacing-size-3;
    padding-top: $spacing-size-4;
 }
+
