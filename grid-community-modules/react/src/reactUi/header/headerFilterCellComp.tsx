@@ -105,7 +105,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={setRef} className={className} role="gridcell" tabIndex={-1}>
+        <div ref={setRef} className={className} role="gridcell">
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 { reactUserComp && !reactiveCustomComponents && <UserCompClass { ...userCompDetails!.params } ref={ userCompStateless ? () => {} : userCompRef }/> }
                 { reactUserComp && reactiveCustomComponents && <CustomContext.Provider value={{
