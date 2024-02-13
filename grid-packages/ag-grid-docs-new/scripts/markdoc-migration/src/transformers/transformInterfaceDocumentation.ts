@@ -16,7 +16,10 @@ export function transformInterfaceDocumentation(ast: any) {
             config: {
                 interfaceName: 'interfaceName',
                 names: 'names',
-                config: 'config',
+                config: {
+                    type: 'object',
+                    name: 'config',
+                },
             },
         });
     });

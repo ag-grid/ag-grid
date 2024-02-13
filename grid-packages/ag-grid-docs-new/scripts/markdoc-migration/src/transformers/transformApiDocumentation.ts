@@ -16,8 +16,14 @@ export function transformApiDocumentation(ast: any) {
             config: {
                 source: 'source',
                 section: 'section',
-                names: 'names',
-                config: 'config',
+                names: {
+                    type: 'array',
+                    name: 'names',
+                },
+                config: {
+                    type: 'object',
+                    name: 'config',
+                },
             },
         });
     });

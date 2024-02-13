@@ -5,7 +5,7 @@ import { Attribute, getAttributeValue } from './getAttributeValue';
 import { childrenWithoutVerticalBar } from './removeStartingVerticalBar';
 
 type AttributeConfigObject = {
-    type: 'boolean' | 'string' | 'object';
+    type: 'boolean' | 'string' | 'object' | 'array';
     name: string;
     transform?: (value: string) => string;
 };
@@ -42,8 +42,9 @@ const createMarkdocTag = ({
     } else if (config) {
         const tagAttrEntries = Object.entries(config)
             .map(([attrName, nameConfig]) => {
-                const isBoolean = (nameConfig as AttributeConfigObject)?.type === 'boolean';
-                const isObject = (nameConfig as AttributeConfigObject)?.type === 'object';
+                const type = (nameConfig as AttributeConfigObject)?.type || 'string';
+                const isBoolean = type === 'boolean';
+                const isString = type === 'string';
                 const field =
                     typeof nameConfig === 'object'
                         ? (nameConfig as AttributeConfigObject)?.name
@@ -59,11 +60,11 @@ const createMarkdocTag = ({
                 } else if (isBoolean) {
                     const boolValue = processedValue === 'true';
                     return [field, boolValue];
-                } else if (isObject) {
-                    return [field, processedValue];
+                } else if (isString) {
+                    return [field, `"${processedValue}"`];
                 }
 
-                return [field, `"${processedValue}"`];
+                return [field, processedValue];
             })
             .filter(Boolean) as [string, string][];
         const tagAttributes = Object.fromEntries(tagAttrEntries);
