@@ -120,9 +120,10 @@ export const LicensePricing = () => {
                             </div>
                         </div>
                         <div className={styles.licensesOuter}>
-                            <Licenses isChecked={isChecked} />
+                            <Licenses className={styles.licensesInfo} isChecked={isChecked} />
                         </div>
 
+                        <div className={styles.desktopTableContainer}>
                         {featuresData.map((section, i) => {
                           return <div className={styles.tableContainer} key={i}>
                               <h4 className={styles.categoryTableHeader}>{section.group.name}</h4>
@@ -144,6 +145,7 @@ export const LicensePricing = () => {
                               />
                           </div>
                         })}
+                        </div>
 
                         <div className={styles.videoPrompt}>
                             <a href="https://www.youtube.com/watch?v=xacx_attYuo" target="_blank" className={styles.thumbnail}>

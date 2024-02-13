@@ -672,3 +672,17 @@ transition: all 0.3s ease-in;
 .tableContainer {
     margin-bottom: $spacing-size-3;
 }
+
+/* mobile breakpoint responsive */
+
+@media screen and (max-width: $breakpoint-pricing-medium) {
+    .licensesOuter {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-size-8;
+    }
+
+    .desktopTableContainer {
+        display: none;   
+    }
+}

@@ -10,6 +10,10 @@ import GridEnterprise from '../../images/inline-svgs/pricing-enterprise.svg';
 import ChartsGrid from '../../images/inline-svgs/pricing-grid-charts.svg';
 // @ts-ignore
 import styles from '@design-system/modules/Licenses.module.scss';
+import { ComparisonTable } from '../../components/comparison-table/ComparisonTable';
+import gridFeaturesData from '../../../doc-pages/licensing/gridFeaturesMatrix.json'
+import chartsFeaturesData from '../../../doc-pages/licensing/chartsFeaturesMatrix.json'
+
 
 type LicenseData = {
     className: string;
@@ -41,7 +45,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     },
     {
         className: styles.gridLicense,
-        id: 'grid',
+        id: 'enterprise-grid',
         subHeading: 'AG Grid Enterprise',
         description: 'All the grid features and dedicated support',
         priceFullDollars: '999',
@@ -67,7 +71,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     },
     {
         className: styles.gridLicense,
-        id: 'grid',
+        id: 'enterprise-charts',
         subHeading: 'AG Charts Enterprise',
         description: 'All the chart features and dedicated support',
         priceFullDollars: '199',
@@ -159,20 +163,58 @@ const License = (props: LicenseData) => {
     );
 };
 
-export const Licenses: FunctionComponent = ({ isChecked }) => {
+export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked }) => {
     const filteredData = DEV_LICENSE_DATA.filter(
         (data) => data.tabGroup === 'both' || (isChecked ? data.tabGroup === 'charts' : data.tabGroup === 'grid')
     );
+
+    const featuresData = !isChecked ? gridFeaturesData : chartsFeaturesData;
 
     return (
         <>
             <div className={styles.emptyColumn}>
                 <div className={styles.pricingText}>Our products</div>
-            </div> {/* Empty Column */}
+            </div>
             {filteredData.map((data) => {
+                let columns, cellRenderer;
+
+                if (data.id === 'togther') { // Correcting the typo to 'together' if necessary
+                    columns = {
+                        'label': '',
+                        'chartsGrid': '',
+                    };
+                    cellRenderer = {
+                        'label': 'label',
+                        'chartsGrid': "feature",
+                    };
+                } else {
+                    columns = {
+                        'label': '',
+                        [data.id.includes('enterprise') ? 'enterprise' : 'community']: '',
+                    };
+                    cellRenderer = {
+                        'label': 'label',
+                        [data.id.includes('enterprise') ? 'enterprise' : 'community']: "feature",
+                    };
+                }
+
                 return (
                     <div key={data.id} className={classnames(styles.license, data.className)}>
                         <License {...data} />
+
+                        <div className={styles.mobileFeatureMatrix}>
+                            {featuresData.map((section, i) => (
+                                <div className={styles.tableContainer} key={i}>
+                                    <h4 className={styles.categoryTableHeader}>{section.group.name}</h4>
+                                    <ComparisonTable
+                                        data={section.items}
+                                        columns={columns}
+                                        cellRenderer={cellRenderer}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        
                     </div>
                 );
             })}

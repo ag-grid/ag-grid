@@ -221,3 +221,24 @@ p.name {
 .pricingText {
     font-weight: var(--text-semibold);
 }
+
+/* mobile breakpoint responsive */
+@media screen and (max-width: $breakpoint-pricing-medium) {
+    .license {
+        border: 1px solid var(--color-border-secondary);
+    .top {
+        display: flex;
+        align-items: start;
+        justify-content: left;
+        text-align: left;
+        border-radius: var(--radius-md);
+    }
+    }
+
+}
+@media screen and (min-width: $breakpoint-pricing-medium) {
+
+.mobileFeatureMatrix {
+    display: none;
+}
+}
