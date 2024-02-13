@@ -93,7 +93,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
                 const compProxy = new FloatingFilterComponentProxy(userCompDetails!.params, () => setRenderKey(prev => prev + 1));
                 userCompRef(compProxy);
                 return compProxy;
-            } else {
+            } else if (userCompDetails.componentFromFramework) {
                 warnReactiveCustomComponents();
             }
         }
