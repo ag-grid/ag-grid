@@ -19,7 +19,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom cell editors, however this will involve declaring your React component imperatively and is deprecated. See [Imperative Cell Editor Component](../component-cell-editor-imperative-react/). In v32, `reactiveCustomComponents` will default to true.</note>
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom cell editors, however this will involve declaring your React component imperatively and is deprecated. See [Imperative Cell Editor Component](../component-cell-editor-imperative-react/). In v32, `reactiveCustomComponents` will default to true. Note that if you have existing custom components created without `reactiveCustomComponents`, these will need to be migrated. See [Migrating to Use reactiveCustomComponents](../upgrading-to-ag-grid-31-1/#migrating-to-use-reactivecustomcomponents) for details.</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
