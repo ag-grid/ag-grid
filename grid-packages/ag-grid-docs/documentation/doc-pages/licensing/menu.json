@@ -629,7 +629,7 @@
             "showInCollapsed": true
           },
           {
-            "title": "Column Filters",
+            "title": "Provided Column Filters",
             "url": "/filtering/",
             "showInCollapsed": false,
             "items": [
@@ -703,12 +703,21 @@
               {
                 "title": "Filter API",
                 "url": "/filter-api/"
-              },
-              {
-                "title": "Floating Filters",
-                "url": "/floating-filters/"
               }
             ]
+          },          
+          {
+            "title": "Custom Column Filters",
+            "url": "/component-filter/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Floating Filters",
+            "url": "/floating-filters/"
+          },
+          {
+            "title": "Custom Floating Filters",
+            "url": "/component-floating-filter/"
           },
           {
             "title": "Advanced Filter",
@@ -1505,15 +1514,6 @@
           {
             "title": "Date Component",
             "url": "/component-date/"
-          },
-          {
-            "title": "Filter Component",
-            "url": "/component-filter/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Floating Filter Component",
-            "url": "/component-floating-filter/"
           },
           {
             "title": "Header Component",
