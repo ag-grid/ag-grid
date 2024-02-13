@@ -787,48 +787,48 @@
             "showInCollapsed": true
           },
           {
-            "title": "Cell Editors",
+            "title": "Edit Components",
             "url": "/cell-editors/",
             "showInCollapsed": true
           },
           {
-            "title": "Provided Cell Editors",
+            "title": "Provided Edit Components",
             "url": "/provided-cell-editors/",
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Text Cell Editor",
+                "title": "Text Editor",
                 "url": "/provided-cell-editors-text/",
                 "showInCollapsed": true
               },
               {
-                "title": "Large Text Cell Editor",
+                "title": "Large Text Editor",
                 "url": "/provided-cell-editors-large-text/",
                 "showInCollapsed": true
               },
               {
-                "title": "Select Cell Editor",
+                "title": "Select Editor",
                 "url": "/provided-cell-editors-select/",
                 "showInCollapsed": true
               },
               {
-                "title": "Rich Select Cell Editor",
+                "title": "Rich Select Editor",
                 "url": "/provided-cell-editors-rich-select/",
                 "showInCollapsed": true,
                 "enterprise": true
               },
               {
-                "title": "Number Cell Editor",
+                "title": "Number Editor",
                 "url": "/provided-cell-editors-number/",
                 "showInCollapsed": true
               },
               {
-                "title": "Date Cell Editors",
+                "title": "Date Editors",
                 "url": "/provided-cell-editors-date/",
                 "showInCollapsed": true
               },
               {
-                "title": "Checkbox Cell Editor",
+                "title": "Checkbox Editor",
                 "url": "/provided-cell-editors-checkbox/",
                 "showInCollapsed": true
               }
@@ -1500,11 +1500,6 @@
           {
             "title": "Registering Components",
             "url": "/components/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Cell Editor",
-            "url": "/component-cell-editor/",
             "showInCollapsed": true
           },
           {
