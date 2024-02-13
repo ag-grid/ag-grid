@@ -81,6 +81,14 @@
       "description": "Background color of the overlay shown over the grid e.g. a data loading indicator",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
+    "--ag-menu-background-color": {
+      "description": "Background color of menus, including the column menu and right-click context menu",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-panel-background-color": {
+      "description": "Background color of panels, including the advanced filter builder and integrated charts",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
     "--ag-row-hover-color": {
       "description": "Background color when hovering over rows in the grid and in dropdown menus. Set to `transparent` to disable the hover effect. Note: if you want a rollover on one but not the other, use CSS selectors instead of this property",
       "type": "CSS color (e.g. `red` or `#fff`)"
@@ -191,6 +199,14 @@
     },
     "--ag-row-border-color": {
       "description": "Colour of the border between grid rows, or `transparent` to display no border",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-menu-border-color": {
+      "description": "Colour of the border around menus including the column menu and right-click context menu",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-panel-border-color": {
+      "description": "Colour of the border around panels including the advanced filter builder and integrated charts",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-cell-horizontal-border": {
@@ -410,7 +426,7 @@
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-menu-min-width": {
-      "description": "Minimum width of a menu that is not tabbed",
+      "description": "Minimum width of the filter menu",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-side-bar-panel-width": {

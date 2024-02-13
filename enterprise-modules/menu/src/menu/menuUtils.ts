@@ -12,6 +12,13 @@ import {
     _
 } from "@ag-grid-community/core";
 
+export interface MenuRestoreFocusParams {
+    column: Column | undefined;
+    headerPosition: HeaderPosition | null;
+    columnIndex: number;
+    eventSource?: HTMLElement;
+}
+
 @Bean('menuUtils')
 export class MenuUtils extends BeanStub {
     @Autowired('focusService') private readonly focusService: FocusService;
@@ -19,15 +26,14 @@ export class MenuUtils extends BeanStub {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     public restoreFocusOnClose(
-        column: Column | undefined,
+        restoreFocusParams: MenuRestoreFocusParams,
         eComp:  HTMLElement,
-        headerPosition: HeaderPosition | null,
-        columnIndex: number,
-        eventSource?: HTMLElement,
-        e?: Event
+        e?: Event,
+        restoreIfMouseEvent?: boolean
     ): void {
+        const { eventSource } = restoreFocusParams;
         const isKeyboardEvent = e instanceof KeyboardEvent;
-        if (!isKeyboardEvent || !eventSource) { return; }
+        if ((!restoreIfMouseEvent && !isKeyboardEvent) || !eventSource) { return; }
         
         const eDocument = this.gridOptionsService.getDocument();
         if (!eComp.contains(eDocument.activeElement) && eDocument.activeElement !== eDocument.body) {
@@ -35,35 +41,14 @@ export class MenuUtils extends BeanStub {
             return;
         }
 
-        const isColumnStillVisible = this.columnModel.getAllDisplayedColumns().some(col => col === column);
-
-        if (isColumnStillVisible && _.isVisible(eventSource)) {
-            const focusableEl = this.focusService.findTabbableParent(eventSource);
-            if (focusableEl) {
-                if (column) {
-                    this.headerNavigationService.scrollToColumn(column);
-                }
-                focusableEl.focus();
-            }
-        }
-        // if the focusEl is no longer in the DOM, we try to focus
-        // the header that is closest to the previous header position
-        else if (headerPosition && columnIndex !== -1) {
-            const allColumns = this.columnModel.getAllDisplayedColumns();
-            const columnToFocus = allColumns[columnIndex] || _.last(allColumns);
-
-            if (columnToFocus) {
-                this.focusService.focusHeaderPosition({
-                    headerPosition: {
-                        headerRowIndex: headerPosition.headerRowIndex,
-                        column: columnToFocus
-                    }
-                });
-            }
-        }
+        this.focusHeaderCell(restoreFocusParams);
     }
 
-    public closePopupAndRestoreFocusOnSelect(hidePopupFunc: (popupParams?: PopupEventParams) => void, event?: CloseMenuEvent): void {
+    public closePopupAndRestoreFocusOnSelect(
+        hidePopupFunc: (popupParams?: PopupEventParams) => void,
+        restoreFocusParams: MenuRestoreFocusParams,
+        event?: CloseMenuEvent
+    ): void {
         let keyboardEvent: KeyboardEvent | undefined;
 
         if (event && event.event && event.event instanceof KeyboardEvent) {
@@ -72,14 +57,18 @@ export class MenuUtils extends BeanStub {
 
         hidePopupFunc(keyboardEvent && { keyboardEvent });
 
-        // this method only gets called when the menu was closed by selection an option
-        // in this case we highlight the cell that was previously highlighted
+        // this method only gets called when the menu was closed by selecting an option
+        // in this case we focus the cell that was previously focused, otherwise the header
         const focusedCell = this.focusService.getFocusedCell();
         const eDocument = this.gridOptionsService.getDocument();
 
-        if (eDocument.activeElement === eDocument.body && focusedCell) {
-            const { rowIndex, rowPinned, column } = focusedCell;
-            this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true, preventScrollOnBrowserFocus: true });
+        if (eDocument.activeElement === eDocument.body) {
+            if (focusedCell) {
+                const { rowIndex, rowPinned, column } = focusedCell;
+                this.focusService.setFocusedCell({ rowIndex, column, rowPinned, forceBrowserFocus: true, preventScrollOnBrowserFocus: true });
+            } else {
+                this.focusHeaderCell(restoreFocusParams);
+            }
         }
     }
 
@@ -107,6 +96,37 @@ export class MenuUtils extends BeanStub {
         if (showMenuCallback(eventOrTouch)) {
             const event = mouseEvent ?? touchEvent;
             event!.preventDefault();
+        }
+    }
+
+    private focusHeaderCell(restoreFocusParams: MenuRestoreFocusParams): void {
+        const { column, columnIndex, headerPosition, eventSource } = restoreFocusParams;
+
+        const isColumnStillVisible = this.columnModel.getAllDisplayedColumns().some(col => col === column);
+
+        if (isColumnStillVisible && eventSource && _.isVisible(eventSource)) {
+            const focusableEl = this.focusService.findTabbableParent(eventSource);
+            if (focusableEl) {
+                if (column) {
+                    this.headerNavigationService.scrollToColumn(column);
+                }
+                focusableEl.focus();
+            }
+        }
+        // if the focusEl is no longer in the DOM, we try to focus
+        // the header that is closest to the previous header position
+        else if (headerPosition && columnIndex !== -1) {
+            const allColumns = this.columnModel.getAllDisplayedColumns();
+            const columnToFocus = allColumns[columnIndex] || _.last(allColumns);
+
+            if (columnToFocus) {
+                this.focusService.focusHeaderPosition({
+                    headerPosition: {
+                        headerRowIndex: headerPosition.headerRowIndex,
+                        column: columnToFocus
+                    }
+                });
+            }
         }
     }
 

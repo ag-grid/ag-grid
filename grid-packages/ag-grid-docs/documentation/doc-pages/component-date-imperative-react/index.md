@@ -4,7 +4,7 @@ frameworks: ["react"]
 ---
 
 <warning>
-|This page describes the old imperative way of declaring custom date components when the grid option `reactiveCustomComponents` is not set. It is strongly recommended to instead use the new behaviour described on the [Custom Date](../component-date) page.
+|This page describes the old imperative way of declaring custom date components when the grid option `reactiveCustomComponents` is not set. This behaviour is deprecated, and you should instead use the new behaviour described on the [Custom Date](../component-date) page.
 </warning>
 
 An example date component looks like this:
@@ -52,7 +52,7 @@ The example below shows how to register a custom date component that contains an
 
 The interface for a custom date component is as follows:
 
-<interface-documentation interfaceName='IDateReactComp' config='{"asCode":true }' ></interface-documentation>
+<interface-documentation interfaceName='IDate' config='{"asCode":true }' ></interface-documentation>
 
 <note>
 |Note that you will need to expose the lifecycle/callback methods (for example, the `getDate` callback) with

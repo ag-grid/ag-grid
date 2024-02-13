@@ -69,10 +69,6 @@ export function setAriaLabelledBy(element: Element, labelledBy: string): void {
     toggleAriaAttribute(element, 'labelledby', labelledBy);
 }
 
-export function setAriaDescription(element: Element, description?: string) {
-    toggleAriaAttribute(element, 'description', description);
-}
-
 export function setAriaDescribedBy(element: Element, describedby?: string): void {
     toggleAriaAttribute(element, 'describedby', describedby);
 }

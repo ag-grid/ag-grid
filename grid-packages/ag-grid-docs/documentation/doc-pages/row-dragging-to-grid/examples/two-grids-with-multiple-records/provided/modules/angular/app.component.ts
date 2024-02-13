@@ -114,7 +114,7 @@ export class AppComponent {
         {
             rowDrag: true,
             maxWidth: 50,
-            suppressMenu: true,
+            suppressHeaderMenuButton: true,
             rowDragText: (params, dragItemCount) => {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
@@ -126,7 +126,7 @@ export class AppComponent {
             colId: 'checkbox',
             maxWidth: 50,
             checkboxSelection: true,
-            suppressMenu: true,
+            suppressHeaderMenuButton: true,
             headerCheckboxSelection: true
         },
         { field: "athlete" },
@@ -137,7 +137,7 @@ export class AppComponent {
         {
             rowDrag: true,
             maxWidth: 50,
-            suppressMenu: true,
+            suppressHeaderMenuButton: true,
             rowDragText: (params, dragItemCount) => {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
@@ -148,7 +148,7 @@ export class AppComponent {
         { field: "athlete" },
         { field: "sport" },
         {
-            suppressMenu: true,
+            suppressHeaderMenuButton: true,
             maxWidth: 50,
             cellRenderer: SportRenderer
         }
@@ -195,7 +195,7 @@ export class AppComponent {
 
     checkboxSelectChange = () => {
         const checked = this.eSelectCheckbox.nativeElement.checked;
-        this.leftApi.setColumnVisible('checkbox', checked);
+        this.leftApi.setColumnsVisible(['checkbox'], checked);
         this.leftApi.setGridOption('suppressRowClickSelection', checked);
     }
 

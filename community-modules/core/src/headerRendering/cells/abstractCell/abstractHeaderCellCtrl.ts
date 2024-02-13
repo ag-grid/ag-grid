@@ -35,16 +35,17 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
     @Autowired('focusService') protected readonly focusService: FocusService;
-    @Autowired('beans') protected readonly beans: Beans;
     @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
     @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
     @Autowired('menuService') protected readonly menuService: MenuService;
 
+    protected readonly beans: Beans;
     private instanceId: string;
     private columnGroupChild: IHeaderColumn;
     private parentRowCtrl: HeaderRowCtrl;
-    
+    private tabIndex: number | undefined;
+
     private isResizing: boolean;
     private resizeToggleTimeout = 0;
     protected resizeMultiplier = 1;
@@ -61,14 +62,19 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     protected abstract resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
 
-    constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl) {
+    constructor(columnGroupChild: IHeaderColumn, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
         super();
 
         this.columnGroupChild = columnGroupChild;
         this.parentRowCtrl = parentRowCtrl;
+        this.beans = beans;
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
+
+        if (!beans.gridOptionsService.get('suppressHeaderFocus')) {
+            this.tabIndex = -1;
+        }
     }
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
@@ -208,6 +214,10 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     public getRowIndex(): number {
         return this.parentRowCtrl.getRowIndex();
+    }
+
+    public getTabIndex(): number | undefined {
+        return this.tabIndex;
     }
 
     public getParentRowCtrl(): HeaderRowCtrl {

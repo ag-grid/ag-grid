@@ -22,7 +22,7 @@ import {
 import { ChartDataModel, ChartModelParams, ColState } from "./model/chartDataModel";
 import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
 import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
-import { ChartSeriesType, getSeriesType } from "./utils/seriesTypeMapper";
+import { ChartSeriesType, getSeriesType, isHierarchical } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
 import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
 
@@ -153,16 +153,10 @@ export class ChartController extends BeanStub {
         const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
         const data = this.getChartData();
         const selectedDimensions = this.getSelectedDimensions();
-        const [selectedDimension] = selectedDimensions;
 
         return {
             data,
             grouping: this.isGrouping(),
-            category: {
-                id: selectedDimension.colId,
-                name: selectedDimension.displayName!,
-                chartDataType: this.model.getChartDataType(selectedDimension.colId)
-            },
             categories: selectedDimensions.map((selectedDimension) => ({
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName!,
@@ -209,6 +203,18 @@ export class ChartController extends BeanStub {
     }
 
     public setChartType(chartType: ChartType): void {
+        // If we are changing from a multi-dimensional chart type to a single-dimensional chart type,
+        // ensure that only the first selected dimension column remains selected
+        const previousChartType = this.model.chartType;
+        if (isHierarchical(previousChartType) && !isHierarchical(chartType)) {
+            let hasSelectedDimension = false;
+            for (const colState of this.model.dimensionColState) {
+                if (!colState.selected) continue;
+                if (hasSelectedDimension) colState.selected = false;
+                hasSelectedDimension = true;
+            }
+        }
+
         this.model.chartType = chartType;
 
         this.model.comboChartModel.updateSeriesChartTypes();

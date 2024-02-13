@@ -23,9 +23,8 @@ The design system has been built from the ground up to be consistent with the ja
 
 To get started with the AG Grid design system first download the .zip file using the button below. Within the zip archive you'll find a `AG-Grid-design-system-X.X.X.fig` Figma file, and a directory with a sample [Style Dictionary](https://amzn.github.io/style-dictionary/#/) project.
 
-<div style="margin-bottom: 24px;">
-  <download-ds-button></download-ds-button>
-</div>
+<download-ds-button></download-ds-button>
+<br />
 
 To start using the AG Grid Design System in Figma just drag and drop the `.fig` file into the Figma application. Alternatively you may want to use one of the other methods of [importing files content into Figma](https://help.figma.com/hc/en-us/articles/360041003114-Import-files-into-Figma).
 

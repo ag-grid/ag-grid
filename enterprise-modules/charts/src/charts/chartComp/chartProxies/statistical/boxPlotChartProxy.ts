@@ -9,13 +9,14 @@ export class BoxPlotChartProxy extends StatisticalChartProxy {
     }
 
     public getSeries(params: UpdateParams): AgBoxPlotSeriesOptions<any>[] {
+        const [category] = params.categories;
         return params.fields.map(
             (field, seriesIndex) => ({
                 type: this.standaloneChartType as AgBoxPlotSeriesOptions['type'],
                 direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
                 // xKey/xName refer to category buckets
-                xKey: params.category.id,
-                xName: params.category.name,
+                xKey: category.id,
+                xName: category.name,
                 // yName is used to label the series
                 yName: field.displayName ?? undefined,
                 // custom field labels shown in the tooltip

@@ -40,11 +40,6 @@ export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
      * Optional: If doing full line edit, then gets called when focus is leaving the editor
      */
     focusOut?(): void;
-
-    /**
-     * Optional: Gets called with the latest cell editor params every time they update
-     */
-    refresh?(params: ICellEditorParams<TData, TValue, TContext>): void;
 }
 
 export interface ICellEditor<TValue = any> extends BaseCellEditor<any, TValue> {
@@ -52,6 +47,11 @@ export interface ICellEditor<TValue = any> extends BaseCellEditor<any, TValue> {
      * Return the final value - called by the grid once after editing is complete
      */
     getValue(): TValue | null | undefined;
+
+    /**
+     * Optional: Gets called with the latest cell editor params every time they update
+     */
+    refresh?(params: ICellEditorParams<any, TValue>): void;
 
     /**
      * Optional: A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.

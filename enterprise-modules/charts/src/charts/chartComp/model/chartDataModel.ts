@@ -262,14 +262,18 @@ export class ChartDataModel extends BeanStub {
 
     private getRowIndexes(): { startRow: number; endRow: number; } {
         let startRow = 0, endRow = 0;
-        const { rangeService, valueCellRange } = this;
+        const { rangeService, valueCellRange, dimensionCellRange } = this;
 
-        if (rangeService && valueCellRange) {
-            startRow = rangeService.getRangeStartRow(valueCellRange).rowIndex;
+        // Not all chart types require a value series (e.g. hierarchical charts),
+        // so fall back to using the dimension cell range for inferring row indices
+        const cellRange = valueCellRange || dimensionCellRange;
+
+        if (rangeService && cellRange) {
+            startRow = rangeService.getRangeStartRow(cellRange).rowIndex;
 
             // when the last row the cell range is a pinned 'bottom' row, the `endRow` index is set to -1 which results
             // in the ChartDatasource processing all non pinned rows from the `startRow` index.
-            const endRowPosition = rangeService.getRangeEndRow(valueCellRange);
+            const endRowPosition = rangeService.getRangeEndRow(cellRange);
             endRow = endRowPosition.rowPinned === 'bottom' ? -1 : endRowPosition.rowIndex;
         }
 
@@ -346,7 +350,8 @@ export class ChartDataModel extends BeanStub {
         const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
         const { dimensionColState, valueColState } = this;
 
-        if (dimensionColState.filter(idsMatch).length > 0) {
+        const supportsMultipleDimensions = isHierarchical(this.chartType);
+        if (!supportsMultipleDimensions && dimensionColState.filter(idsMatch).length > 0) {
             // only one dimension should be selected
             dimensionColState.forEach(cs => cs.selected = idsMatch(cs));
         } else {
@@ -394,7 +399,9 @@ export class ChartDataModel extends BeanStub {
                 if ((selectedCols.length > 0 && !supportsMultipleDimensions) || !colsInRange.has(col)) { return; }
                 selectedCols.push(col);
             });
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedCols);
+            if (selectedCols.length > 0) {
+                this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedCols);
+            }
             return;
         }
 
@@ -461,10 +468,10 @@ export class ChartDataModel extends BeanStub {
     private syncDimensionCellRange() {
         const selectedDimensions = this.getSelectedDimensions();
         if (selectedDimensions.length === 0) return;
-        const columns = selectedDimensions.map(({ column }) => column)
+        const selectedCols = selectedDimensions.map(({ column }) => column)
             .filter((value): value is NonNullable<typeof value> => value != null);
-        if (columns.length > 0) {
-            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...columns);
+        if (selectedCols.length > 0) {
+            this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, ...selectedCols);
         }
     }
 

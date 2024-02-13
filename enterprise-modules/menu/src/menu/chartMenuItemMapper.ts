@@ -278,8 +278,8 @@ export type RangeMenuOptionName =
     'rangeAreaChart' | 'rangeArea' | 'rangeStackedArea' | 'rangeNormalizedArea' |
     'rangePolarChart' | 'rangeRadarLine' | 'rangeRadarArea' | 'rangeNightingale' | 'rangeRadialColumn' | 'rangeRadialBar' |
     'rangeStatisticalChart' | 'rangeBoxPlot' | 'rangeHistogramChart' |'rangeRangeBar' | 'rangeRangeArea' |
-    'rangeHierarchicalChart' | 'rangeTreemap' |
-    'rangeSpecializedChart' | 'rangeWaterfall' |
+    'rangeHierarchicalChart' | 'rangeTreemap' | 'rangeSunburst' |
+    'rangeSpecializedChart' | 'rangeWaterfall' | 'rangeHeatmap' |
     'rangeCombinationChart' | 'rangeColumnLineCombo' | 'rangeAreaColumnCombo';
 
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
@@ -376,6 +376,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     subMenu:
                         [
                             getMenuItem('treemap', 'Treemap&lrm;', 'treemap', 'rangeTreemap'),
+                            getMenuItem('sunburst', 'Sunburst&lrm;', 'sunburst', 'rangeSunburst'),
                         ],
                     _key: 'rangeHierarchicalChart',
                     _enterprise: true,
@@ -384,6 +385,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
                     name: localeTextFunc('specializedChart', 'Specialized'),
                     subMenu:
                         [
+                            getMenuItem('heatmap', 'Heatmap&lrm;', 'heatmap', 'rangeHeatmap'),
                             getMenuItem('waterfall', 'Waterfall&lrm;', 'waterfall', 'rangeWaterfall'),
                         ],
                     _key: 'rangeSpecializedChart',
@@ -454,9 +456,11 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
             hierarchicalGroup: {
                 _key: 'rangeHierarchicalChart',
                 treemap: 'rangeTreemap',
+                sunburst: 'rangeSunburst',
             },
             specializedGroup: {
                 _key: 'rangeSpecializedChart',
+                heatmap: 'rangeHeatmap',
                 waterfall: 'rangeWaterfall',
             },
             combinationGroup: {

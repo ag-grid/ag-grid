@@ -113,7 +113,7 @@ export default memo(({ value, onValueChange, eventKey, stopEditing }: CustomCell
 
     return (
         <input ref={refInput}
-            value={value}
+            value={value == null ? '' : value}
             onChange={(event: any) => updateValue(event.target.value)}
             onKeyDown={(event: any) => onKeyDown(event)}
             className="numeric-input"

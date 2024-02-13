@@ -1611,6 +1611,12 @@
             "url": "/component-loading-cell-renderer/"
           },
           {
+            "title": "Menu Item Component",
+            "url": "/component-menu-item/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "Overlay Component",
             "url": "/component-overlay/"
           },
@@ -1629,12 +1635,6 @@
           {
             "title": "Tooltip Component",
             "url": "/component-tooltip/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Menu Item Component",
-            "url": "/component-menu-item/",
-            "enterprise": true,
             "showInCollapsed": true
           },
           {

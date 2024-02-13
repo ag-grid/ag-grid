@@ -383,19 +383,23 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     columnChooserParams?: ColumnChooserParams;
     /** @deprecated v31.1 Use columnChooserParams instead */
     columnsMenuParams?: ColumnsMenuParams;
-    /**
-     * Set to `true` if no menu should be shown for this column header.
-     * @default false
-     */
+    /** @deprecated v31.1 Use suppressHeaderMenuButton instead */
     suppressMenu?: boolean;
     /**
-     * Set to `true` to not display the filter button in the column header.
-     * Only applies when `columnMenu = true`.
+     * Set to `true` if no menu button should be shown for this column header.
+     * @default false
      */
-    suppressHeaderFilter?: boolean;
+    suppressHeaderMenuButton?: boolean;
+    /**
+     * Set to `true` to not display the filter button in the column header.
+     * Only applies when `columnMenu = 'new'`.
+     * @default false
+     */
+    suppressHeaderFilterButton?: boolean;
     /**
      * Set to `true` to not display the column menu when the column header is right-clicked.
-     * Only applies when `columnMenu = true`.
+     * Only applies when `columnMenu = 'new'`.
+     * @default false
      */
     suppressHeaderContextMenu?: boolean;
     /**

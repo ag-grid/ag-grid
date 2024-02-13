@@ -120,7 +120,7 @@ The following example demonstrates a custom menu item component in both the colu
 </snippet>
 </framework-specific-section>
 <framework-specific-section frameworks="react">
-<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom menu items, however this will involve declaring your React component imperatively, and is not recommended. See [Imperative Menu Item Component](../component-menu-item-imperative-react/).</note>
+<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom menu items, however this will involve declaring your React component imperatively and is deprecated. See [Imperative Menu Item Component](../component-menu-item-imperative-react/). In v32, `reactiveCustomComponents` will default to true.</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript,angular,vue">

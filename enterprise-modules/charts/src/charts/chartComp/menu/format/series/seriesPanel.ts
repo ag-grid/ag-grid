@@ -21,11 +21,13 @@ import { FormatPanelOptions, getMaxValue } from "../formatPanel";
 import { MarkersPanel } from "./markersPanel";
 import { ChartController } from "../../../chartController";
 import { ChartSeriesType, getSeriesType } from "../../../utils/seriesTypeMapper";
+import { AgColorPicker } from '../../../../../widgets/agColorPicker';
 import { CalloutPanel } from "./calloutPanel";
 import { CapsPanel } from "./capsPanel";
 import { ConnectorLinePanel } from "./connectorLinePanel";
 import { WhiskersPanel } from "./whiskersPanel";
 import { SeriesItemsPanel } from "./seriesItemsPanel";
+import { TileSpacingPanel } from "./tileSpacingPanel";
 
 export class SeriesPanel extends Component {
 
@@ -51,6 +53,7 @@ export class SeriesPanel extends Component {
     private widgetFuncs: {[name: string]: () => void}= {
         'lineWidth': () => this.initStrokeWidth('lineWidth'),
         'strokeWidth': () => this.initStrokeWidth('strokeWidth'),
+        'lineColor': () => this.initLineColor(),
         'lineDash': () => this.initLineDash(),
         'lineOpacity': () => this.initLineOpacity(),
         'fillOpacity': () => this.initFillOpacity(),
@@ -63,6 +66,7 @@ export class SeriesPanel extends Component {
         'caps': () => this.initCaps(),
         'connectorLine': () => this.initConnectorLine(),
         'seriesItems': () => this.initSeriesItemsPanel(),
+        'tileSpacing': () => this.initTileSpacingPanel(),
     };
 
     private seriesWidgetMappings: { [K in ChartSeriesType]?: string[] } = {
@@ -74,15 +78,17 @@ export class SeriesPanel extends Component {
         'bubble': ['tooltips', 'markers', 'labels'],
         'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
         'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
-        'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'radial-column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
+        'radial-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'radar-line': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
         'radar-area': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels'],
         'nightingale': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'box-plot': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'whiskers', 'caps'],
         'range-bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels'],
         'range-area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
-        'treemap': ['tooltips'],
+        'treemap': ['tooltips', 'tileSpacing'],
+        'sunburst': ['tooltips'],
+        'heatmap': ['tooltips', 'labels', 'lineColor', 'lineWidth', 'lineOpacity'],
         'waterfall': ['tooltips', 'connectorLine', 'seriesItems'],
     }
 
@@ -171,6 +177,19 @@ export class SeriesPanel extends Component {
             .onValueChange(newValue => this.setSeriesOption("tooltip.enabled", newValue));
 
         this.addWidget(seriesTooltipsToggle);
+    }
+
+    private initLineColor(): void {
+        const currentValue = this.getSeriesOption<string | undefined>("stroke");
+
+        const seriesLineColorPicker = this.createBean(new AgColorPicker());
+        seriesLineColorPicker
+            .setLabel(this.translate("strokeColor"))
+            .setLabelWidth('flex')
+            .onValueChange(newValue => this.setSeriesOption("stroke", newValue));
+        if (currentValue) seriesLineColorPicker.setValue(currentValue);
+
+        this.addWidget(seriesLineColorPicker);
     }
 
     private initStrokeWidth(label: 'strokeWidth' | 'lineWidth'): void {
@@ -360,6 +379,11 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesItemsPanelComp);
     }
 
+    private initTileSpacingPanel() {
+        const tileSpacingPanelComp = this.createBean(new TileSpacingPanel(this.chartOptionsService, () => this.seriesType));
+        this.addWidget(tileSpacingPanelComp);
+    }
+
     private addWidget(widget: Component): void {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
@@ -407,6 +431,7 @@ export class SeriesPanel extends Component {
                 ['range-bar', {value: 'range-bar', text: this.translate('rangeBar', 'Range Bar')}],
                 ['range-area', {value: 'range-area', text: this.translate('rangeArea', 'Range Area')}],
                 ['treemap', {value: 'treemap', text: this.translate('treemap', 'Treemap')}],
+                ['sunburst', {value: 'sunburst', text: this.translate('sunburst', 'Sunburst')}],
                 ['waterfall', {value: 'waterfall', text: this.translate('waterfall', 'Waterfall')}],
                 ['box-plot', {value: 'box-plot', text: this.translate('boxPlot', 'Box Plot')}],
                 ['pie', {value: 'pie', text: this.translate('pie', 'Pie')}],

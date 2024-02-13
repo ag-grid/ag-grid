@@ -31,15 +31,16 @@ export class PolarChartProxy extends ChartProxy {
     }
 
     public getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
-        const {fields, category} = params;
+        const {fields} = params;
+        const [category] = params.categories;
         const radialBar = this.standaloneChartType === 'radial-bar';
 
         return fields.map(f => ({
             type: this.standaloneChartType as AgRadarAreaSeriesOptions['type'],
             angleKey: radialBar ? f.colId : category.id,
             angleName: radialBar ? (f.displayName ?? undefined) : category.name,
-            radiusKey: radialBar ? params.category.id : f.colId,
-            radiusName: radialBar ? params.category.name : (f.displayName ?? undefined),
+            radiusKey: radialBar ? category.id : f.colId,
+            radiusName: radialBar ? category.name : (f.displayName ?? undefined),
         }));
     }
 
@@ -62,7 +63,8 @@ export class PolarChartProxy extends ChartProxy {
     }
 
     private getDataTransformedData(params: UpdateParams, isCategoryAxis: boolean) {
-        return this.transformData(params.data, params.category.id, isCategoryAxis);
+        const [category] = params.categories;
+        return this.transformData(params.data, category.id, isCategoryAxis);
     }
 
     public crossFilteringReset(): void {

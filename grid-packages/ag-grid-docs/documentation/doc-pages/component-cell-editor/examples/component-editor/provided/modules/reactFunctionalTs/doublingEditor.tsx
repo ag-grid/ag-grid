@@ -34,8 +34,8 @@ export default memo(({ value, onValueChange }: CustomCellEditorProps) => {
     return (
         <input type="number"
             ref={refInput}
-            value={value / 2}
-            onChange={({ target: { value: newValue }}) => onValueChange(parseInt(newValue) * 2)}
+            value={value == null ? '' : (value / 2)}
+            onChange={({ target: { value: newValue }}) => onValueChange(newValue == '' ? null : (parseInt(newValue) * 2))}
             className="doubling-input"
         />
     );

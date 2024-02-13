@@ -2,7 +2,7 @@ import { BeanStub } from "./context/beanStub";
 import { Autowired, Bean, PostConstruct } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { Logger } from "./logger";
-import { ColumnModel } from "./columns/columnModel";
+import { ColumnModel, convertSourceType } from "./columns/columnModel";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { IRowModel } from "./interfaces/iRowModel";
@@ -67,7 +67,6 @@ export class SyncService extends BeanStub {
             return;
         }
 
-        const source = (event as any).source ?? 'api';
-        this.columnModel.setColumnDefs(columnDefs, source);
+        this.columnModel.setColumnDefs(columnDefs, convertSourceType(event.source));
     }
 }

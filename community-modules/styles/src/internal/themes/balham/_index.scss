@@ -112,6 +112,10 @@
     .ag-panel-title-bar-button-icon {
         font-size: calc(var(--ag-icon-size) + var(--ag-grid-size));
     }
+    
+    .ag-panel {
+        background-color: var(--ag-header-background-color);
+    }
 
     .ag-chart-data-section,
     .ag-chart-format-section {
@@ -142,5 +146,9 @@
         background: var(--ag-header-background-color);
         border: 1px solid var(--ag-secondary-border-color);
         border-right: none;
+    }
+
+    .ag-filter-active .ag-icon-filter {
+        color: var(--ag-balham-active-color);
     }
 }

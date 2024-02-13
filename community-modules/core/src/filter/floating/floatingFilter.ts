@@ -73,7 +73,7 @@ export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
      */
     onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null): void;
 
-    // /** @deprecated v31.1 - Use `refresh` instead */
+    /** @deprecated v31.1 - Use `refresh` instead */
     onParamsUpdated?(params: IFloatingFilterParams<P>): void;
 
     /** A hook to perform any necessary operations when the column definition is updated. */

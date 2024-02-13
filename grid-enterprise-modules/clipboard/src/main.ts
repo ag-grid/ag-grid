@@ -1,1 +1,0 @@
-export { ClipboardModule } from "./clipboardModule";

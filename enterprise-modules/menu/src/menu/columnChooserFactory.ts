@@ -5,10 +5,13 @@ import {
     BeanStub,
     Column,
     ColumnChooserParams,
+    ColumnMenuVisibleChangedEvent,
     ColumnModel,
+    Events,
     FocusService,
     IColumnChooserFactory,
-    ShowColumnChooserParams
+    ShowColumnChooserParams,
+    WithoutGridCommon
 } from "@ag-grid-community/core";
 import { PrimaryColsPanel } from "@ag-grid-enterprise/column-tool-panel";
 import { MenuUtils } from "./menuUtils";
@@ -74,14 +77,16 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
             closable: true,
             afterGuiAttached: () => {
                 this.focusService.findNextFocusableElement(columnSelectPanel.getGui())?.focus();
+                this.dispatchVisibleChangedEvent(true, column);
             },
             closedCallback: (event) => {
                 const eComp = this.activeColumnChooser!.getGui();
                 this.destroyBean(this.activeColumnChooser);
                 this.activeColumnChooser = undefined;
                 this.activeColumnChooserDialog = undefined;
+                this.dispatchVisibleChangedEvent(false, column);
                 if (column) {
-                    this.menuUtils.restoreFocusOnClose(column, eComp, headerPosition, columnIndex, eventSource, event);
+                    this.menuUtils.restoreFocusOnClose({ column, headerPosition, columnIndex, eventSource }, eComp, event, true);
                 }
             }
         }));
@@ -93,5 +98,16 @@ export class ColumnChooserFactory extends BeanStub implements IColumnChooserFact
         if (this.activeColumnChooserDialog) {
             this.destroyBean(this.activeColumnChooserDialog);
         }
+    }
+
+    private dispatchVisibleChangedEvent(visible: boolean, column?: Column | null): void {
+        const event: WithoutGridCommon<ColumnMenuVisibleChangedEvent> = {
+            type: Events.EVENT_COLUMN_MENU_VISIBLE_CHANGED,
+            visible,
+            switchingTab: false,
+            key: 'columnChooser',
+            column: column ?? null
+        };
+        this.eventService.dispatchEvent(event);
     }
 }

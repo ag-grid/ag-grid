@@ -201,7 +201,7 @@ class ContextMenu extends Component {
 
     @PostConstruct
     private addMenuItems(): void {
-        const menuList = this.createManagedBean(new AgMenuList(1, {
+        const menuList = this.createManagedBean(new AgMenuList(0, {
             column: this.column,
             node: this.node,
             value: this.value

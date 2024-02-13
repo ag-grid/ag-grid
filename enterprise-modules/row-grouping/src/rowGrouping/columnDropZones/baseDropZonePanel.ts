@@ -17,7 +17,6 @@ import {
     LoggerFactory,
     ManagedFocusFeature,
     PositionableFeature,
-
     _
 } from "@ag-grid-community/core";
 import { DropZoneColumnComp } from "./dropZoneColumnComp";
@@ -327,7 +326,7 @@ export abstract class BaseDropZonePanel extends Component {
         this.refreshGui();
     }
 
-    public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType = "api") {
+    public setColumnsVisible(columns: Column[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter(c => !c.getColDef().lockVisible);
             this.colModel.setColumnsVisible(allowedCols, visible, source);

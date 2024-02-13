@@ -657,7 +657,7 @@ The data supplied to the grid usually requires some degree of formatting. For ba
 
 __Value Formatters__ are basic functions which take the value of the cell, apply some basic formatting, and return a new value to be displayed by the grid. Let's try this by adding the `valueFormatter` property to our 'price' column and returning the formatted value:
 
-<snippet transform={false} language=jsx>
+<snippet transform={false} language="jsx">
 |columnDefs: [
 |  {
 |    field: "price",
@@ -685,7 +685,7 @@ The data supplied to the grid usually requires some degree of formatting. For ba
 
 __Value Formatters__ are basic functions which take the value of the cell, apply some basic formatting, and return a new value to be displayed by the grid. Let's try this by adding the `valueFormatter` property to our 'price' column and returning the formatted value:
 
-<snippet transform={false} language=jsx>
+<snippet transform={false} language="jsx">
 |const [colDefs] = useState([
 |  {
 |    field: "price",
@@ -742,7 +742,7 @@ The data supplied to the grid usually requires some degree of formatting. For ba
 
 __Value Formatters__ are basic functions which take the value of the cell, apply some basic formatting, and return a new value to be displayed by the grid. Let's try this by adding the `valueFormatter` property to our 'price' column and returning the formatted value:
 
-<snippet transform={false} language=jsx>
+<snippet transform={false} language="jsx">
 const colDefs = ref([
   { field: "price", valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } },
   // ...
@@ -769,7 +769,7 @@ __Cell Renderers__ allow you add custom HTML & JS within cells. To use a Cell Re
 
 Let's try this by creating a new component to display the company logo in the 'company' column:
 
-<snippet transform={false} language=jsx>
+<snippet transform={false} language="jsx">
 |class CompanyLogoRenderer {
 |  eGui;
 |
@@ -801,7 +801,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 
 And then adding `cellRenderer: CompanyLogoRenderer` to the 'company' column definition:
 
-<snippet transform={false} language=jsx>
+<snippet transform={false} language="jsx">
 |columnDefs: [
 |  {
 |    field: "country",
@@ -831,7 +831,7 @@ __Cell Renderers__ allow you to use your own React components within cells. To u
 
 Let's try this by creating a new component to display the company logo in the 'company' column:
 
-<snippet transform={false} language=jsx>
+<snippet transform={false} language="jsx">
 |// Custom Cell Renderer (Display flags based on cell value)
 |const CompanyLogoRenderer = ({ value }) => (
 |  &lt;span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{value && &lt;img alt={`${value} Flag`} src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}&lt;p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{value}&lt;/p>&lt;/span>
@@ -840,7 +840,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 
 And then adding the `cellRenderer` prop on our 'company' column to use our component:
 
-<snippet transform={false} language=jsx>
+<snippet transform={false} language="jsx">
 |const [colDefs] = useState([
 |  {
 |    field: "company",
@@ -871,7 +871,7 @@ __Cell Renderers__ allow you to use your own components within cells. To use a c
 
 Let's try this by creating a new component to display the company logo in the 'company' column:
 
-<snippet transform={false} language=jsx>
+<snippet transform={false} language="jsx">
 |// Custom Cell Renderer Component
 |@Component({
 |  selector: 'app-company-logo-renderer',
@@ -928,7 +928,7 @@ __Cell Renderers__ allow you to use your own components within cells. To use a c
 
 Let's try this by creating a new component to display the company logo in the 'company' column:
 
-<snippet transform={false} language=jsx>
+<snippet transform={false} language="jsx">
 |const CompanyLogoRenderer = {
 |  template:
 |    `
@@ -950,7 +950,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 
 And then adding the `cellRenderer` property to the 'company' column:
 
-<snippet transform={false} language=jsx>
+<snippet transform={false} language="jsx">
 |const App = {
 |  components: {
 |    AgGridVue,

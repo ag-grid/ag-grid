@@ -1,4 +1,4 @@
-import { AgPromise, IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
+import { IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
 import { CustomComponentWrapper } from "./customComponentWrapper";
 import { updateFloatingFilterParent } from "./floatingFilterComponentProxy";
 import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./interfaces";
@@ -6,6 +6,7 @@ import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./inte
 // floating filter is normally instantiated via react header filter cell comp, but not in the case of multi filter
 export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloatingFilterParams, CustomFloatingFilterProps, CustomFloatingFilterCallbacks> implements IFloatingFilter {
     private model: any = null;
+    private readonly onModelChange = (model: any) => this.updateModel(model);
 
     public onParentModelChanged(parentModel: any): void {
         this.model = parentModel;
@@ -24,6 +25,7 @@ export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloa
     private updateModel(model: any): void {
         this.model = model;
         this.refreshProps();
+        // don't need to wait on `refreshProps` as not reliant on state maintained inside React
         updateFloatingFilterParent(this.sourceParams, model);
     }
 
@@ -31,7 +33,7 @@ export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloa
         return {
             ...this.sourceParams,
             model: this.model,
-            onModelChange: model => this.updateModel(model),
+            onModelChange: this.onModelChange,
             key: this.key
         } as any;
     }

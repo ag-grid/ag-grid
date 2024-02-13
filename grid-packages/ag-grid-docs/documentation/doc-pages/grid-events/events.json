@@ -17,6 +17,12 @@
                 "name": "Tool Panel Events",
                 "url": "/tool-panel/#events"
             }
+        },
+        "columnMenuVisibleChanged": {
+            "more": {
+                "name": "Column Menu API / Events",
+                "url": "/column-menu/#column-menu-api--events"
+            }
         }
     },
     "clipboard": {

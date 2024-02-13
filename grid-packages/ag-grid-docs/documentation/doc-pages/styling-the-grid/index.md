@@ -21,7 +21,7 @@ Try it out by editing the success or price columns to see the styles update in r
 
 ## Setup
 
-<note disableMarkdown='true'>To follow this tutorial clone our <a href='#'>Basic Grid Template</a> or fork the <a href='#'>CodeSandbox Example</a>.</note>
+<note disableMarkdown='true'>To follow this tutorial clone our <a href='#' target="_blank">Basic Grid Template</a> or fork the <a href='#' target="_blank">CodeSandbox Example</a>.</note>
 
 ## Introduction
 
@@ -69,7 +69,7 @@ And then setting the value of the `rowClass` prop to the `.row` selector:
 |&lt;/div>
 </snippet>
 
-All rows should now use the <span style="font-family: 'Courier New'">Courier New</span> font:
+All rows should now use the Courier New font:
 
 <grid-example title='Row Class Example' name='row-class-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
