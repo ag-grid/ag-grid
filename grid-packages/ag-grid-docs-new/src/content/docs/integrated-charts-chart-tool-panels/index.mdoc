@@ -22,11 +22,11 @@ Chart Settings Panel
 
 It is possible to configure which chart groups and chart types are included and in which order via the `chartToolPanelsDef` grid option:
 
-{% apiDocumentation source="grid-options/properties.json" section="charts" names="["chartToolPanelsDef"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="charts" names=["chartToolPanelsDef"] /%}
 
 The full list of chart groups with the corresponding chart types are shown below:
 
-{% interfaceDocumentation interfaceName="ChartGroupsDef" config="{"description":"", "asCode":true, "lineBetweenProps": false}" /%}
+{% interfaceDocumentation interfaceName="ChartGroupsDef" config={"description":"", "asCode":true, "lineBetweenProps": false} /%}
 
 {% note %}
 The contents and order of chart menu items in the [Context Menu](./context-menu/) will match the `ChartGroupsDef` configuration.
@@ -51,7 +51,7 @@ Chart Data Panel
 
 It is possible to configure which groups are shown, the order in which they appear and whether they are opened by default via the `chartToolPanelsDef` grid option:
 
-{% apiDocumentation source="grid-options/properties.json" section="charts" names="["chartToolPanelsDef"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="charts" names=["chartToolPanelsDef"] /%}
 
 The default list and order of the Data Panel groups are as shown below:
 
@@ -92,7 +92,7 @@ Chart Format Panel
 
 It is possible to configure which groups are shown, the order in which they appear and whether they are opened by default via the `chartToolPanelsDef` grid option:
 
-{% apiDocumentation source="grid-options/properties.json" section="charts" names="["chartToolPanelsDef"]" /%}
+{% apiDocumentation source="grid-options/properties.json" section="charts" names=["chartToolPanelsDef"] /%}
 
 The default list and order of format groups are as follows:
 
@@ -159,7 +159,7 @@ The following example shows how the Chart Tool Panels can be omitted and ordered
 
 The Chart Tool Panels can be opened and closed programmatically using the following grid APIs:
 
-{% apiDocumentation source="grid-api/api.json" section="charts" names="["openChartToolPanel", "closeChartToolPanel"]" /%}
+{% apiDocumentation source="grid-api/api.json" section="charts" names=["openChartToolPanel", "closeChartToolPanel"] /%}
 
 The example below demonstrates how you can open and close the Chart Tool Panels.
 

@@ -128,7 +128,7 @@ const gridOptions = {
         dateColumn: {
             filter: 'agDateColumnFilter',
             filterParams: { comparator: myDateComparator },
-            suppressMenu: true
+            suppressHeaderMenuButton: true
         }
     }
 }
@@ -140,7 +140,7 @@ At each stage if a column property already exists, the latter will override the 
 
 For example, the following is an outline of the steps used when creating 'Col C' shown above:
 
-```js {% snippet=true transform=false %}
+```js {% snippet=true %}
 // Step 1: the grid starts with an empty definition
 {}
 

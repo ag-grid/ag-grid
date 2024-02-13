@@ -94,6 +94,23 @@ export default defineMarkdocConfig({
                 options: { type: Object },
             },
         },
+        // TODO: Implement
+        apiDocumentation: {
+            render: 'pre',
+            attributes: {
+                source: { type: String, required: true },
+                section: { type: String },
+                names: { type: Array }
+            },
+        },
+        // TODO: Implement
+        interfaceDocumentation: {
+            render: 'pre',
+            attributes: {
+                interfaceName: { type: String, required: true },
+                config: { type: Object }
+            },
+        },
         matrixTable: {
             render: component('./src/features/matrixTable/components/MatrixTable.astro'),
             attributes: {
