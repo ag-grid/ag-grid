@@ -3,6 +3,7 @@ import {
     ChartParamsCellRange,
     ChartType,
     IAggFunc,
+    LegacyChartType,
     UpdateChartParams,
     UpdateCrossFilterChartParams,
     UpdatePivotChartParams,
@@ -10,11 +11,12 @@ import {
     SeriesChartType,
     Column
 } from "@ag-grid-community/core";
+import { getCanonicalChartType } from './seriesTypeMapper';
 
-const validateIfDefined = <T>(validationFn: (value: T) => boolean) => {
-    return (value: T | undefined): boolean => {
-        if (value === undefined) return true;
-        return validationFn(value);
+const validateIfDefined = <I, O = never>(validationFn: (value: NonNullable<I>) => boolean | O) => {
+    return (value: I | null | undefined): boolean | O => {
+        if (value == undefined) return true;
+        return validationFn(value as NonNullable<I>);
     };
 };
 
@@ -24,11 +26,17 @@ const isValidSeriesChartType = (value: any): boolean => typeof value === 'object
 const createWarnMessage = (property: string, expectedType: string): ((value: any) => string) =>
     (value: any) => `AG Grid - unable to update chart as invalid params supplied:  \`${property}: ${value}\`, expected ${expectedType}.`;
 
-interface ValidationFunction<T> {
-    property: keyof T;
-    validationFn: (value: any) => boolean;
-    warnMessage: (value: any) => string;
+interface ValidationFunction<T, K extends keyof T = keyof T, V = T[K]> {
+    property: K;
+    validationFn: (value: T[K]) => boolean | V;
+    warnMessage: (value: T[K]) => string;
 }
+
+export type ValidatedChartType = Exclude<UpdateChartParams['chartType'], LegacyChartType | undefined>;
+
+export type ValidatedUpdateChartParams = UpdateChartParams & {
+    chartType: ValidatedChartType;
+};
 
 export class UpdateParamsValidator {
     private static validChartTypes: ChartType[] = [
@@ -66,8 +74,26 @@ export class UpdateParamsValidator {
         'customCombo'
     ];
 
-    private static validateChartType = validateIfDefined<ChartType>((chartType) => {
-        return UpdateParamsValidator.validChartTypes.includes(chartType);
+    private static legacyChartTypes: LegacyChartType[] = [
+        'doughnut',
+    ];
+
+    private static isValidChartType(value: string): value is ChartType {
+        return UpdateParamsValidator.validChartTypes.includes(value as ChartType);
+    }
+
+    private static isLegacyChartType(value: string): value is LegacyChartType {
+        return UpdateParamsValidator.legacyChartTypes.includes(value as LegacyChartType);
+    }
+
+    private static validateChartType = validateIfDefined<UpdateChartParams['chartType'], ValidatedChartType>((chartType) => {
+        if (this.isValidChartType(chartType)) return true;
+        if (this.isLegacyChartType(chartType)) {
+            const renamedChartType = getCanonicalChartType(chartType)
+            console.warn(`AG Grid - The chart type '${chartType}' has been deprecated. Please use '${renamedChartType}' instead.`);
+            return renamedChartType;
+        };
+        return false;
     });
 
     private static validateAgChartThemeOverrides = validateIfDefined<AgChartThemeOverrides>((themeOverrides) => {
@@ -123,7 +149,7 @@ export class UpdateParamsValidator {
         },
     ];
 
-    public static validateChartParams(params: UpdateChartParams): boolean {
+    public static validateChartParams(params: UpdateChartParams): boolean | ValidatedUpdateChartParams {
         let paramsToValidate = params as UpdateChartParams;
         switch (paramsToValidate.type) {
             case 'rangeChartUpdate':
@@ -138,7 +164,7 @@ export class UpdateParamsValidator {
         }
     }
 
-    private static validateUpdateRangeChartParams(params: UpdateRangeChartParams): boolean {
+    private static validateUpdateRangeChartParams(params: UpdateRangeChartParams): boolean | ValidatedUpdateChartParams {
         const validations: ValidationFunction<any>[] = [
             ...UpdateParamsValidator.commonValidations,
             ...UpdateParamsValidator.cellRangeValidations,
@@ -152,7 +178,7 @@ export class UpdateParamsValidator {
         return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart', 'cellRange', 'suppressChartRanges', 'aggFunc', 'seriesChartTypes'], 'UpdateRangeChartParams');
     }
 
-    private static validateUpdatePivotChartParams(params: UpdatePivotChartParams): boolean {
+    private static validateUpdatePivotChartParams(params: UpdatePivotChartParams): boolean | ValidatedUpdateChartParams {
         const validations: ValidationFunction<any>[] = [
             ...UpdateParamsValidator.commonValidations,
         ];
@@ -160,7 +186,7 @@ export class UpdateParamsValidator {
         return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart'], 'UpdatePivotChartParams');
     }
 
-    private static validateUpdateCrossFilterChartParams(params: UpdateCrossFilterChartParams): boolean {
+    private static validateUpdateCrossFilterChartParams(params: UpdateCrossFilterChartParams): boolean | ValidatedUpdateChartParams {
         const validations: ValidationFunction<any>[] = [
             ...UpdateParamsValidator.commonValidations,
             ...UpdateParamsValidator.cellRangeValidations,
@@ -169,15 +195,23 @@ export class UpdateParamsValidator {
         return UpdateParamsValidator.validateProperties(params, validations, ['type', 'chartId', 'chartType', 'chartThemeName', 'chartThemeOverrides', 'unlinkChart', 'cellRange', 'suppressChartRanges', 'aggFunc'], 'UpdateCrossFilterChartParams');
     }
 
-    private static validateProperties<T>(params: T, validations: ValidationFunction<T>[], validPropertyNames: (keyof T)[], paramsType: string): boolean {
+    private static validateProperties<T extends object>(params: T, validations: ValidationFunction<T>[], validPropertyNames: (keyof T)[], paramsType: string): boolean | T {
+        let validatedProperties: T | undefined = undefined;
         for (const validation of validations) {
             const { property, validationFn, warnMessage } = validation;
             if (property in params) {
                 const value = params[property];
-                if (!validationFn(value)) {
+                const validationResult = validationFn(value);
+                if (validationResult === true) continue;
+                if (validationResult === false) {
                     console.warn(warnMessage(value));
                     return false;
                 }
+                // If the validation function returned a 'fix' value, we need to return an updated property set.
+                // First we clone the input set if there has not been a 'fix' encountered in a previous iteration:
+                validatedProperties = validatedProperties || { ...params };
+                /// Then we update the cloned object with the 'fixed' value
+                validatedProperties[property] = validationResult;
             }
         }
 
@@ -188,6 +222,10 @@ export class UpdateParamsValidator {
                 return false;
             }
         }
+
+        // If one or more 'fixed' values were encountered, return the updated property set
+        if (validatedProperties) return validatedProperties;
+
         return true;
     }
 

@@ -2,7 +2,7 @@ import { ChartModel } from '@ag-grid-community/core';
 import { AgChartThemeName } from 'ag-charts-community';
 
 // @ts-ignore
-import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
+import { getCanonicalChartType, getSeriesType } from './chartComp/utils/seriesTypeMapper';
 // @ts-ignore
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
 // @ts-ignore
@@ -138,7 +138,7 @@ function migrateV26_2(model: ChartModel) {
     model = jsonDelete('chartOptions.xAxis', model);
     model = jsonDelete('chartOptions.yAxis', model);
     const {
-        chartType,
+        chartType: providedChartType,
         chartOptions: { axes, series, seriesDefaults, ...otherChartOptions },
         ...otherModelProps
     } = model as any;
@@ -147,7 +147,9 @@ function migrateV26_2(model: ChartModel) {
     // We can't rely on the `series.type` field as it was incorrect (in v25.0.0 line chart has an
     // `area` series).
     // Note that in v31.1.0, the canonical name for the 'doughnut' chart type changed to 'donut'.
-    const seriesTypes = [getSeriesType(chartType === 'doughnut' ? 'donut' : chartType)];
+    const chartType = getCanonicalChartType(providedChartType);
+    const seriesType = getSeriesType(chartType);
+    const seriesTypes = [seriesType];
 
     const chartTypeMixin: any = {};
     if (!seriesTypes.includes('pie')) {

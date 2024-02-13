@@ -1,3 +1,4 @@
+import { LegacyChartType } from '@ag-grid-community/core';
 import { ChartType } from "@ag-grid-community/core";
 
 // these values correspond to top level object names in `AgChartThemeOverrides`
@@ -26,12 +27,6 @@ export type ChartSeriesType =
     'heatmap' |
     'waterfall' |
     'common';
-
-type PolarChartSeriesType = Extract<ChartSeriesType,
-    'radar-line' |
-    'radar-area' |
-    'nightingale'
->;
 
 export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'area',
@@ -107,6 +102,15 @@ export function hasGradientLegend(chartType: ChartType): boolean {
             return true;
         default:
             return false;
+    }
+}
+
+export function getCanonicalChartType(chartType: ChartType | LegacyChartType): ChartType {
+    switch (chartType) {
+        case 'doughnut':
+            return 'donut';
+        default:
+            return chartType;
     }
 }
 

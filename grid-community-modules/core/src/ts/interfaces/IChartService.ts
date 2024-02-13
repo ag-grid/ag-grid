@@ -84,9 +84,12 @@ export interface IChartService {
     updateChart(params: UpdateChartParams): void;
 }
 
+export type LegacyChartType =
+    | 'doughnut';
+
 interface CreateChartParams {
     /** The type of chart to create. */
-    chartType: ChartType;
+    chartType: ChartType | LegacyChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
     /** Provide to display the chart outside the grid in your own container. */
@@ -128,7 +131,7 @@ export interface UpdateRangeChartParams {
     /** The id of the chart to update. */
     chartId: string;
     /** The type of chart to update. */
-    chartType?: ChartType;
+    chartType?: ChartType | LegacyChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
     /** Allows specific chart options in the current theme to be overridden. */
@@ -150,7 +153,7 @@ export interface UpdatePivotChartParams {
     /** The id of the chart to update. */
     chartId: string;
     /** The type of chart to update. */
-    chartType?: ChartType;
+    chartType?: ChartType | LegacyChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
     /** Allows specific chart options in the current theme to be overridden. */
@@ -164,7 +167,7 @@ export interface UpdateCrossFilterChartParams {
     /** The id of the chart to update. */
     chartId: string;
     /** The type of chart to update. */
-    chartType?: ChartType;
+    chartType?: ChartType | LegacyChartType;
     /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
     /** Allows specific chart options in the current theme to be overridden. */

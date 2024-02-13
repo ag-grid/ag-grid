@@ -24,7 +24,7 @@ import { ChartProxy, UpdateParams } from "./chartProxies/chartProxy";
 import { _Theme, AgChartThemePalette, _ModuleSupport } from "ag-charts-community";
 import { ChartSeriesType, getSeriesType, isHierarchical } from "./utils/seriesTypeMapper";
 import { isStockTheme } from "./chartProxies/chartTheme";
-import { UpdateParamsValidator } from "./utils/UpdateParamsValidator";
+import { UpdateParamsValidator, ValidatedUpdateChartParams } from "./utils/UpdateParamsValidator";
 
 export const DEFAULT_THEMES = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
 
@@ -70,10 +70,15 @@ export class ChartController extends BeanStub {
     }
 
     public update(params: UpdateChartParams): boolean {
-        if (!this.validUpdateType(params) || !UpdateParamsValidator.validateChartParams(params)) {
-            return false;
-        }
+        if (!this.validUpdateType(params)) return false;
+        const validationResult = UpdateParamsValidator.validateChartParams(params);
+        if (!validationResult) return false;
+        const validParams = validationResult === true ? params as ValidatedUpdateChartParams : validationResult;
+        this.applyValidatedChartParams(validParams);
+        return true;
+    }
 
+    private applyValidatedChartParams(params: ValidatedUpdateChartParams): void {
         const { chartId, chartType, chartThemeName, unlinkChart } = params;
 
         // create a common base for the chart model parameters (this covers pivot chart updates)
@@ -113,8 +118,6 @@ export class ChartController extends BeanStub {
         // if the chart should be unlinked or chart ranges suppressed, remove all cell ranges; otherwise, set the chart range
         const removeChartCellRanges = chartModelParams.unlinkChart || chartModelParams.suppressChartRanges;
         removeChartCellRanges ? this.rangeService?.setCellRanges([]) : this.setChartRange();
-
-        return true;
     }
 
     public updateForGridChange(): void {

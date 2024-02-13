@@ -524,7 +524,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-doughnut su
     },
   },
   "chartThemeName": "ag-vivid",
-  "chartType": "doughnut",
+  "chartType": "donut",
 }
 `;
 
@@ -762,7 +762,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-pie-callout
     },
   },
   "chartThemeName": "ag-default",
-  "chartType": "doughnut",
+  "chartType": "donut",
 }
 `;
 
