@@ -226,7 +226,10 @@ export function ComparisonTable({
     const numColumns = {"--num-columns": Object.keys(columns).length} as React.CSSProperties;
 
     return (
-        <div className={styles.comparisonTable} style={numColumns}>
+        <div className={classnames(
+            styles.comparisonTable, 
+            Object.keys(columns).length <= 2 ? styles.twoColumn : ""
+        )} style={numColumns}>
             <TableRows data={tableData} columns={columns} cellRenderer={cellRenderer} />
         </div>
     );

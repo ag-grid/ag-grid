@@ -3,6 +3,16 @@
 .comparisonTable {
 }
 
+.twoColumn .cell {
+    &:first-child {
+        width: calc(100% - #{$spacing-size-16});
+    }
+
+    &:last-child {
+        width: $spacing-size-16;
+    }
+}
+
 .row {
     display: flex;
     align-items: center;
@@ -20,5 +30,4 @@
 
 .cell {
     width: calc(100% / var(--num-columns));
-    
 }
