@@ -24,6 +24,7 @@ import {
 } from "@ag-grid-community/core";
 import { AgChartThemeOverrides, AgChartThemePalette, VERSION as CHARTS_VERSION, _ModuleSupport} from "ag-charts-community";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
+import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from "./chartModelMigration";
 import { VERSION as GRID_VERSION } from "../version";
 
@@ -315,7 +316,7 @@ export class ChartService extends BeanStub implements IChartService {
             chartId: this.generateId(),
             pivotChart,
             cellRange,
-            chartType,
+            chartType: getCanonicalChartType(chartType),
             chartThemeName,
             insideDialog: !(container || createChartContainerFunc),
             suppressChartRanges,

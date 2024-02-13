@@ -97,7 +97,7 @@ function createQuarterlySalesChart(api: GridApi) {
 
 function createSalesByRefChart(api: GridApi) {
   api.createCrossFilterChart({
-    chartType: 'doughnut',
+    chartType: 'donut',
     cellRange: {
       columns: ['salesRep', 'sale'],
     },
@@ -123,7 +123,7 @@ function createSalesByRefChart(api: GridApi) {
         },
       },
     },
-    chartContainer: document.querySelector('#doughnutChart') as any,
+    chartContainer: document.querySelector('#donutChart') as any,
   })
 }
 

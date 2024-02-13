@@ -70,10 +70,15 @@ export class ChartController extends BeanStub {
     }
 
     public update(params: UpdateChartParams): boolean {
-        if (!this.validUpdateType(params) || !UpdateParamsValidator.validateChartParams(params)) {
-            return false;
-        }
+        if (!this.validUpdateType(params)) return false;
+        const validationResult = UpdateParamsValidator.validateChartParams(params);
+        if (!validationResult) return false;
+        const validParams = validationResult === true ? params : validationResult;
+        this.applyValidatedChartParams(validParams);
+        return true;
+    }
 
+    private applyValidatedChartParams(params: UpdateChartParams): void {
         const { chartId, chartType, chartThemeName, unlinkChart } = params;
 
         // create a common base for the chart model parameters (this covers pivot chart updates)
@@ -113,8 +118,6 @@ export class ChartController extends BeanStub {
         // if the chart should be unlinked or chart ranges suppressed, remove all cell ranges; otherwise, set the chart range
         const removeChartCellRanges = chartModelParams.unlinkChart || chartModelParams.suppressChartRanges;
         removeChartCellRanges ? this.rangeService?.setCellRanges([]) : this.setChartRange();
-
-        return true;
     }
 
     public updateForGridChange(): void {
