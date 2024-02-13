@@ -69,7 +69,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
     const escapedValue = _.escapeString(value, true);
 
     return (
-        <span className={className} ref={setRef} role={ ctrlRef.current?.getCellAriaRole() }>
+        <span className={className} ref={setRef}>
             <span className={expandedClassName} ref={eExpandedRef}></span>
             <span className={contractedClassName} ref={eContractedRef}></span>
             <span className={checkboxClassName} ref={eCheckboxRef}></span>
