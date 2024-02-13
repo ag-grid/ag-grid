@@ -10,14 +10,12 @@ const {
     // NOTE: Language is passed through by markdoc as `data-language`
     // @see https://github.com/markdoc/markdoc/blob/a13cc583fa3b0420538e772a75628dd15d72b793/src/schema.ts#L56
     'data-language': language,
-    snippet,
+    frameworkTransform,
     ...otherProps
 } = Astro.props;
-// Only transform if `snippet=true`
-const shouldTransform = snippet;
 
 const encodedHtmlContent = await Astro.slots.render('default');
 const content = he.decode(encodedHtmlContent);
 ---
 
-<Snippet framework={framework} language={language} content={content} transform={shouldTransform} {...otherProps} />
+<Snippet framework={framework} language={language} content={content} transform={frameworkTransform} {...otherProps} />

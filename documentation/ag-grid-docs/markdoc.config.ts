@@ -35,7 +35,7 @@ export default defineMarkdocConfig({
                  *
                  * Snippets transform the code based on the user selected framework
                  */
-                snippet: Boolean,
+                frameworkTransform: Boolean,
                 language: String,
                 lineNumbers: Boolean,
                 suppressFrameworkContext: Boolean,
@@ -100,7 +100,7 @@ export default defineMarkdocConfig({
             attributes: {
                 source: { type: String, required: true },
                 section: { type: String },
-                names: { type: Array }
+                names: { type: Array },
             },
         },
         // TODO: Implement
@@ -108,7 +108,7 @@ export default defineMarkdocConfig({
             render: 'pre',
             attributes: {
                 interfaceName: { type: String, required: true },
-                config: { type: Object }
+                config: { type: Object },
             },
         },
         matrixTable: {

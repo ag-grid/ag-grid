@@ -8,7 +8,7 @@ import { removeStartingVerticalBar } from './removeStartingVerticalBar';
 const LANGUAGE_ATTRIBUTE = 'language';
 const DEFAULT_CODE_LANGUAGE = 'js';
 
-function getMetaAttributes(attributes: Attribute[]) {
+function getTransformMetaAttributes(attributes: Attribute[]) {
     const metaAttributes = attributes.filter((attr) => {
         return attr.name !== LANGUAGE_ATTRIBUTE;
     });
@@ -22,7 +22,9 @@ function getMetaAttributes(attributes: Attribute[]) {
 
         return `${name}=${attrValue}`;
     });
-    const metaValuesString = metaValues.length ? `{% snippet=true ${metaValues.join(' ')} %}` : '';
+    const metaValuesString = metaValues.length
+        ? `{% frameworkTransform=true ${metaValues.join(' ')} %}`
+        : '{% frameworkTransform=true %}';
 
     return metaValuesString;
 }
@@ -47,8 +49,10 @@ export const createMarkdocCodeFence = ({
     // Ignore attributes if transform is 'false'
     // Unnecessary to use snippet in this situation
     const transformValue = getAttributeValue({ attributes, name: 'transform' });
-    const transformIsFalse = transformValue?.type === JSX_ATTRIBUTE_TYPE ? transformValue?.value === 'false' : false;
-    const meta = transformIsFalse ? '' : getMetaAttributes(attributes);
+
+    // Only don't transform if 'false'
+    const isTransform = transformValue === undefined || transformValue !== 'false';
+    let meta = isTransform ? getTransformMetaAttributes(attributes) : '';
 
     const content = children
         .map((paragraph) => {
