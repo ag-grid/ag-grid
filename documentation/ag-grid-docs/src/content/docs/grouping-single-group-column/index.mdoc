@@ -12,7 +12,7 @@ containing all row groups under a single row group hierarchy.
 
 By default, a Single Group Column is used, but it can be explicitly set using `groupDisplayType = 'singleColumn'` as shown below:
 
-```js {% snippet=true spaceBetweenProperties=true %}
+```js {% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
@@ -43,7 +43,7 @@ The example below demonstrates the default row grouping behaviour. Note the foll
 The Single Group Column display type adds a single Auto Group Column to the grid. To change the default configuration
 of this group column, use the `autoGroupColumnDef` grid option as shown below:
 
-```js
+```js {% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
         headerName: 'My Group',

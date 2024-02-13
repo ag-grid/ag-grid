@@ -14,7 +14,7 @@ Each column in the grid is defined using a Column Definition (`ColDef`). Columns
 
 The following example shows a simple grid with 3 columns defined:
 
-```js
+```js {% frameworkTransform=true %}
 const gridOptions = {
     // define 3 columns
     columnDefs: [
@@ -29,7 +29,7 @@ See [Column Properties](./column-properties/) for a list of all properties that 
 
 If you want the columns to be grouped, you can include them as children like so:
 
-```js {% snippet=true suppressFrameworkContext=true %}
+```js {% frameworkTransform=true suppressFrameworkContext=true %}
 const gridOptions = {
     // put the three columns into a group
     columnDefs: [
@@ -54,7 +54,7 @@ If, however, the row data contains nested objects, you can use dot notation to r
 
 For example, if the row data has an object property `medals` that contains the individual medal counts, then to display gold medals won use the field value `'medals.gold'`.
 
-```js
+```js {% frameworkTransform=true %}
 const gridOptions = {
     rowData: [
         {
@@ -97,7 +97,7 @@ Column Types are designed to work on Columns only, i.e. they won't be applied to
 
 The following code snippet demonstrates these three properties:
 
-```js {% snippet=true spaceBetweenProperties=true %}
+```js {% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
     columnDefs: [
         // uses the default column properties
@@ -140,7 +140,7 @@ At each stage if a column property already exists, the latter will override the 
 
 For example, the following is an outline of the steps used when creating 'Col C' shown above:
 
-```js {% snippet=true %}
+```js
 // Step 1: the grid starts with an empty definition
 {}
 
@@ -166,7 +166,7 @@ The grid provides a handy shortcut for aligning columns to the right. Setting th
 Because right alignment is used for numbers, we also provided an alias `numericColumn` that can be used to align the header and cell text to the right.
 {% /note %}
 
-```js
+```js {% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         { headerName: 'Column A', field: 'a' },
