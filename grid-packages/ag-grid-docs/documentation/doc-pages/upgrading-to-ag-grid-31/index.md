@@ -57,7 +57,7 @@ If you are using Standalone Charts, please see changes to charts in the [AG Char
 
 Grid columns are now sortable and resizable by default. Also, the grid animates rows by default. In order to avoid this, please set `defaultColDef.resizable = false`, `defaultColDef.sortable = false` and `gridOptions.animateRows = false`.
 
-When not providing column definitions or setting columnDefs=undefined, a loading overlay will be displayed until column definitions are set. To go back to the earlier behavior of showing a grid without any columns, please set `columnDefs = []`.
+When not providing column definitions or setting `columnDefs = undefined`, a loading overlay will be displayed until column definitions are set. To go back to the earlier behavior of showing a grid without any columns, please set `columnDefs = []`.
 
 ### GridOptions
 
