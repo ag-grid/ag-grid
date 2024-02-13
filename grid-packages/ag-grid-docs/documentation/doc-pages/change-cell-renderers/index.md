@@ -2,11 +2,11 @@
 title: "Highlighting Changes"
 ---
 
-Highlighting Changes concerns bringing the users attention to a cell.
+This page concerns bringing the users attention to a cell.
 
-[Flashing Cells](#flashing-cells) to bring attention to a cell.
+[Flashing Cells](#flashing-cells) is a quick and easy way to highlight a cell.
 
-[Animated Components](/#animated-components) can highlight Cells for Updating Data in interesting ways.
+[Animated Cells](/#animated-cells) highlight changed values in interesting ways.
 
 
 ## Flashing Cells
@@ -51,7 +51,7 @@ The example below demonstrates flashing delay changes. The following can be note
 
 One exception to the above is changes due to filtering. If you are [Row Grouping](/grouping/) the data with [Aggregations](/aggregation/), then the aggregated values will change as filtering adds and removes rows contained within the groups. It typically doesn't make sense to flash these changes when it's due to a filter change, as filtering would impact many (possibly all) cells at once, thus not usefully bringing the users attention to any particular cell. If you do not like this exception and would like to flash changes even when it's the result of a filter change, then set grid property `allowShowChangeAfterFilter=true`.
 
-## Animated Components
+## Animated Cells
 
 Interesting animations for data changes can be achieved using [Cell Components](/component-cell-renderer/). You can create your own or use one of the provided Show Change Cell Components. The grid provides two such components out of the box:
 

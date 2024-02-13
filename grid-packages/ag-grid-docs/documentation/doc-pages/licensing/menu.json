@@ -1009,6 +1009,23 @@
                 ]
               },
               {
+                "title": "Group Cell Component",
+                "url": "/group-expand-collapse-comp/",
+                "enterprise": true,
+                "items": [
+                  {
+                    "title": "Provided Component",
+                    "url": "/group-cell-renderer/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Custom Component",
+                    "url": "/group-custom-group-comp/",
+                    "enterprise": true
+                  }                  
+                ]
+              },
+              {
                 "title": "Row Group Panel",
                 "url": "/grouping-group-panel/",
                 "enterprise": true,
@@ -1075,23 +1092,6 @@
                 "url": "/grouping-unbalanced-groups/",
                 "enterprise": true,
                 "showInCollapsed": false
-              },
-              {
-                "title": "Expand & Collapse Comp",
-                "url": "/group-expand-collapse-comp/",
-                "enterprise": true,
-                "items": [
-                  {
-                    "title": "Provided Group Comp",
-                    "url": "/group-cell-renderer/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Custom Group Comp",
-                    "url": "/group-custom-group-comp/",
-                    "enterprise": true
-                  }                  
-                ]
               }
             ]
           },

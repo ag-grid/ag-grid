@@ -50,6 +50,9 @@ md-include:component-interface-vue.md
 
 md-include:params_vue.md
 
+<note>
+Note that if [Row Selection](/row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the <kbd>␣ Space</kbd> key from triggering both row selection and toggling the checkbox.
+</note>
 
 ## Provided Components
 
@@ -291,38 +294,3 @@ refer to the [hook specific](../react-hooks/) documentation for more information
 </note>
 </framework-specific-section>
 
-<framework-specific-section frameworks="angular">
-|### Example: Rendering using more complex Components
-|This example illustrates a few different ideas:
-|- Custom Cell Renderers
-|- Parent/Child Communication using [context](/context/)
-|- Storing the Grid API via the "Grid Ready" event, and using it later
-</framework-specific-section>
-<framework-specific-section frameworks="angular">
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-|### Example: Rendering using more complex Components
-|This example illustrates a few different ideas:
-|- Custom Cell Renderers
-|- Parent/Child Communication using [context](/context/)
-|- Using a `ref` to access `AgGridReact` in order to access the underlying APIs
-</framework-specific-section>
-<framework-specific-section frameworks="react">
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-|### Example: Rendering using more complex Components
-|This example illustrates a few different ideas:
-|- Custom Cell Renderers
-|- Parent/Child Communication using [context](/context/)
-|- Storing the Grid API via the "Grid Ready" event, and using it later
-</framework-specific-section>
-<framework-specific-section frameworks="vue">
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
-</framework-specific-section>
-
-
-Note that if [Row Selection](/row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the <kbd>␣ Space</kbd> key from triggering both row selection and toggling the checkbox. This is shown in the example above.
