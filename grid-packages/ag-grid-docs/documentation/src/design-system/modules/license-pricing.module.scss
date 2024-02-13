@@ -667,6 +667,7 @@ transition: all 0.3s ease-in;
     &:first-child {
         margin-top: 0;
     }
+    z-index: 1;
 }
 
 .tableContainer {

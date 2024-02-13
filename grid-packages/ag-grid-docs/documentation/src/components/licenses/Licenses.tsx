@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Icon } from '../../components/Icon';
 import { trackBuyButton } from '../../utils/analytics';
 import AGGridLogo from '../../images/inline-svgs/ag-grid-logo.svg';
@@ -198,23 +198,34 @@ export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked 
                     };
                 }
 
+                const [showFeatureBreakdown, setShowFeatureBreakdown] = useState(false);
+
+                const toggleFeatureBreakdown = () => {
+                    setShowFeatureBreakdown(!showFeatureBreakdown);
+                };
+
                 return (
                     <div key={data.id} className={classnames(styles.license, data.className)}>
                         <License {...data} />
-
-                        <div className={styles.mobileFeatureMatrix}>
-                            {featuresData.map((section, i) => (
-                                <div className={styles.tableContainer} key={i}>
-                                    <h4 className={styles.categoryTableHeader}>{section.group.name}</h4>
-                                    <ComparisonTable
-                                        data={section.items}
-                                        columns={columns}
-                                        cellRenderer={cellRenderer}
-                                    />
-                                </div>
-                            ))}
-                        </div>
                         
+                        <span className={styles.toggleFeatureBreakdownButton} onClick={toggleFeatureBreakdown}>
+                            {showFeatureBreakdown ? 'Hide Feature Breakdown' : 'Show Feature Breakdown'}
+                        </span>
+                        
+                        {showFeatureBreakdown && (
+                            <div className={styles.mobileFeatureMatrix}>
+                                {featuresData.map((section, i) => (
+                                    <div className={styles.tableContainer} key={i}>
+                                        <h4 className={styles.categoryTableHeader}>{section.group.name}</h4>
+                                        <ComparisonTable
+                                            data={section.items}
+                                            columns={columns}
+                                            cellRenderer={cellRenderer}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 );
             })}
