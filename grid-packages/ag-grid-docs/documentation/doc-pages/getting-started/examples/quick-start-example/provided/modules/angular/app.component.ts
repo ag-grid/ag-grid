@@ -20,10 +20,10 @@ interface IRow {
   selector: 'my-app',
   template: 
   `
-  <div class="content">
+  <div class="content" style="width: 100%; height: 100%;">
     <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
     <ag-grid-angular
-      style="width: 100%; height: 176px;"
+      style="width: 100%; height: 100%;"
       [class]="themeClass"
       [rowData]="rowData"
       [columnDefs]="colDefs"

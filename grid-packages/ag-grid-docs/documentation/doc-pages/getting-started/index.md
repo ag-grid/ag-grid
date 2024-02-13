@@ -361,7 +361,7 @@ Below is a live example of the application running. Click `</> Code` to see the 
 
 <grid-example title='Quick Start Example' name='quick-start-example' type='mixed' options='{ "exampleHeight": 302 }'></grid-example>
 
-<note>To live-edit the code, open the example in CodeSandbox or Plunkr using the buttons to the lower-right.</note>
+<note>To live-edit the code, open the example in CodeSandbox or Plunker using the buttons to the lower-right.</note>
 
 Now that you have a basic grid running, the remainder of this page explores some of the key concepts. 
 
@@ -515,7 +515,7 @@ Add buttons, checkboxes or images to cells with a [Cell Renderer](../cell-render
 
 ### Resizing Columns
 
-Columns are resized by dragging the Column Header edges. Additionally assign `flex` values to 
+Columns are [Resized](../column-sizing/) by dragging the Column Header edges. Additionally assign `flex` values to 
 allow columns to flex to the grid width.
 
 <snippet>
@@ -531,19 +531,24 @@ const gridOptions = {
 
 <div style="height:15px;"></div>
 
+### Example
+
+This example demonstrates mapping and formatting values, cell components, and resizing columns.
+
 <grid-example title='Showing Data Example' name='showing-data-example' type='mixed' options='{ "exampleHeight": 302 }'></grid-example>
 
 ## Working with Data
 
+By default, the row data is used to infer the [Cell Data Type](../cell-data-types/). The cell data type allows grid features, such as filtering and editing, to work without additional configuration.
+
 ### Filtering
 
-[Column Filters](../filtering/) are embedded into each column menu. These are configured using the `filter` attribute.
+[Column Filters](../filtering/) are embedded into each column menu. These are enabled using the `filter` attribute. The filter type is inferred from the cell data type.
 
 <snippet>
 const gridOptions = {
     columnDefs: [
-        { field: "make", filter: 'agTextColumnFilter' }, // use the text filter
-        { field: "price", filter: 'agNumberColumnFilter' }, // use the number filter
+        { field: "make", filter: true },
     ],
 };
 </snippet>
@@ -556,14 +561,14 @@ You can also create your own [Custom Filter](../filter-custom/).
 <snippet>
 const gridOptions = {
     columnDefs: [
-        { field: "make", filter: 'agTextColumnFilter', floatingFilter: true },
+        { field: "make", filter: true, floatingFilter: true },
     ],
 };
 </snippet>
 
 ### Editing
 
-Enable editing by setting the `editable` attribute to `true`.
+Enable [Editing](../cell-editing/) by setting the `editable` attribute to `true`. The cell editor is inferred from the cell data type.
 
 <snippet>
 const gridOptions = {
@@ -593,29 +598,11 @@ const gridOptions = {
 
 ### Sorting
 
-Data is sorted by clicking the column headers. Configure custom sorting using the `comparator` attribute.
+Data is [Sorted](../row-sorting/) by clicking the column headers. Sorting is enabled by default.
 
-<snippet>
-const gridOptions = {
-    columnDefs: [{
-        field: 'month',
-        comparator: (valueA, valueB) => {
-            const months = [
-                'January', 'February', 'March', 'April',
-                'May', 'June', 'July', 'August',
-                'September', 'October', 'November', 'December',
-            ];
-            const idxA = months.indexOf(valueA);
-            const idxB = months.indexOf(valueB);
-            return idxA - idxB;
-        },
-    }],
-}
-</snippet>
+### Row Selection
 
-### Selection
-
-Row selection is enabled using the `rowSelection` attribute. Use the `checkboxSelection` column definition attribute to render checkboxes for selection.
+[Row Selection](../row-selection/) is enabled using the `rowSelection` attribute. Use the `checkboxSelection` column definition attribute to render checkboxes for selection.
 
 <snippet>
 const gridOptions = {
@@ -638,6 +625,10 @@ const gridOptions = {
     paginationPageSizeSelector: [200, 500, 1000],
 };
 </snippet>
+
+### Example
+
+This example demonstrates filtering, editing, sorting, row selection, and pagination.
 
 <grid-example title='Working With Data Example' name='working-with-data-example' type='mixed' options='{ "exampleHeight": 500 }'></grid-example>
 
@@ -768,14 +759,13 @@ Customise themes using CSS variables.
 }
 </snippet>
 
-<div style="width: 50%">
-<image-caption src="getting-started/resources/customisingThemeExample.png" alt="Customising a Theme with CSS Variables"></image-caption>
-</div>
-
+<image-caption src="getting-started/resources/customisingThemeExample.png" constrained=true centered=true alt="Customising a Theme with CSS Variables"></image-caption>
 
 ### Figma
 
 If you are designing within Figma, you can use the [AG Grid Design System](../ag-grid-design-system/) to replicate Alpine and Alpine Dark AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid themes.
+
+<image-caption src="getting-started/resources/FDS-Example.png" constrained=true centered=true alt="Figma Design System with AG Grid"></image-caption>
 
 ### Cell Style
 
@@ -819,6 +809,10 @@ const gridOptions = {
     },
 };
 </snippet>
+
+### Example
+
+This example demonstrates cell style and row style.
 
 <grid-example title='Theming Example' name='theming-example' type='generated'></grid-example>
 
