@@ -1005,10 +1005,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             this.rootNode.updateHasChildren();
         }
 
-        this.rowCountReady = true;
-        this.eventService.dispatchEventOnce({
-            type: Events.EVENT_ROW_COUNT_READY
-        });
+        if (this.nodeManager.isRowCountReady()) {
+            // only if row data has been set
+            this.rowCountReady = true;
+            this.eventService.dispatchEventOnce({
+                type: Events.EVENT_ROW_COUNT_READY
+            });
+        }
     }
 
     private doFilter(changedPath: ChangedPath) {
