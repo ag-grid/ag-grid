@@ -2,7 +2,7 @@ export interface ChartGroupsDef {
     // community chart groups
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
     barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[],
-    pieGroup?: ('pie' | 'donut')[],
+    pieGroup?: ('pie' | 'donut' | 'doughnut')[],
     lineGroup?: ('line')[],
     scatterGroup?: ('scatter' | 'bubble')[],
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[],
