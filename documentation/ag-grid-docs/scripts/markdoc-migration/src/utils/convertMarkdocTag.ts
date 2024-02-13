@@ -21,7 +21,9 @@ function toMarkdownParagraph(node, _, state, info) {
  */
 export function markdocParagraphHandler(node, parent, state, info) {
     const isMarkdocTag = node[IS_MARKDOC_FIELD];
-    const defaultParagraph = toMarkdownParagraph(node, parent, state, info);
+    const defaultParagraph = toMarkdownParagraph(node, parent, state, info)
+        // Convert comments from /* */ to <!-- -->
+        .replaceAll(/\/\\\* (.*) \\\*\//g, '<!--$1-->');
 
     if (isMarkdocTag) {
         return (
