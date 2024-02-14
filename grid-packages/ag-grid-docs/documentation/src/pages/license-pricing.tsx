@@ -147,6 +147,27 @@ export const LicensePricing = () => {
                         })}
                         </div>
 
+                        <div className={styles.contactSales}>
+                    <h3 className="text-2xl">Need help?</h3>
+
+                    <p className="text-secondary">
+                        Email{' '}
+                        <InfoEmailLink emailSubject="AG Grid Developer license query" trackingType="headerLink">
+                            info@ag-grid.com 
+                        </InfoEmailLink>{' '}
+                         and start a conversation. We can provide quotes, give bulk pricing, and answer any sales or
+                        contract-related questions you may have.
+                    </p>
+
+                    <InfoEmailLink
+                        emailSubject="AG Grid Developer license query"
+                        className="button"
+                        trackingType="footer"
+                    >
+                        info@ag-grid.com
+                    </InfoEmailLink>
+                </div>
+
                         <div className={styles.videoPrompt}>
                             <a href="https://www.youtube.com/watch?v=xacx_attYuo" target="_blank" className={styles.thumbnail}>
                                 <img
@@ -180,26 +201,6 @@ export const LicensePricing = () => {
 
                 <SocialProof />
 
-                <div className={styles.contactSales}>
-                    <h3 className="text-2xl">Need help?</h3>
-
-                    <p className="text-secondary">
-                        Email{' '}
-                        <InfoEmailLink emailSubject="AG Grid Developer license query" trackingType="headerLink">
-                            info@ag-grid.com 
-                        </InfoEmailLink>{' '}
-                         and start a conversation. We can provide quotes, give bulk pricing, and answer any sales or
-                        contract-related questions you may have.
-                    </p>
-
-                    <InfoEmailLink
-                        emailSubject="AG Grid Developer license query"
-                        className="button"
-                        trackingType="footer"
-                    >
-                        info@ag-grid.com
-                    </InfoEmailLink>
-                </div>
             </div>
         </>
     );
