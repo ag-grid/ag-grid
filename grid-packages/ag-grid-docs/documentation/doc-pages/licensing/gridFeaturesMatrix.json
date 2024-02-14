@@ -378,5 +378,28 @@
         "chartsGrid": true
       }
     ]
+  },
+  {
+    "group": {
+      "name": "Support"
+    },
+    "items": [
+      {
+        "label": {
+          "name": "Dedicated Support"
+        },
+        "community": { "value": false, "detail": "Community support via Github" },
+        "enterprise": { "value": true, "detail": "Dedicated support via Zenhub" },
+        "chartsGrid": { "value": true, "detail": "Dedicated support via Zenhub" }
+      },
+      {
+        "label": {
+          "name": "Perpetual license"
+        },
+        "community": false,
+        "enterprise": { "value": true, "detail": "Including 1 year of updates" },
+        "chartsGrid": { "value": true, "detail": "Including 1 year of updates" }
+      }
+    ]
   }
 ]
