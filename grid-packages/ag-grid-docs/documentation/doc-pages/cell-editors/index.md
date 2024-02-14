@@ -122,7 +122,7 @@ Here is a full example:
 - `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
 - Edit a cell by double clicking to observe the different editors used. 
 
-<grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "richselect"], "exampleHeight": 450, "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "richselect"], "exampleHeight": 450, "includeNgFormsModule": true }'></grid-example>
 
 ## Dynamic Parameters
 

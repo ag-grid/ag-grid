@@ -6,7 +6,7 @@ Filter components allow you to add your own filter types to AG Grid. Use them wh
 
 The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the second is on the `Year` column with preset options.
 
-<grid-example title='Filter Component' name='custom-filter' type='mixed' options='{ "includeNgFormsModule" : true}'></grid-example>
+<grid-example title='Filter Component' name='custom-filter' type='mixed' options='{ "includeNgFormsModule": true}'></grid-example>
 
 ## Implementing a Filter Component
 
@@ -174,4 +174,4 @@ There are two ways you can get fix this problem:
 
 The example below illustrates how a custom filter component can be accessed and methods on it invoked:
 
-<grid-example title='Filter Component Instance' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Filter Component Instance' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "includeNgFormsModule": true }'></grid-example>

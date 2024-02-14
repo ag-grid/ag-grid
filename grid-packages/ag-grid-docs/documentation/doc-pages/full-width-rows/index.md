@@ -73,7 +73,7 @@ The following points should be noted:
 
 - The example is showing a flat list of data. There is no grouping or parent / child relationships between the full width and normal rows.
 
-<grid-example title='Basic Full Width' name='basic-full-width' type='generated' options=' { "exampleHeight" : 595 }'></grid-example>
+<grid-example title='Basic Full Width' name='basic-full-width' type='generated' options=' { "exampleHeight": 595 }'></grid-example>
 
 ## Embedded Full Width Rows
 
@@ -88,7 +88,7 @@ The example below demonstrates the behaviour when Full Width Rows are embedded i
 - Full Width Rows in the **non pinned** section take the whole width of the section and scroll horizontally.
 - Full Width Rows in the **pinned** sections take the whole width of the section.
 
-<grid-example title='Embedded Full Width Rows' name='embedded-full-width' type='generated' options=' { "exampleHeight" : 595 }'></grid-example>
+<grid-example title='Embedded Full Width Rows' name='embedded-full-width' type='generated' options=' { "exampleHeight": 595 }'></grid-example>
 
 ## Full Width Keyboard Navigation
 
