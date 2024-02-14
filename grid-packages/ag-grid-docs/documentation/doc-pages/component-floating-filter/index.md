@@ -16,7 +16,7 @@ Floating Filter Components allow you to add your own floating filter types to AG
 
 In the following example you can see how the Gold, Silver, Bronze and Total columns have a custom floating filter `NumberFloatingFilter`. This filter substitutes the standard floating filter for an input box that the user can change to adjust how many medals of each column to filter by based on a greater than filter.
 
-<grid-example title='Custom Floating Filter' name='custom-floating-filter' type='mixed' options='{ "includeNgFormsModule" : true}'></grid-example>
+<grid-example title='Custom Floating Filter' name='custom-floating-filter' type='mixed' options='{ "includeNgFormsModule": true}'></grid-example>
 
 ## Implementing a Floating Filter Component
 
@@ -67,7 +67,7 @@ This example extends the previous example by also providing its own custom filte
 |1. `NumberFilter.myMethodForTakingValueFromFloatingFilter(change)` performs the filtering.
 </framework-specific-section>
 
-<grid-example title='Custom Filter and Floating Filter' name='custom-filter-and-floating-filter' type='mixed' options='{"includeNgFormsModule" : true}'></grid-example>
+<grid-example title='Custom Filter and Floating Filter' name='custom-filter-and-floating-filter' type='mixed' options='{"includeNgFormsModule": true}'></grid-example>
 
 ## Example: Custom Filter And Read-Only Floating Filter
 
@@ -84,7 +84,7 @@ This example uses the previous custom filter but implements `getModelAsString()`
 |The below example shows how to create a custom floating filter re-using the out-of-the-box Number Filter .
 </framework-specific-section>
 <framework-specific-section frameworks="react,angular,vue">
-<grid-example title='Sliding Floating Filter Component' name='floating-filter-component' type='mixed' options='{ "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Sliding Floating Filter Component' name='floating-filter-component' type='mixed' options='{ "includeNgFormsModule": true }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
