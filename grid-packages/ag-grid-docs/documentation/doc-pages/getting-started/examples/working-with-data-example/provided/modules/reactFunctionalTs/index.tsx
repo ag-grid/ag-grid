@@ -70,6 +70,7 @@ const GridExample = () => {
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           rowSelection="multiple"
+          suppressRowClickSelection={true}
           pagination={true}
           paginationPageSize={500}
           paginationPageSizeSelector={[200, 500, 1000]}

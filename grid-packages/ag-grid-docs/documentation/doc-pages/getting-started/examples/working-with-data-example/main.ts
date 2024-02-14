@@ -49,6 +49,7 @@ const gridOptions: GridOptions = {
     floatingFilter: true,
   },
   rowSelection: "multiple",
+  suppressRowClickSelection: true,
   pagination: true,
   paginationPageSize: 500,
   paginationPageSizeSelector: [200, 500, 1000]
