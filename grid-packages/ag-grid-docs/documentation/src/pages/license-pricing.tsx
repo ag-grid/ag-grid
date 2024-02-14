@@ -17,8 +17,16 @@ import chartsFeaturesData from '../../doc-pages/licensing/chartsFeaturesMatrix.j
 import pricingFAQData from '../../doc-pages/licensing/pricingFAQs.json'
 
 import FAQ from '../components/licenses/FAQ';
+import { CHARTS_URL } from '../utils/consts';
 
-export const LicensePricing = () => {
+export type LicenseTab = 'grid' | 'charts';
+
+interface Props {
+    initialTab?: LicenseTab
+    isWithinIframe: boolean
+}
+
+export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
     const [showFullWidthBar, setShowFullWidthBar] = useState(false);
 
     useEffect(() => {
@@ -54,14 +62,30 @@ export const LicensePricing = () => {
     });
 
     // Handles charts/grid toggle logic
-
-    const [isChecked, setIsChecked] = useState(false);
+    const [chartsIsSelected, setChartsIsSelected] = useState(false);
 
     const handleToggle = () => {
-        setIsChecked(!isChecked);
+        setChartsIsSelected(!chartsIsSelected);
     };
 
-    const featuresData = !isChecked ? gridFeaturesData : chartsFeaturesData;
+    // Set toggle based on prop
+    useEffect(() => {
+        setChartsIsSelected(initialTab === 'charts');
+    }, [initialTab]);
+
+
+    useEffect(() => {
+        if (isWithinIframe) {
+            const message = {
+                type: 'tabChange',
+                tab: chartsIsSelected ? 'charts' : 'grid' as LicenseTab,
+                windowHeight: document.body.clientHeight
+            };
+            parent.postMessage(message, CHARTS_URL!);
+        }
+    }, [chartsIsSelected])
+
+    const featuresData = chartsIsSelected ? chartsFeaturesData : gridFeaturesData; 
 
     return (
         <>
@@ -95,7 +119,7 @@ export const LicensePricing = () => {
                                         type="checkbox"
                                         id="toggle"
                                         className={styles.toggleCheckbox}
-                                        checked={isChecked}
+                                        checked={chartsIsSelected}
                                         onChange={handleToggle}
                                     />
                                     <label htmlFor="toggle" className={styles.toggleContainer}>
@@ -114,7 +138,7 @@ export const LicensePricing = () => {
                             </div>
                         </div>
                         <div className={styles.licensesOuter}>
-                            <Licenses className={styles.licensesInfo} isChecked={isChecked} />
+                            <Licenses className={styles.licensesInfo} isChecked={chartsIsSelected} />
                         </div>
 
                         <div className={styles.desktopTableContainer}>
