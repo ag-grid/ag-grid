@@ -1,0 +1,17 @@
+{
+  "name": "example-generation",
+  "description": "Example Generation for Documentation",
+  "version": "31.0.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "private": true,
+  "scripts": {
+    "build": ""
+  },
+  "dependencies": {
+    "typescript": "^5.3.3",
+    "@ag-grid-community/core": "^31.0.2"
+  }
+}

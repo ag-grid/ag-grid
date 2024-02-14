@@ -67,7 +67,8 @@
       "enterprise-modules/sparklines",
       "enterprise-modules/viewport-row-model",
       "enterprise-modules/status-bar",
-      "documentation/ag-grid-docs"
+      "documentation/ag-grid-docs",
+      "documentation/example-generation"
     ],
     "nohoist": [
       "**/@vue/**",
