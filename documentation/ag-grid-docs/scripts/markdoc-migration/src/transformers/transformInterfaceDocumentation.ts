@@ -15,7 +15,10 @@ export function transformInterfaceDocumentation(ast: any) {
             children,
             config: {
                 interfaceName: 'interfaceName',
-                names: 'names',
+                names: {
+                    type: 'array',
+                    name: 'names',
+                },
                 config: {
                     type: 'object',
                     name: 'config',

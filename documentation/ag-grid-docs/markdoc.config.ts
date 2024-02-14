@@ -112,6 +112,7 @@ export default defineMarkdocConfig({
             render: 'pre',
             attributes: {
                 interfaceName: { type: String, required: true },
+                names: { type: Array },
                 config: { type: Object },
             },
         },
