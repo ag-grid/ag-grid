@@ -33,8 +33,6 @@ const SOCIALS_ICON_MAP = {
     linkedin: CarbonIcon.LogoLinkedin,
 };
 
-console.log(LucideIcon);
-
 const DOCS_CATEGORIES_ICON_MAP = {
     'docs-api': ApiIcon,
     'docs-columns': ColumnsIcon,
