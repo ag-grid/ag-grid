@@ -84,13 +84,7 @@ export const LicensePricing = () => {
                         <div className={styles.introSection}>
                             <h1 className={styles.pricingHeading}>Pricing</h1>
 
-                            <p className="text-regular">
-                                Need bulk pricing? We can provide quotes, give bulk pricing, contact us at
-                                <InfoEmailLink emailSubject="AG Grid Developer license query" trackingType="headerLink">
-                                    info@ag-grid.com
-                                </InfoEmailLink>{' '}
-                                for info.
-                            </p>
+                            <p className="text-regular">Compare what’s different in our grid and charts products</p>
 
                             <div className={styles.switchContainer}>
                                 <div className={styles.gradient}></div>
