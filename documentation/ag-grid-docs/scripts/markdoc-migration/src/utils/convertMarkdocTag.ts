@@ -38,6 +38,8 @@ export function markdocParagraphHandler(node, parent, state, info) {
                 .replaceAll('\\-', '-')
                 // Unescape `\*` eg, list items
                 .replaceAll('\\*', '*')
+                // Unescape `\`` eg, code attribute values
+                .replaceAll('\\`', '`')
         );
     }
 
