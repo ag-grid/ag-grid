@@ -3,16 +3,19 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-diff';
 import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-scss';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-xml-doc';
 import 'prismjs/plugins/keep-markup/prism-keep-markup';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
 import { memo, useEffect, useRef } from 'react';
 
 const GrammarMap = {
     js: Prism.languages.javascript,
+    json: Prism.languages.json,
     ts: Prism.languages.typescript,
     css: Prism.languages.css,
     bash: Prism.languages.bash,
@@ -22,6 +25,7 @@ const GrammarMap = {
     sql: Prism.languages.sql,
     diff: Prism.languages.diff,
     scss: Prism.languages.scss,
+    xml: Prism.languages.xml,
 };
 
 export type Language = keyof typeof GrammarMap;
