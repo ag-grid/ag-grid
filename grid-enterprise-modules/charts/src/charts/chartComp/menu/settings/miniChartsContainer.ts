@@ -43,58 +43,90 @@ import {
     MiniSunburst,
     MiniTreemap,
 } from "./miniCharts/index"; // please leave this as is - we want it to be explicit for build reasons
+import { MiniChart } from './miniCharts/miniChart';
 
 // import {enterprise} from "../../../../main";
 
 export type ThemeTemplateParameters = {
     extensions: Map<any, any>;
     properties: Map<any, any>;
+};
+
+type MiniChartMenuMapping = {
+    [K in keyof ChartGroupsDef]-?: MiniChartMenuGroup<K>;
+};
+
+type MiniChartMenuGroup<K extends keyof ChartGroupsDef> = {
+    [T in NonNullable<ChartGroupsDef[K]>[number]]: MiniChartMenuItem;
 }
 
-const miniChartMapping = {
+interface MiniChartMenuItem {
+    range: boolean;
+    pivot: boolean;
+    enterprise: boolean;
+    icon: MiniChartConstructor;
+}
+
+type MiniChartConstructor = {
+    chartType: ChartType;
+    new (...args: any[]): MiniChart;
+};
+
+const miniChartMapping: MiniChartMenuMapping = {
     columnGroup: {
-        enterprise: false,
-        chartTypes: {column: MiniColumn, stackedColumn: MiniStackedColumn, normalizedColumn: MiniNormalizedColumn}
+        column: { range: true, pivot: true, enterprise: false, icon: MiniColumn },
+        stackedColumn: { range: true, pivot: true, enterprise: false, icon: MiniStackedColumn },
+        normalizedColumn: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedColumn },
     },
     barGroup: {
-        enterprise: false,
-        chartTypes: {bar: MiniBar, stackedBar: MiniStackedBar, normalizedBar: MiniNormalizedBar}
+        bar: { range: true, pivot: true, enterprise: false, icon: MiniBar },
+        stackedBar: { range: true, pivot: true, enterprise: false, icon: MiniStackedBar },
+        normalizedBar: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedBar },
     },
-    pieGroup: {enterprise: false, chartTypes: {pie: MiniPie, donut: MiniDonut, doughnut: MiniDonut}},
-    lineGroup: {enterprise: false, chartTypes: {line: MiniLine}},
-    scatterGroup: {enterprise: false, chartTypes: {scatter: MiniScatter, bubble: MiniBubble}},
+    pieGroup: {
+        pie: { range: true, pivot: true, enterprise: false, icon: MiniPie },
+        donut: { range: true, pivot: true, enterprise: false, icon: MiniDonut },
+        doughnut: { range: true, pivot: true, enterprise: false, icon: MiniDonut },
+    },
+    lineGroup: { line: { range: true, pivot: true, enterprise: false, icon: MiniLine } },
+    scatterGroup: {
+        scatter: { range: true, pivot: true, enterprise: false, icon: MiniScatter },
+        bubble: { range: true, pivot: true, enterprise: false, icon: MiniBubble },
+    },
     areaGroup: {
-        enterprise: false,
-        chartTypes: {area: MiniArea, stackedArea: MiniStackedArea, normalizedArea: MiniNormalizedArea}
+        area: { range: true, pivot: true, enterprise: false, icon: MiniArea },
+        stackedArea: { range: true, pivot: true, enterprise: false, icon: MiniStackedArea },
+        normalizedArea: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedArea },
     },
     polarGroup: {
-        enterprise: true,
-        chartTypes: {radarLine: MiniRadarLine, radarArea: MiniRadarArea, nightingale: MiniNightingale, radialColumn: MiniRadialColumn, radialBar: MiniRadialBar}
+        radarLine: { range: true, pivot: false, enterprise: true, icon: MiniRadarLine },
+        radarArea: { range: true, pivot: false, enterprise: true, icon: MiniRadarArea },
+        nightingale: { range: true, pivot: false, enterprise: true, icon: MiniNightingale },
+        radialColumn: { range: true, pivot: false, enterprise: true, icon: MiniRadialColumn },
+        radialBar: { range: true, pivot: false, enterprise: true, icon: MiniRadialBar },
     },
     statisticalGroup: {
-        enterprise: true,
-        chartTypes: {boxPlot: MiniBoxPlot, histogram: MiniHistogram, rangeBar: MiniRangeBar, rangeArea: MiniRangeArea}
+        boxPlot: { range: true, pivot: false, enterprise: true, icon: MiniBoxPlot },
+        histogram: { range: true, pivot: false, enterprise: true, icon: MiniHistogram },
+        rangeBar: { range: true, pivot: false, enterprise: true, icon: MiniRangeBar },
+        rangeArea: { range: true, pivot: false, enterprise: true, icon: MiniRangeArea },
     },
     hierarchicalGroup: {
-        enterprise: true,
-        chartTypes: {treemap: MiniTreemap, sunburst: MiniSunburst}
+        treemap: { range: true, pivot: false, enterprise: true, icon: MiniTreemap },
+        sunburst: { range: true, pivot: false, enterprise: true, icon: MiniSunburst },
     },
     specializedGroup: {
-        enterprise: true,
-        chartTypes: {heatmap: MiniHeatmap, waterfall: MiniWaterfall}
+        heatmap: { range: true, pivot: false, enterprise: true, icon: MiniHeatmap },
+        waterfall: { range: true, pivot: false, enterprise: true, icon: MiniWaterfall },
     },
     combinationGroup: {
-        enterprise: false,
-        chartTypes: {
-            columnLineCombo: MiniColumnLineCombo,
-            areaColumnCombo: MiniAreaColumnCombo,
-            customCombo: MiniCustomCombo
-        }
-    }
+        columnLineCombo: { range: true, pivot: true, enterprise: false, icon: MiniColumnLineCombo },
+        areaColumnCombo: { range: true, pivot: true, enterprise: false, icon: MiniAreaColumnCombo },
+        customCombo: { range: true, pivot: true, enterprise: false, icon: MiniCustomCombo },
+    },
 };
 
 export class MiniChartsContainer extends Component {
-
     static TEMPLATE = /* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`;
 
     private readonly fills: string[];
@@ -123,28 +155,68 @@ export class MiniChartsContainer extends Component {
     private init() {
         const eGui = this.getGui();
         const isEnterprise = this.chartController.isEnterprise();
-        Object.keys(this.chartGroups).forEach((group: keyof ChartGroupsDef) => {
-            if (!isEnterprise && miniChartMapping[group]?.enterprise) {
-                return; // skip enterprise groups if community
+        const isPivotChart = this.chartController.isPivotChart();
+        const isRangeChart = !isPivotChart;
+
+        // Determine the set of chart types that are specified by the chartGroupsDef config, filtering out any entries
+        // that are invalid for the current chart configuration (pivot/range) and license type
+        const displayedMenuGroups = Object.keys(this.chartGroups).map((group) => {
+            const menuGroup = group in miniChartMapping
+                ? miniChartMapping[group as keyof typeof miniChartMapping]
+                : undefined;
+            if (!menuGroup) {
+                // User has specified an invalid chart group in the chartGroupsDef config
+                _.warnOnce(`invalid chartGroupsDef config '${group}'`);
+                return null;
             }
 
-            const chartGroupValues = this.chartGroups[group];
-            const groupComponent = this.createBean(new AgGroupComponent({
-                title: this.chartTranslationService.translate(group),
-                suppressEnabledCheckbox: true,
-                enabled: true,
-                suppressOpenCloseIcons: true,
-                cssIdentifier: 'charts-settings',
-                direction: 'horizontal'
-            }));
+            // Determine the valid chart types within this group, based on the chartGroupsDef config
+            const chartGroupValues = this.chartGroups[group as keyof ChartGroupsDef] ?? [];
+            const menuItems = chartGroupValues.map((chartType) => {
+                const menuItem = chartType in menuGroup
+                        ? (menuGroup as Record<typeof chartType, MiniChartMenuItem>)[chartType]
+                        : undefined;
 
-            chartGroupValues!.forEach((chartType: keyof ChartGroupsDef[typeof group]) => {
-                const MiniClass = miniChartMapping[group]?.chartTypes[chartType] as any;
-                if (!MiniClass) {
+                if (!menuItem) {
+                     // User has specified an invalid chart type in the chartGroupsDef config
                     _.warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
-                    return;
+                    return null;
                 }
 
+                if (!isEnterprise && menuItem.enterprise) {
+                    return null; // skip enterprise charts if community
+                }
+                // Only show the chart if it is valid for the current chart configuration (pivot/range)
+                if (isRangeChart && menuItem.range) return menuItem;
+                if (isPivotChart && menuItem.pivot) return menuItem;
+                return null;
+            })
+            .filter((menuItem): menuItem is NonNullable<typeof menuItem> => menuItem != null);
+
+            if (menuItems.length === 0) return null; // don't render empty chart groups
+
+            return {
+                label: this.chartTranslationService.translate(group),
+                items: menuItems
+            };
+        })
+        .filter((menuGroup): menuGroup is NonNullable<typeof menuGroup> => menuGroup != null);
+
+        // Render the filtered menu items
+        for (const { label, items } of displayedMenuGroups) {
+            const groupComponent = this.createBean(
+                new AgGroupComponent({
+                    title: label,
+                    suppressEnabledCheckbox: true,
+                    enabled: true,
+                    suppressOpenCloseIcons: true,
+                    cssIdentifier: 'charts-settings',
+                    direction: 'horizontal',
+                })
+            );
+
+            for (const menuItem of items) {
+                const MiniClass = menuItem.icon;
                 const miniWrapper = document.createElement('div');
                 miniWrapper.classList.add('ag-chart-mini-thumbnail');
 
@@ -158,10 +230,10 @@ export class MiniChartsContainer extends Component {
 
                 this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes, this.themeTemplateParameters, this.isCustomTheme));
                 groupComponent.addItem(miniWrapper);
-            });
+            }
 
             eGui.appendChild(groupComponent.getGui());
-        });
+        }            
 
         // hide MiniCustomCombo if no custom combo exists
         if (!this.chartController.customComboExists() && this.chartGroups.combinationGroup) {
