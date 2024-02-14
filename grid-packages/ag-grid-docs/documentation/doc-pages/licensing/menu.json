@@ -414,6 +414,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Chart Types",
+            "url": "/integrated-charts-chart-types/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "User Created Charts",
             "url": "/integrated-charts-user-created/",
             "enterprise": true,
