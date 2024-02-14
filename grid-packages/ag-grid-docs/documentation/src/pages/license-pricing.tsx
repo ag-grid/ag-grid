@@ -23,7 +23,7 @@ export const LicensePricing = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 830) {
+            if (window.scrollY > 800) {
                 setShowFullWidthBar(true);
             } else {
                 setShowFullWidthBar(false);
