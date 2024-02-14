@@ -39,7 +39,7 @@ Here we give some hints on testing AG Grid as part of your application.
 
 
 <framework-specific-section frameworks="javascript">
-<snippet transform="{false}">
+<snippet transform={false}>
 |import { getByText } from '@testing-library/dom';
 |import '@testing-library/jest-dom';
 |
