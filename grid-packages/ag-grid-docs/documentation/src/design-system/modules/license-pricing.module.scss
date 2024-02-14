@@ -459,6 +459,7 @@
     user-select: none;
     box-shadow: var(--shadow-sm);
     margin-bottom: $spacing-size-4;
+
     #{$selector-darkmode} & {
         border: 2px solid var(--color-bg-primary);
     }
@@ -472,35 +473,28 @@
     left: 0%;
     border-radius: 32px;
     background: var(--color-bg-brand-solid);
-    #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-bg-secondary),var(--color-bg-primary) 40%);
-    }
-
     transition: all 0.2s;
-    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 40%);
+    }
 }
 
 .toggleContainer div {
-    padding: 6px;
-    text-align: center;
-    z-index: 1;
-}
-
-.gridToggle {
     display: flex;
-    gap: 8px;
     align-items: center;
-    margin-left: 8px;
     justify-content: center;
-    cursor: pointer;
-}
-
-.chartsToggle {
-    display: flex;
     gap: 8px;
-    align-items: center;
+    padding: 6px;
     margin-left: 8px;
+    text-align: center;
     cursor: pointer;
+    z-index: 1;
+
+    &.chartsToggle {
+        padding-right: 18px;
+    }
 }
 
 .toggleCheckbox:checked + .toggleContainer::before {
@@ -508,14 +502,16 @@
 }
 
 .toggleCheckbox:checked + .toggleContainer .gridToggle {
-        margin-left: 0;
+    margin-left: 0;
     padding-left: 0;
     border-radius: 32px;
     color: var(--color-text-secondary);
     transition: color 0.3s;
+
     .gridInactive {
         display: inline;
     }
+
     .gridActive {
         display: none;
     }
@@ -524,31 +520,29 @@
         .gridInactive {
             display: none;
         }
+
         .gridActive {
             display: inline;
         }
     }
-
 }
 
-.toggleCheckbox:checked + .toggleContainer .gridToggle:hover{
-background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 15%);
-transition: all 0.3s ease-in;
+.toggleCheckbox:checked + .toggleContainer .gridToggle:hover {
+    background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 15%);
+    transition: all 0.3s ease-in;
 }
 
 .toggleCheckbox:checked + .toggleContainer .chartsToggle {
     border-radius: 32px;
     color: var(--color-button-primary-fg);
     transition: color 0.3s;
+
     .chartsInactive {
         display: none;
     }
 
     .chartsActive {
         display: inline;
-    }
-    #{$selector-darkmode} & {
-        
     }
 }
 .toggleCheckbox + .toggleContainer .gridToggle {
@@ -556,36 +550,37 @@ transition: all 0.3s ease-in;
     padding-left: 0;
     color: var(--color-button-primary-fg);
     transition: color 0.3s;
+
     .gridInactive {
         display: none;
     }
+
     .gridActive {
         display: inline;
-    }
-    #{$selector-darkmode} & {
-        
     }
 }
 .toggleCheckbox + .toggleContainer .chartsToggle {
     border-radius: 32px;
     color: var(--color-text-secondary);
     transition: color 0.3s;
+
     .chartsInactive {
         display: inline;
     }
+
     .chartsActive {
         display: none;
     }
+
     #{$selector-darkmode} & {
         .chartsInactive {
             display: none;
         }
+
         .chartsActive {
             display: inline;
         }
     }
-
-
 }
 
 .toggleCheckbox:not(:checked) + .toggleContainer .chartsToggle:hover {
@@ -607,6 +602,7 @@ transition: all 0.3s ease-in;
     top: 30px;
     left: 50%;
     transform: translate(-50%, -50%);
+
     #{$selector-darkmode} & {
         opacity: 0.2;
     }
@@ -629,21 +625,17 @@ transition: all 0.3s ease-in;
     top: 48px;
 }
 
-.newTag {
-    background: color-mix(in srgb, var(--color-bg-brand-solid), var(--color-bg-primary) 90%);
-    color: var(--color-link);
-    border-radius: 24px;
-}
 .gradient {
     position: absolute;
     top: -70px;
     height: 100px;
     width: 100vw;
     background: linear-gradient(transparent, var(--color-bg-brand-solid));
+    opacity: 0.05;
+
     #{$selector-darkmode} & {
         background: linear-gradient(transparent, var(--color-fg-primary));
     }
-    opacity: 0.05;
 }
 
 .videoPrompt {
@@ -658,16 +650,18 @@ transition: all 0.3s ease-in;
     padding-left: $spacing-size-2;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border-secondary);
-    @media screen and (min-width: $breakpoint-pricing-large) { 
-    position: sticky;
-    top: 119px;
-}
     color: var(--color-text-secondary);
+    z-index: 1;
 
     &:first-child {
         margin-top: 0;
     }
-    z-index: 1;
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        position: sticky;
+        top: 119px;
+    }
+
     #{$selector-darkmode} & {
         background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
     }
@@ -688,6 +682,6 @@ transition: all 0.3s ease-in;
     }
 
     .desktopTableContainer {
-        display: none;   
+        display: none;
     }
 }

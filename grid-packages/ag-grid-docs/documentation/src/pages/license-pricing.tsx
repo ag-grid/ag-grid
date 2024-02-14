@@ -113,7 +113,7 @@ export const LicensePricing = () => {
                                         <div className={styles.chartsToggle}>
                                             <ChartsActive className={styles.chartsActive} />
                                             <ChartsInactive className={styles.chartsInactive} />
-                                            Charts <div className={styles.newTag}>New</div>
+                                            Charts
                                         </div>
                                     </label>
                                 </div>
