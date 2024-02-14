@@ -2,6 +2,7 @@ import {
     BaseComponentWrapper, ColumnApi, ComponentType,
     ComponentUtil,
     Context, CtrlsService, FrameworkComponentWrapper,
+    FrameworkOverridesIncomingSource,
     GridApi,
     GridCoreCreator,
     GridOptions,
@@ -26,7 +27,7 @@ import { AgGridReactProps } from '../shared/interfaces';
 import { ReactComponent } from '../shared/reactComponent';
 import { PortalManager } from '../shared/portalManager';
 import { BeansContext } from "./beansContext";
-import { CssClasses } from "./utils";
+import { CssClasses, runWithoutFlushSync } from "./utils";
 import GroupCellRenderer from "../reactUi/cellRenderer/groupCellRenderer";
 import GridComp from './gridComp';
 import { warnReactiveCustomComponents } from '../shared/customComp/util';
@@ -350,6 +351,17 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         const prototype = comp.prototype;
         const isJsComp = prototype && 'getGui' in prototype;
         return !isJsComp;
+    }
+
+    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (callback, source) => {
+        if (source === 'ensureVisible') {
+            // As ensureVisible could easily be called from an effect which is already running inside a React render
+            // we need to run it without flushSync to avoid the DEV error from React when calling flushSync inside a render.
+            // This does mean there will be a flicker as the grid redraws the cells in the new location but this is deemed
+            // less of an issue then the error in the console for devs. 
+            return runWithoutFlushSync(callback);
+        }
+        return callback();
     }
 }
 
