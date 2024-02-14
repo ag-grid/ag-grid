@@ -48,7 +48,6 @@
             "displayName": "Column Sizing",
             "description": "See [Column Sizing](/column-sizing/)"
         },
-        "setColumnWidth": {},
         "setColumnWidths": {},
         "sizeColumnsToFit": {
             "more": {

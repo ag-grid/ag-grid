@@ -88,7 +88,7 @@ As mentioned above, the Pivot Result Columns in the grid are created by the grid
 | const irelandGoldColumn = api.getPivotResultColumn(['Ireland'],'gold');
 | 
 | // change the width of the Pivot Result Column
-| api.setColumnWidth(irelandGoldColumn, newWidth);
+| api.setColumnWidths([{ key: irelandGoldColumn, newWidth: newWidth }]);
 | 
 | // look up the Column that pivots on country SausageKingdom and year 2002 and aggregates silver
 | const sausageKingdomColumn = api.getPivotResultColumn(['SausageKingdom','2002'],'silver');
