@@ -3,8 +3,10 @@ import { ExcelOOXMLTemplate, XmlElement, _ } from '@ag-grid-community/core';
 const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
     const ret: XmlElement[] = [];
 
-    strMap.forEach((val, key) => {
+    for (const key of strMap.keys()) {
         const textNode = key.toString();
+
+
         const child: XmlElement = {
             name: 't',
             textNode: _.escapeString(textNode)
@@ -24,7 +26,7 @@ const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
             name: 'si',
             children: [child]
         });
-    });
+    }
 
     return ret;
 };
