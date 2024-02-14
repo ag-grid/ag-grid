@@ -53,7 +53,7 @@ const createMarkdocTag = ({
                 const attrValue = getAttributeValue({ attributes: attributes!, name: attrName });
 
                 const transform = (nameConfig as AttributeConfigObject)?.transform;
-                const processedValue = transform ? transform(attrValue) : attrValue;
+                const processedValue = transform ? transform(attrValue)?.trim() : attrValue?.trim();
 
                 if (processedValue === undefined) {
                     return;
