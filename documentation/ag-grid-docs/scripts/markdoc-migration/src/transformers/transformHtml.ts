@@ -1,4 +1,4 @@
-import { brk, inlineCode, listItem, text } from 'mdast-builder';
+import { inlineCode, list, listItem, text } from 'mdast-builder';
 import { visit } from 'unist-util-visit';
 
 import { JSX_TEXT_TYPE, JSX_TYPE } from '../constants';
@@ -6,31 +6,19 @@ import { replaceNodeWithMarkdocTag } from '../utils/markdocTag';
 
 function transformStyledList(ast: any) {
     visit(ast, { type: JSX_TYPE, name: 'ol' }, function (node) {
-        const { attributes, children } = node;
+        const { children } = node;
         const contentArray = children[0].value.split('\n');
         const listItems = contentArray
             .map((item: string) => {
                 return item.replace(/<li>(.*)<\/li>/, '$1').trim();
             })
-            .flatMap((itemText: string, index: number) => {
-                return index < contentArray.length - 1 ? [listItem(text(itemText)), brk] : [listItem(text(itemText))];
-            });
+            .map((itemText: string) => listItem(text(itemText)));
 
-        replaceNodeWithMarkdocTag({
-            node,
-            tagName: 'styledList',
-            attributes,
-            children: listItems,
-            config: {
-                style: {
-                    type: 'string',
-                    name: 'style',
-                    transform(value) {
-                        return value.replace(/list-style-type:\s?(.*);$/, '$1');
-                    },
-                },
-            },
-        });
+        const replacement = list('ordered', listItems);
+        node.type = replacement.type;
+        node.ordered = replacement.ordered;
+        node.children = replacement.children;
+        delete node.attributes;
     });
 }
 
