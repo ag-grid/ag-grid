@@ -55,12 +55,12 @@
         "published": "01/2024"
     },
     {
-        "title": "",
-        "link": "",
-        "description": "",
-        "author": "",
-        "type": "",
-        "published": ""
+        "title": "How To Create Simple Column Chooser In AG Grid Using Angular Framework",
+        "link": "https://medium.com/@nitin_rajput/how-to-create-simple-column-chooser-in-ag-grid-using-angular-framework-a9531beb741c",
+        "description": "Customise the default column choose panel using Tailwind CSS",
+        "author": "Nitin Rajput",
+        "type": "Blog",
+        "published": "02/2024"
     },
     {
         "title": "",
