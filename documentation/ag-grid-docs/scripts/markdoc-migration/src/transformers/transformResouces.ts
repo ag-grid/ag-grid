@@ -20,6 +20,19 @@ function resourcesFolderTransform(value: string) {
     return path.join(RESOURCES_FOLDER, fileName);
 }
 
+function transformImage(ast: any) {
+    const matcher = { type: 'image' };
+
+    visit(ast, matcher, function (node) {
+        const isExternalUrl = node.url.startsWith('http');
+
+        if (!isExternalUrl) {
+            // Needs to be relative path
+            node.url = './' + resourcesFolderTransform(node.url);
+        }
+    });
+}
+
 function transformGif(ast: any) {
     const matcher = { type: JSX_TYPE, name: 'gif' };
 
@@ -165,6 +178,7 @@ function transformVideoSection(ast: any) {
 }
 
 export function transformResouces(ast: any) {
+    transformImage(ast);
     transformImageCaption(ast);
     transformDivImageCaption(ast);
     transformGif(ast);
