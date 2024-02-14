@@ -303,6 +303,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private setupFilterChangedListener(): void {
         if (this.active) {
             this.destroyFilterChangedListener = this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.updateFilterButton.bind(this));
+            this.updateFilterButton();
         }
     }
 
