@@ -72,6 +72,9 @@ export default defineMarkdocConfig({
                 return new Markdoc.Tag(this.render, {}, [node.attributes.primary]);
             },
         },
+        br: {
+            render: 'br',
+        },
         /**
          * External link that opens in a new tab
          */
