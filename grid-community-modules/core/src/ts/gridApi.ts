@@ -1419,6 +1419,8 @@ export class GridApi<TData = any> {
             this.ensureIndexVisible(params.rowIndex);
         }
 
+        this.ensureColumnVisible(params.colKey);
+
         const cell = this.navigationService.getCellByPosition(cellPosition);
         if (!cell) { return; }
         if (!this.focusService.isCellFocused(cellPosition)) {
