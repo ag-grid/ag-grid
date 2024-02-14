@@ -63,20 +63,20 @@
         "published": "02/2024"
     },
     {
-        "title": "",
-        "link": "",
-        "description": "",
-        "author": "",
-        "type": "",
-        "published": ""
+        "title": "AG Grid in SvelteKit for Spreadsheet Like Data Editing",
+        "link": "https://www.youtube.com/watch?v=VfFKEiMAloc",
+        "description": "In this tutorial we will implement AG Grid into Svelte Kit 1.0 to give users an editing experience like in spreadsheet apps / Excel.",
+        "author": "Harten Feller",
+        "type": "Video",
+        "published": "02/2023"
     },
     {
-        "title": "",
-        "link": "",
-        "description": "",
-        "author": "",
-        "type": "",
-        "published": ""
+        "title": "React Pivot Table with AG Grid and Cube",
+        "link": "https://cube.dev/blog/react-pivot-table-with-ag-grid",
+        "description": "Learn how to add a pivot table to a React app using AG Grid",
+        "author": "Igor Lukanin",
+        "type": "Blog",
+        "published": "03/2021"
     },
     {
         "title": "",

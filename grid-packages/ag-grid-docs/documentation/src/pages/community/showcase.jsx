@@ -37,7 +37,7 @@ const CommunityPage = () => {
             },
             maxWidth: 150,
         },
-        { field: 'stars' },
+        { field: 'stars', sort: 'desc' },
         { field: 'type' },
     ];
 
