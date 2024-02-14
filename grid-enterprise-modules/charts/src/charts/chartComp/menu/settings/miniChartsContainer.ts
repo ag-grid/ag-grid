@@ -107,7 +107,7 @@ const miniChartMapping: MiniChartMenuMapping = {
     },
     statisticalGroup: {
         boxPlot: { range: true, pivot: false, enterprise: true, icon: MiniBoxPlot },
-        histogram: { range: true, pivot: false, enterprise: true, icon: MiniHistogram },
+        histogram: { range: true, pivot: false, enterprise: false, icon: MiniHistogram },
         rangeBar: { range: true, pivot: false, enterprise: true, icon: MiniRangeBar },
         rangeArea: { range: true, pivot: false, enterprise: true, icon: MiniRangeArea },
     },
