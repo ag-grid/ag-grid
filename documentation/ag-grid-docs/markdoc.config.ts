@@ -159,6 +159,9 @@ export default defineMarkdocConfig({
                 wrapped: { type: Boolean },
             },
         },
+        iconsPanel: {
+            render: component('./src/components/icon/IconsPanel.astro'),
+        },
         imageCaption: {
             render: component('./src/components/image/ImageCaption.astro'),
             attributes: {

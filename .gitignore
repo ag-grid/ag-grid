@@ -176,7 +176,7 @@ typings/
 
 # gatsby files
 .cache/
-public
+grid-packages/ag-grid-docs/documentation/public
 
 # Mac files
 .DS_Store
