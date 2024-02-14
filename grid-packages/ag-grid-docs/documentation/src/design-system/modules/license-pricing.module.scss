@@ -653,6 +653,7 @@
 
 .toggleWrapper {
     top: 48px;
+    max-height: 70px; // Prevents 1px height change on toggle
 }
 
 .gradient {
