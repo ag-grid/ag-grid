@@ -3,12 +3,9 @@
 .license {
     width: 100%;
     border-radius: var(--radius-md);
-    // border: 1px solid var(--color-border-secondary);
-    // border-right: 1px solid var(--color-border-secondary);
     color: var(--color-fg-primary);
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        // max-width: calc(50% - $spacing-size-4);
         max-height: 480px;
     }
 
@@ -31,34 +28,24 @@
     }
 }
 
+.limitedTimePill,
+.limitedTimeSpacer {
+    height: 30px;
+    margin-bottom: $spacing-size-4;
+}
+
+.limitedTimePill {
+    padding: 4px 16px;
+    border-radius: 16px;
+    background-color: var(--color-util-brand-100);
+    color: var(--color-text-brand-primary);
+}
+
 .licenseMeta {
     display: flex;
     flex-direction: column;
     margin-bottom: $spacing-size-12;
     color: var(--color-text-tertiary);
-
-    :global(.icon) {
-        margin-top: -1px;
-        margin-left: 2px;
-        width: 16px;
-        opacity: 0.6666;
-
-        * {
-            fill: var(--color-text-tertiary);
-        }
-    }
-}
-
-.logo {
-    height: 40px;
-    width: auto;
-    margin-bottom: $spacing-size-5;
-
-    #{$selector-darkmode} & {
-        :global(#LogoType) * {
-            fill: var(--color-fg-primary) !important; // !important required to override SVG inline styles
-        }
-    }
 }
 
 p.name {
@@ -77,6 +64,7 @@ p.name {
 .price {
     display: flex;
     flex-direction: column;
+    margin-top: auto;
     margin-bottom: $spacing-size-4;
 }
 
@@ -88,40 +76,34 @@ p.name {
 .standardPrice {
     display: inline-block;
     position: relative;
+    font-size: var(--text-fs-2xl);
     margin-left: $spacing-size-4;
-    color: var(--color-text-tertiary);
+    color: var(--color-util-gray-400);
 
     &::after {
         content: '';
         position: absolute;
-        top: 50%;
+        top: 60%;
         right: $spacing-size-1 * -1;
         left: $spacing-size-1 * -1;
         height: $spacing-size-1;
         margin-top: $spacing-size-1 * -1;
-        background-color: var(--color-text-tertiary);
-    }
-}
-
-.priceFullDollars,
-.standardPrice {
-    font-size: 44px;
-    line-height: var(--text-lh-ultra-tight);
-    letter-spacing: -0.05em;
-    padding-top: $spacing-size-1;
-    padding-bottom: $spacing-size-2;
-
-    &::before {
-        content: '$';
+        background-color: var(--color-util-gray-400);
+        opacity: 0.6666;
     }
 }
 
 .priceFullDollars {
-    font-weight: var(--text-bold);
-    height: $spacing-size-16;
     display: flex;
     flex-direction: row;
     align-items: end;
+    height: $spacing-size-16;
+    padding-top: $spacing-size-1;
+    padding-bottom: $spacing-size-2;
+    font-size: 44px;
+    line-height: var(--text-lh-ultra-tight);
+    font-weight: var(--text-bold);
+    letter-spacing: -0.05em;
 
     .developerText {
         font-size: var(--text-fs-base) !important;
@@ -149,7 +131,6 @@ p.name {
 
 .licenseActions {
     width: 100%;
-    margin-top: auto;
 
     a {
         width: 100%;

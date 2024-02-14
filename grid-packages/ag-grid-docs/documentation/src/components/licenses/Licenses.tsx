@@ -1,10 +1,6 @@
 import classnames from 'classnames';
 import React, { FunctionComponent, useState } from 'react';
-import { Icon } from '../../components/Icon';
 import { trackBuyButton } from '../../utils/analytics';
-import AGGridLogo from '../../images/inline-svgs/ag-grid-logo.svg';
-import AGChartsLogo from '../../images/inline-svgs/ag-charts-logo.svg';
-import ChartsPricing from '../../images/inline-svgs/pricing-charts.svg';
 import GridCommunity from '../../images/inline-svgs/pricing-community.svg';
 import GridEnterprise from '../../images/inline-svgs/pricing-enterprise.svg';
 import ChartsGrid from '../../images/inline-svgs/pricing-grid-charts.svg';
@@ -22,8 +18,6 @@ type LicenseData = {
     priceFullDollars: string;
     launchPrice: any;
     buyLink: string;
-    learnMoreLink: string;
-    Logo: any;
     description: string;
     tabGroup: string;
 };
@@ -37,8 +31,6 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         priceFullDollars: '0',
         launchPrice: null,
         buyLink: 'https://ag-grid.com/react-data-grid/licensing/',
-        learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
-        Logo: GridCommunity,
         tabGroup: 'grid'
     },
     {
@@ -49,8 +41,6 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         priceFullDollars: '999',
         launchPrice: null,
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
-        learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
-        Logo: GridEnterprise,
         tabGroup: 'grid'
     },
     {
@@ -61,8 +51,6 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         priceFullDollars: '0',
         launchPrice: null,
         buyLink: 'https://ag-grid.com/react-data-grid/licensing/',
-        learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
-        Logo: GridCommunity,
         tabGroup: 'charts'
     },
     {
@@ -70,11 +58,9 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         id: 'enterprise-charts',
         subHeading: 'AG Charts Enterprise',
         description: 'All the chart features and dedicated support',
-        priceFullDollars: '199',
-        launchPrice: null,
+        priceFullDollars: '399',
+        launchPrice: '199',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
-        learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
-        Logo: GridEnterprise,
         tabGroup: 'charts'
     },
     {
@@ -82,19 +68,12 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         id: 'togther',
         subHeading: 'AG Grid + AG Charts Enterprise',
         description: 'All grid + chart features and dedicated support',
-        priceFullDollars: '1198',
-        launchPrice: null,
+        priceFullDollars: '1398',
+        launchPrice: '1198',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
-        learnMoreLink: "https://charts.ag-grid.com/javascript/licensing/",
-        Logo: ChartsGrid,
         tabGroup: 'both'
     },
 ];
-
-const makeNonBreaking = (text: string) => {
-    const nonBreakingSpace = '\u00A0';
-    return text.replace(' ', nonBreakingSpace);
-};
 
 const Price = ({ priceFullDollars, launchPrice }) => {
     return (
@@ -104,29 +83,32 @@ const Price = ({ priceFullDollars, launchPrice }) => {
                 </span>
             <p><b></b></p>
             <p className={styles.priceFullDollars}>
-                {launchPrice ? launchPrice : priceFullDollars}
+                <span>${ launchPrice ? launchPrice : priceFullDollars}</span>
+                
                 { launchPrice && (
                     <>
                         <span className={styles.standardPrice}>
-                            {priceFullDollars}
+                            ${priceFullDollars}
                         </span>
                     </>
                 )}
-                <span className={styles.developerText}>
-                    per developer
-                </span>
+            </p>
+            <p className={styles.developerText}>
+                per developer
             </p>
         </div>
     );
 };
 
 const License = (props: LicenseData) => {
-    const { id, description, subHeading, priceFullDollars, launchPrice, buyLink, learnMoreLink, Logo } = props;
+    const { id, description, subHeading, priceFullDollars, launchPrice, buyLink } = props;
 
     return (
         <>
-            <div className={classnames(styles.top, 'top')} id={id}>
-                {/* <Logo className={styles.logo}/> */}
+            <div className={styles.top} id={id}>
+                { launchPrice && <span className={styles.limitedTimePill}>Limited time offer</span> }
+                { !launchPrice && <span className={styles.limitedTimeSpacer}></span> }
+
                 <div className={styles.licenseMeta}>
                     <h2 className="">{subHeading}</h2>
                     <p className="">{description}</p>
