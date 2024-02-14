@@ -48,9 +48,13 @@ export const isComponentStateless = (Component: any) => {
 const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && (ReactDOM as any).flushSync != null;
 
 let disableFlushSync = false;
+/** Enable flushSync to be disabled for the callback and the next frame (via setTimeout 0) to prevent flushSync during an existing render.
+ * Provides an alternative to the more fine grained useFlushSync boolean param to agFlushSync.
+ */
 export function runWithoutFlushSync<T>(func: () => T){
     if(!disableFlushSync){
-        setTimeout(() => {disableFlushSync = false},0);
+        // We only re-enable flushSync asynchronously to avoid re-enabling it while React is still triggering renders related to the original call.
+        setTimeout(() => disableFlushSync = false, 0);
     }
     disableFlushSync = true;
     return func();
