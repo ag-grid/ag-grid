@@ -1,7 +1,5 @@
 <framework-specific-section frameworks="javascript">
-|
-|The header group component interface is almost identical to the above header component. The only difference is the `params` object passed to the `init` method.
-|
+|The Header Group Component interface is as follows:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">

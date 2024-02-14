@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="vue">
-|### Opening / Closing Groups
+|### Implementing Group Expansion
 |
 |Not all column groups can open and close, so you should display open / close features accordingly. To check if a column group should have open / close functionality, check the `isExpandable()` method on the column group.
 |

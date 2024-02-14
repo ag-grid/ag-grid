@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="angular">
-|The header group component interface is almost identical to the above header component. The only difference is the `params` passed to the `agInit` method.
+|The Header Group Component interface is as follows:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
