@@ -38,7 +38,13 @@
     padding: 4px 16px;
     border-radius: 16px;
     background-color: var(--color-util-brand-100);
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-text-brand-primary), var(--color-bg-primary) 90%);
+    }
     color: var(--color-text-brand-primary);
+    font-weight: var(--text-semibold);
+
+
 }
 
 .licenseMeta {
@@ -76,9 +82,14 @@ p.name {
 .standardPrice {
     display: inline-block;
     position: relative;
-    font-size: var(--text-fs-2xl);
+    font-size: var(--text-fs-3xl);
     margin-left: $spacing-size-4;
     color: var(--color-util-gray-400);
+
+    #{$selector-darkmode} & {
+        color: var(--color-text-secondary);
+       opacity: 0.5;
+    }
 
     &::after {
         content: '';
@@ -89,6 +100,10 @@ p.name {
         height: $spacing-size-1;
         margin-top: $spacing-size-1 * -1;
         background-color: var(--color-util-gray-400);
+        #{$selector-darkmode} & {
+            background: var(--color-text-primary);
+            opacity: 0.6;
+         }
         opacity: 0.6666;
     }
 }
