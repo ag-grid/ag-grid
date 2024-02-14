@@ -1,10 +1,11 @@
 @use '../core' as *;
 
 .label {
+    padding-left: $spacing-size-3;
+
     svg {
         margin-right: $spacing-size-4;
     }
-    padding-left: $spacing-size-3;
 }
 
 .feature {
@@ -22,12 +23,12 @@
 }
 
 .tick svg {
-    fill: var(--color-util-brand-700);
-    background: color-mix(in srgb, var(--color-util-brand-700), var(--color-bg-primary) 95%);
-    border-radius: 24px;
+    width: 24px;
     height: 24px;
     padding: 4px;
-    width: 24px;
+    border-radius: 24px;
+    fill: var(--color-util-brand-700);
+    background: color-mix(in srgb, var(--color-util-brand-700), var(--color-bg-primary) 95%);
 }
 
 .dash {

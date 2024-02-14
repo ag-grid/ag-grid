@@ -192,7 +192,6 @@ p.name {
 }
 @media screen and (min-width: $breakpoint-pricing-medium) {
     .license:nth-child(3) {
-        // border: 1px solid var(--color-border-secondary);
         border-bottom: none;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
@@ -205,6 +204,7 @@ p.name {
     .toggleFeatureBreakdownButton {
         display: none;
     }
+    
     .mobileFeatureMatrix {
         display: none;
         padding-top: $spacing-size-4;

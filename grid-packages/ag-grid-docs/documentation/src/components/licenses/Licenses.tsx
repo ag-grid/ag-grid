@@ -81,10 +81,8 @@ const Price = ({ priceFullDollars, launchPrice }) => {
              <span className={styles.developerText}>
                     Starting from
                 </span>
-            <p><b></b></p>
             <p className={styles.priceFullDollars}>
                 <span>${ launchPrice ? launchPrice : priceFullDollars}</span>
-                
                 { launchPrice && (
                     <>
                         <span className={styles.standardPrice}>

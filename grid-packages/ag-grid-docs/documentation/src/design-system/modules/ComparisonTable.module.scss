@@ -1,8 +1,5 @@
 @use '../core' as *;
 
-.comparisonTable {
-}
-
 .twoColumn .cell {
     &:first-child {
         width: calc(100% - #{$spacing-size-16});
