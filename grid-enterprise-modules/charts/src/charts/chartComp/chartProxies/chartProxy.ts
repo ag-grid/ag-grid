@@ -13,6 +13,7 @@ import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
 import { applyThemeOverrides, createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
+import { get } from "../utils/object";
 
 export interface ChartProxyParams {
     chartInstance?: AgChartInstance;
@@ -130,7 +131,7 @@ export abstract class ChartProxy {
 
     public isPaired(): boolean {
         const seriesType = getSeriesType(this.chartProxyParams.chartType);
-        return _.get(this.getChartThemeOverrides(), `${seriesType}.paired`, true);
+        return get(this.getChartThemeOverrides(), `${seriesType}.paired`, true);
     }
 
     public lookupCustomChartTheme(themeName: string) {

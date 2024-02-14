@@ -61,7 +61,7 @@ Note that a pivot can only be active if pivot mode is on. If pivot mode is off, 
 
 ## Pivot Mode & Visible Columns
 
-When not in pivot mode, only columns that are visible are shown in the grid. To remove a column from the grid, use `api.setColumnVisible(colKey, visible)`. Checking a column in the toolPanel will set the visibility on the column.
+When not in pivot mode, only columns that are visible are shown in the grid. To remove a column from the grid, use `api.setColumnsVisible([colKey], visible)`. Checking a column in the toolPanel will set the visibility on the column.
 
 When in pivot mode and not pivoting, only columns that have row group or aggregation active are included in the grid. To add a column to the grid you either add it as a row group column or a value column. Setting visibility on a column has no impact when in pivot mode. Checking a column in the toolPanel will either add the column as a row group (if the column is configured as a dimension) or as an aggregated value (if the columns is configured as a value).
 
@@ -88,7 +88,7 @@ As mentioned above, the Pivot Result Columns in the grid are created by the grid
 | const irelandGoldColumn = api.getPivotResultColumn(['Ireland'],'gold');
 | 
 | // change the width of the Pivot Result Column
-| api.setColumnWidth(irelandGoldColumn, newWidth);
+| api.setColumnWidths([{ key: irelandGoldColumn, newWidth: newWidth }]);
 | 
 | // look up the Column that pivots on country SausageKingdom and year 2002 and aggregates silver
 | const sausageKingdomColumn = api.getPivotResultColumn(['SausageKingdom','2002'],'silver');

@@ -389,6 +389,10 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return this.mixedStyles[key].excelID;
     }
 
+    private deepCloneObject<T>(object: T): T {
+        return JSON.parse(JSON.stringify(object));
+    }
+
     private addNewMixedStyle(styleIds: string[]): void {
         this.mixedStyleCounter += 1;
         const excelId = `mixedStyle${this.mixedStyleCounter}`;
@@ -397,7 +401,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         styleIds.forEach((styleId: string) => {
             this.excelStyles.forEach((excelStyle: ExcelStyle) => {
                 if (excelStyle.id === styleId) {
-                    _.mergeDeep(resultantStyle, _.deepCloneObject(excelStyle));
+                    _.mergeDeep(resultantStyle, this.deepCloneObject(excelStyle));
                 }
             });
         });

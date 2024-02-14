@@ -2,15 +2,15 @@ import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/cor
 import { CustomHeader } from './customHeader_typescript'
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', suppressMenu: true, minWidth: 120 },
+  { field: 'athlete', suppressHeaderMenuButton: true, minWidth: 120 },
   {
     field: 'age',
     sortable: false,
     headerComponentParams: { menuIcon: 'fa-external-link-alt' },
   },
-  { field: 'country', suppressMenu: true, minWidth: 120 },
+  { field: 'country', suppressHeaderMenuButton: true, minWidth: 120 },
   { field: 'year', sortable: false },
-  { field: 'date', suppressMenu: true },
+  { field: 'date', suppressHeaderMenuButton: true },
   { field: 'sport', sortable: false },
   {
     field: 'gold',
@@ -18,7 +18,7 @@ const columnDefs: ColDef[] = [
     minWidth: 120,
   },
   { field: 'silver', sortable: false },
-  { field: 'bronze', suppressMenu: true, minWidth: 120 },
+  { field: 'bronze', suppressHeaderMenuButton: true, minWidth: 120 },
   { field: 'total', sortable: false },
 ]
 

@@ -62,10 +62,10 @@ const GridExample = () => {
             return;
         }
 
-        columns.forEach(column => {
-            const newRandomWidth = Math.round((150 + Math.random() * 100) * 100) / 100;
-            gridApi.setColumnWidth(column, newRandomWidth);
-        });
+        const newWidths = columns.map(column => {
+            return { key: column.getColId(), newWidth: Math.round((150 + Math.random() * 100) * 100) / 100 };
+        })
+        gridApi.setColumnWidths(newWidths);        
     }, [gridApi])
 
     const destroyGrid = useCallback(() => {

@@ -29,6 +29,9 @@ export class ClientSideNodeManager {
 
     private static ROOT_NODE_ID = 'ROOT_NODE_ID';
 
+    // has row data actually been set
+    private rowCountReady = false;
+
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: { [id: string]: RowNode } = {};
 
@@ -64,6 +67,7 @@ export class ClientSideNodeManager {
             console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
             return;
         }
+        this.rowCountReady = true;
 
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
@@ -101,6 +105,7 @@ export class ClientSideNodeManager {
     }
 
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: { [id: string]: number } | null | undefined): RowNodeTransaction {
+        this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
 
         const rowNodeTransaction: RowNodeTransaction = {
@@ -122,6 +127,10 @@ export class ClientSideNodeManager {
         }
 
         return rowNodeTransaction;
+    }
+
+    public isRowCountReady(): boolean {
+        return this.rowCountReady;
     }
 
     private dispatchRowDataUpdateStartedEvent(rowData?: any[] | null): void {

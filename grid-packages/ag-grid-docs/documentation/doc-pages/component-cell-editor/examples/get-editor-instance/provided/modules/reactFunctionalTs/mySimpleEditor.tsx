@@ -1,10 +1,11 @@
-import { CustomCellEditorProps, ICellEditorReactComp } from '@ag-grid-community/react';
+import { CustomCellEditorProps } from '@ag-grid-community/react';
+import { ICellEditor } from '@ag-grid-community/core';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
 
-export interface MySimpleInterface extends ICellEditorReactComp {
+export interface MySimpleInterface extends ICellEditor {
     myCustomFunction(): { rowIndex: number, colId: string };
 }
 

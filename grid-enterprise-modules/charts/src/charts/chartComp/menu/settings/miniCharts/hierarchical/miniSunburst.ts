@@ -8,30 +8,26 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
 
     // Hierarchical data using multidimensional array
     private data = [
-        [
-            [
-                [[], [[]]],
-                [[[]], []],
-            ],
-            [],
-            [[]],
-            [[]],
-        ],
-        [[[[[]], []]], [[]], []],
+        [[], []],
+        [[], []],
         [[], []],
     ];
+
+    // Rotate the chart by the given angle (-90 degrees)
+    private angleOffset = -Math.PI / 2;
+
+    private innerRadiusRatio = 0;
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
         super(container, 'sunburstTooltip');
 
         this.showRadiusAxisLine = false;
         
-        const { data, size, padding } = this;
+        const { data, size, padding, angleOffset, innerRadiusRatio } = this;
 
         const radius = (size - padding * 2) / 2;
-        const innerRadiusRatio = 0.3;
 
-        const angleRange = [0, 2 * Math.PI];
+        const angleRange = [angleOffset + 0, angleOffset + 2 * Math.PI];
         const angleExtent = Math.abs(angleRange[1] - angleRange[0]);
 
         const radiusRange = [radius * innerRadiusRatio, radius];
@@ -68,12 +64,10 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
             }
 
             const childDepth = depth + 1;
-            const children = data.length;
-            const parts = (children * (children + 1)) / 2;
 
             let previousAngle = startAngle;
 
-            data.forEach((child, childIndex) => {
+            data.forEach((child, childIndex, children) => {
                 let childGroup = group;
                 if (!childGroup) {
                     childGroup = new _Scene.Group();
@@ -83,7 +77,7 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
                 const innerRadius = radiusRange[0] + depth * radiusRatio;
                 const outerRadius = radiusRange[0] + childDepth * radiusRatio;
 
-                const angleRatio = (children - childIndex) / parts;
+                const angleRatio = 1 / children.length;
                 const start = previousAngle;
                 const end = start + availableAngle * angleRatio;
 

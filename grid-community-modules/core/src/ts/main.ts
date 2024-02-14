@@ -80,7 +80,9 @@ export {
     ExcelRow,
     ExcelStyle,
     ExcelTable,
-    ExcelWorksheet
+    ExcelWorksheet,
+    ExcelSheetNameGetter,
+    ExcelSheetNameGetterParams,
 } from "./interfaces/iExcelCreator";
 
 // dragAndDrop
@@ -315,9 +317,9 @@ export { IDetailCellRendererParams, GetDetailRowData, GetDetailRowDataParams, ID
 
 // exporter
 export {
-    CsvExportParams, CsvCell, CsvCellData, CsvCustomContent, ExportParams, PackageFileParams,
-    ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams,
-    ProcessRowGroupForExportParams, ShouldRowBeSkippedParams, BaseExportParams
+    CsvExportParams, CsvCell, CsvCellData, CsvCustomContent, ExportParams, ExportFileNameGetter,
+    ExportFileNameGetterParams, PackageFileParams, ProcessCellForExportParams, ProcessHeaderForExportParams,
+    ProcessGroupHeaderForExportParams, ProcessRowGroupForExportParams, ShouldRowBeSkippedParams, BaseExportParams
 } from "./interfaces/exportParams";
 export { HeaderElement, PrefixedXmlAttributes, XmlElement } from "./interfaces/iXmlFactory";
 export { ICsvCreator } from "./interfaces/iCsvCreator";

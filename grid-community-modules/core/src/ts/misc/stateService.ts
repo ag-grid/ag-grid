@@ -60,6 +60,7 @@ export class StateService extends BeanStub {
     private queuedUpdateSources: Set<(keyof GridState | 'gridInitializing')> = new Set();
     private dispatchStateUpdateEventDebounced = debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
     private columnStates?: ColumnState[];
+    private columnGroupStates?: { groupId: string, open: boolean | undefined }[];
 
     @PostConstruct
     private postConstruct(): void {
@@ -100,14 +101,8 @@ export class StateService extends BeanStub {
 
     private setupStateOnColumnsInitialised(): void {
         const initialState = this.gridOptionsService.get('initialState') ?? {};
-        const {
-            columnGroup: columnGroupState
-        } = initialState;
-
         this.setColumnState(initialState);
-        if (columnGroupState) {
-            this.setColumnGroupState(columnGroupState);
-        }
+        this.setColumnGroupState(initialState);
 
         this.updateColumnState([
             'aggregation', 'columnOrder', 'columnPinning', 'columnSizing', 'columnVisibility', 'pivot', 'pivot', 'rowGroup', 'sort'
@@ -379,20 +374,29 @@ export class StateService extends BeanStub {
     private setColumnPivotState(applyOrder: boolean): void {
         const columnStates = this.columnStates;
         this.columnStates = undefined;
+        const columnGroupStates = this.columnGroupStates;
+        this.columnGroupStates = undefined;
 
-        if (!columnStates || !this.columnModel.isSecondaryColumnsPresent()) { return; }
+        if (!this.columnModel.isSecondaryColumnsPresent()) { return; }
 
-        let secondaryColumnStates: ColumnState[] = [];
-        for (const columnState of columnStates) {
-            if (this.columnModel.getSecondaryColumn(columnState.colId)) {
-                secondaryColumnStates.push(columnState);
+        if (columnStates) {
+            let secondaryColumnStates: ColumnState[] = [];
+            for (const columnState of columnStates) {
+                if (this.columnModel.getSecondaryColumn(columnState.colId)) {
+                    secondaryColumnStates.push(columnState);
+                }
             }
+
+            this.columnModel.applyColumnState({
+                state: secondaryColumnStates,
+                applyOrder
+            }, 'gridInitializing');
         }
 
-        this.columnModel.applyColumnState({
-            state: secondaryColumnStates,
-            applyOrder
-        }, 'gridInitializing');
+        if (columnGroupStates) {
+            // no easy/performant way of knowing which column groups are pivot column groups
+            this.columnModel.setColumnGroupState(columnGroupStates, 'gridInitializing');
+        }
     }
 
     private getColumnGroupState(): ColumnGroupState | undefined {
@@ -406,14 +410,31 @@ export class StateService extends BeanStub {
         return openColumnGroups.length ? { openColumnGroupIds: openColumnGroups } : undefined;
     }
 
-    private setColumnGroupState(columnGroupState: ColumnGroupState): void {
-        const { openColumnGroupIds: openColumnGroups } = columnGroupState;
-        const openColumnGroupSet = new Set(openColumnGroups);
+    private setColumnGroupState(initialState: GridState): void {
+        if (!initialState.hasOwnProperty('columnGroup')) { return; }
+
+        const openColumnGroups =  new Set(initialState.columnGroup?.openColumnGroupIds);
         const existingColumnGroupState = this.columnModel.getColumnGroupState();
-        const stateItems = existingColumnGroupState.map(({ groupId }) => ({
-            groupId,
-            open: openColumnGroupSet.has(groupId)
-        }));
+        const stateItems = existingColumnGroupState.map(({ groupId }) => {
+            const open = openColumnGroups.has(groupId);
+            if (open) {
+                openColumnGroups.delete(groupId);
+            }
+            return {
+                groupId,
+                open
+            }
+        });
+        // probably pivot cols
+        openColumnGroups.forEach(groupId => {
+            stateItems.push({
+                groupId,
+                open: true
+            })
+        });
+        if (stateItems.length) {
+            this.columnGroupStates = stateItems;
+        }
         this.columnModel.setColumnGroupState(stateItems, 'gridInitializing');
     }
 

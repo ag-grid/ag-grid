@@ -9,6 +9,6 @@ export function partition<T, K>(items: T[], selector: (item: T) => K): Map<K, T[
     )
 }
 
-export function flatMap<T, V>(items: T[], iteratee: (item: T) => V[]): V[] {
-    return items.reduce((acc, item) => acc.concat(iteratee(item)), new Array<V>());
+export function flatMap<T, V>(items: T[], iteratee: (item: T, index: number, array: T[]) => V[]): V[] {
+    return items.reduce((acc, item, index, array) => acc.concat(iteratee(item, index, array)), new Array<V>());
 }

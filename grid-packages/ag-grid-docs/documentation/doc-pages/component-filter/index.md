@@ -2,7 +2,15 @@
 title: "Filter Component"
 ---
 
+<framework-specific-section frameworks="javascript,angular,vue">
+|Filter components allow you to add your own filter types to AG Grid. Use them when the Provided Filters do not meet your requirements.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+<video-section id="98JVaTcoexc" title="React Custom Filter Components" header="true">
 Filter components allow you to add your own filter types to AG Grid. Use them when the Provided Filters do not meet your requirements.
+</video-section>
+</framework-specific-section>
 
 The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the second is on the `Year` column with preset options.
 

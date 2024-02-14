@@ -23,7 +23,7 @@ const Version = ({ date, version, blogUrl, highlights, buttonURL, majorMinor }) 
                     <span className={styles.date}>{date}</span>
 
                     <div className={styles.flex}>
-                    {version === "31.0.0" && <span className={styles['latest-tag']}>Latest</span>}
+                    {version === "31.1.0" && <span className={styles['latest-tag']}>Latest</span>}
                     {majorMinor && <span className={styles['major-text']}>Major</span>}
                     </div>
                     

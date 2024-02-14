@@ -112,6 +112,10 @@
     .ag-panel-title-bar-button-icon {
         font-size: calc(var(--ag-icon-size) + var(--ag-grid-size));
     }
+    
+    .ag-panel {
+        background-color: var(--ag-header-background-color);
+    }
 
     .ag-chart-data-section,
     .ag-chart-format-section {

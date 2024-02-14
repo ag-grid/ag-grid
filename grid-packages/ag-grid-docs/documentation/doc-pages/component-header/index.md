@@ -14,7 +14,7 @@ There are two types of header components:
 The example below shows a header component in action. The following can be observed in the demo:
 
 - Column moving and resizing is working without requiring any logic in the header component.
-- Some columns have `suppressMenu=true`, so the header component doesn't show the menu.
+- Some columns have `suppressHeaderMenuButton=true`, so the header component doesn't show the menu.
 - Some columns have `sortable=false`, so the header component doesn't add sorting logic.
 - The header component uses additional parameters to allowing configuring the menu icon.
 

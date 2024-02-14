@@ -2,6 +2,7 @@ import {
     BaseComponentWrapper, ColumnApi, ComponentType,
     ComponentUtil,
     Context, CtrlsService, FrameworkComponentWrapper,
+    FrameworkOverridesIncomingSource,
     GridApi,
     GridCoreCreator,
     GridOptions,
@@ -22,23 +23,23 @@ import { MenuItemComponentWrapper } from '../shared/customComp/menuItemComponent
 import { NoRowsOverlayComponentWrapper } from '../shared/customComp/noRowsOverlayComponentWrapper';
 import { StatusPanelComponentWrapper } from '../shared/customComp/statusPanelComponentWrapper';
 import { ToolPanelComponentWrapper } from '../shared/customComp/toolPanelComponentWrapper';
-import { AgReactUiProps } from '../shared/interfaces';
+import { AgGridReactProps } from '../shared/interfaces';
 import { ReactComponent } from '../shared/reactComponent';
 import { PortalManager } from '../shared/portalManager';
 import { BeansContext } from "./beansContext";
-import { CssClasses } from "./utils";
-
+import { CssClasses, runWithoutFlushSync } from "./utils";
 import GroupCellRenderer from "../reactUi/cellRenderer/groupCellRenderer";
 import GridComp from './gridComp';
+import { warnReactiveCustomComponents } from '../shared/customComp/util';
 
 
-export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
+export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager | null>(null);
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
-    const prevProps = useRef<AgReactUiProps<any>>(props);
+    const prevProps = useRef<AgGridReactProps<any>>(props);
 
     const ready = useRef<boolean>(false);
 
@@ -206,6 +207,19 @@ class ReactFrameworkComponentWrapper
             if (ComponentClass) {
                 return new ComponentClass(UserReactComponent, this.parent, componentType);
             }
+        } else {
+            switch (componentType.propertyName) {
+                case 'filter':
+                case 'floatingFilterComponent':
+                case 'dateComponent':
+                case 'loadingOverlayComponent':
+                case 'noRowsOverlayComponent':
+                case 'statusPanel':
+                case 'toolPanel':
+                case 'menuItem':
+                    warnReactiveCustomComponents();
+                    break;
+            }
         }
         // only cell renderers and tool panel should use fallback methods
         const suppressFallbackMethods = !componentType.cellRenderer && componentType.propertyName !== 'toolPanel';
@@ -337,6 +351,17 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
         const prototype = comp.prototype;
         const isJsComp = prototype && 'getGui' in prototype;
         return !isJsComp;
+    }
+
+    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (callback, source) => {
+        if (source === 'ensureVisible') {
+            // As ensureVisible could easily be called from an effect which is already running inside a React render
+            // we need to run it without flushSync to avoid the DEV error from React when calling flushSync inside a render.
+            // This does mean there will be a flicker as the grid redraws the cells in the new location but this is deemed
+            // less of an issue then the error in the console for devs. 
+            return runWithoutFlushSync(callback);
+        }
+        return callback();
     }
 }
 

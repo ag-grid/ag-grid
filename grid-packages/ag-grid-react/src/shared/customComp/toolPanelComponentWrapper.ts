@@ -4,6 +4,7 @@ import { CustomToolPanelProps } from "./interfaces";
 
 export class ToolPanelComponentWrapper extends CustomComponentWrapper<IToolPanelParams, CustomToolPanelProps, {}> implements IToolPanel {
     private state: any;
+    private readonly onStateChange = (state: any) => this.updateState(state);
 
     public refresh(params: IToolPanelParams): boolean {
         this.sourceParams = params;
@@ -18,6 +19,7 @@ export class ToolPanelComponentWrapper extends CustomComponentWrapper<IToolPanel
     private updateState(state: any): void {
         this.state = state;
         this.refreshProps();
+        // don't need to wait on `refreshProps` as not reliant on state maintained inside React
         this.sourceParams.onStateUpdated();
     }
 
@@ -26,7 +28,7 @@ export class ToolPanelComponentWrapper extends CustomComponentWrapper<IToolPanel
             ...this.sourceParams,
             key: this.key,
             state: this.state,
-            onStateChange: (state: any) => this.updateState(state)
+            onStateChange: this.onStateChange
         } as any;
     }
 }

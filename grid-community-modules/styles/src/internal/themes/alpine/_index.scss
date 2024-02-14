@@ -208,6 +208,14 @@
         }
     }
 
+    .ag-header-cell-menu-button:hover .ag-icon,
+    .ag-header-cell-filter-button:hover .ag-icon,
+    .ag-side-button-button:hover .ag-icon,
+    .ag-panel-title-bar-button:hover .ag-icon,
+    .ag-floating-filter-button-button:hover .ag-icon {
+        color: inherit;
+    }
+
     .ag-filter-active .ag-icon-filter {
         color: var(--ag-alpine-active-color);
     }

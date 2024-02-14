@@ -128,7 +128,7 @@ export class GridCtrl extends BeanStub {
         return this.focusService.focusInto(focusableContainers[nextIdx]);
     }
 
-    public focusInnerElement(fromBottom?: boolean) {
+    public focusInnerElement(fromBottom?: boolean): boolean {
         const focusableContainers = this.view.getFocusableContainers();
         const allColumns = this.columnModel.getAllDisplayedColumns();
 
@@ -137,13 +137,21 @@ export class GridCtrl extends BeanStub {
                 return this.focusService.focusInto(last(focusableContainers), true);
             }
 
-
             const lastColumn = last(allColumns);
             if (this.focusService.focusGridView(lastColumn, true)) { return true; }
         }
-        
-        if (this.gridOptionsService.get('headerHeight') === 0) {
-            return this.focusService.focusGridView(allColumns[0]);
+
+        if (this.gridOptionsService.get('headerHeight') === 0 || this.gridOptionsService.get('suppressHeaderFocus')) {
+            if (this.focusService.focusGridView(allColumns[0])) {
+                return true;
+            }
+
+            for (let i = 1; i < focusableContainers.length; i++) {
+                if (this.focusService.focusInto(focusableContainers[i])) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         return this.focusService.focusFirstHeader();

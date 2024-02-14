@@ -28,6 +28,7 @@
     --ag-range-selection-border-color: var(--ag-balham-active-color);
     --ag-checkbox-checked-color: var(--ag-balham-active-color);
     --ag-checkbox-background-color: var(--ag-background-color);
+    --ag-panel-background-color: var(--ag-header-background-color);
 
     // derived and blended colours (these are static versions of the dynamic colour blends
     // applied by the Sass API and must be overridden in balham-dark)

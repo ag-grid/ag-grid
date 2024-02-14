@@ -33,7 +33,7 @@ const GridExample = () => {
                 maxValue: 7,
             },
             suppressFloatingFilterButton: true,
-            suppressMenu: false,
+            suppressHeaderMenuButton: false,
         },
         {
             field: 'silver',
@@ -44,7 +44,7 @@ const GridExample = () => {
                 maxValue: 5,
             },
             suppressFloatingFilterButton: true,
-            suppressMenu: false,
+            suppressHeaderMenuButton: false,
         },
         {
             field: 'bronze',
@@ -55,7 +55,7 @@ const GridExample = () => {
                 maxValue: 10,
             },
             suppressFloatingFilterButton: true,
-            suppressMenu: false,
+            suppressHeaderMenuButton: false,
         },
     ]);
     const defaultColDef = useMemo<ColDef>(() => {

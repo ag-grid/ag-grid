@@ -217,7 +217,7 @@ const AG_GRID_LOCALE_EN = {
 
     pieChart: 'Pie',
     pie: 'Pie',
-    doughnut: 'Doughnut',
+    donut: 'Donut',
 
     line: 'Line',
 
@@ -251,6 +251,7 @@ const AG_GRID_LOCALE_EN = {
 
     specializedChart: 'Specialized',
     waterfall: 'Waterfall',
+    heatmap: 'Heatmap',
 
     combinationChart: 'Combination',
     columnLineCombo: 'Column & Line',
@@ -341,6 +342,7 @@ const AG_GRID_LOCALE_EN = {
     boldItalic: 'Bold Italic',
     predefined: 'Predefined',
     fillOpacity: 'Fill Opacity',
+    strokeColor: 'Line Color',
     strokeOpacity: 'Line Opacity',
     histogramBinCount: 'Bin count',
     connectorLine: 'Connector Line',
@@ -367,7 +369,7 @@ const AG_GRID_LOCALE_EN = {
     stackedBarTooltip: 'Stacked',
     normalizedBarTooltip: '100% Stacked',
     pieTooltip: 'Pie',
-    doughnutTooltip: 'Doughnut',
+    donutTooltip: 'Donut',
     lineTooltip: 'Line',
     groupedAreaTooltip: 'Area',
     stackedAreaTooltip: 'Stacked',
@@ -386,14 +388,18 @@ const AG_GRID_LOCALE_EN = {
     treemapTooltip: 'Treemap',
     sunburstTooltip: 'Sunburst',
     waterfallTooltip: 'Waterfall',
+    heatmapTooltip: 'Heatmap',
     columnLineComboTooltip: 'Column & Line',
     areaColumnComboTooltip: 'Area & Column',
     customComboTooltip: 'Custom Combination',
     innerRadius: 'Inner Radius',
     startAngle: 'Start Angle',
     endAngle: 'End Angle',
+    reverseDirection: 'Reverse Direction',
     groupPadding: 'Group Padding',
     seriesPadding: 'Series Padding',
+    group: 'Group',
+    tile: 'Tile',
     whisker: 'Whisker',
     cap: 'Cap',
     capLengthRatio: 'Length Ratio',

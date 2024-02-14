@@ -19,7 +19,7 @@ import {
 import { IRowModel } from '../interfaces/iRowModel';
 import { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { Events } from '../eventKeys';
-import { ColumnModel, ColumnState, ColumnStateParams } from './columnModel';
+import { ColumnModel, ColumnState, ColumnStateParams, convertSourceType } from './columnModel';
 import { getValueUsingField } from '../utils/object';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
@@ -83,9 +83,9 @@ export class DataTypeService extends BeanStub {
         });
         this.processDataTypeDefinitions();
 
-        this.addManagedPropertyListener('dataTypeDefinitions', () => {
+        this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
             this.processDataTypeDefinitions();
-            this.columnModel.recreateColumnDefs('gridOptionsChanged');
+            this.columnModel.recreateColumnDefs(convertSourceType(event.source));
         });
     }
 

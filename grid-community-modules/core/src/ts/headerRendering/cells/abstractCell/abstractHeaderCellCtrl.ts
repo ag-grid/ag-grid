@@ -1,5 +1,5 @@
 import { BeanStub } from "../../../context/beanStub";
-import { Autowired } from "../../../context/context";
+import { Autowired, PostConstruct } from "../../../context/context";
 import { IHeaderColumn } from "../../../interfaces/iHeaderColumn";
 import { FocusService } from "../../../focusService";
 import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
@@ -35,16 +35,16 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
     @Autowired('focusService') protected readonly focusService: FocusService;
-    @Autowired('beans') protected readonly beans: Beans;
     @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
     @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
     @Autowired('menuService') protected readonly menuService: MenuService;
 
+    protected readonly beans: Beans;
     private instanceId: string;
     private columnGroupChild: IHeaderColumn;
     private parentRowCtrl: HeaderRowCtrl;
-    
+
     private isResizing: boolean;
     private resizeToggleTimeout = 0;
     protected resizeMultiplier = 1;
@@ -61,14 +61,20 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     protected abstract resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
 
-    constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl) {
+    constructor(columnGroupChild: IHeaderColumn, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
         super();
 
         this.columnGroupChild = columnGroupChild;
         this.parentRowCtrl = parentRowCtrl;
+        this.beans = beans;
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
     }
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
@@ -94,6 +100,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         this.addDomData();
         this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.onDisplayedColumnsChanged();
+        this.refreshTabIndex();
     }
 
     protected onDisplayedColumnsChanged(): void {
@@ -119,6 +126,15 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
         this.addManagedListener(this.eGui, 'keydown', this.onGuiKeyDown.bind(this));
         this.addManagedListener(this.eGui, 'keyup', this.onGuiKeyUp.bind(this));
+    }
+
+    private refreshTabIndex(): void {
+        const suppressHeaderFocus = this.gridOptionsService.get('suppressHeaderFocus');
+        if (suppressHeaderFocus) {
+            this.eGui.removeAttribute('tabindex');
+        } else {
+            this.eGui.setAttribute('tabindex', '-1');
+        }
     }
 
     private onGuiKeyDown(e: KeyboardEvent): void {

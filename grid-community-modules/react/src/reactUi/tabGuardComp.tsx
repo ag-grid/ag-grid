@@ -9,7 +9,7 @@ import {
 import { BeansContext } from './beansContext';
 
 export interface TabGuardCompCallback {
-    forceFocusOutOfContainer(): void;
+    forceFocusOutOfContainer(up?: boolean): void;
 }
 
 interface TabGuardProps {
@@ -42,8 +42,8 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     }
 
     useImperativeHandle(forwardRef, () => ({
-        forceFocusOutOfContainer() {
-            tabGuardCtrlRef.current?.forceFocusOutOfContainer();
+        forceFocusOutOfContainer(up?: boolean) {
+            tabGuardCtrlRef.current?.forceFocusOutOfContainer(up);
         }
     }));
 

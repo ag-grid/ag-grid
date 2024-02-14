@@ -1,4 +1,4 @@
-import { missing, exists, values } from './generic';
+import { exists } from './generic';
 
 export function iterateObject<T>(object: { [p: string]: T; } | T[] | null | undefined, callback: (key: string, value: T) => void) {
     if (object == null) { return; }
@@ -26,10 +26,6 @@ export function cloneObject<T extends {}>(object: T): T {
     }
 
     return copy;
-}
-
-export function deepCloneObject<T>(object: T): T {
-    return JSON.parse(JSON.stringify(object));
 }
 
 // returns copy of an object, doing a deep clone of any objects with that object.
@@ -62,44 +58,6 @@ export function deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | un
     });
 
     return res;
-}
-
-export function getProperty<T, K extends keyof T>(object: T, key: K): any {
-    return object[key];
-}
-
-export function setProperty<T, K extends keyof T>(object: T, key: K, value: any): void {
-    object[key] = value;
-}
-
-/**
- * Will copy the specified properties from `source` into the equivalent properties on `target`, ignoring properties with
- * a value of `undefined`.
- */
-export function copyPropertiesIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, ...properties: K[]) {
-    properties.forEach(p => copyPropertyIfPresent(source, target, p));
-}
-
-/**
- * Will copy the specified property from `source` into the equivalent property on `target`, unless the property has a
- * value of `undefined`. If a transformation is provided, it will be applied to the value before being set on `target`.
- */
-export function copyPropertyIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, property: K, transform?: (value: S[K]) => any) {
-    const value = getProperty(source, property);
-
-    if (value !== undefined) {
-        setProperty(target, property, transform ? transform(value) : value);
-    }
-}
-
-export function getAllKeysInObjects(objects: any[]): string[] {
-    const allValues: any = {};
-
-    objects.filter(obj => obj != null).forEach(obj => {
-        Object.keys(obj).forEach(key => allValues[key] = null);
-    });
-
-    return Object.keys(allValues);
 }
 
 export function getAllValuesInObject<T extends Object>(obj: T): any[] {
@@ -153,49 +111,6 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopy
             dest[key] = sourceValue;
         }
     });
-}
-
-export function missingOrEmptyObject(value: any): boolean {
-    return missing(value) || Object.keys(value).length === 0;
-}
-
-export function get(source: any, expression: string, defaultValue: any): any {
-    if (source == null) { return defaultValue; }
-
-    const keys = expression.split('.');
-    let objectToRead = source;
-
-    while (keys.length > 1) {
-        objectToRead = objectToRead[keys.shift()!];
-
-        if (objectToRead == null) {
-            return defaultValue;
-        }
-    }
-
-    const value = objectToRead[keys[0]];
-
-    return value != null ? value : defaultValue;
-}
-
-export function set(target: any, expression: string, value: any) {
-    if (target == null) { return; }
-
-    const keys = expression.split('.');
-    
-    let objectToUpdate = target;
-    // Create empty objects
-    keys.forEach((key, i) => {
-        if (!objectToUpdate[key]) {
-            objectToUpdate[key] = {};
-        }
-
-        if (i < keys.length - 1) {
-            objectToUpdate = objectToUpdate[key];
-        }
-    });
-
-    objectToUpdate[keys[keys.length - 1]] = value;
 }
 
 export function getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {

@@ -324,8 +324,11 @@ export class FocusService extends BeanStub {
         allowUserOverride?: boolean;
         event?: KeyboardEvent;
         fromCell?: boolean;
+        resetHeaderRowWithoutSpan?: boolean;
     }): boolean {
-        const { direction, fromTab, allowUserOverride, event, fromCell } = params;
+        if (this.gridOptionsService.get('suppressHeaderFocus')) { return false; }
+
+        const { direction, fromTab, allowUserOverride, event, fromCell, resetHeaderRowWithoutSpan } = params;
         let { headerPosition } = params;
 
         if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
@@ -367,9 +370,8 @@ export class FocusService extends BeanStub {
         if (headerPosition.headerRowIndex === -1) {
             if (this.filterManager.isAdvancedFilterHeaderActive()) {
                 return this.focusAdvancedFilter(headerPosition);
-            } else {
-                return this.focusGridView(headerPosition.column as Column);
             }
+            return this.focusGridView(headerPosition.column as Column);
         }
 
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
@@ -378,6 +380,10 @@ export class FocusService extends BeanStub {
 
         // this will automatically call the setFocusedHeader method above
         const focusSuccess = headerRowContainerCtrl.focusHeader(headerPosition.headerRowIndex, headerPosition.column, event);
+
+        if (focusSuccess && (resetHeaderRowWithoutSpan || fromCell)) {
+            this.headerNavigationService.resetHeaderRowWithoutSpan();
+        }
 
         return focusSuccess;
     }
@@ -391,7 +397,8 @@ export class FocusService extends BeanStub {
         }
 
         return this.focusHeaderPosition({
-            headerPosition: { headerRowIndex: 0, column: firstColumn }
+            headerPosition: { headerRowIndex: 0, column: firstColumn },
+            resetHeaderRowWithoutSpan: true
         });
     }
 
@@ -401,6 +408,7 @@ export class FocusService extends BeanStub {
 
         return this.focusHeaderPosition({
             headerPosition: { headerRowIndex, column },
+            resetHeaderRowWithoutSpan: true,
             event
         });
     }
@@ -534,9 +542,11 @@ export class FocusService extends BeanStub {
         // navigate between the cells using tab. Instead, we put focus on either
         // the header or after the grid, depending on whether tab or shift-tab was pressed.
         if (this.gridOptionsService.get('suppressCellFocus')) {
-
             if (backwards) {
-                return this.focusLastHeader();
+                if (!this.gridOptionsService.get('suppressHeaderFocus')) {
+                    return this.focusLastHeader();
+                }
+                return this.focusNextGridCoreContainer(true, true);
             }
 
             return this.focusNextGridCoreContainer(false);

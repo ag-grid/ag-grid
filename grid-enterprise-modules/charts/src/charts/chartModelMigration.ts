@@ -2,7 +2,7 @@ import { ChartModel } from '@ag-grid-community/core';
 import { AgChartThemeName } from 'ag-charts-community';
 
 // @ts-ignore
-import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
+import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
 // @ts-ignore
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
 // @ts-ignore
@@ -138,7 +138,7 @@ function migrateV26_2(model: ChartModel) {
     model = jsonDelete('chartOptions.xAxis', model);
     model = jsonDelete('chartOptions.yAxis', model);
     const {
-        chartType,
+        chartType: providedChartType,
         chartOptions: { axes, series, seriesDefaults, ...otherChartOptions },
         ...otherModelProps
     } = model as any;
@@ -146,10 +146,13 @@ function migrateV26_2(model: ChartModel) {
     // At 26.2.0 combination charts weren't supported, so we can safely assume a single series type.
     // We can't rely on the `series.type` field as it was incorrect (in v25.0.0 line chart has an
     // `area` series).
-    const seriesTypes = [getSeriesType(chartType)];
+    // Note that in v31.1.0, the canonical name for the 'doughnut' chart type changed to 'donut'.
+    const chartType = getCanonicalChartType(providedChartType);
+    const seriesType = getSeriesType(chartType);
+    const seriesTypes = [seriesType];
 
     const chartTypeMixin: any = {};
-    if (!seriesTypes.includes('pie')) {
+    if (!isPieChartSeries(seriesType)) {
         const minimalAxis = { top: {}, bottom: {}, left: {}, right: {} };
         const updatedAxes = axes
             .map(({ type, ...axisProps }: any) => ({
@@ -195,6 +198,11 @@ function migrateV28_2(model: ChartModel) {
     model = jsonRename('chartOptions.pie.series.label', 'calloutLabel', model);
     model = jsonRename('chartOptions.pie.series.labelKey', 'sectorLabelKey', model);
     model = jsonRename('chartOptions.pie.series.labelName', 'sectorLabelName', model);
+
+    model = jsonRename('chartOptions.donut.series.callout', 'calloutLine', model);
+    model = jsonRename('chartOptions.donut.series.label', 'calloutLabel', model);
+    model = jsonRename('chartOptions.donut.series.labelKey', 'sectorLabelKey', model);
+    model = jsonRename('chartOptions.donut.series.labelName', 'sectorLabelName', model);
 
     // series.yKeys => yKey ?
     // series.yNames => yName ?

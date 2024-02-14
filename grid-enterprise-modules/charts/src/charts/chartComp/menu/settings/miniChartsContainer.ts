@@ -20,7 +20,7 @@ import {
     MiniColumn,
     MiniColumnLineCombo,
     MiniCustomCombo,
-    MiniDoughnut,
+    MiniDonut,
     MiniHeatmap,
     MiniHistogram,
     MiniLine,
@@ -60,7 +60,7 @@ const miniChartMapping = {
         enterprise: false,
         chartTypes: {bar: MiniBar, stackedBar: MiniStackedBar, normalizedBar: MiniNormalizedBar}
     },
-    pieGroup: {enterprise: false, chartTypes: {pie: MiniPie, doughnut: MiniDoughnut}},
+    pieGroup: {enterprise: false, chartTypes: {pie: MiniPie, donut: MiniDonut, doughnut: MiniDonut}},
     lineGroup: {enterprise: false, chartTypes: {line: MiniLine}},
     scatterGroup: {enterprise: false, chartTypes: {scatter: MiniScatter, bubble: MiniBubble}},
     areaGroup: {

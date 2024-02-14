@@ -45,7 +45,7 @@ import {ChartCrossFilterService} from "./services/chartCrossFilterService";
 import {CrossFilteringContext} from "../chartService";
 import {ChartOptionsService} from "./services/chartOptionsService";
 import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
-import {isHierarchical} from "./utils/seriesTypeMapper";
+import {getCanonicalChartType, isHierarchical} from "./utils/seriesTypeMapper";
 
 export interface GridChartParams {
     chartId: string;
@@ -114,7 +114,7 @@ export class GridChartComp extends Component {
         const modelParams: ChartModelParams = {
             chartId: this.params.chartId,
             pivotChart: this.params.pivotChart,
-            chartType: this.params.chartType,
+            chartType: getCanonicalChartType(this.params.chartType),
             chartThemeName: this.getThemeName(),
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
@@ -241,6 +241,7 @@ export class GridChartComp extends Component {
             case 'normalizedBar':
                 return new BarChartProxy(chartProxyParams);
             case 'pie':
+            case 'donut':
             case 'doughnut':
                 return new PieChartProxy(chartProxyParams);
             case 'area':
@@ -391,7 +392,7 @@ export class GridChartComp extends Component {
 
     private chartTypeChanged(updateParams?: UpdateChartParams): boolean {
         const [currentType, updatedChartType] = [this.chartController.getChartType(), updateParams?.chartType];
-        return this.chartType !== currentType || (!!updatedChartType && this.chartType !== updatedChartType);
+        return this.chartType !== currentType || (!!updatedChartType && this.chartType !== getCanonicalChartType(updatedChartType));
     }
 
     public getChartModel(): ChartModel {
@@ -480,11 +481,21 @@ export class GridChartComp extends Component {
         return _.includes(availableChartThemes, chartThemeName) ? chartThemeName! : availableChartThemes[0];
     }
 
+    private getAllKeysInObjects(objects: any[]): string[] {
+        const allValues: any = {};
+    
+        objects.filter(obj => obj != null).forEach(obj => {
+            Object.keys(obj).forEach(key => allValues[key] = null);
+        });
+    
+        return Object.keys(allValues);
+    }
+
     private validateCustomThemes() {
         const suppliedThemes = this.getChartThemes();
         const customChartThemes = this.gridOptionsService.get('customChartThemes');
         if (customChartThemes) {
-            _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
+            this.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
                 if (!_.includes(suppliedThemes, customThemeName)) {
                     console.warn("AG Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
                         "supplied but not added to the 'chartThemes' list");

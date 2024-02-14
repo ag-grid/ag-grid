@@ -1,4 +1,3 @@
-import { ColumnModel } from "../../columns/columnModel";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, PostConstruct } from "../../context/context";
 import { Column, ColumnPinnedType } from "../../entities/column";
@@ -6,14 +5,13 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { VirtualColumnsChangedEvent } from "../../events";
-import { FocusService } from "../../focusService";
 import { AbstractHeaderCellCtrl } from "../cells/abstractCell/abstractHeaderCellCtrl";
 import { HeaderFilterCellCtrl } from "../cells/floatingFilter/headerFilterCellCtrl";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 import { values } from "../../utils/generic";
-import { FilterManager } from "../../filter/filterManager";
+import { Beans } from "../../rendering/beans";
 
 export interface IHeaderRowComp {
     setTop(top: string): void;
@@ -26,9 +24,7 @@ let instanceIdSequence = 0;
 
 export class HeaderRowCtrl extends BeanStub {
 
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('beans') private beans: Beans;
 
     private comp: IHeaderRowComp;
     private rowIndex: number;
@@ -138,17 +134,18 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getWidthForRow(): number {
+        const { columnModel } = this.beans;
         if (this.isPrintLayout) {
             const pinned = this.pinned != null;
             if (pinned) { return 0; }
 
-            return this.columnModel.getContainerWidth('right')
-                + this.columnModel.getContainerWidth('left')
-                + this.columnModel.getContainerWidth(null);
+            return columnModel.getContainerWidth('right')
+                + columnModel.getContainerWidth('left')
+                + columnModel.getContainerWidth(null);
         }
 
         // if not printing, just return the width as normal
-        return this.columnModel.getContainerWidth(this.pinned);
+        return columnModel.getContainerWidth(this.pinned);
     }
 
     private onRowHeightChanged(): void {
@@ -159,18 +156,19 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public getTopAndHeight() {
-        let headerRowCount = this.columnModel.getHeaderRowCount();
+        const { columnModel, filterManager } = this.beans;
+        let headerRowCount = columnModel.getHeaderRowCount();
         const sizes: number[] = [];
 
         let numberOfFloating = 0;
 
-        if (this.filterManager.hasFloatingFilters()) {
+        if (filterManager.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }
 
-        const groupHeight = this.columnModel.getColumnGroupHeaderRowHeight();
-        const headerHeight = this.columnModel.getColumnHeaderRowHeight();
+        const groupHeight = columnModel.getColumnGroupHeaderRowHeight();
+        const headerHeight = columnModel.getColumnHeaderRowHeight();
 
         const numberOfNonGroups = 1 + numberOfFloating;
         const numberOfGroups = headerRowCount - numberOfNonGroups;
@@ -179,7 +177,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         sizes.push(headerHeight);
 
-        for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.columnModel.getFloatingFiltersHeight() as number); }
+        for (let i = 0; i < numberOfFloating; i++) { sizes.push(columnModel.getFloatingFiltersHeight() as number); }
 
         let topOffset = 0;
 
@@ -214,9 +212,11 @@ export class HeaderRowCtrl extends BeanStub {
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
         const isFocusedAndDisplayed = (ctrl: HeaderCellCtrl) => {
-            const isFocused = this.focusService.isHeaderWrapperFocused(ctrl);
+            const { focusService, columnModel } = this.beans;
+
+            const isFocused = focusService.isHeaderWrapperFocused(ctrl);
             if (!isFocused) { return false; }
-            const isDisplayed = this.columnModel.isDisplayed(ctrl.getColumnGroupChild());
+            const isDisplayed = columnModel.isDisplayed(ctrl.getColumnGroupChild());
             return isDisplayed;
         };
 
@@ -266,13 +266,13 @@ export class HeaderRowCtrl extends BeanStub {
         if (headerCtrl == null) {
             switch (this.type) {
                 case HeaderRowType.FLOATING_FILTER:
-                    headerCtrl = this.createBean(new HeaderFilterCellCtrl(headerColumn as Column, this));
+                    headerCtrl = this.createBean(new HeaderFilterCellCtrl(headerColumn as Column, this.beans, this));
                     break;
                 case HeaderRowType.COLUMN_GROUP:
-                    headerCtrl = this.createBean(new HeaderGroupCellCtrl(headerColumn as ColumnGroup, this));
+                    headerCtrl = this.createBean(new HeaderGroupCellCtrl(headerColumn as ColumnGroup, this.beans, this));
                     break;
                 default:
-                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as Column, this));
+                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as Column, this.beans, this));
                     break;
             }
         }
@@ -290,9 +290,10 @@ export class HeaderRowCtrl extends BeanStub {
 
         let viewportColumns: IHeaderColumn[] = [];
         const actualDepth = this.getActualDepth();
+        const { columnModel } = this.beans;
 
         (['left', null, 'right'] as ColumnPinnedType[]).forEach(pinned => {
-            const items = this.columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
+            const items = columnModel.getVirtualHeaderGroupRow(pinned, actualDepth);
             viewportColumns = viewportColumns.concat(items);
         });
 
@@ -305,7 +306,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private getColumnsInViewportNormalLayout(): IHeaderColumn[] {
         // when in normal layout, we add the columns for that container only
-        return this.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
+        return this.beans.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
     }
 
     public focusHeader(column: IHeaderColumn, event?: KeyboardEvent): boolean {

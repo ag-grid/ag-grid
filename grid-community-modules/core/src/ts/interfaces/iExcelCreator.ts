@@ -1,5 +1,6 @@
 import { Column } from "../entities/column";
-import { ExportParams } from "./exportParams";
+import { ExportFileNameGetter, ExportParams } from "./exportParams";
+import { AgGridCommon } from "./iCommon";
 import { XmlElement } from "./iXmlFactory";
 
 // Excel Styles
@@ -344,6 +345,10 @@ export interface ExcelOOXMLTemplate {
 // Excel Export
 export enum ExcelFactoryMode { SINGLE_SHEET, MULTI_SHEET }
 
+export interface ExcelSheetNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
+
+export type ExcelSheetNameGetter = (params?: ExcelSheetNameGetterParams) => string;
+
 export interface ColumnWidthCallbackParams {
     column: Column | null;
     index: number;
@@ -382,10 +387,12 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      */
     rowHeight?: number | ((params: RowHeightCallbackParams) => number);
     /**
-     * The name of the sheet in Excel where the grid will be exported. There is a max limit of 31 characters.
+     * The name of the sheet in Excel where the grid will be exported. Either a string or a function that returns a
+     * string can be used. If a function is used, it will be called once before the export starts.
+     * There is a max limit of 31 characters per sheet name.
      * @default 'ag-grid'
      */
-    sheetName?: string;
+    sheetName?: string | ExcelSheetNameGetter;
     /** The Excel document page margins. Relevant for printing. */
     margins?: ExcelSheetMargin;
     /** Allows you to setup the page orientation and size. */
@@ -432,10 +439,10 @@ export interface ExcelExportMultipleSheetParams {
      */
     data: string[];
     /**
-     * String to use as the file name.
+     * String to use as the file name or a function that returns a string.
      * @default 'export.xlsx'
      */
-    fileName?: string;
+    fileName?: string | ExportFileNameGetter;
     /**
      * The default value for the font size of the Excel document.
      * @default 11

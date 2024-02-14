@@ -24,7 +24,7 @@ The new-format column menu is enabled by setting `columnMenu = 'new'`.
 
 How the column menu is launched from the header can be configured via the following column definition properties.
 
-<api-documentation source='column-properties/properties.json' section='header' names='["suppressMenu", "suppressHeaderFilter", "suppressHeaderContextMenu"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='header' names='["suppressHeaderMenuButton", "suppressHeaderFilterButton", "suppressHeaderContextMenu"]'></api-documentation>
 
 The column menu button can be hidden until moused over by the grid option `suppressMenuHide`.
 
@@ -112,6 +112,12 @@ Menu items can be grouped together by adding separators between groups. Separato
 ```js
 menuItems.push('separator')
 ```
+
+### Custom Menu Item Components
+
+In addition to the provided menu items, it is also possible to create custom menu item components.
+
+For more details, refer to the section: [Custom Menu Item Components](/component-menu-item/).
 
 ### Example: Customising the Menu Items
 

@@ -44,11 +44,11 @@ const columnDefs: ColDef[] = [
       readOnly: true,
       comparator: dateComparator,
     } as IDateFilterParams,
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
   },
   {
     field: 'sport',
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
     filter: 'agMultiColumnFilter',
     filterParams: {
       filters: [

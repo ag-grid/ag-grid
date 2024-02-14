@@ -12,6 +12,7 @@ import { iterateObject, mergeDeep } from '../utils/object';
 import { attrToNumber, attrToBoolean } from '../utils/generic';
 import { DataTypeService } from './dataTypeService';
 import { warnOnce } from '../utils/function';
+import { ColumnEventType } from '../events';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
@@ -26,7 +27,7 @@ export class ColumnFactory extends BeanStub {
         this.logger = loggerFactory.create('ColumnFactory');
     }
 
-    public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingTree?: IProvidedColumn[])
+    public createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingTree: IProvidedColumn[] | undefined, source: ColumnEventType)
         : { columnTree: IProvidedColumn[], treeDept: number; } {
 
         // column key creator dishes out unique column id's in a deterministic way,
@@ -39,7 +40,7 @@ export class ColumnFactory extends BeanStub {
 
         // create am unbalanced tree that maps the provided definitions
         const unbalancedTree = this.recursivelyCreateColumns(defs, 0, primaryColumns,
-            existingCols, columnKeyCreator, existingGroups);
+            existingCols, columnKeyCreator, existingGroups, source);
         const treeDept = this.findMaxDept(unbalancedTree, 0);
         this.logger.log('Number of levels for grouped columns is ' + treeDept);
         const columnTree = this.balanceColumnTree(unbalancedTree, 0, treeDept, columnKeyCreator);
@@ -218,7 +219,8 @@ export class ColumnFactory extends BeanStub {
         primaryColumns: boolean,
         existingColsCopy: Column[],
         columnKeyCreator: ColumnKeyCreator,
-        existingGroups: ProvidedColumnGroup[]
+        existingGroups: ProvidedColumnGroup[],
+        source: ColumnEventType
     ): IProvidedColumn[] {
         if (!defs) return [];
     
@@ -227,9 +229,9 @@ export class ColumnFactory extends BeanStub {
             const def = defs[i];
             if (this.isColumnGroup(def)) {
                 result[i] = this.createColumnGroup(primaryColumns, def as ColGroupDef, level, existingColsCopy,
-                    columnKeyCreator, existingGroups);
+                    columnKeyCreator, existingGroups, source);
             } else {
-                result[i] = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator);
+                result[i] = this.createColumn(primaryColumns, def as ColDef, existingColsCopy, columnKeyCreator, source);
             }
         }
         return result;
@@ -241,7 +243,8 @@ export class ColumnFactory extends BeanStub {
         level: number,
         existingColumns: Column[],
         columnKeyCreator: ColumnKeyCreator,
-        existingGroups: ProvidedColumnGroup[]
+        existingGroups: ProvidedColumnGroup[],
+        source: ColumnEventType
     ): ProvidedColumnGroup {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
@@ -260,7 +263,7 @@ export class ColumnFactory extends BeanStub {
         }
 
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
-            level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups);
+            level + 1, primaryColumns, existingColumns, columnKeyCreator, existingGroups, source);
 
         providedGroup.setChildren(children);
 
@@ -279,7 +282,8 @@ export class ColumnFactory extends BeanStub {
         primaryColumns: boolean,
         colDef: ColDef,
         existingColsCopy: Column[] | null,
-        columnKeyCreator: ColumnKeyCreator
+        columnKeyCreator: ColumnKeyCreator,
+        source: ColumnEventType
     ): Column {
         // see if column already exists
         const existingColAndIndex = this.findExistingColumn(colDef, existingColsCopy);
@@ -299,8 +303,8 @@ export class ColumnFactory extends BeanStub {
             this.context.createBean(column);
         } else {
             const colDefMerged = this.addColumnDefaultAndTypes(colDef, column.getColId());
-            column.setColDef(colDefMerged, colDef);
-            this.applyColumnState(column, colDefMerged);
+            column.setColDef(colDefMerged, colDef, source);
+            this.applyColumnState(column, colDefMerged, source);
         }
 
         this.dataTypeService.addColumnListeners(column);
@@ -308,7 +312,7 @@ export class ColumnFactory extends BeanStub {
         return column;
     }
 
-    public applyColumnState(column: Column, colDef: ColDef): void {
+    public applyColumnState(column: Column, colDef: ColDef, source: ColumnEventType): void {
         // flex
         const flex = attrToNumber(colDef.flex);
         if (flex !== undefined) {
@@ -321,21 +325,21 @@ export class ColumnFactory extends BeanStub {
             // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
             const width = attrToNumber(colDef.width);
             if (width != null) {
-                column.setActualWidth(width);
+                column.setActualWidth(width, source);
             } else {
                 // otherwise set the width again, in case min or max width has changed,
                 // and width needs to be adjusted.
                 const widthBeforeUpdate = column.getActualWidth();
-                column.setActualWidth(widthBeforeUpdate);
+                column.setActualWidth(widthBeforeUpdate, source);
             }
         }
 
         // sort - anything but undefined will set sort, thus null or empty string will clear the sort
         if (colDef.sort !== undefined) {
             if (colDef.sort == 'asc' || colDef.sort == 'desc') {
-                column.setSort(colDef.sort);
+                column.setSort(colDef.sort, source);
             } else {
-                column.setSort(undefined);
+                column.setSort(undefined, source);
             }
         }
 
@@ -348,7 +352,7 @@ export class ColumnFactory extends BeanStub {
         // hide - anything but undefined, thus null will clear the hide
         const hide = attrToBoolean(colDef.hide);
         if (hide !== undefined) {
-            column.setVisible(!hide);
+            column.setVisible(!hide, source);
         }
 
         // pinned - anything but undefined, thus null or empty string will remove pinned

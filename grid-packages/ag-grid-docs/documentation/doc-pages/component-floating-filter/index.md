@@ -7,7 +7,7 @@ title: "Floating Filter Component"
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<video-section id="CxwfX4KodaM" title="React Floating Filters" header="true">
+<video-section id="MdO6vZN2Gxo" title="React Floating Filters" header="true">
 Floating Filter Components allow you to add your own floating filter types to AG Grid. You can create a Custom Floating Filter Component to work alongside one of the grid's Provided Filters, or alongside a Custom Filter.
 </video-section>
 </framework-specific-section>

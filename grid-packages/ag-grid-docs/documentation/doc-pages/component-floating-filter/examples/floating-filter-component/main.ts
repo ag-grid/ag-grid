@@ -17,7 +17,7 @@ const columnDefs: ColDef[] = [
       maxValue: 7,
     },
     suppressFloatingFilterButton: true,
-    suppressMenu: false,
+    suppressHeaderMenuButton: false,
   },
   {
     field: 'silver',
@@ -28,7 +28,7 @@ const columnDefs: ColDef[] = [
       maxValue: 5,
     },
     suppressFloatingFilterButton: true,
-    suppressMenu: false,
+    suppressHeaderMenuButton: false,
   },
   {
     field: 'bronze',
@@ -39,7 +39,7 @@ const columnDefs: ColDef[] = [
       maxValue: 10,
     },
     suppressFloatingFilterButton: true,
-    suppressMenu: false,
+    suppressHeaderMenuButton: false,
   },
 ]
 

@@ -35,9 +35,9 @@ var dateFilterParams: IDateFilterParams = {
 }
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', filter: 'agTextColumnFilter', suppressMenu: true },
-  { field: 'age', filter: 'agNumberColumnFilter', suppressMenu: true },
-  { field: 'country', filter: 'agSetColumnFilter', suppressMenu: true },
+  { field: 'athlete', filter: 'agTextColumnFilter', suppressHeaderMenuButton: true },
+  { field: 'age', filter: 'agNumberColumnFilter', suppressHeaderMenuButton: true },
+  { field: 'country', filter: 'agSetColumnFilter', suppressHeaderMenuButton: true },
   {
     field: 'year',
     maxWidth: 120,
@@ -49,16 +49,16 @@ const columnDefs: ColDef[] = [
     minWidth: 215,
     filter: 'agDateColumnFilter',
     filterParams: dateFilterParams,
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
   },
-  { field: 'sport', suppressMenu: true, filter: 'agTextColumnFilter' },
+  { field: 'sport', suppressHeaderMenuButton: true, filter: 'agTextColumnFilter' },
   {
     field: 'gold',
     filter: 'agNumberColumnFilter',
     filterParams: {
       buttons: ['apply'],
     } as INumberFilterParams,
-    suppressMenu: true,
+    suppressHeaderMenuButton: true,
   },
   {
     field: 'silver',

@@ -3,7 +3,7 @@ import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType } from "
 
 import { ChartController } from "../chartController";
 import { AgChartActual } from "../utils/integration";
-import { deepMerge } from "../utils/object";
+import { deepMerge, get, set } from "../utils/object";
 import { ChartSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 
 type ChartAxis = NonNullable<AgChartActual['axes']>[number];
@@ -17,7 +17,7 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getChartOption<T = string>(expression: string): T {
-        return _.get(this.getChart(), expression, undefined) as T;
+        return get(this.getChart(), expression, undefined) as T;
     }
 
     public setChartOption<T = string>(expression: string, value: T, isSilent?: boolean): void {
@@ -49,7 +49,7 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getAxisProperty<T = string>(expression: string): T {
-        return _.get(this.getChart().axes?.[0], expression, undefined);
+        return get(this.getChart().axes?.[0], expression, undefined);
     }
 
     public setAxisProperty<T = string>(expression: string, value: T) {
@@ -83,7 +83,7 @@ export class ChartOptionsService extends BeanStub {
 
     public getLabelRotation(axisType: 'xAxis' | 'yAxis'): number {
         const axis = this.getAxis(axisType);
-        return _.get(axis, 'label.rotation', undefined);
+        return get(axis, 'label.rotation', undefined);
     }
 
     public setLabelRotation(axisType: 'xAxis' | 'yAxis', value: number | undefined) {
@@ -100,7 +100,7 @@ export class ChartOptionsService extends BeanStub {
         // rather than the properties object. This is due to us needing to reach inside the chart itself to retrieve
         // the value, and will likely be cleaned up in a future release
         const series = this.getChart().series.find((s: any) => ChartOptionsService.isMatchingSeries(seriesType, s));
-        return _.get(calculated ? series : series?.properties.toJson(), expression, undefined) as T;
+        return get(calculated ? series : series?.properties.toJson(), expression, undefined) as T;
     }
 
     public setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {
@@ -177,7 +177,7 @@ export class ChartOptionsService extends BeanStub {
                 overrides
             }
         };
-        _.set(overrides, `${seriesType}.${expression}`, value);
+        set(overrides, `${seriesType}.${expression}`, value);
 
         return chartOptions;
     }

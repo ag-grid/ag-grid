@@ -923,12 +923,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
-    /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its "flashed" state.
+    /** To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long a cell should remain in its "flashed" state.
          * @default 500
          */
+    @Input() public cellFlashDuration: number | undefined = undefined;
+    /** @deprecated v31.1 - use `cellFlashDuration` instead.
+         */
     @Input() public cellFlashDelay: number | undefined = undefined;
-    /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
+    /** To be used in combination with `enableCellChangeFlash`, the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
          * @default 1000
+         */
+    @Input() public cellFadeDuration: number | undefined = undefined;
+    /** @deprecated v31.1 - use `cellFadeDuration` instead.
          */
     @Input() public cellFadeDelay: number | undefined = undefined;
     /** Set to `true` to have cells flash after data changes even when the change is due to filtering.
@@ -1155,6 +1161,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
          * @default false
          * @initial
+         * @deprecated v31.1
          */
     @Input() public suppressServerSideInfiniteScroll: boolean | undefined = undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
@@ -1198,13 +1205,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** @deprecated v30 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead.
          */
     @Input() public serverSideFilterAllLevels: boolean | undefined = undefined;
-    /**
-         * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
+    /** When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * @default false
+         * @deprecated
          */
     @Input() public serverSideSortOnServer: boolean | undefined = undefined;
     /** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
          * @default false
+         * @deprecated
          */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
@@ -1285,6 +1293,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public suppressCellFocus: boolean | undefined = undefined;
+    /** If `true`, header cells won't be focusable. This means keyboard navigation will be disabled for grid header cells, but remain enabled in other elements of the grid such as grid cells and tool panels.
+         * @default false
+         */
+    @Input() public suppressHeaderFocus: boolean | undefined = undefined;
     /** If `true`, only a single range can be selected.
          * @default false
          */
@@ -1525,7 +1537,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.
          */
     @Input() public fillOperation: ((params: FillOperationParams<TData>) => any) | undefined = undefined;
-    /** Callback to perform additional sorting after the grid has sorted the rows. When used with SSRM, only applicable when `suppressServerSideInfiniteScroll=true`.
+    /** Callback to perform additional sorting after the grid has sorted the rows.
          */
     @Input() public postSortRows: ((params: PostSortRowsParams<TData>) => void) | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.
@@ -1817,6 +1829,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressMakeColumnVisibleAfterUnGroup: boolean | null | '';
     static ngAcceptInputType_suppressRowClickSelection: boolean | null | '';
     static ngAcceptInputType_suppressCellFocus: boolean | null | '';
+    static ngAcceptInputType_suppressHeaderFocus: boolean | null | '';
     static ngAcceptInputType_suppressHorizontalScroll: boolean | null | '';
     static ngAcceptInputType_groupSelectsChildren: boolean | null | '';
     static ngAcceptInputType_alwaysShowHorizontalScroll: boolean | null | '';
