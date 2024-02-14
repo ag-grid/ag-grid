@@ -101,6 +101,7 @@ export default defineMarkdocConfig({
                 source: { type: String, required: true },
                 section: { type: String },
                 names: { type: Array },
+                config: { type: Object },
             },
         },
         // TODO: Implement
