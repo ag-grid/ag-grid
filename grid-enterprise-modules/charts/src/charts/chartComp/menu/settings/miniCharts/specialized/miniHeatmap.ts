@@ -48,7 +48,7 @@ export class MiniHeatmap extends MiniChart {
                 rect.y = yScale.convert(yIndex);
                 rect.width = width;
                 rect.height = height;
-                rect.strokeWidth = 1;
+                rect.strokeWidth = 0;
                 rect.crisp = true;
 
                 return rect;
