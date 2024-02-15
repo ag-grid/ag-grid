@@ -394,11 +394,11 @@
         },
         "enterprise": {
           "value": true,
-          "detail": "Dedicated support via Zenhub"
+          "detail": "Dedicated support via Zendesk"
         },
         "chartsGrid": {
           "value": true,
-          "detail": "Dedicated support via Zenhub"
+          "detail": "Dedicated support via Zendesk"
         }
       },
       {
