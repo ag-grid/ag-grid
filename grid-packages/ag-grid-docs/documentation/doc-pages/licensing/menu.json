@@ -1246,6 +1246,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Custom Menu Item",
+            "url": "/component-menu-item/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "Status Bar",
             "url": "/status-bar/",
             "enterprise": true,
@@ -1316,6 +1322,10 @@
                 "title": "Row Selection",
                 "url": "/server-side-model-selection/",
                 "enterprise": true
+              },
+              {
+                "title": "Loading Component",
+                "url": "/component-loading-cell-renderer/"
               },
               {
                 "title": "Changing Columns",

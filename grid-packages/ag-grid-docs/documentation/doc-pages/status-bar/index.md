@@ -40,7 +40,7 @@ The Status Bar Panels provided by the grid are as follows:
 
 The `align` property can be `left`, `center` or `right` (default).
 
-The `key` is used for accessing panel instances via the grid API `getStatusPanel(key)`. This can be useful for interacting with Custom Panels.
+The `key` is used for [Accessing Panel Instances](#accessing-instances) via the grid API `getStatusPanel(key)`. This can be useful for interacting with Custom Panels.
 
 Additional `props` are passed to Status Panels using `statusPanelParams`. The provided panel `agAggregationComponent` can have `aggFuncs` passed.
 
