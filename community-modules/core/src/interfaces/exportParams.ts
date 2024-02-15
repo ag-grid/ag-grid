@@ -4,7 +4,9 @@ import { RowPosition } from "../entities/rowPositionUtils";
 import { AgGridCommon } from "./iCommon";
 import { IRowNode } from "./iRowNode";
 
-export type ExportFileNameGetter = () => string;
+export interface ExportFileNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
+
+export type ExportFileNameGetter = (params?: ExportFileNameGetterParams) => string;
 
 export interface BaseExportParams {
     /**

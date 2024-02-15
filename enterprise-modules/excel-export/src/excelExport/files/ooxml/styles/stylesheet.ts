@@ -206,8 +206,8 @@ const registerFont = (font: ExcelFont): number => {
     return pos;
 };
 
-const registerStyle = (config: ExcelStyle): void => {
-    const { alignment, borders, font, interior, numberFormat, protection } = config;
+const registerStyle = (config: ExcelStyle & { quotePrefix?: 1 }): void => {
+    const { alignment, borders, font, interior, numberFormat, protection, quotePrefix } = config;
     let { id } = config;
     let currentFill = 0;
     let currentBorder = 0;
@@ -245,6 +245,7 @@ const registerStyle = (config: ExcelStyle): void => {
         fontId: currentFont || 0,
         numFmtId: currentNumberFmt || 0,
         protection,
+        quotePrefix: quotePrefix,
         xfId: 0
     });
 };

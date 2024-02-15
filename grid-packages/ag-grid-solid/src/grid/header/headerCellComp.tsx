@@ -49,7 +49,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
             col-id={ getColId() }
             aria-sort={ getAriaSort() }
             role="columnheader"
-            tabIndex={-1}
         >
             <div ref={eResize!} class="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper!} class="ag-header-cell-comp-wrapper" role="presentation">

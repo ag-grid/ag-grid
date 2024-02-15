@@ -111,7 +111,10 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
 
     getMultipleSheetsAsExcelCompressed(params).then(contents => {
         if (contents) {
-            const downloadFileName = typeof fileName === 'function' ? fileName() : fileName;
+            const downloadFileName = typeof fileName === 'function'
+                ? fileName()
+                : fileName;
+
             Downloader.download(downloadFileName, contents);
         }
     });
@@ -172,7 +175,10 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
         this.packageCompressedFile(exportParams).then(packageFile => {
             if (packageFile) {
                 const { fileName } = mergedParams;
-                const providedFileName = typeof fileName === 'function' ? fileName() : fileName;
+                const providedFileName = typeof fileName === 'function'
+                    ? fileName(this.gridOptionsService.getGridCommonParams())
+                    : fileName;
+
                 Downloader.download(this.getFileName(providedFileName), packageFile);
             }
         });
@@ -229,7 +235,10 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], ExcelSerializingSessio
         let sheetName: string;
         if (params.sheetName != null) {
             const {sheetName: sheetNameParam } = params;
-            const sheetNameValue = typeof sheetNameParam === 'function' ? sheetNameParam() : sheetNameParam;
+            const sheetNameValue = typeof sheetNameParam === 'function'
+                ? sheetNameParam(this.gridOptionsService.getGridCommonParams())
+                : sheetNameParam;
+
             sheetName = String(sheetNameValue).substring(0, 31);
         } else {
             sheetName = 'ag-grid';

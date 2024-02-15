@@ -72,7 +72,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
             className="ag-header-cell"
             col-id={colId}
             role="columnheader"
-            tabIndex={-1}
         >
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             <div ref={eHeaderCompWrapper} className="ag-header-cell-comp-wrapper" role="presentation">

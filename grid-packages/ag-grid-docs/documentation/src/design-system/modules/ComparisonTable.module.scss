@@ -1,0 +1,30 @@
+@use '../core' as *;
+
+.twoColumn .cell {
+    &:first-child {
+        width: calc(100% - #{$spacing-size-16});
+    }
+
+    &:last-child {
+        width: $spacing-size-16;
+    }
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    min-height: $spacing-size-12;
+    padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-4;
+    border-top: 1px solid var(--color-border-secondary);
+}
+
+.row {
+    &:first-child {
+        border-top: none;
+    }
+}
+
+.cell {
+    width: calc(100% / var(--num-columns));
+}

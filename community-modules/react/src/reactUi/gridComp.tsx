@@ -64,8 +64,8 @@ const GridComp = ({ context }: GridCompProps) => {
             destroyGridUi:
                 () => {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass: setRtlClass,
-            forceFocusOutOfContainer: () => {
-                tabGuardRef.current?.forceFocusOutOfContainer();
+            forceFocusOutOfContainer: (up?: boolean) => {
+                tabGuardRef.current?.forceFocusOutOfContainer(up);
             },
             updateLayoutClasses: setLayoutClass,
             getFocusableContainers: () => {

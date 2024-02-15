@@ -50,7 +50,7 @@ const cellFactory: ExcelOOXMLTemplate = {
         } else {
             children = [{
                 name: 'v',
-                textNode: value
+                textNode: value,
             }];
         }
 

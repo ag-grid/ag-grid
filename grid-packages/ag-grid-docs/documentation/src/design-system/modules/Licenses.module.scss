@@ -3,11 +3,9 @@
 .license {
     width: 100%;
     border-radius: var(--radius-md);
-    border: 1px solid var(--color-border-primary);
     color: var(--color-fg-primary);
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        max-width: calc(50% - $spacing-size-4);
         max-height: 480px;
     }
 
@@ -30,38 +28,28 @@
     }
 }
 
+.limitedTimePill,
+.limitedTimeSpacer {
+    height: 30px;
+    margin-bottom: $spacing-size-4;
+}
+
+.limitedTimePill {
+    padding: 4px 16px;
+    border-radius: 16px;
+    background-color: var(--color-util-brand-100);
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-text-brand-primary), var(--color-bg-primary) 90%);
+    }
+    color: var(--color-text-brand-primary);
+    font-weight: var(--text-semibold);
+}
+
 .licenseMeta {
     display: flex;
     flex-direction: column;
-    margin-bottom: $spacing-size-8;
+    margin-bottom: $spacing-size-12;
     color: var(--color-text-tertiary);
-
-    :global(.icon) {
-        margin-top: -1px;
-        margin-left: 2px;
-        width: 16px;
-        opacity: 0.6666;
-
-        * {
-            fill: var(--color-text-tertiary);
-        }
-    }
-}
-
-.logo {
-    height: 54px;
-    width: fit-content;
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        margin-left: -10px;
-        margin-bottom: -4px;
-    }
-
-    #{$selector-darkmode} & {
-        :global(#LogoType) * {
-            fill: var(--color-fg-primary) !important; // !important required to override SVG inline styles
-        }
-    }
 }
 
 p.name {
@@ -80,76 +68,67 @@ p.name {
 .price {
     display: flex;
     flex-direction: column;
+    margin-top: auto;
     margin-bottom: $spacing-size-4;
-}
-
-.price p:first-child {
-    color: var(--color-text-tertiary);
-    font-size: var(--text-fs-md);
 }
 
 .standardPrice {
     display: inline-block;
     position: relative;
+    font-size: var(--text-fs-3xl);
     margin-left: $spacing-size-4;
-    color: var(--color-text-tertiary);
+    color: var(--color-util-gray-400);
 
     &::after {
         content: '';
         position: absolute;
-        top: 50%;
+        top: 60%;
         right: $spacing-size-1 * -1;
         left: $spacing-size-1 * -1;
         height: $spacing-size-1;
         margin-top: $spacing-size-1 * -1;
-        background-color: var(--color-text-tertiary);
+        background-color: var(--color-util-gray-400);
+        opacity: 0.6666;
+
+        #{$selector-darkmode} & {
+            background: var(--color-text-primary);
+            opacity: 0.6;
+        }
     }
-}
 
-.priceFullDollars,
-.standardPrice {
-    font-size: 44px;
-    line-height: var(--text-lh-ultra-tight);
-    letter-spacing: -0.05em;
-    padding-top: $spacing-size-1;
-    padding-bottom: $spacing-size-2;
-
-    &::before {
-        content: '$';
+    #{$selector-darkmode} & {
+        color: var(--color-text-secondary);
+        opacity: 0.5;
     }
 }
 
 .priceFullDollars {
-    font-weight: var(--text-bold);
+    display: flex;
+    flex-direction: row;
+    align-items: end;
     height: $spacing-size-16;
+    padding-top: $spacing-size-1;
+    padding-bottom: $spacing-size-2;
+    font-size: 44px;
+    line-height: var(--text-lh-ultra-tight);
+    font-weight: var(--text-bold);
+    letter-spacing: -0.05em;
+
+    &.freePrice {
+        margin-bottom: 22px;
+    }
+
+    .developerText {
+        font-size: var(--text-fs-base) !important;
+        font-weight: var(--text-regular);
+        letter-spacing: 0px;
+        padding-left: $spacing-size-2;
+        height: $spacing-size-4;
+    }
 
     :global(#grid) & {
         position: relative;
         top: 4px;
-    }
-}
-
-.licenseBenefits {
-    display: flex;
-    flex-direction: column;
-
-    ul li:where(:not(:last-child)) {
-        margin-bottom: $spacing-size-1;
-    }
-
-    a {
-        display: block;
-        margin-top: $spacing-size-1;
-    }
-
-    ul svg {
-        position: relative;
-        top: -2px;
-        width: 20px;
-        height: 20px;
-        border-radius: 3px;
-        fill: var(--color-util-gray-700);
-        background-color: var(--color-util-gray-300);
     }
 }
 
@@ -165,7 +144,6 @@ p.name {
 
 .licenseActions {
     width: 100%;
-    margin-top: auto;
 
     a {
         width: 100%;
@@ -187,4 +165,65 @@ p.name {
 
         transform: translateX(5px);
     }
+}
+
+.developerText {
+    color: var(--color-text-tertiary);
+}
+
+/* mobile breakpoint responsive */
+@media screen and (max-width: $breakpoint-pricing-medium) {
+    .license {
+        border: 1px solid var(--color-border-secondary);
+        padding-bottom: $spacing-size-6;
+
+        .top {
+            display: flex;
+            align-items: start;
+            justify-content: left;
+            text-align: left;
+            border-radius: var(--radius-md);
+        }
+
+        .license:last-child {
+            border-right: 1px solid var(--color-border-primary);
+        }
+    }
+}
+@media screen and (min-width: $breakpoint-pricing-medium) {
+    .license:nth-child(3) {
+        border-bottom: none;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .license:last-child {
+        border-right: none;
+    }
+
+    .toggleFeatureBreakdownButton {
+        display: none;
+    }
+
+    .mobileFeatureMatrix {
+        display: none;
+        padding-top: $spacing-size-4;
+    }
+}
+
+.toggleFeatureBreakdownButton {
+    color: var(--color-link);
+    font-weight: var(--text-semibold);
+    cursor: pointer;
+    user-select: none;
+}
+
+.mobileFeatureMatrix {
+    padding-top: $spacing-size-4;
+    text-align: left;
+}
+
+.mobileFeatureMatrix h4 {
+    padding-left: $spacing-size-3;
+    padding-top: $spacing-size-4;
 }

@@ -93,7 +93,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
                 const compProxy = new FloatingFilterComponentProxy(userCompDetails!.params, () => setRenderKey(prev => prev + 1));
                 userCompRef(compProxy);
                 return compProxy;
-            } else {
+            } else if (userCompDetails.componentFromFramework) {
                 warnReactiveCustomComponents();
             }
         }
@@ -105,7 +105,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={setRef} className={className} role="gridcell" tabIndex={-1}>
+        <div ref={setRef} className={className} role="gridcell">
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 { reactUserComp && !reactiveCustomComponents && <UserCompClass { ...userCompDetails!.params } ref={ userCompStateless ? () => {} : userCompRef }/> }
                 { reactUserComp && reactiveCustomComponents && <CustomContext.Provider value={{

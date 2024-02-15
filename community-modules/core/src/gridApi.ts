@@ -748,7 +748,7 @@ export class GridApi<TData = any> {
      * - `end` - Scrolls the column to the end of the viewport.
     */
     public ensureColumnVisible(key: string | Column, position: 'auto' | 'start' | 'middle' | 'end' = 'auto') {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position));
+        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position), 'ensureVisible');
     }
 
     /**
@@ -757,7 +757,7 @@ export class GridApi<TData = any> {
      * This will have no effect before the firstDataRendered event has fired.
      */
     public ensureIndexVisible(index: number, position?: 'top' | 'bottom' | 'middle' | null) {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position));
+        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(index, position), 'ensureVisible');
     }
 
     /**
@@ -769,7 +769,7 @@ export class GridApi<TData = any> {
         nodeSelector: TData | IRowNode<TData> | ((row: IRowNode<TData>) => boolean),
         position: 'top' | 'bottom' | 'middle' | null = null
     ) {
-        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position));
+        this.frameworkOverrides.wrapIncoming(() => this.gridBodyCtrl.getScrollFeature().ensureNodeVisible(nodeSelector, position), 'ensureVisible');
     }
 
     /**
@@ -1416,8 +1416,10 @@ export class GridApi<TData = any> {
         };
         const notPinned = params.rowPinned == null;
         if (notPinned) {
-            this.gridBodyCtrl.getScrollFeature().ensureIndexVisible(params.rowIndex);
+            this.ensureIndexVisible(params.rowIndex);
         }
+
+        this.ensureColumnVisible(params.colKey);
 
         const cell = this.navigationService.getCellByPosition(cellPosition);
         if (!cell) { return; }
@@ -1797,11 +1799,12 @@ export class GridApi<TData = any> {
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnModel.moveRowGroupColumn(fromIndex, toIndex, 'api'); }
     /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
     public setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void { this.columnModel.setColumnAggFunc(key, aggFunc, 'api'); }
-    /** Sets the column width on a single column. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
     public setColumnWidth(key: string | ColDef | Column, newWidth: number, finished: boolean = true, source: ColumnEventType = 'api'): void {
+        this.logDeprecation('v31.1', 'setColumnWidth(col, width)', 'setColumnWidths([{key: col, newWidth: width}])');
         this.columnModel.setColumnWidths([{ key, newWidth }], false, finished, source);
     }
-    /** Sets the column widths on multiple columns. This method offers better performance than calling `setColumnWidth` multiple times. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
     public setColumnWidths(columnWidths: { key: string | ColDef | Column, newWidth: number }[], finished: boolean = true, source: ColumnEventType = 'api'): void {
         this.columnModel.setColumnWidths(columnWidths, false, finished, source);
     }

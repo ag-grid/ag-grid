@@ -120,7 +120,7 @@ The following example demonstrates a custom menu item component in both the colu
 </snippet>
 </framework-specific-section>
 <framework-specific-section frameworks="react">
-<note>If you do not enable the grid option `reactiveCustomComponents`, it is still possible to use custom menu items, however this will involve declaring your React component imperatively and is deprecated. See [Imperative Menu Item Component](../component-menu-item-imperative-react/). In v32, `reactiveCustomComponents` will default to true.</note>
+<note>Enabling `reactiveCustomComponents` affects all custom components. If you have custom components built in an imperative way instead of setting the `reactiveCustomComponents` option, they may need to be rebuilt to take advantage of the new features that `reactiveCustomComponents` offers. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be `true` by default. See [Migrating to Use reactiveCustomComponents](../upgrading-to-ag-grid-31-1/#migrating-to-use-reactivecustomcomponents). For the legacy imperative documentation, see [Imperative Menu Item Component](../component-menu-item-imperative-react/).</note>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript,angular,vue">

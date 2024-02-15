@@ -37,7 +37,7 @@ export class ChartOptionsService extends BeanStub {
         });
 
         if (!isSilent) {
-            this.updateChart(chartOptions);
+            this.updateChart(chartOptions, true);
             this.raiseChartOptionsChangedEvent();
         }
     }
@@ -161,8 +161,11 @@ export class ChartOptionsService extends BeanStub {
         return this.chartController.getChartProxy().getChart();
     }
 
-    private updateChart(chartOptions: AgChartOptions) {
+    private updateChart(chartOptions: AgChartOptions, quick = false) {
         const chartRef = this.chartController.getChartProxy().getChartRef();
+        if (quick) {
+            chartRef.skipAnimations();
+        }
         AgCharts.updateDelta(chartRef, chartOptions);
     }
 

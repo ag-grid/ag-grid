@@ -51,7 +51,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         const packagedFile = new Blob(["\ufeff", data], { type: 'text/plain' });
 
         const fileName = typeof mergedParams.fileName === 'function'
-            ? mergedParams.fileName()
+            ? mergedParams.fileName(this.gridOptionsService.getGridCommonParams())
             : mergedParams.fileName;
 
         Downloader.download(this.getFileName(fileName), packagedFile);

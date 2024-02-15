@@ -407,7 +407,7 @@ const CellComp = (props: {
                     let compProxy = undefined;
                     if (reactiveCustomComponents) {
                         compProxy = new CellEditorComponentProxy(compDetails.params!, () => setRenderKey( prev => prev + 1 ));
-                    } else {
+                    } else if (compDetails.componentFromFramework) {
                         warnReactiveCustomComponents();
                     }
                     // start editing

@@ -156,4 +156,4 @@ That's it! You've created a theme. You haven't added any styles to it so what yo
 ```
 
 ## Creating Themes with the AG Grid Design System 
-Figma users can now download the AG Grid design system and extend the Alpine or Apline Dark themes to create custom CSS themes. For more information on how to create themes with the AG Grid design system please see our [AG Grid Design System](/ag-grid-design-system/) page. 
+Figma users can now download the AG Grid design system and extend the Quartz or Alpine themes to create custom CSS themes. For more information on how to create themes with the AG Grid design system please see our [AG Grid Design System](/ag-grid-design-system/) page. 

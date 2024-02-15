@@ -15,7 +15,7 @@
     width: 60%;
 }
 
-#doughnutChart {
+#donutChart {
     width: calc(40% - 8px);
 }
 

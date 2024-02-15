@@ -16,15 +16,6 @@
             "title": "Quick Start",
             "url": "/getting-started/",
             "icon": "framework"
-          },
-          {
-            "title": "Creating a Basic Grid",
-            "url": "/deep-dive/",
-            "icon": "framework"
-          },
-          {
-            "title": "Video Tutorials",
-            "url": "/videos/"
           }
         ]
       },
@@ -119,28 +110,6 @@
                 ]
               }
             ]
-          },
-          {
-            "title": "Compatibility",
-            "url": "/react-compatibility/",
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Compatibility",
-            "url": "/angular-compatibility/",
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
-            "title": "Supported Browsers",
-            "url": "/supported-browsers/"
-          },
-          {
-            "title": "Upgrading to Enterprise",
-            "url": "/licensing/"
           }
         ]
       },
@@ -148,22 +117,20 @@
         "title": "Guides",
         "items": [
           {
-            "title": "Testing",
-            "url": "/testing/"
+            "title": "Tutorial: My First Grid",
+            "url": "/deep-dive/",
+            "icon": "framework"
           },
           {
-            "title": "Testing Async",
-            "url": "/testing-async/",
-            "frameworks": [
-              "angular"
-            ]
+            "title": "Video Tutorials",
+            "url": "/videos/"
           },
           {
-            "title": "Security",
-            "url": "/security/"
+            "title": "AG Grid Enterprise",
+            "url": "/licensing/"
           },
           {
-            "title": "Best Practices",
+            "title": "React Hooks",
             "url": "/react-hooks/",
             "frameworks": [
               "react"
@@ -194,24 +161,7 @@
             ]
           }
         ]
-      },
-      {
-        "title": "Migration",
-        "items": [
-          {
-            "title": "Upgrading to AG Grid 31",
-            "url": "/upgrading-to-ag-grid-31/"
-          },
-          {
-            "title": "Upgrading to Older Versions",
-            "url": "/upgrading-to-older-versions/"
-          },
-          {
-            "title": "Codemods",
-            "url": "/codemods/"
-          }
-        ]
-      }
+      }      
     ]
   },
   {
@@ -406,6 +356,12 @@
           {
             "title": "Overview",
             "url": "/integrated-charts/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Chart Types",
+            "url": "/integrated-charts-chart-types/",
             "enterprise": true,
             "showInCollapsed": true
           },
@@ -1667,6 +1623,70 @@
       {
         "title": "",
         "items": []
+      }
+    ]
+  },
+  {
+    "group": "MISC",
+    "items": [
+      {
+        "title": "Migration",
+        "items": [
+          {
+            "title": "Upgrading to AG Grid 31.1",
+            "url": "/upgrading-to-ag-grid-31-1/"
+          },
+          {
+            "title": "Upgrading to AG Grid 31",
+            "url": "/upgrading-to-ag-grid-31/"
+          },
+          {
+            "title": "Upgrading to Older Versions",
+            "url": "/upgrading-to-older-versions/"
+          },
+          {
+            "title": "Codemods",
+            "url": "/codemods/"
+          }
+        ]
+      },
+      {
+        "title": "Other",
+        "items": [         
+          {
+            "title": "Testing",
+            "url": "/testing/"
+          },
+          {
+            "title": "Testing Async",
+            "url": "/testing-async/",
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
+            "title": "Security",
+            "url": "/security/"
+          },
+          {
+            "title": "Compatibility",
+            "url": "/angular-compatibility/",
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
+            "title": "Compatibility",
+            "url": "/react-compatibility/",
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Supported Browsers",
+            "url": "/supported-browsers/"
+          }
+        ]
       }
     ]
   }

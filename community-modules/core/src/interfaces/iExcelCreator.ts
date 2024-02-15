@@ -1,5 +1,6 @@
 import { Column } from "../entities/column";
 import { ExportFileNameGetter, ExportParams } from "./exportParams";
+import { AgGridCommon } from "./iCommon";
 import { XmlElement } from "./iXmlFactory";
 
 // Excel Styles
@@ -344,7 +345,9 @@ export interface ExcelOOXMLTemplate {
 // Excel Export
 export enum ExcelFactoryMode { SINGLE_SHEET, MULTI_SHEET }
 
-export type ExcelSheetNameGetter = () => string;
+export interface ExcelSheetNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
+
+export type ExcelSheetNameGetter = (params?: ExcelSheetNameGetterParams) => string;
 
 export interface ColumnWidthCallbackParams {
     column: Column | null;

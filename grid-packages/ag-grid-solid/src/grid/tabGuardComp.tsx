@@ -11,7 +11,7 @@ interface TabGuardProps {
 }
 
 export interface TabGuardRef {
-    forceFocusOutOfContainer(): void;
+    forceFocusOutOfContainer(up?: boolean): void;
 }
 
 const TabGuardComp = (props: TabGuardProps)=> {
@@ -42,8 +42,8 @@ const TabGuardComp = (props: TabGuardProps)=> {
         }));
 
         props.ref({
-            forceFocusOutOfContainer() {
-                ctrl.forceFocusOutOfContainer();
+            forceFocusOutOfContainer(up?: boolean) {
+                ctrl.forceFocusOutOfContainer(up);
             }
         });
     });

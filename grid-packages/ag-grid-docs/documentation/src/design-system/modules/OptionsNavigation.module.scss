@@ -255,7 +255,7 @@
         background-color: var(--color-util-brand-100);
 
         #{$selector-darkmode} & {
-            background-color: rgba(255, 255, 255, 0.075);
+            background-color: rgba(255, 255, 255, 0.1);
         }
     }
 }

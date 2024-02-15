@@ -1,10 +1,17 @@
-import React from 'react';
-import LicensePricing from './license-pricing';
-
-const IS_SSR = typeof window === 'undefined';
+import React, { useEffect, useState } from 'react';
+import LicensePricing, { type LicenseTab } from './license-pricing';
 
 const LicensePricingBare = ({location}) => {
-    if (!IS_SSR) {
+    const [initialTab, setInitialTab] = useState<LicenseTab>('grid');
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tab = params.get('tab') as LicenseTab;
+
+        setInitialTab(tab);
+    }, [])
+
+    useEffect(() => {
         const params = new URLSearchParams(location.search);
         const darkMode = params.get("darkMode") === "true";
 
@@ -13,10 +20,10 @@ const LicensePricingBare = ({location}) => {
         htmlEl.classList.add('no-transitions');
         htmlEl.dataset.darkMode = darkMode ? 'true' : 'false';
         htmlEl.classList.remove('no-transitions');
-    }
+    }, [])
 
     return (
-        <LicensePricing></LicensePricing>
+        <LicensePricing initialTab={initialTab} isWithinIframe={true}></LicensePricing>
     )
 }
 

@@ -7,7 +7,7 @@ export * from "./bar/miniStackedBar";
 export * from "./bar/miniNormalizedBar";
 
 export * from "./pie/miniPie";
-export * from "./pie/miniDoughnut";
+export * from "./pie/miniDonut";
 
 export * from "./line/miniLine";
 

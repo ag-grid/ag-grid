@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
         defaultToolPanel: 'settings',
         settingsPanel: {
             chartGroupsDef: {
-                pieGroup: ['doughnut', 'pie'],
+                pieGroup: ['donut', 'pie'],
                 columnGroup: ['stackedColumn', 'column', 'normalizedColumn'],
                 barGroup: ['bar'],
             },

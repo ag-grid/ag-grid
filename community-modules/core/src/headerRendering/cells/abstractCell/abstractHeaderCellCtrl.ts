@@ -1,5 +1,5 @@
 import { BeanStub } from "../../../context/beanStub";
-import { Autowired } from "../../../context/context";
+import { Autowired, PostConstruct } from "../../../context/context";
 import { IHeaderColumn } from "../../../interfaces/iHeaderColumn";
 import { FocusService } from "../../../focusService";
 import { isUserSuppressingHeaderKeyboardEvent } from "../../../utils/keyboard";
@@ -44,7 +44,6 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
     private instanceId: string;
     private columnGroupChild: IHeaderColumn;
     private parentRowCtrl: HeaderRowCtrl;
-    private tabIndex: number | undefined;
 
     private isResizing: boolean;
     private resizeToggleTimeout = 0;
@@ -71,10 +70,11 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = columnGroupChild.getUniqueId() + '-' + instanceIdSequence++;
+    }
 
-        if (!beans.gridOptionsService.get('suppressHeaderFocus')) {
-            this.tabIndex = -1;
-        }
+    @PostConstruct
+    private postConstruct(): void {
+        this.addManagedPropertyListeners(['suppressHeaderFocus'], () => this.refreshTabIndex());
     }
 
     protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
@@ -100,6 +100,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         this.addDomData();
         this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.onDisplayedColumnsChanged();
+        this.refreshTabIndex();
     }
 
     protected onDisplayedColumnsChanged(): void {
@@ -125,6 +126,15 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
         this.addManagedListener(this.eGui, 'keydown', this.onGuiKeyDown.bind(this));
         this.addManagedListener(this.eGui, 'keyup', this.onGuiKeyUp.bind(this));
+    }
+
+    private refreshTabIndex(): void {
+        const suppressHeaderFocus = this.gridOptionsService.get('suppressHeaderFocus');
+        if (suppressHeaderFocus) {
+            this.eGui.removeAttribute('tabindex');
+        } else {
+            this.eGui.setAttribute('tabindex', '-1');
+        }
     }
 
     private onGuiKeyDown(e: KeyboardEvent): void {
@@ -214,10 +224,6 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     public getRowIndex(): number {
         return this.parentRowCtrl.getRowIndex();
-    }
-
-    public getTabIndex(): number | undefined {
-        return this.tabIndex;
     }
 
     public getParentRowCtrl(): HeaderRowCtrl {

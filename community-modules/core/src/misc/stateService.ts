@@ -60,6 +60,7 @@ export class StateService extends BeanStub {
     private queuedUpdateSources: Set<(keyof GridState | 'gridInitializing')> = new Set();
     private dispatchStateUpdateEventDebounced = debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
     private columnStates?: ColumnState[];
+    private columnGroupStates?: { groupId: string, open: boolean | undefined }[];
 
     @PostConstruct
     private postConstruct(): void {
@@ -373,20 +374,29 @@ export class StateService extends BeanStub {
     private setColumnPivotState(applyOrder: boolean): void {
         const columnStates = this.columnStates;
         this.columnStates = undefined;
+        const columnGroupStates = this.columnGroupStates;
+        this.columnGroupStates = undefined;
 
-        if (!columnStates || !this.columnModel.isSecondaryColumnsPresent()) { return; }
+        if (!this.columnModel.isSecondaryColumnsPresent()) { return; }
 
-        let secondaryColumnStates: ColumnState[] = [];
-        for (const columnState of columnStates) {
-            if (this.columnModel.getSecondaryColumn(columnState.colId)) {
-                secondaryColumnStates.push(columnState);
+        if (columnStates) {
+            let secondaryColumnStates: ColumnState[] = [];
+            for (const columnState of columnStates) {
+                if (this.columnModel.getSecondaryColumn(columnState.colId)) {
+                    secondaryColumnStates.push(columnState);
+                }
             }
+
+            this.columnModel.applyColumnState({
+                state: secondaryColumnStates,
+                applyOrder
+            }, 'gridInitializing');
         }
 
-        this.columnModel.applyColumnState({
-            state: secondaryColumnStates,
-            applyOrder
-        }, 'gridInitializing');
+        if (columnGroupStates) {
+            // no easy/performant way of knowing which column groups are pivot column groups
+            this.columnModel.setColumnGroupState(columnGroupStates, 'gridInitializing');
+        }
     }
 
     private getColumnGroupState(): ColumnGroupState | undefined {
@@ -405,10 +415,26 @@ export class StateService extends BeanStub {
 
         const openColumnGroups =  new Set(initialState.columnGroup?.openColumnGroupIds);
         const existingColumnGroupState = this.columnModel.getColumnGroupState();
-        const stateItems = existingColumnGroupState.map(({ groupId }) => ({
-            groupId,
-            open: openColumnGroups.has(groupId)
-        }));
+        const stateItems = existingColumnGroupState.map(({ groupId }) => {
+            const open = openColumnGroups.has(groupId);
+            if (open) {
+                openColumnGroups.delete(groupId);
+            }
+            return {
+                groupId,
+                open
+            }
+        });
+        // probably pivot cols
+        openColumnGroups.forEach(groupId => {
+            stateItems.push({
+                groupId,
+                open: true
+            })
+        });
+        if (stateItems.length) {
+            this.columnGroupStates = stateItems;
+        }
         this.columnModel.setColumnGroupState(stateItems, 'gridInitializing');
     }
 
@@ -602,11 +628,14 @@ export class StateService extends BeanStub {
 
     private suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {
         this.suppressEvents = true;
+        const columnAnimation = this.gridOptionsService.get('suppressColumnMoveAnimation');
+        this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: true }});
         updateFunc();
         // We want to suppress any grid events, but not user events.
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
         setTimeout(() => {
             this.suppressEvents = false;
+            this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: columnAnimation }});
             // We only want the grid initializing source.
             this.queuedUpdateSources.clear();
             this.dispatchStateUpdateEvent(['gridInitializing']);

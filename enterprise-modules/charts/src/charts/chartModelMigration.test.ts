@@ -52,6 +52,7 @@ describe('chartModelMigration', () => {
         '22.1.0-pie-callout': {},
         '22.1.0-scatter': {},
         '22.1.0-doughnut': {},
+        '22.1.0-doughnut-callout': {},
         '23.0.0': {},
         '24.0.0': {},
         '25.0.0': {},

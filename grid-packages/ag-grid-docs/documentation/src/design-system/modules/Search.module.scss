@@ -8,8 +8,7 @@
         width: 380px;
     }
 
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        padding-right: $spacing-size-2;
-        padding-left: $spacing-size-2;
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        width: 440px;
     }
 }

@@ -350,13 +350,29 @@ export class ChartDataModel extends BeanStub {
         const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
         const { dimensionColState, valueColState } = this;
 
-        const supportsMultipleDimensions = isHierarchical(this.chartType);
-        if (!supportsMultipleDimensions && dimensionColState.filter(idsMatch).length > 0) {
-            // only one dimension should be selected
-            dimensionColState.forEach(cs => cs.selected = idsMatch(cs));
-        } else {
-            // just update the selected value on the supplied value column
-            valueColState.filter(idsMatch).forEach(cs => cs.selected = updatedCol.selected);
+        // Determine whether the specified column is a dimension or value column
+        const matchedDimensionColState = dimensionColState.find(idsMatch);
+        const matchedValueColState = valueColState.find(idsMatch);
+
+        if (matchedDimensionColState) {
+            // For non-hierarchical chart types, only one dimension can be selected
+            const supportsMultipleDimensions = isHierarchical(this.chartType);
+            if (!supportsMultipleDimensions) {
+                // Determine which column should end up selected, if any
+                const selectedColumnState = updatedCol.selected
+                    ? matchedDimensionColState
+                    : dimensionColState
+                        .filter((cs) => cs !== matchedDimensionColState)
+                        .find(({ selected }) => selected);
+                // Update the selection state of all dimension columns
+                dimensionColState.forEach(cs => cs.selected = (cs === selectedColumnState));
+            } else {
+                // Update the selection state of the specified dimension column
+                matchedDimensionColState.selected = updatedCol.selected;
+            }
+        } else if (matchedValueColState) {
+            // Update the selection state of the specified value column
+            matchedValueColState.selected = updatedCol.selected;
         }
 
         const allColumns = [...dimensionColState, ...valueColState];

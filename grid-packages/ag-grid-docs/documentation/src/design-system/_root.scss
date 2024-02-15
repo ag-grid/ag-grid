@@ -84,12 +84,12 @@
     --text-lh-xl: 1.2;
 
     --text-fs-2xl: 32px;
-    --text-lh-2xl: 1.2;
+    --text-lh-2xl: 1.5;
 
     --text-fs-3xl: 40px;
     --text-lh-3xl: 1.1;
 
-    --icon-size: $spacing-size-8;
+    --icon-size: #{$spacing-size-8};
 
     --color-scheme: light;
 
