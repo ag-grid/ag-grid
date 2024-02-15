@@ -7,6 +7,7 @@ export type Theme = {
   name: string;
   css: Record<string, string>;
   icons: Record<string, string>;
+  variableDefaults: Record<string, string>;
 };
 
 export type PickVariables<P extends AnyPart, V extends object> = {
@@ -24,6 +25,7 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
       common: commonStructuralCSS,
     },
     icons: {},
+    variableDefaults: {},
   };
 
   const parts = flattenParts(Array.isArray(partOrParts) ? partOrParts : [partOrParts]);
@@ -72,9 +74,14 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
     }
   }
 
-  // combine CSS and conditional CSS
-  const themeClassSelector = `.ag-theme-${name}`;
+  // render variables
+  for (const [name, value] of Object.entries(mergedParams)) {
+    if (!presetProperties.has(name) && typeof value === 'string') {
+      result.variableDefaults[`--ag-${kebabCase(name)}`] = value;
+    }
+  }
 
+  // combine CSS and conditional CSS
   const mainCSS: string[] = [];
   for (const part of parts) {
     if (part.css) {
@@ -90,24 +97,12 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
   }
 
   if (mainCSS.length > 0) {
-    result.css[`theme-${name}`] = preprocessCss(themeClassSelector, mainCSS.join('\n'));
+    result.css[`theme-${name}`] = preprocessCss(
+      `.ag-theme-${name}`,
+      result.variableDefaults,
+      mainCSS.join('\n'),
+    );
   }
-
-  // render variables
-  const mergedParamEntries = Object.entries(mergedParams);
-  if (mergedParamEntries.length > 0)
-    result.css[`theme-${name}-variables`] =
-      `\n${themeClassSelector} {\n` +
-      mergedParamEntries
-        .filter(([name]) => !presetProperties.has(name))
-        .map(([name, value]) =>
-          // TODO consider how to escape this, or validate and remove invalid values like "; border: 1px solid red;" which will inject unrelated styles
-          // one idea: validate by removing single and double quoted strings, then escaped anything e.g. \; or \\, then check for no semicolons
-          // Syntax spec: https://www.w3.org/TR/css-syntax-3/
-          typeof value === 'string' ? `\t--ag-${kebabCase(name)}: ${value};\n` : '',
-        )
-        .join('') +
-      '}';
 
   // combine icons
   for (const part of parts) {
@@ -118,12 +113,22 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
 };
 
 const themeSelectorPlaceholder = ':ag-current-theme';
-const preprocessCss = (themeSelector: string, css: string) =>
-  css
-    // rtlcss doesn't have an option to remove the space after the RTL selector,
-    // so we're doing it here removing the space in `.ag-rtl .ag-theme-custom`
-    .replaceAll(` ${themeSelectorPlaceholder}`, themeSelectorPlaceholder)
-    .replaceAll(themeSelectorPlaceholder, themeSelector);
+const preprocessCss = (themeSelector: string, variables: Record<string, string>, css: string) => {
+  const addVariableDefaults = (css: string): string =>
+    css.replaceAll(/var\((--ag-[^)]+)\)/g, (match, variable) => {
+      const defaultValue = variables[variable];
+      if (defaultValue) {
+        return `var(${variable}, ${addVariableDefaults(defaultValue)})`;
+      } else {
+        return match;
+      }
+    });
+  // rtlcss doesn't have an option to remove the space after the RTL selector,
+  // so we're doing it here removing the space in `.ag-rtl .ag-theme-custom`
+  css = css.replaceAll(` ${themeSelectorPlaceholder}`, themeSelectorPlaceholder);
+  css = css.replaceAll(themeSelectorPlaceholder, themeSelector);
+  return addVariableDefaults(css);
+};
 
 const flattenParts = (parts: readonly AnyPart[]): Part[] => {
   const result: Part[] = [];

@@ -14,7 +14,7 @@ export const renderedThemeAtom = atom((get): Theme => {
 
   const theme = defineTheme('custom', themeParts, paramValues);
 
-  document.body.className = 'ag-theme-custom';
+  document.body.classList.add('ag-theme-custom');
 
   installTheme(theme);
 

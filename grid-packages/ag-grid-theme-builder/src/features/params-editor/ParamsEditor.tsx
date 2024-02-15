@@ -9,9 +9,11 @@ import { ColorParamEditor } from './ColorParamEditor';
 
 export const ParamsEditor = withErrorBoundary(() => (
   <Table>
-    {allParamModels().map((param) => (
-      <ParamEditor key={param.property} param={param} />
-    ))}
+    {allParamModels()
+      .filter((param) => param.meta.type !== 'preset')
+      .map((param) => (
+        <ParamEditor key={param.property} param={param} />
+      ))}
   </Table>
 ));
 
@@ -53,8 +55,10 @@ export const ParamEditor = ({ param }: ParamEditorProps) => {
           </Select>
         );
       case 'preset':
+        // presets don't have param editors, they're handled by part editors
+        return <span />;
       case 'css':
-        return <>TODO</>;
+        return <span>TODO</span>;
     }
   };
 
