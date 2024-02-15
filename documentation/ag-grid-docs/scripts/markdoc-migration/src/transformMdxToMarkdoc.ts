@@ -14,6 +14,7 @@ import { transformEnterpriseIcon } from './transformers/transformEnterpriseIcon'
 import { transformExternalLink } from './transformers/transformExternalLink';
 import { transformFrameworkSpecificSection } from './transformers/transformFrameworkSpecificSection';
 import { transformGridExample } from './transformers/transformGridExample';
+import { transformHeading } from './transformers/transformHeading';
 import { transformHtml } from './transformers/transformHtml';
 import { transformInterfaceDocumentation } from './transformers/transformInterfaceDocumentation';
 import { transformLink } from './transformers/transformLink';
@@ -47,6 +48,7 @@ export async function transformMdxToMarkdoc({ contents }: { contents: string }) 
     transformApiDocumentation(ast);
     transformInterfaceDocumentation(ast);
     transformFrameworkSpecificSection(ast);
+    transformHeading(ast);
     transformLink(ast);
     transformExternalLink(ast);
     transformIconsPanel(ast);
