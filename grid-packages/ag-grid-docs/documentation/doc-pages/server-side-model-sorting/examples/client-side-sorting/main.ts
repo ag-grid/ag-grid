@@ -9,21 +9,34 @@ declare var FakeServer: any;
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { field: 'athlete', minWidth: 220 },
-    { field: 'country', minWidth: 200 },
-    { field: 'year' },
-    { field: 'sport', minWidth: 200 },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
+    { field: 'country', rowGroup: true, hide: true },
+    { field: 'sport', rowGroup: true, hide: true },
+    { field: 'athlete', minWidth: 150 },
+    { field: 'gold', aggFunc: 'sum', enableValue: true },
+    { field: 'silver', aggFunc: 'sum', enableValue: true },
+    { field: 'bronze', aggFunc: 'sum', enableValue: true },
+    { field: 'total', aggFunc: 'sum', enableValue: true },
   ],
 
   defaultColDef: {
     flex: 1,
     minWidth: 100,
   },
+  autoGroupColumnDef: {
+    minWidth: 200,
+  },
 
-  cacheBlockSize: 10000,
+  isServerSideGroupOpenByDefault: (params) => {
+    var route = params.rowNode.getRoute();
+    if (!route) {
+      return false;
+    }
+
+    var routeAsString = route.join(',');
+    var routesToOpenByDefault = ['United States', 'United States,Gymnastics'];
+    return routesToOpenByDefault.indexOf(routeAsString) >= 0;
+  },
+
   serverSideEnableClientSideSort: true,
 
   // use the server-side row model
@@ -46,7 +59,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         } else {
           params.fail()
         }
-      }, 500)
+      }, 1000)
     },
   }
 }
