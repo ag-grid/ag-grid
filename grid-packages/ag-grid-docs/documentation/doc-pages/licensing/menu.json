@@ -1224,6 +1224,12 @@
                 "url": "/tool-panel-filters/",
                 "showInCollapsed": true,
                 "enterprise": true
+              },
+              {
+                "title": "Custom Panel",
+                "url": "/component-tool-panel/",
+                "enterprise": true,
+                "showInCollapsed": true
               }
             ]
           },
@@ -1528,18 +1534,6 @@
           {
             "title": "Overlay Component",
             "url": "/component-overlay/"
-          },
-          {
-            "title": "Status Bar Component",
-            "url": "/component-status-bar/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Tool Panel Component",
-            "url": "/component-tool-panel/",
-            "enterprise": true,
-            "showInCollapsed": true
           },
           {
             "title": "Tooltip Component",

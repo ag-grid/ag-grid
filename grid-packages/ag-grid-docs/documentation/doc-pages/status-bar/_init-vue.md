@@ -5,7 +5,7 @@
 |     updateStatusBar() { ... },
 |   },
 |   created() {
-|     // Remember to remove the event listener when the component is destroyed
+|     // Remove event listener when destroyed
 |     this.params.api.addEventListener(
 |       'modelUpdated',
 |       this.updateStatusBar.bind(this)

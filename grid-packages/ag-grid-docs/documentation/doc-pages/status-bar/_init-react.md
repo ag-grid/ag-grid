@@ -5,7 +5,7 @@
 |  useEffect(() => {
 |    props.api.addEventListener('modelUpdated', updateStatusBar);
 |
-|    // Remember to remove the event listener when the component is destroyed
+|    // Remove event listener when destroyed
 |    return () => {
 |        if (!props.api.isDestroyed()) {
 |            props.api.removeEventListener('modelUpdated', updateStatusBar);
