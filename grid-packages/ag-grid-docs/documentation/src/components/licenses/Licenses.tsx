@@ -30,7 +30,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         description: 'Community support',
         priceFullDollars: '0',
         launchPrice: null,
-        buyLink: 'https://ag-grid.com/react-data-grid/licensing/',
+        buyLink: 'https://ag-grid.com/javascript-data-grid/getting-started/',
         tabGroup: 'grid'
     },
     {
@@ -50,7 +50,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         description: 'Community support',
         priceFullDollars: '0',
         launchPrice: null,
-        buyLink: 'https://ag-grid.com/react-data-grid/licensing/',
+        buyLink: 'https://charts.ag-grid.com/javascript/quick-start/',
         tabGroup: 'charts'
     },
     {
@@ -76,13 +76,16 @@ const DEV_LICENSE_DATA: LicenseData[] = [
 ];
 
 const Price = ({ priceFullDollars, launchPrice }) => {
+    const price = launchPrice ? launchPrice : priceFullDollars;
+    const hasCost = price !== '0';
+
     return (
         <div className={styles.price}>
-             <span className={styles.developerText}>
-                    Starting from
-                </span>
-            <p className={styles.priceFullDollars}>
-                <span>${ launchPrice ? launchPrice : priceFullDollars}</span>
+            { hasCost && <span className={styles.developerText}>From</span> }
+
+            <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '' )}>
+                <span>{ hasCost ? `$${ price }` : 'Free' }</span>
+
                 { launchPrice && (
                     <>
                         <span className={styles.standardPrice}>
@@ -91,9 +94,8 @@ const Price = ({ priceFullDollars, launchPrice }) => {
                     </>
                 )}
             </p>
-            <p className={styles.developerText}>
-                per developer
-            </p>
+
+            { hasCost && <p className={styles.developerText}>per developer</p> }
         </div>
     );
 };
@@ -124,7 +126,7 @@ const License = (props: LicenseData) => {
                             });
                         }}
                     >
-                        {id === 'community' ? 'Start for free' : 'Buy now'}
+                        {id === 'community' ? 'Get started' : 'Buy now'}
                     </a>
                 </div>
             </div>
