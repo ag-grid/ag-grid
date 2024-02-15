@@ -21,6 +21,7 @@ import {
 } from "./colDef";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
+import { warnOnce } from "../utils/function";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =
@@ -849,6 +850,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      * @deprecated v31.1 Use `getColDef().menuTabs ?? defaultValues` instead.
      */
     public getMenuTabs(defaultValues: ColumnMenuTab[]): ColumnMenuTab[] {
+        warnOnce(`As of v31.1, 'getMenuTabs' is deprecated. Use 'getColDef().menuTabs ?? defaultValues' instead.`);
         let menuTabs = this.getColDef().menuTabs;
 
         if (menuTabs == null) {
