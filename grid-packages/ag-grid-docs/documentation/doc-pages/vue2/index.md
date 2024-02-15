@@ -78,11 +78,11 @@ new Vue({
 </tabs>
 
 <video-section id="eW3qCti1lsA" title="Getting Started Video Tutorial">
-    In this article, we will walk you through the necessary steps to add AG Grid
-    (both <a href="../licensing/">Community and Enterprise</a> are covered)
-    to an existing Vue project, configure some of the essential features of it.
-    We will show you some of the fundamentals of the grid (passing properties, using the API, etc).
-    As a bonus, we will also tweak the grid's visual appearance using Sass variables.
+In this article, we will walk you through the necessary steps to add AG Grid
+(both <a href="../licensing/">Community and Enterprise</a> are covered)
+to an existing Vue project, configure some of the essential features of it.
+We will show you some of the fundamentals of the grid (passing properties, using the API, etc).
+As a bonus, we will also tweak the grid's visual appearance using Sass variables.
 </video-section>
 
 <br/><br/>
