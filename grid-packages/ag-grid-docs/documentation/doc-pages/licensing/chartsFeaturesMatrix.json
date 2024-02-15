@@ -277,14 +277,17 @@
         "label": {
           "name": "Perpetual license"
         },
-        "community": false,
+        "community": {
+          "value": false,
+          "detail": "<a href='https://www.ag-grid.com/eula/AG-Grid-Community-License.html'>MIT license</a>"
+        },
         "enterprise": {
           "value": true,
-          "detail": "Including 1 year of updates"
+          "detail": "Including 1 year of updates (see <a href='https://www.ag-grid.com/eula/AG-Grid-Enterprise-License-Latest.html'>EULA</a>)"
         },
         "chartsGrid": {
           "value": true,
-          "detail": "Including 1 year of updates"
+          "detail": "Including 1 year of updates (see <a href='https://www.ag-grid.com/eula/AG-Grid-Enterprise-License-Latest.html'>EULA</a>)"
         }
       }
     ]

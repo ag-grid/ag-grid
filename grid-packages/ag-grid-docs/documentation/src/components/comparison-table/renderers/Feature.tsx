@@ -10,6 +10,6 @@ export function Feature({ value }: { value: boolean | string }) {
       { isEnabled && <span className={styles.tick}><Icon name="tick"/></span> }
       { !isEnabled && <span className={styles.dash}>—</span> }
 
-      { value.detail && <span className={styles.detail}>{value.detail}</span> }
+      { value.detail && <span className={styles.detail} dangerouslySetInnerHTML={{ __html: value.detail }}></span> }
     </div> 
 }
