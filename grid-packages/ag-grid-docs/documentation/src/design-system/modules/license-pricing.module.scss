@@ -9,7 +9,6 @@
     flex-wrap: wrap;
     gap: $spacing-size-8;
     margin-top: $spacing-size-12;
-    margin-bottom: $spacing-size-16;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         flex-wrap: nowrap;

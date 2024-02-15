@@ -394,18 +394,21 @@
         },
         "enterprise": {
           "value": true,
-          "detail": "Dedicated support via Zendesk"
+          "detail": "Enterprise support via Zendesk"
         },
         "chartsGrid": {
           "value": true,
-          "detail": "Dedicated support via Zendesk"
+          "detail": "Enterprise support via Zendesk"
         }
       },
       {
         "label": {
           "name": "Perpetual license"
         },
-        "community": false,
+        "community": {
+          "value": false,
+          "detail": "MIT license"
+        },
         "enterprise": {
           "value": true,
           "detail": "Including 1 year of updates"

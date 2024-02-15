@@ -106,13 +106,9 @@ export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
                 <div className={styles.topSection}>
                     <div className={styles.intro}>
                         <div className={styles.introSection}>
-                            <h1 className={styles.pricingHeading}>Pricing</h1>
-
-                            <p className="text-regular">Compare what’s different in our grid and charts products</p>
-
                             <div className={styles.switchContainer}>
                                 <div className={styles.gradient}></div>
-                                <ToggleBackground className={styles.toggleBackground} />
+                                {/* <ToggleBackground className={styles.toggleBackground} /> */}
                                 <hr className={styles.horizontalRule} />
                                 <div className={styles.toggleWrapper}>
                                     <input
@@ -205,15 +201,6 @@ export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
                             </div>
                         </div>
 
-                        <div className={styles.faqSection}>
-                            <h3 className="text-2xl">Frequently asked questions</h3>
-
-                            <p className="text-regular">
-                                Here are some of the most commonly asked questions our customers ask us at AG Grid
-                            </p>
-                        </div>
-
-                        <FAQ faqs={pricingFAQData} />
                     </div>
                 </div>
 
