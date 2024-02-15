@@ -1,24 +1,16 @@
 @use '../core' as *;
 
 .container {
-    margin-top: $spacing-size-12;
+    margin-top: $spacing-size-8;
 }
 
 .topSection {
     display: flex;
     flex-wrap: wrap;
     gap: $spacing-size-8;
-    margin-top: $spacing-size-12;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         flex-wrap: nowrap;
-    }
-
-    h1 {
-        font-size: 44px;
-        font-weight: var(--text-bold);
-        margin-bottom: $spacing-size-2;
-        line-height: var(--text-lh-ultra-tight);
     }
 }
 
@@ -28,12 +20,13 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    margin-bottom: $spacing-size-12;
+    margin-bottom: $spacing-size-8;
+    border-bottom: 1px solid var(--color-border-secondary);
+
     p {
         text-align: center;
         text-wrap: balance;
     }
-    border-bottom: 1px solid var(--color-border-secondary);
 }
 
 .intro {
@@ -361,7 +354,7 @@
     background-color: #fbfbfc;
 
     #{$selector-darkmode} & {
-        background: color-mix(in srgb,var(--color-fg-primary)  , var(--color-bg-primary) 98% );
+        background: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
     }
 
     &::before,
@@ -373,7 +366,7 @@
         top: 0;
         background-color: #fbfbfc;
         #{$selector-darkmode} & {
-            background: color-mix(in srgb,var(--color-fg-primary)  , var(--color-bg-primary) 98% );
+            background: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
         }
         z-index: -1;
         pointer-events: none;
@@ -680,11 +673,11 @@
     padding-left: $spacing-size-3;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border-secondary);
-    @media screen and (min-width: $breakpoint-pricing-large) { 
-    position: sticky;
-    top: 119px;
-    margin-bottom: $spacing-size-2;
-}
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        position: sticky;
+        top: 119px;
+        margin-bottom: $spacing-size-2;
+    }
     color: var(--color-text-secondary);
     z-index: 1;
 

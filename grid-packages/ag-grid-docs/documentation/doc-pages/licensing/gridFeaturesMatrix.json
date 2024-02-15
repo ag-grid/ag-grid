@@ -6,16 +6,7 @@
     "items": [
       {
         "label": {
-          "name": "Integrated Community Charts",
-          "link": "https://ag-grid.com/javascript-data-grid/integrated-charts/"
-        },
-        "community": false,
-        "enterprise": true,
-        "chartsGrid": true
-      },
-      {
-        "label": {
-          "name": "Integrated Enterprise Charts",
+          "name": "Integrated Charts",
           "link": "https://ag-grid.com/javascript-data-grid/integrated-charts/"
         },
         "community": false,
@@ -386,7 +377,7 @@
     "items": [
       {
         "label": {
-          "name": "Dedicated support",
+          "name": "Enterprise support",
           "link": "https://ag-grid.com/javascript-data-grid/licensing/"
         },
         "community": {
