@@ -59,7 +59,7 @@ export class MiniRadialBar extends MiniChartWithPolarAxes {
                 sector.startAngle = startAngle;
                 sector.endAngle = endAngle;
                 sector.stroke = undefined;
-                sector.strokeWidth = 1;
+                sector.strokeWidth = 0;
                 return sector;
             });
 

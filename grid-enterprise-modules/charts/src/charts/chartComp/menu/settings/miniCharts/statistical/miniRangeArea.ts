@@ -81,8 +81,8 @@ export class MiniRangeArea extends MiniChartWithAxes {
             lines.push([highLine, lowLine]);
             areas.push(area);
 
-            highLine.strokeWidth = 1;
-            lowLine.strokeWidth = 1;
+            highLine.strokeWidth = 0;
+            lowLine.strokeWidth = 0;
             area.strokeWidth = 0;
             area.fillOpacity = 0.8;
 
