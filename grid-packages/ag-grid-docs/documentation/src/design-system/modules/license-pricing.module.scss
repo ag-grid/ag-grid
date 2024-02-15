@@ -9,7 +9,6 @@
     flex-wrap: wrap;
     gap: $spacing-size-8;
     margin-top: $spacing-size-12;
-    margin-bottom: $spacing-size-16;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         flex-wrap: nowrap;
@@ -29,7 +28,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    margin-bottom: $spacing-size-16;
+    margin-bottom: $spacing-size-12;
     p {
         text-align: center;
         text-wrap: balance;
@@ -43,7 +42,7 @@
     text-align: center;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
-        margin-top: 36px;
+        margin-top: $spacing-size-4;
         text-align: left;
     }
 
@@ -115,7 +114,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     // gap: $spacing-size-8;
-    padding-top: $spacing-size-20;
+    padding-top: $spacing-size-5;
 }
 
 .buyTogether {

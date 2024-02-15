@@ -27,17 +27,17 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         className: styles.gridLicense,
         id: 'community',
         subHeading: 'AG Grid Community',
-        description: 'Free for everyone, including production use',
+        description: 'Community support',
         priceFullDollars: '0',
         launchPrice: null,
-        buyLink: 'https://ag-grid.com/react-data-grid/licensing/',
+        buyLink: 'https://ag-grid.com/javascript-data-grid/getting-started/',
         tabGroup: 'grid'
     },
     {
         className: styles.gridLicense,
         id: 'enterprise-grid',
         subHeading: 'AG Grid Enterprise',
-        description: 'All the grid features and dedicated support',
+        description: 'Enterprise support',
         priceFullDollars: '999',
         launchPrice: null,
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
@@ -47,17 +47,17 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         className: styles.gridLicense,
         id: 'community',
         subHeading: 'AG Charts Community',
-        description: 'Free for everyone, including production use',
+        description: 'Community support',
         priceFullDollars: '0',
         launchPrice: null,
-        buyLink: 'https://ag-grid.com/react-data-grid/licensing/',
+        buyLink: 'https://charts.ag-grid.com/javascript/quick-start/',
         tabGroup: 'charts'
     },
     {
         className: styles.gridLicense,
         id: 'enterprise-charts',
         subHeading: 'AG Charts Enterprise',
-        description: 'All the chart features and dedicated support',
+        description: 'Enterprise support',
         priceFullDollars: '399',
         launchPrice: '199',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
@@ -66,8 +66,8 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.chartsLicense,
         id: 'togther',
-        subHeading: 'AG Grid + AG Charts Enterprise',
-        description: 'All grid + chart features and dedicated support',
+        subHeading: 'AG Grid Bundle',
+        description: 'AG Grid + AG Chart Enterprise',
         priceFullDollars: '1398',
         launchPrice: '1198',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
@@ -76,13 +76,16 @@ const DEV_LICENSE_DATA: LicenseData[] = [
 ];
 
 const Price = ({ priceFullDollars, launchPrice }) => {
+    const price = launchPrice ? launchPrice : priceFullDollars;
+    const hasCost = price !== '0';
+
     return (
         <div className={styles.price}>
-             <span className={styles.developerText}>
-                    Starting from
-                </span>
-            <p className={styles.priceFullDollars}>
-                <span>${ launchPrice ? launchPrice : priceFullDollars}</span>
+            { hasCost && <span className={styles.developerText}>From</span> }
+
+            <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '' )}>
+                <span>{ hasCost ? `$${ price }` : 'Free' }</span>
+
                 { launchPrice && (
                     <>
                         <span className={styles.standardPrice}>
@@ -91,9 +94,8 @@ const Price = ({ priceFullDollars, launchPrice }) => {
                     </>
                 )}
             </p>
-            <p className={styles.developerText}>
-                per developer
-            </p>
+
+            { hasCost && <p className={styles.developerText}>per developer</p> }
         </div>
     );
 };
@@ -124,7 +126,7 @@ const License = (props: LicenseData) => {
                             });
                         }}
                     >
-                        {id === 'community' ? 'Start for free' : 'Buy now'}
+                        {id === 'community' ? 'Get started' : 'Buy now'}
                     </a>
                 </div>
             </div>
