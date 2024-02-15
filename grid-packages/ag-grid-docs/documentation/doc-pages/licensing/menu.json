@@ -1246,7 +1246,7 @@
             "showInCollapsed": true
           },
           {
-            "title": "Custom Menu Item",
+            "title": "Menu Item Component",
             "url": "/component-menu-item/",
             "enterprise": true,
             "showInCollapsed": true
@@ -1324,7 +1324,7 @@
                 "enterprise": true
               },
               {
-                "title": "Loading Component",
+                "title": "Loading Cell Renderer",
                 "url": "/component-loading-cell-renderer/"
               },
               {
@@ -1530,20 +1530,6 @@
           {
             "title": "Date Component",
             "url": "/component-date/"
-          },
-          {
-            "title": "Loading Cell Renderer",
-            "url": "/component-loading-cell-renderer/"
-          },
-          {
-            "title": "Menu Item Component",
-            "url": "/component-menu-item/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Overlay Component",
-            "url": "/component-overlay/"
           },
           {
             "title": "Tooltip Component",
