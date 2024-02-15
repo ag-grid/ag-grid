@@ -10,6 +10,7 @@ import { find } from 'unist-util-find';
 import { JSX_TEXT_TYPE, JSX_TYPE } from './constants';
 import { removeElements } from './transformers/removeElements';
 import { transformApiDocumentation } from './transformers/transformApiDocumentation';
+import { transformDownloadDSButton } from './transformers/transformDownloadDSButton';
 import { transformEnterpriseIcon } from './transformers/transformEnterpriseIcon';
 import { transformExternalLink } from './transformers/transformExternalLink';
 import { transformFrameworkSpecificSection } from './transformers/transformFrameworkSpecificSection';
@@ -51,6 +52,7 @@ export async function transformMdxToMarkdoc({ contents }: { contents: string }) 
     transformFrameworkSpecificSection(ast);
     transformHeading(ast);
     transformLink(ast);
+    transformDownloadDSButton(ast);
     transformExternalLink(ast);
     transformIconsPanel(ast);
     transformTabs(ast);

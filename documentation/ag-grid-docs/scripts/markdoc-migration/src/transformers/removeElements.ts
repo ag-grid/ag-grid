@@ -18,7 +18,6 @@ export function removeElements(ast: any) {
         'ul',
         // Components that need to be implemented or needs
         // to be updated manually
-        'download-ds-button',
         'matrix-table',
     ];
 

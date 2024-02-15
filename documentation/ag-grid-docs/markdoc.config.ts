@@ -162,6 +162,9 @@ export default defineMarkdocConfig({
         iconsPanel: {
             render: component('./src/components/icon/IconsPanel.astro'),
         },
+        downloadDSButton: {
+            render: component('./src/components/download-ds-button/DownloadDSButton.astro'),
+        },
         image: {
             render: component('./src/components/image/Image.astro'),
             attributes: {
