@@ -37,7 +37,7 @@ const CommunityPage = () => {
             },
             maxWidth: 150,
         },
-        { field: 'stars', sort: 'desc' },
+        { field: 'stars', sort: 'desc', filter: 'agNumberColumnFilter', },
         { field: 'type' },
     ];
 

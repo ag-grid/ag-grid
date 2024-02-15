@@ -1,0 +1,186 @@
+[
+    {
+        "title": "AG Grid: Typescript Generics",
+        "link": "https://dev.to/ag-grid/ag-grid-typescript-generics-21bh",
+        "description": "In this article, we will show you how to make the most of Typescript Generics in AG Grid v28. We will demonstrate the great developer experience it unlocks with the help of code examples.",
+        "author": "Stephen Cooper",
+        "type": "Blog",
+        "published": "07/2022"
+    },
+    {
+        "title": "Meet Niall Crosby, CEO of JavaScript Data Grid: AG Grid",
+        "link": "https://techround.co.uk/interviews/niall-crosby-ag-grid/",
+        "description": "Following a record-breaking year and over £16m in revenues at AG Grid, the team at TechRound spoke to the company’s CEO Niall Crosby about how he made the data grid provider the ‘gold standard’ within the industry.",
+        "author": "Tech Round",
+        "type": "Blog",
+        "published": "04/2022"
+    },
+    {
+        "title": "Use AG Grid with Observables as cell values",
+        "link": "https://dev.to/ag-grid/use-ag-grid-with-observables-as-cell-values-89f",
+        "description": "Learn a clean approach to working with Observable data in Angular.",
+        "author": "Stephen Cooper",
+        "type": "Blog",
+        "published": "01/2023"
+    },
+    {
+        "title": "AgGrid: From Open Source to Successful Business ft. Niall Crosby - JSJ 504",
+        "link": "https://podcasts.apple.com/gb/podcast/aggrid-from-open-source-to-successful-business-ft-niall/id496893300?i=1000538344830",
+        "description": "Niall Crosby, creator of AgGrid, joins the panel to discuss the journey from building an open source data grid used all over the world to providing support and enterprise features and running a successful business based on that same open source software.",
+        "author": "Javascript Jabber",
+        "type": "Podcast",
+        "published": "06/2022"
+    },
+    {
+        "title": "AGGrid: High-Performance DOM Updates w/ Niall Crosby",
+        "link": "https://www.youtube.com/watch?v=QRtrS_SvR4w",
+        "description": "SolidJS's ecosystem has been growing at a rapid rate. The latest addition is AGGrid, a high-performance table library. Niall Crosby, creator of AGGrid, joins me on stream to talk about what AGGrid is, how we can use it with Solid, and where things are going in the future.",
+        "author": "Ryan Carniato",
+        "type": "Video",
+        "published": "10/2022"
+    },
+    {
+        "title": "Typing the not so secret to customisation ngTemplateOutlet",
+        "link": "https://www.youtube.com/watch?v=ELRCT7ooNCU",
+        "description": "ngTemplateOutlets are no longer a secret and continue to be an immensely powerful feature for customising our applications. But they were held back by a lack of template typings. This is no longer the case. We can now type them!",
+        "author": "Stephen Cooper",
+        "type": "Video",
+        "published": "10/2023"
+    },
+    {
+        "title": "AG Grid's new React Rendering Engine ",
+        "link": "https://www.youtube.com/watch?v=u4QTr56t7iM&t=9004s",
+        "description": "An overview of the Rendering engine built specifically for React",
+        "author": "Niall Crosby",
+        "type": "Video",
+        "published": "04/2022"
+    },
+    {
+        "title": "How to use ag grid in angular | From Setup to Advance",
+        "link": "https://www.youtube.com/watch?v=XqH7gXY0Rb8",
+        "description": "Learn how to use AG Grid in Angular",
+        "author": "Learning Partner",
+        "type": "Video",
+        "published": "01/2024"
+    },
+    {
+        "title": "Dash Ag Grid - Icons, Dropdowns, and Links",
+        "link": "https://www.youtube.com/watch?v=MzmefjD9Oow",
+        "description": "Learn to add Icons, Dropdowns and Links to the Dash Ag Grid Table. ",
+        "author": "Charming Data",
+        "type": "Video",
+        "published": "04/2023"
+    },
+    {
+        "title": "React Ag-Grid Tutorial: Server-Side Pagination, Filtering, Search, and Sorting | Codenemy Tutorial",
+        "link": "https://www.youtube.com/watch?v=qOTeoNheCEc",
+        "description": "Learn how to implement medium to advanced AG Grid functionality",
+        "author": "Codenemy",
+        "type": "Video",
+        "published": "07/2021"
+    },
+    {
+        "title": "Introduction to Dash Ag Grid",
+        "link": "https://www.youtube.com/watch?v=LSLNt6PFgIM",
+        "description": "Discover the power behind Dash Ag Grid, and learn to connect it to a Plotly histogram and a scatter plot.",
+        "author": "Charming Data",
+        "type": "Video",
+        "published": "05/2023"
+    },
+    {
+        "title": "High-Performance Data Tables with Dash AG Grid",
+        "link": "https://www.youtube.com/watch?v=dovf4FwtwPg",
+        "description": "Learn about Dash AG Grid from Co-founder & CTO, Alex Johnson",
+        "author": "Alex Johnson",
+        "type": "Video",
+        "published": "01/2023"
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    },
+    {
+        "title": "",
+        "link": "",
+        "description": "",
+        "author": "",
+        "type": "",
+        "published": ""
+    }
+]

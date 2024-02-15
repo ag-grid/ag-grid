@@ -1,0 +1,94 @@
+[
+    {
+        "company": "MongoDB",
+        "product": "Compass"
+    },    
+    {
+        "company": "NASA",
+        "product": "Aerie"
+    },    
+    {
+        "company": "Prisma",
+        "product": "Prisma Studio"
+    },    
+    {
+        "company": "Apache",
+        "product": "Traffic Control"
+    },    
+    {
+        "company": "Allianz",
+        "product": "NG-Aquila"
+    },    
+    {
+        "company": "Siemens",
+        "product": "IX"
+    },    
+    {
+        "company": "Coveo",
+        "product": "Coveo Search UI"
+    },    
+    {
+        "company": "AWS",
+        "product": "Network Orchestration for Transit Gateway"
+    },    
+    {
+        "company": "Lowdefy",
+        "product": "Lowdefy"
+    },    
+    {
+        "company": "MLFlow",
+        "product": "MLFlow"
+    },    
+    {
+        "company": "OpenBB Finance",
+        "product": "Terminal Pro"
+    },    
+    {
+        "company": ".NET Core",
+        "product": "WTM"
+    },    
+    {
+        "company": "Morgan Stanley",
+        "product": "Test Plan"
+    },    
+    {
+        "company": "Public Health Agency of Canada",
+        "product": "IRIDA"
+    },    
+    {
+        "company": "National Security Agency (NSA)",
+        "product": "Timely"
+    },    
+    {
+        "company": "J.P. Morgan",
+        "product": "Salt Design System"
+    },    
+    {
+        "company": "Microsoft Azure",
+        "product": "Azure IoT Device Simulations"
+    },    
+    {
+        "company": "Microsoft",
+        "product": "MSR Gamut"
+    },    
+    {
+        "company": "Province of British Columbia",
+        "product": "PIMS"
+    },   
+    {
+        "company": "Environmental Defense Fund",
+        "product": "Rio"
+    },    
+    {
+        "company": "County of San Francisco",
+        "product": "DAHLIA"
+    },    
+    {
+        "company": "Open Search",
+        "product": "Dashboard Observability"
+    },    
+    {
+        "company": "",
+        "product": ""
+    }
+]

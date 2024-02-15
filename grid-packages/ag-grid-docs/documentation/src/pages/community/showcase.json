@@ -41,6 +41,7 @@
         "title": "Unavco",
         "open_source": false,
         "description": "A public network (GPS) monitoring application.",
+        "stars": 0,
         "type": "Product"
     },
     {
@@ -711,7 +712,7 @@
         "repo": "https://github.com/ChainMovers/suibase",
         "open_source": true,
         "stars": 25,
-        "type": "Itnegration",
+        "type": "Integration",
         "link": "suibase.io"
     },
     {
@@ -1282,22 +1283,454 @@
         "link": "https://design.baloise.dev"
     },
     {
-        "title": "",
-        "description": "",
-        "repo": "",
+        "title": "SBA Angular",
+        "description": "Sinequa's Angular-based Search Based Application (SBA) Framework",
+        "repo": "https://github.com/sinequa/sba-angular",
         "open_source": true,
-        "stars": 0,
-        "type": "",
+        "stars": 30,
+        "type": "Integration",
+        "link": "https://sinequa.github.io/sba-angular/"
+    },
+    {
+        "title": "Metriql",
+        "description": "Metriql is an open-source metrics store which allows companies to define their metrics as code and share them across their BI and data tools easily",
+        "repo": "https://github.com/metriql/metriql",
+        "open_source": true,
+        "stars": 290,
+        "type": "Product",
+        "link": "https://metriql.com"
+    },
+    {
+        "title": "AG Grid OData",
+        "description": "Odata provider for ag-grid",
+        "repo": "https://github.com/SenyaMur/ag-grid-odata",
+        "open_source": true,
+        "stars": 20,
+        "type": "Extension",
+        "link": "https://codesandbox.io/p/sandbox/ag-grid-server-side-row-model-sample-zqujt"
+    },
+    {
+        "title": "DayZ Server Manager",
+        "description": "A server installer and watch-dog for dayz standalone with built-in Discord and RCon bot",
+        "repo": "https://github.com/mr-guard/dayz-server-manager",
+        "open_source": true,
+        "stars": 110,
+        "type": "Product",
         "link": ""
     },
     {
-        "title": "",
-        "description": "",
-        "repo": "",
+        "title": "Abacus",
+        "description": "Abacus: Automattic's Experimentation Platform UI",
+        "repo": "https://github.com/Automattic/abacus",
         "open_source": true,
-        "stars": 0,
-        "type": "",
+        "stars": 30,
+        "type": "Product",
+        "link": "https://abacus-a8c.vercel.app/"
+    },
+    {
+        "title": "SF Dahlia Web",
+        "description": "DAHLIA is the affordable housing portal for the City and County of San Francisco.",
+        "repo": "https://github.com/SFDigitalServices/sf-dahlia-web",
+        "open_source": true,
+        "stars": 30,
+        "type": "Product",
+        "link": "https://housing.sfgov.org"
+    },
+    {
+        "title": "VSCode Kusto",
+        "description": "A Visual Studio Code extension that provides the ability to run Kusto queries in Notebooks as well as plain text files.",
+        "repo": "https://github.com/notebookPowerTools/vscode-kusto",
+        "open_source": true,
+        "stars": 25,
+        "type": "Product",
+        "link": "https://marketplace.visualstudio.com/items?itemName=donjayamanne.kusto"
+    },
+    {
+        "title": "Fribbels Epic 7 Optimizer",
+        "description": "A gear optimizer for the mobile game Epic 7",
+        "repo": "https://github.com/fribbels/Fribbels-Epic-7-Optimizer",
+        "open_source": true,
+        "stars": 460,
+        "type": "Product",
         "link": ""
+    },
+    {
+        "title": "OperatorFabric",
+        "description": "OperatorFabric is a modular, extensible, industrial-strength platform for use in electricity, water, and other utility operations.",
+        "repo": "https://github.com/opfab/operatorfabric-core",
+        "open_source": true,
+        "stars": 40,
+        "type": "Product",
+        "link": "https://opfab.github.io/"
+    },
+    {
+        "title": "AspNetCoreSpa",
+        "description": "Asp.Net 7.0 & Angular 15 SPA Fullstack application with plenty of examples.",
+        "repo": "https://github.com/fullstackproltd/AspNetCoreSpa",
+        "open_source": true,
+        "stars": 1500,
+        "type": "Product",
+        "link": "https://aspnetcorespa.fullstackpro.co.uk/"
+    },
+    {
+        "title": "Switchboard Dapp",
+        "description": "Switchboard dApp is a decentralized application that allows management of identities, assets, applications, services and access controls with DIDs(Decentralised Identifiers) and VCs(Verifiable Credentials)",
+        "repo": "https://github.com/energywebfoundation/switchboard-dapp",
+        "open_source": true,
+        "stars": 30,
+        "type": "Product",
+        "link": "https://switchboard.energyweb.org/"
+    },
+    {
+        "title": "VSCode Q",
+        "description": "vscode kdb+/q extension ",
+        "repo": "https://github.com/jshinonome/vscode-q",
+        "open_source": true,
+        "stars": 40,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "Open Trading Platform",
+        "description": "An open source highly scalable platform for building cross asset execution orientated trading applications that can be easily deployed on-prem or in the cloud. Primarily written in Golang, with a Java FIX market simulator and React client. ",
+        "repo": "https://github.com/ettec/open-trading-platform",
+        "open_source": true,
+        "stars": 60,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "AoE II Companion",
+        "description": "A companion app for Age of Empires 2",
+        "repo": "https://github.com/denniske/aoe2companion",
+        "open_source": true,
+        "stars": 90,
+        "type": "Product",
+        "link": "https://https://www.aoe2companion.com/"
+    },
+    {
+        "title": "AWS Network Orchestration",
+        "description": "The Network Orchestration for AWS Transit Gateway solution automates the process of setting up and managing transit networks in distributed AWS environments.",
+        "repo": "https://github.com/aws-solutions/network-orchestration-for-aws-transit-gateway",
+        "open_source": true,
+        "stars": 100,
+        "type": "Product",
+        "link": "https://aws.amazon.com/solutions/implementations/serverless-transit-network-orchestrator/"
+    },
+    {
+        "title": "Federal Geospatial Platform Visualiser (FGPV)",
+        "description": "The Reusable Accessible Mapping Platform (RAMP), also known as the Federal Geospatial Platform Visualiser (FGPV), is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.0 'AA' compliant common viewer platform for the Government of Canada.",
+        "repo": "https://github.com/fgpv-vpgf/fgpv-vpgf",
+        "open_source": true,
+        "stars": 50,
+        "type": "Product",
+        "link": "https://fgpv-vpgf.github.io/fgpv-vpgf/develop/docs/#/"
+    },
+    {
+        "title": "Management Presence Server",
+        "description": "The Management Presence Server (MPS) is a cloud-agnostic microservice that enables platforms featuring Intel® AMT to be managed over the internet.",
+        "repo": "https://github.com/open-amt-cloud-toolkit/mps",
+        "open_source": true,
+        "stars": 25,
+        "type": "Product",
+        "link": "https://open-amt-cloud-toolkit.github.io/docs/"
+    },
+    {
+        "title": "WizardMC",
+        "description": "Official website of the WizardMC minecraft server.",
+        "repo": "https://github.com/EvoWide/wizardmc.fr",
+        "open_source": true,
+        "stars": 40,
+        "type": "Product",
+        "link": "https://wizardmc.fr/"
+    },
+    {
+        "title": "PIMS",
+        "description": "Property Inventory Management System",
+        "repo": "https://github.com/bcgov/PIMS",
+        "open_source": true,
+        "stars": 40,
+        "type": "Product",
+        "link": "https://pims.gov.bc.ca"
+    },
+    {
+        "title": "MX Division Builds",
+        "description": "A tool to create and share build easily currently in public beta",
+        "repo": "https://github.com/mxswat/mx-division-builds",
+        "open_source": true,
+        "stars": 80,
+        "type": "Product",
+        "link": "https://mxswat.github.io/mx-division-builds/"
+    },
+    {
+        "title": "Homer UI",
+        "description": "This project provides the Front-End components of HOMER 7.x and higher, featuring native integration with all supported backend components for search and analytics including pgsql, influxdb, prometheus, loki and more.",
+        "repo": "https://github.com/sipcapture/homer-ui",
+        "open_source": true,
+        "stars": 65,
+        "type": "Product",
+        "link": "https://sipcapture.org/"
+    },
+    {
+        "title": "Theia Trace Extension",
+        "description": "Theia trace viewer extension using the tsp-typescript-client",
+        "repo": "https://github.com/eclipse-cdt-cloud/theia-trace-extension",
+        "open_source": true,
+        "stars": 50,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "Employee Mangement System",
+        "description": "Employee management system frontend react",
+        "repo": "https://github.com/fenil29/employee-management-system-frontend-react",
+        "open_source": true,
+        "stars": 90,
+        "type": "Product",
+        "link": "https://employee-management-fk.netlify.com/"
+    },
+    {
+        "title": "Chemotion",
+        "description": "An Electronic Lab Notebook for chemists!",
+        "repo": "https://github.com/ComPlat/chemotion_ELN",
+        "open_source": true,
+        "stars": 110,
+        "type": "Product",
+        "link": "https://www.chemotion.net/"
+    },
+    {
+        "title": "MongoDB Compass",
+        "description": "The GUI for MongoDB.",
+        "repo": "https://github.com/mongodb-js/compass",
+        "open_source": true,
+        "stars": 1000,
+        "type": "Product",
+        "link": "https://mongodb.com/compass"
+    },
+    {
+        "title": "Candilib V2",
+        "description": "Application for online reservation of places for the practical driving license test.",
+        "repo": "https://github.com/LAB-MI/candilibV2",
+        "open_source": true,
+        "stars": 40,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "NGX Formly",
+        "description": "JSON powered / Dynamic forms for Angular",
+        "repo": "https://github.com/ngx-formly/ngx-formly",
+        "open_source": true,
+        "stars": 2700,
+        "type": "Product",
+        "link": "https://formly.dev"
+    },
+    {
+        "title": "BTS CE Lite",
+        "description": "BTS-CE-Lite (Boda-Lite) is a cross platform vendor and technology agnostic telecommunication network management desktop application",
+        "repo": "https://github.com/bodastage/bts-ce-lite",
+        "open_source": true,
+        "stars": 30,
+        "type": "Product",
+        "link": "https://www.bodastage.org/bts-ce-lite"
+    },
+    {
+        "title": "SYNCloud",
+        "description": "Run popular services on your device with one click",
+        "repo": "https://github.com/syncloud/platform",
+        "open_source": true,
+        "stars": 400,
+        "type": "Product",
+        "link": "https://syncloud.org/"
+    },
+    {
+        "title": "TestPlan",
+        "description": "Testplan, a multi-testing framework, because unit tests can only go so far..",
+        "repo": "http://testplan.readthedocs.io/",
+        "open_source": true,
+        "stars": 170,
+        "type": "Integration",
+        "link": "http://testplan.readthedocs.io/"
+    },
+    {
+        "title": "AG Grid Autocomplete Editor",
+        "description": "Quick implementation of autocompletion into ag-Grid cell using autocompleter package.",
+        "repo": "https://github.com/avallete/ag-grid-autocomplete-editor",
+        "open_source": true,
+        "stars": 50,
+        "type": "Extension",
+        "link": "https://stackblitz.com/edit/ag-grid-autocomplete-editor?file=index.js"
+    },
+    {
+        "title": "Kendraio App",
+        "description": "Kendraio App is an open source dashboard application for rights owners, music makers, managers and record labels, enabling users to manage and track their digital media assets, collaborations and associated rights.",
+        "repo": "https://github.com/kendraio/kendraio-app",
+        "open_source": true,
+        "stars": 22,
+        "type": "Product",
+        "link": "https://app.kendra.io/"
+    },
+    {
+        "title": "ZimFarm",
+        "description": "Farm operated by bots to grow and harvest new zim files",
+        "repo": "https://github.com/openzim/zimfarm",
+        "open_source": true,
+        "stars": 70,
+        "type": "Product",
+        "link": "https://farm.openzim.org/"
+    },
+    {
+        "title": "File Manager",
+        "description": "A file manager web app with Django rest framework in backend and Vue.js in frontend with ag-grid data tables integration.",
+        "repo": "https://github.com/talented/FileManager",
+        "open_source": true,
+        "stars": 80,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "C2C UI",
+        "description": "User interface for camptocamp.org",
+        "repo": "https://github.com/c2corg/c2c_ui",
+        "open_source": true,
+        "stars": 25,
+        "type": "Product",
+        "link": "https://www.camptocamp.org"
+    },
+    {
+        "title": "CoinFi",
+        "description": "CoinFi is the cryptocurrency market intelligence platform.",
+        "repo": "https://github.com/coinfi/coinfi",
+        "open_source": true,
+        "stars": 70,
+        "type": "Product",
+        "link": "www.coinfi.com"
+    },
+    {
+        "title": "AccountGo",
+        "description": "Accounting System built in ASP.NET DotNetCore, ReactJS, MobX. Don't forget to click STAR if you like this project.",
+        "repo": "https://github.com/AccountGo/accountgo",
+        "open_source": true,
+        "stars": 370,
+        "type": "Product",
+        "link": "http://accountgo.net/"
+    },
+    {
+        "title": "Cube",
+        "description": "Cube — The Semantic Layer for Building Data Applications",
+        "repo": "https://github.com/cube-js/cube",
+        "open_source": true,
+        "stars": 16900,
+        "type": "Product",
+        "link": "https://cube.dev/"
+    },
+    {
+        "title": "Krypto Trading Bot",
+        "description": "Self-hosted crypto trading bot (automated high frequency market making) written in C++",
+        "repo": "https://github.com/ctubio/Krypto-trading-bot",
+        "open_source": true,
+        "stars": 3200,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "Timely",
+        "description": "Timely is a time series database application that provides secure access to time series data.",
+        "repo": "https://github.com/NationalSecurityAgency/timely",
+        "open_source": true,
+        "stars": 370,
+        "type": "Product",
+        "link": "https://code.nsa.gov/timely/"
+    },
+    {
+        "title": "Hook0",
+        "description": "Open-source webhook server that helps you provide webhooks to your users. It handles for you a great amount of features that are usually tedious to (re)implement.",
+        "repo": "https://github.com/hook0/hook0",
+        "open_source": true,
+        "stars": 360,
+        "type": "Product",
+        "link": "https://www.hook0.com/"
+    },
+    {
+        "title": "LiteSpeedTest",
+        "description": "LiteSpeedTest is a simple tool for batch test ss/ssr/v2ray/trojan/clash servers.",
+        "repo": "https://github.com/xxf098/LiteSpeedTest",
+        "open_source": true,
+        "stars": 310,
+        "type": "Product",
+        "link": ""
+    },
+    {
+        "title": "Siembol",
+        "description": "An open-source, real-time Security Information & Event Management tool based on big data technologies, providing a scalable, advanced security analytics framework.",
+        "repo": "https://github.com/G-Research/siembol",
+        "open_source": true,
+        "stars": 200,
+        "type": "Product",
+        "link": "https://siembol.io/"
+    },
+    {
+        "title": "Scancode Workbench",
+        "description": "ScanCode Workbench is a desktop app to review and conclude license and origin from code scans generated by ScanCode Toolkit.",
+        "repo": "https://github.com/nexB/scancode-workbench",
+        "open_source": true,
+        "stars": 150,
+        "type": "Product",
+        "link": "https://github.com/nexB/scancode-workbench/releases/latest"
+    },
+    {
+        "title": "MapleStory Music",
+        "description": "MapleStory Music website",
+        "repo": "https://github.com/maplestory-music/maplestory-music.github.io",
+        "open_source": true,
+        "stars": 100,
+        "type": "Product",
+        "link": "https://maplestory-music.github.io/"
+    },
+    {
+        "title": "Opensearch Dashboard Observability",
+        "description": "Visualize and explore your logs, traces and metrics data in OpenSearch Dashboards",
+        "repo": "https://github.com/opensearch-project/dashboards-observability",
+        "open_source": true,
+        "stars": 10,
+        "type": "Product",
+        "link": "https://opensearch.org/docs/latest/observability-plugin/index/"
+    },
+    {
+        "title": "Feliz AG Grid",
+        "description": "Feliz-style bindings for ag-grid-react",
+        "repo": "https://github.com/CompositionalIT/feliz-ag-grid",
+        "open_source": true,
+        "stars": 10,
+        "type": "Wrapper",
+        "link": "https://compositionalit.github.io/feliz-ag-grid/"
+    },
+    {
+        "open_source": true,
+        "stars": 5,
+        "link": "https://package.elm-lang.org/packages/mercurymedia/elm-ag-grid/latest/AgGrid",
+        "title": "Elm AG Grid",
+        "repo": "https://github.com/mercurymedia/elm-ag-grid",
+        "description": "Elm integration for the Ag Grid data grid library.",
+        "type": "Wrapper"
+    },
+    {
+        "title": "Blazor AG Grid",
+        "description": "Blazor-wrapped component over ag-Grid",
+        "repo": "https://github.com/ebekker/blazor-ag-grid",
+        "open_source": true,
+        "stars": 60,
+        "type": "Wrapper",
+        "link": "https://blog.bkkr.us/blazor-ag-grid/"
+    },
+    {
+        "title": "AG Grid RS (Rust)",
+        "description": "Rust bindings for the AG Grid JavaScript table library.",
+        "repo": "https://github.com/mfreeborn/ag-grid-rs/tree/main",
+        "open_source": true,
+        "stars": 10,
+        "type": "Wrapper",
+        "link": "https://docs.rs/ag-grid-rs/latest/ag_grid_rs/index.html#"
     },
     {
         "title": "",
