@@ -406,3 +406,5 @@ export type VariableTypes = {
    */
   iconStrokeWidth: string;
 };
+
+export const allParts = [core, colors, borders, quartzIcons];

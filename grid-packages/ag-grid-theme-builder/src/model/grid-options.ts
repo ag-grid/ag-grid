@@ -42,7 +42,6 @@ export const buildGridOptions = (
   };
 
   if (config.advancedFilter) {
-    debugger;
     options.enableAdvancedFilter = true;
     defaultColDef.filter = true;
   }
@@ -79,11 +78,9 @@ export const buildGridOptions = (
     if (!config.rowGrouping) {
       columnDefs[0].checkboxSelection = (params) => {
         // we put checkbox on the name if we are not doing grouping
-        debugger;
         return params.api.getRowGroupColumns().length === 0;
       };
       columnDefs[0].headerCheckboxSelection = (params) => {
-        debugger;
         // we put checkbox on the name if we are not doing grouping
         return params.api.getRowGroupColumns().length === 0;
       };

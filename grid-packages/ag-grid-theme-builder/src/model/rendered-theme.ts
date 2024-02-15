@@ -1,23 +1,18 @@
 import { atom } from 'jotai';
-import {
-  Theme,
-  borders,
-  colors,
-  core,
-  defineTheme,
-  installTheme,
-  quartzIcons,
-} from '../ag-grid-community-themes';
+import { Theme, defineTheme, installTheme } from '../ag-grid-community-themes';
 import { allParamModels } from './ParamModel';
+import { allPartModels } from './PartModel';
 
 export const renderedThemeAtom = atom((get): Theme => {
   const paramValues = Object.fromEntries(
     allParamModels().map((param) => [param.property, get(param.valueAtom)]),
   );
 
-  console.log('rendering theme');
+  const themeParts = allPartModels()
+    .filter((part) => get(part.enabledAtom))
+    .map((part) => part.themePart);
 
-  const theme = defineTheme('custom', [core, borders, colors, quartzIcons], paramValues);
+  const theme = defineTheme('custom', themeParts, paramValues);
 
   document.body.className = 'ag-theme-custom';
 

@@ -1,4 +1,3 @@
-/// <reference types="vitest" />
 import { expect, test } from 'vitest';
 import { PickVariables, defineTheme as defineThemeImport } from './Theme';
 import { AnyPart } from './theme-types';
@@ -7,7 +6,7 @@ import { definePart } from './theme-utils';
 export const defineTheme = <P extends AnyPart>(
   name: string,
   partOrParts: P | readonly P[],
-  parameters: PickVariables<P, any> = {},
+  parameters: PickVariables<P, any> & { aPreset?: string } = {},
 ) => defineThemeImport(name, partOrParts, parameters);
 
 test('Parameters', () => {

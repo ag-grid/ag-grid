@@ -1,5 +1,5 @@
 import { atom, useAtom } from 'jotai';
-import { VariableTypes } from '../ag-grid-community-themes';
+import { Part, VariableTypes, allParts } from '../ag-grid-community-themes';
 import { PartMeta, PresetMeta, allPartsMeta } from '../ag-grid-community-themes/metadata';
 import { PersistentAtom, atomWithJSONStorage } from './JSONStorage';
 import { ParamModel } from './ParamModel';
@@ -13,6 +13,7 @@ export class PartModel {
   readonly presets: readonly PresetModel[] | undefined;
   readonly defaultPreset: PresetModel | undefined;
   readonly paramDefaults: ParamValueMap;
+  readonly themePart: Part;
 
   readonly params: readonly ParamModel[];
 
@@ -34,6 +35,8 @@ export class PartModel {
     this.enabledAtom = this.alwaysPresent
       ? constantAtom(true, `Can't disable part ${this.partId}`)
       : atomWithJSONStorage<boolean>(`part.enabled.${this.partId}`, true);
+
+    this.themePart = allParts.find((part) => part.partId === this.partId)!;
 
     const presetParam = this.params.find((param) => param.type === 'preset');
     if (presetParam) {

@@ -94,13 +94,15 @@ const makePublicFile = (): string => {
   }
   result += '}\n\n';
 
+  result += `export const allParts = [${allPartsMeta.map((p) => camelCase(p.partId)).join(', ')}]\n\n`;
+
   return result;
 };
 
 const codeLiteral = (code: string): any => `$CODE-LITERAL-START$${code}$CODE-LITERAL-END$`;
 
 const restoreLiterals = (json: string) =>
-  json.replaceAll(/"\$CODE-LITERAL-START\$(.*?)\$CODE-LITERAL-END\$"/g, (_, match) =>
+  json.replace(/"\$CODE-LITERAL-START\$(.*?)\$CODE-LITERAL-END\$"/g, (_, match) =>
     JSON.parse(`"${match}"`),
   );
 
