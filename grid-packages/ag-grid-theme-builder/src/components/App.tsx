@@ -1,14 +1,22 @@
-import { VariableDescriptions, useUpdateVariableDescriptions } from 'atoms/variableDescriptions';
-import { registerFeatureModules } from 'model/features';
-import { useEffect } from 'react';
+import { useColorScheme } from '@mui/joy';
+import { useEffect, useLayoutEffect } from 'react';
 import { RootContainer } from './RootContainer';
 
-export type ThemeBuilderAppProps = {
-  variableDescriptions: VariableDescriptions;
-};
+export const App = () => {
+  // const { isDark } = useAtomValue(renderedThemeAtom);
+  const isDark = false; // TODO restore
+  const { setMode } = useColorScheme();
 
-export const App = ({ variableDescriptions }: ThemeBuilderAppProps) => {
-  useUpdateVariableDescriptions()(variableDescriptions);
-  useEffect(registerFeatureModules, []);
+  useLayoutEffect(() => {
+    const root = document.querySelector('html');
+    if (root) {
+      root.dataset.darkMode = isDark ? 'true' : 'false';
+    }
+  }, [isDark]);
+
+  useEffect(() => {
+    setMode(isDark ? 'dark' : 'light');
+  }, [isDark, setMode]);
+
   return <RootContainer />;
 };

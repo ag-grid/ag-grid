@@ -1,0 +1,32 @@
+@use "ag";
+
+@mixin output {
+    .ag-date-time-list-page-title-bar {
+        display: flex;
+    }
+
+    .ag-date-time-list-page-title {
+        flex-grow: 1;
+        text-align: center;
+    }
+
+    .ag-date-time-list-page-column-labels-row,
+    .ag-date-time-list-page-entries-row {
+        display: flex;
+    }
+
+    .ag-date-time-list-page-column-label,
+    .ag-date-time-list-page-entry {
+        flex-basis: 0;
+        flex-grow: 1;
+    }
+
+    .ag-date-time-list-page-entry {
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .ag-date-time-list-page-column-label {
+        text-align: center;
+    }
+}

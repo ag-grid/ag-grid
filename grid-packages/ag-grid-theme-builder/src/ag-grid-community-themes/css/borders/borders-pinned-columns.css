@@ -1,0 +1,38 @@
+/**
+ * NOTE: these don't need RTL versions when pinning columns, "left" always means
+ * visually on the left
+ */
+
+:ag-current-theme {
+  .ag-body-horizontal-scroll:not(.ag-scrollbar-invisible) {
+    .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
+      /*rtl:ignore*/
+      border-right: solid 1px var(--ag-border-color);
+    }
+
+    .ag-horizontal-right-spacer:not(.ag-scroller-corner) {
+      /*rtl:ignore*/
+      border-left: solid 1px var(--ag-border-color);
+    }
+  }
+
+  .ag-pinned-right-header {
+    /*rtl:ignore*/
+    border-left: solid 1px var(--ag-border-color);
+  }
+
+  .ag-pinned-left-header {
+    /*rtl:ignore*/
+    border-right: solid 1px var(--ag-border-color);
+  }
+
+  .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
+    /*rtl:ignore*/
+    border-left: solid 1px var(--ag-border-color);
+  }
+
+  .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
+    /*rtl:ignore*/
+    border-right: solid 1px var(--ag-border-color);
+  }
+}

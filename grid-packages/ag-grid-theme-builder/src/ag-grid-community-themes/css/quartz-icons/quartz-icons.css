@@ -1,0 +1,24 @@
+:ag-current-theme {
+  .ag-icon {
+    width: var(--ag-icon-size);
+    height: var(--ag-icon-size);
+  }
+
+  .ag-icon {
+    width: var(--ag-icon-size);
+    height: var(--ag-icon-size);
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke: currentColor;
+    stroke-width: var(--ag-icon-stroke-width);
+
+    > * {
+      vector-effect: non-scaling-stroke;
+    }
+  }
+
+  .ag-icon-grip {
+    fill: currentColor;
+  }
+}

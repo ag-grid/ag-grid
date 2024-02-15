@@ -1,103 +1,65 @@
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
-import '@ag-grid-community/styles/ag-theme-balham.css';
-import '@ag-grid-community/styles/ag-theme-material.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { TrashCan } from '@carbon/icons-react';
-import styled from '@emotion/styled';
-import { useColorScheme } from 'atoms/colorScheme';
-import { useParentTheme } from 'atoms/parentTheme';
-import { useRenderedCss } from 'atoms/renderedCss';
-import { useResetVariableDefaults } from 'atoms/variableDefaults';
-import { memo, useLayoutEffect, useState } from 'react';
-import { Tooltip } from 'react-tooltip';
-import { ColorSchemeMenu } from './ColorSchemeMenu';
+import { styled } from '@mui/joy';
+import { useAtomValue } from 'jotai';
+import { memo } from 'react';
+import { GridConfigDropdownButton } from '../features/grid-config/GridConfigDropdown';
+import { PartsEditor } from '../features/parts-editor/PartsEditor';
+import { renderedThemeAtom } from '../model/rendered-theme';
 import { CopyButton } from './CopyButton';
+import { DiscardChangesButton } from './DiscardChangesButton';
 import { GridPreview } from './GridPreview';
-import { IconButton } from './IconButton';
-import { ParentThemeMenu } from './ParentThemeMenu';
-import { Inspector } from './inspector/Inspector';
 
 export const RootContainer = memo(() => {
-  const parentTheme = useParentTheme();
-  const colorScheme = useColorScheme();
-  const renderedCss = useRenderedCss();
-  const resetVariableDefaults = useResetVariableDefaults();
-  const [hasRenderedStyles, setHasRenderedStyles] = useState(false);
-
-  useLayoutEffect(() => {
-    setHasRenderedStyles(true);
-    resetVariableDefaults();
-  }, [renderedCss, resetVariableDefaults]);
-
+  const theme = useAtomValue(renderedThemeAtom);
   return (
-    <>
-      <style>{renderedCss}</style>
-      <DefaultsElement
-        className={`${parentTheme.name}-${colorScheme}`}
-        id="theme-builder-defaults-computation"
-      />
-      <Container>
-        {hasRenderedStyles && (
-          <>
-            <Header>
-              <ParentThemeMenu />
-              <ColorSchemeMenu />
-              <IconButton
-                label="Discard changes"
-                icon={TrashCan}
-                onClick={() => {
-                  if (confirm('Discard all of your theme customisations?')) {
-                    localStorage.clear();
-                    location.reload();
-                  }
-                }}
-              />
-              <CopyButton payload={renderedCss} label="Copy CSS" />
-            </Header>
-            <Menu>
-              <Inspector />
-            </Menu>
-            <Main>
-              <GridPreview />
-            </Main>
-            <Tooltip
-              id="theme-builder-tooltip"
-              className="tooltip"
-              place="top"
-              anchorSelect="[data-tooltip-content]"
-            />
-          </>
-        )}
-      </Container>
-    </>
+    <Container>
+      <Grid>
+        <Header>
+          <GridConfigDropdownButton />
+          <Spacer />
+          <CopyButton getText={() => Object.values(theme.css).join('\n\n')}>Copy CSS</CopyButton>
+          <DiscardChangesButton />
+        </Header>
+        <Menu>
+          <PartsEditor />
+        </Menu>
+        <Main>
+          <GridPreview />
+        </Main>
+      </Grid>
+    </Container>
   );
 });
 
 const Container = styled('div')`
+  position: absolute;
+  inset: 12px;
+`;
+
+const Grid = styled('div')`
   height: 100%;
   display: grid;
   grid-template-areas:
     'header header'
     'menu main';
-  grid-template-columns: 300px auto;
+  grid-template-columns: 400px auto;
   grid-template-rows: min-content auto;
   gap: 20px;
+
+  font-family: 'IBM Plex Sans', sans-serif;
 
   .tooltip {
     max-width: 400px;
   }
 `;
 
-const DefaultsElement = styled('div')`
-  position: absolute;
-  transform: translateY(-10);
-`;
-
 const Header = styled('div')`
   grid-area: header;
   display: flex;
-  justify-content: space-between;
+  gap: 16px;
+`;
+
+const Spacer = styled('div')`
+  flex-grow: 1;
 `;
 
 const Menu = styled('div')`

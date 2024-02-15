@@ -1,0 +1,23 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  color-scheme: light;
+}
+
+html[data-dark-mode='true'] {
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-dark-mode='false']) {
+    color-scheme: dark;
+  }
+}

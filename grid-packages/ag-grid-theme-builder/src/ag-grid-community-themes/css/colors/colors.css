@@ -1,0 +1,19 @@
+:ag-current-theme {
+  --ag-border-color: #999;
+  --ag-row-border-color: var(--ag-border-color);
+
+  .ag-root-wrapper,
+  .ag-sticky-top,
+  .ag-dnd-ghost {
+    background-color: var(--ag-background-color);
+    color: var(--ag-foreground-color);
+  }
+
+  /* TODO temporary */
+  .ag-header,
+  .ag-advanced-filter-header,
+  .ag-tool-panel-wrapper,
+  .ag-column-drop-horizontal {
+    background-color: var(--ag-chrome-background-color);
+  }
+}

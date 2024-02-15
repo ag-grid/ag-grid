@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@mui/joy';
 import { Component, PropsWithChildren } from 'react';
 
 type ErrorBoundaryState = {

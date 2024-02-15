@@ -1,0 +1,23 @@
+:ag-current-theme {
+  /* sidebar visually on left */
+  .ag-ltr .ag-side-bar-left,
+  .ag-rtl .ag-side-bar-right {
+    border-right: solid 1px var(--ag-border-color);
+    .ag-tool-panel-wrapper {
+      border-left: solid 1px var(--ag-border-color);
+    }
+  }
+  /* sidebar visually on right */
+  .ag-rtl .ag-side-bar-left,
+  .ag-ltr .ag-side-bar-right {
+    border-left: solid 1px var(--ag-border-color);
+
+    .ag-tool-panel-wrapper {
+      border-right: solid 1px var(--ag-border-color);
+    }
+  }
+
+  .ag-chart-menu-panel {
+    border-left: solid 1px var(--ag-border-color);
+  }
+}

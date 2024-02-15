@@ -1,0 +1,5 @@
+:ag-current-theme {
+  .ag-root-wrapper {
+    border: solid 1px var(--ag-border-color);
+  }
+}

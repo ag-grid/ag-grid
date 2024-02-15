@@ -1,30 +1,31 @@
 import { Checkmark, Copy } from '@carbon/icons-react';
-import styled from '@emotion/styled';
+import { Button, styled } from '@mui/joy';
 import { useState } from 'react';
+import { logErrorMessage } from '../model/utils';
 
 type CopyButtonProps = {
-  label: string;
-  payload: string;
+  children: string;
+  getText: () => string;
 };
 
-export const CopyButton = ({ label, payload }: CopyButtonProps) => {
+export const CopyButton = ({ children, getText }: CopyButtonProps) => {
   const [copied, setCopied] = useState(false);
   const copiedClass = copied ? 'is-copied' : '';
 
   return (
-    <Button
+    <StyledButton
       className={copiedClass}
       onClick={() =>
         void (async () => {
           try {
             if (navigator.clipboard) {
-              await navigator.clipboard.writeText(payload);
+              await navigator.clipboard.writeText(getText());
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
               return;
             }
-          } catch {
-            // ignore errors
+          } catch (e) {
+            logErrorMessage('Failed to copy', e);
           }
           setCopied(false);
           alert('ERROR: could not copy CSS, ensure that you are using a recent web browser.');
@@ -36,21 +37,21 @@ export const CopyButton = ({ label, payload }: CopyButtonProps) => {
         <Checkmark />
       </CopiedLabel>
       <DefaultLabel className={copiedClass}>
-        <LabelText>{label}</LabelText>
+        <LabelText>{children}</LabelText>
         <Copy />
       </DefaultLabel>
-    </Button>
+    </StyledButton>
   );
 };
 
-const Button = styled('button')`
+const StyledButton = styled(Button)`
   transition: background-color 0.4s;
   position: relative;
   display: flex;
   justify-content: center;
 
   &.is-copied {
-    background-color: var(--green-600) !important;
+    background-color: rgb(51, 165, 53);
   }
 `;
 
