@@ -26,7 +26,7 @@ function updateDependency(fileContents, property, chartsVersion) {
 }
 
 
-const packageRootDirectories = JSON.parse(fs.readFileSync('lerna.json', 'utf-8')).packages;
+const packageRootDirectories = JSON.parse(fs.readFileSync('package.json', 'utf-8')).workspaces.packages;
 
 const processPackageFile = packageJsonFilename => {
     if (fs.existsSync(packageJsonFilename)) {
@@ -44,12 +44,9 @@ const processPackageFile = packageJsonFilename => {
 
 for (const lernaPackage of packageRootDirectories) {
     const packageRootDirectory = lernaPackage.replace('/*', '');
-    fs.readdirSync(packageRootDirectory)
-        .forEach(packageDirectory => {
-                const packageJsonFilename = `./${packageRootDirectory}/${packageDirectory}/package.json`;
-                processPackageFile(packageJsonFilename);
-            }
-        )
+        const packageJsonFilename = `./${packageRootDirectory}/package.json`;
+        if(fs.existsSync(packageJsonFilename)) {
+            processPackageFile(packageJsonFilename);
+        }
 }
 
-processPackageFile('./grid-packages/ag-grid-docs/documentation/package.json');
