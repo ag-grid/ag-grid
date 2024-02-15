@@ -333,28 +333,6 @@ const desktopDefaultCols = [
                 cellDataType: 'currency',
                 filter: 'agNumberColumnFilter',
             },
-            {
-                colId: 'extraInfo1',
-                headerName: 'Extra Info 1',
-                columnGroupShow: 'open',
-                width: 150,
-                editable: false,
-                suppressHeaderMenuButton: true,
-                suppressHeaderContextMenu: true,
-                cellStyle: { textAlign: 'right' },
-                valueGetter: () => 'Abra...',
-            },
-            {
-                colId: 'extraInfo2',
-                headerName: 'Extra Info 2',
-                columnGroupShow: 'open',
-                width: 150,
-                editable: false,
-                suppressHeaderMenuButton: true,
-                suppressHeaderContextMenu: true,
-                cellStyle: { textAlign: 'left' },
-                valueGetter: () => '...cadabra!',
-            },
         ],
     },
     {
@@ -478,8 +456,6 @@ const ExampleInner = ({darkMode}) => {
             popupParent: IS_SSR ? null : document.querySelector('#example-wrapper'),
             rowGroupPanelShow: isSmall ? undefined : 'always',
             pivotPanelShow: 'always',
-            enterNavigatesVerticallyAfterEdit: true,
-            enterNavigatesVertically: true,
             suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
             enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
             enableCharts: true,
@@ -506,10 +482,9 @@ const ExampleInner = ({darkMode}) => {
                     baseDataType: 'number',
                     valueFormatter: currencyFormatter,
                     valueParser: params => {
-                        let newValue = params.newValue?.trim?.();
-                        if (newValue == null || newValue === '') {
-                            return null
-                        }
+                        if (params.newValue == null) { return null; }
+                        let newValue = String(params.newValue)?.trim?.();
+                        if (newValue === '') { return null; }
                         newValue = newValue.replace('$', '').replace(',', '');
                         if (newValue.includes('(')) {
                             newValue = newValue.replace('(').replace(')');
