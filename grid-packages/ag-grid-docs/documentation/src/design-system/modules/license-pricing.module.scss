@@ -43,7 +43,7 @@
     text-align: center;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
-        margin-top: 36px;
+        margin-top: $spacing-size-4;
         text-align: left;
     }
 
@@ -115,7 +115,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     // gap: $spacing-size-8;
-    padding-top: $spacing-size-20;
+    padding-top: $spacing-size-5;
 }
 
 .buyTogether {
