@@ -15,12 +15,12 @@ export type PickVariables<P extends AnyPart, V extends object> = {
 };
 
 export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>(
-  name: string,
+  themeName: string,
   partOrParts: P | readonly P[],
   parameters: PickVariables<P, V>,
 ): Theme => {
   const result: Theme = {
-    name,
+    name: themeName,
     css: {
       common: commonStructuralCSS,
     },
@@ -97,8 +97,8 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
   }
 
   if (mainCSS.length > 0) {
-    result.css[`theme-${name}`] = preprocessCss(
-      `.ag-theme-${name}`,
+    result.css[`theme-${themeName}`] = preprocessCss(
+      themeName,
       result.variableDefaults,
       mainCSS.join('\n'),
     );
@@ -112,8 +112,13 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
   return result;
 };
 
-const themeSelectorPlaceholder = ':ag-current-theme';
-const preprocessCss = (themeSelector: string, variables: Record<string, string>, css: string) => {
+const preprocessCss = (themeName: string, variables: Record<string, string>, css: string) => {
+  const themeSelector = `.ag-theme-${themeName}`;
+  const themeSelectorPlaceholder = ':ag-current-theme';
+
+  // Add default values to var(--ag-foo) expressions. This is recursive - if the
+  // default value for --ag-foo is var(--ag-bar) then `var(--ag-foo)` becomes
+  // `var(--ag-foo, var(--ag-bar, [bar default]))`
   const addVariableDefaults = (css: string): string =>
     css.replaceAll(/var\((--ag-[^)]+)\)/g, (match, variable) => {
       const defaultValue = variables[variable];
@@ -123,11 +128,14 @@ const preprocessCss = (themeSelector: string, variables: Record<string, string>,
         return match;
       }
     });
+  css = addVariableDefaults(css);
+
   // rtlcss doesn't have an option to remove the space after the RTL selector,
   // so we're doing it here removing the space in `.ag-rtl .ag-theme-custom`
   css = css.replaceAll(` ${themeSelectorPlaceholder}`, themeSelectorPlaceholder);
   css = css.replaceAll(themeSelectorPlaceholder, themeSelector);
-  return addVariableDefaults(css);
+
+  return css;
 };
 
 const flattenParts = (parts: readonly AnyPart[]): Part[] => {
