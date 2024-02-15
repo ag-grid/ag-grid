@@ -2,11 +2,15 @@
 
 .license {
     width: 100%;
-    border-radius: var(--radius-md);
     color: var(--color-fg-primary);
+
+    @media screen and (max-width: $breakpoint-pricing-medium) {
+        border-radius: var(--radius-md);
+    }
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         max-height: 480px;
+        border-right: 1px solid var(--color-border-tertiary);
     }
 
     p {
@@ -38,18 +42,23 @@
     padding: 4px 16px;
     border-radius: 16px;
     background-color: var(--color-util-brand-100);
+    color: var(--color-text-brand-primary);
+    font-weight: var(--text-semibold);
+
     #{$selector-darkmode} & {
         background-color: color-mix(in srgb, var(--color-text-brand-primary), var(--color-bg-primary) 90%);
     }
-    color: var(--color-text-brand-primary);
-    font-weight: var(--text-semibold);
 }
 
 .licenseMeta {
     display: flex;
     flex-direction: column;
-    margin-bottom: $spacing-size-12;
+    margin-bottom: $spacing-size-8;
     color: var(--color-text-tertiary);
+
+    h2 {
+        margin-bottom: $spacing-size-1;
+    }
 }
 
 p.name {
@@ -75,7 +84,6 @@ p.name {
 .standardPrice {
     display: inline-block;
     position: relative;
-    font-size: var(--text-fs-3xl);
     margin-left: $spacing-size-4;
     color: var(--color-util-gray-400);
 
@@ -106,10 +114,10 @@ p.name {
     display: flex;
     flex-direction: row;
     align-items: end;
-    height: $spacing-size-16;
+    height: 52px;
     padding-top: $spacing-size-1;
     padding-bottom: $spacing-size-2;
-    font-size: 44px;
+    font-size: 34px;
     line-height: var(--text-lh-ultra-tight);
     font-weight: var(--text-bold);
     letter-spacing: -0.05em;

@@ -26,8 +26,8 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'community',
-        subHeading: 'AG Grid Community',
-        description: 'Community support',
+        subHeading: 'Community',
+        description: '',
         priceFullDollars: '0',
         launchPrice: null,
         buyLink: 'https://ag-grid.com/javascript-data-grid/getting-started/',
@@ -36,8 +36,8 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'enterprise-grid',
-        subHeading: 'AG Grid Enterprise',
-        description: 'Enterprise support',
+        subHeading: 'Enterprise',
+        description: '',
         priceFullDollars: '999',
         launchPrice: null,
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
@@ -46,8 +46,8 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'community',
-        subHeading: 'AG Charts Community',
-        description: 'Community support',
+        subHeading: 'Community',
+        description: '',
         priceFullDollars: '0',
         launchPrice: null,
         buyLink: 'https://charts.ag-grid.com/javascript/quick-start/',
@@ -56,8 +56,8 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'enterprise-charts',
-        subHeading: 'AG Charts Enterprise',
-        description: 'Enterprise support',
+        subHeading: 'Enterprise',
+        description: '',
         priceFullDollars: '399',
         launchPrice: '199',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
@@ -66,7 +66,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.chartsLicense,
         id: 'togther',
-        subHeading: 'AG Grid Bundle',
+        subHeading: 'Enterprise Bundle',
         description: 'AG Grid + AG Charts Enterprise',
         priceFullDollars: '1398',
         launchPrice: '1198',
