@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { type LicenseTab, LicensePricing } from './license-pricing';
+import LicensePricing, { type LicenseTab } from './license-pricing';
 
 const LicensePricingBare = ({location}) => {
     const [initialTab, setInitialTab] = useState<LicenseTab>('grid');

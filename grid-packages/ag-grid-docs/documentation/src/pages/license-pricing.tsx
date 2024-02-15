@@ -23,7 +23,7 @@ export type LicenseTab = 'grid' | 'charts';
 
 interface Props {
     initialTab?: LicenseTab
-    isWithinIframe: boolean
+    isWithinIframe?: boolean
 }
 
 export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
@@ -224,14 +224,14 @@ export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
     );
 };
 
-const LicensePricingPage = () => {
+const LicensePricingPage = (props) => {
     return (
         <>
             <SEO
                 title="AG Grid: License and Pricing"
                 description="AG Grid is a feature-rich datagrid available in Community or Enterprise versions. This page describes the License and Pricing details for AG Grid Enterprise."
             />
-            <LicensePricing />
+            <LicensePricing {...props} />
         </>
     );
 };
