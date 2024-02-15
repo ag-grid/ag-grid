@@ -6,6 +6,7 @@ import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-scss';
+import 'prismjs/components/prism-shell-session';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-xml-doc';
@@ -19,6 +20,7 @@ const GrammarMap = {
     ts: Prism.languages.typescript,
     css: Prism.languages.css,
     bash: Prism.languages.bash,
+    shell: Prism.languages.shellsession,
     html: Prism.languages.html,
     jsx: Prism.languages.jsx,
     java: Prism.languages.java,
