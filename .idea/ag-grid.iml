@@ -82,15 +82,9 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue/lib" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/react/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/react/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/react/umd" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/react/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/polymer/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/infinite-row-model/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/infinite-row-model/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/angular/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/angular/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/csv-export/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/csv-export/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/row-grouping/node_modules.nosync" />
@@ -165,8 +159,14 @@
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/side-bar/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/sparklines/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/viewport-row-model/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/angular/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/angular/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/react/bundles" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/react/umd" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/react/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/react/node_modules.nosync" />
     </content>
-    <content url="file://$MODULE_DIR$/grid-community-modules/react/dev" />
+    <content url="file://$MODULE_DIR$/community-modules/react/dev" />
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

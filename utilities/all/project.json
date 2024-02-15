@@ -111,6 +111,8 @@
     "community-modules/styles",
     "community-modules/csv-export",
     "community-modules/infinite-row-model",
+    "community-modules/angular",
+    "community-modules/react",
     "enterprise-modules/core",
     "enterprise-modules/advanced-filter",
     "enterprise-modules/charts",
