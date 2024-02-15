@@ -10,11 +10,22 @@ export class MiniRangeArea extends MiniChartWithAxes {
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
         super(container, 'rangeAreaTooltip');
-        const data = [
-            [3, 3.5, 3, 3.7, 3.9],
-            [4, 4.5, 4, 4.7, 4.8],
-            [2, 2.5, 4, 5, 5.8],
+
+        // Create a set of repeating zigzag-shaped data series to use as the chart data
+        const period = 4;
+        const dataSeriesMidpoints = [
+            zigzag({ offset: 0.375 * period, length: period, pattern: { low: 3, high: 5, period } }),
+            zigzag({ offset: 0.375 * period, length: period, pattern: { low: 2.25, high: 4.25, period } }),
+            zigzag({ offset: 0.75 * period, length: period, pattern: { low: 2.5, high: 4.5, period } }),
         ];
+        const dataSeriesWidth = 1.75;
+        const data = dataSeriesMidpoints.map((series) =>
+            series.map(([x, y]) => ({
+                x,
+                low: y - 0.5 * dataSeriesWidth,
+                high: y + 0.5 * dataSeriesWidth,
+            }))
+        );
 
         const { lines, areas } = this.createRangeArea(this.root, data, this.size, this.padding);
         this.lines = lines;
@@ -23,6 +34,10 @@ export class MiniRangeArea extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
+        // Swap the secondary and tertiary colors to match the designs
+        fills = swapArrayItems(fills, 1, 2);
+        strokes = swapArrayItems(strokes, 1, 2);
+
         this.lines.forEach(([highLine, lowLine], i) => {
             highLine.fill = undefined;
             highLine.stroke = strokes[i];
@@ -36,37 +51,23 @@ export class MiniRangeArea extends MiniChartWithAxes {
 
     createRangeArea(
         root: _Scene.Group,
-        data: number[][],
+        data: Array<Array<{ x: number; low: number; high: number }>>,
         size: number,
         padding: number
     ): { lines: _Scene.Path[][]; areas: _Scene.Path[] } {
+        const xMin = data.reduce((acc, series) => series.reduce((acc, { x }) => Math.min(acc, x), acc), Infinity);
+        const xMax = data.reduce((acc, series) => series.reduce((acc, { x }) => Math.max(acc, x), acc), -Infinity);
+        const yMin = data.reduce((acc, series) => series.reduce((acc, { low }) => Math.min(acc, low), acc), Infinity);
+        const yMax = data.reduce((acc, series) => series.reduce((acc, { high }) => Math.max(acc, high), acc), -Infinity);
+
         const xScale = new _Scene.LinearScale();
-        xScale.domain = [0, data[0].length - 1];
+        xScale.domain = [xMin, xMax];
         xScale.range = [padding, size - padding];
 
-        const lowRatio = 0.9;
-        const highRatio = 1.1;
         const scalePadding = 2 * padding;
 
         const yScale = new _Scene.LinearScale();
-        yScale.domain = [
-            data.reduce(
-                (min, series) =>
-                    Math.min(
-                        series.reduce((a, b) => Math.min(a, b), Infinity),
-                        min
-                    ),
-                Infinity
-            ) * lowRatio,
-            data.reduce(
-                (max, series) =>
-                    Math.max(
-                        series.reduce((a, b) => Math.max(a, b), 0),
-                        max
-                    ),
-                0
-            ) * highRatio,
-        ];
+        yScale.domain = [yMin, yMax];
         yScale.range = [size - scalePadding, scalePadding];
 
         const lines: _Scene.Path[][] = [];
@@ -83,31 +84,31 @@ export class MiniRangeArea extends MiniChartWithAxes {
             highLine.strokeWidth = 1;
             lowLine.strokeWidth = 1;
             area.strokeWidth = 0;
-            area.fillOpacity = 0.7;
+            area.fillOpacity = 0.8;
 
             highLine.path.clear();
             lowLine.path.clear();
             area.path.clear();
 
             return series.map((datum, datumIndex) => {
-                const [low, high] = [datum * lowRatio, datum * highRatio];
+                const { x, low, high } = datum;
 
-                const x = xScale.convert(datumIndex);
+                const scaledX = xScale.convert(x);
                 const yLow = yScale.convert(low);
                 const yHigh = yScale.convert(high);
 
                 const command = datumIndex > 0 ? 'lineTo' : 'moveTo';
 
-                highLine.path[command](x, yHigh);
-                lowLine.path[command](x, yLow);
-                area.path[command](x, yHigh);
+                highLine.path[command](scaledX, yHigh);
+                lowLine.path[command](scaledX, yLow);
+                area.path[command](scaledX, yHigh);
 
-                return [x, yLow];
+                return [scaledX, yLow];
             });
         });
 
         lowPoints.forEach((seriesLowPoints, seriesIndex) => {
-            const n = seriesLowPoints.length -1;
+            const n = seriesLowPoints.length - 1;
             const area = areas[seriesIndex];
             for (let datumIndex = n; datumIndex >= 0; datumIndex--) {
                 const [x, y] = seriesLowPoints[datumIndex];
@@ -119,4 +120,73 @@ export class MiniRangeArea extends MiniChartWithAxes {
 
         return { lines, areas };
     }
+}
+
+interface ZigzagPatternOptions {
+    low: number;
+    high: number;
+    period: number;
+}
+
+function zigzag(options: {
+    offset: number;
+    length: number;
+    pattern: ZigzagPatternOptions;
+}): Array<[number, number]> {
+    const { offset, length, pattern } = options;
+
+    // Generate [x, y] points for all inflection points of the zigzag pattern that fall within the range
+    const points = getZigzagInflectionPoints(offset, length, pattern);
+
+    // Ensure the first and last points are clamped to the start and end of the range
+    const xMin = 0;
+    const xMax = length;
+    if (points.length === 0 || points[0][0] !== xMin) points.unshift(getZigzagPoint(xMin, offset, pattern));
+    if (points[points.length - 1][0] !== xMax) points.push(getZigzagPoint(xMax, offset, pattern));
+
+    return points;
+
+    function getZigzagInflectionPoints(
+        offset: number,
+        length: number,
+        pattern: ZigzagPatternOptions
+    ): [number, number][] {
+        const { period } = pattern;
+        const scaledOffset = offset / period;
+        const patternInflectionPoints = [0, 0.5];
+        const inflectionPoints = patternInflectionPoints
+            .map((x) => x - scaledOffset)
+            .map(getRemainderAbs)
+            .sort();
+        const repeatedPoints = Array.from(
+            { length: Math.floor(inflectionPoints.length * (period / length)) },
+            (_, i) => inflectionPoints[i % inflectionPoints.length] + Math.floor(i / inflectionPoints.length)
+        );
+        return repeatedPoints.map((x) => x * period).map((x) => getZigzagPoint(x, offset, pattern));
+    }
+
+    function getZigzagPoint(x: number, offset: number, pattern: ZigzagPatternOptions): [number, number] {
+        return [x, getZigzagValue(offset + x, pattern)];
+    }
+
+    function getZigzagValue(x: number, pattern: ZigzagPatternOptions): number {
+        const { low, high, period } = pattern;
+        const scaledX = getRemainderAbs(x / period);
+        const y = scaledX > 0.5 ? 1 - 2 * (scaledX - 0.5) : 2 * scaledX;
+        return low + (high - low) * y;
+    }
+}
+
+
+function getRemainderAbs(value: number): number {
+    const remainder = value % 1;
+    return remainder < 0 ? remainder + 1 : remainder;
+}
+
+function swapArrayItems<T>(items: T[], leftIndex: number, rightIndex: number): T[] {
+    const results = [...items];
+    const temp = results[leftIndex];
+    results[leftIndex] = results[rightIndex];
+    results[rightIndex] = temp;
+    return results;
 }
