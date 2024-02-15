@@ -411,11 +411,11 @@
         },
         "enterprise": {
           "value": true,
-          "detail": "Including 1 year of updates"
+          "detail": "Including 1 year of updates (see EULA)"
         },
         "chartsGrid": {
           "value": true,
-          "detail": "Including 1 year of updates"
+          "detail": "Including 1 year of updates (see EULA)"
         }
       }
     ]
