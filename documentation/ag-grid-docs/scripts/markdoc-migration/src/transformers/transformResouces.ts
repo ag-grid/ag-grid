@@ -177,10 +177,25 @@ function transformVideoSection(ast: any) {
     });
 }
 
+function transformLearningVideos(ast: any) {
+    const matcher = { type: JSX_TYPE, name: 'learning-videos' };
+
+    visit(ast, matcher, function (node) {
+        const { attributes, children } = node;
+        replaceNodeWithMarkdocTag({
+            node,
+            tagName: 'learningVideos',
+            attributes,
+            children,
+        });
+    });
+}
+
 export function transformResouces(ast: any) {
     transformImage(ast);
     transformImageCaption(ast);
     transformDivImageCaption(ast);
     transformGif(ast);
     transformVideoSection(ast);
+    transformLearningVideos(ast);
 }

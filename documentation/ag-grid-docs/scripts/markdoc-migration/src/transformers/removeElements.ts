@@ -19,7 +19,6 @@ export function removeElements(ast: any) {
         // Components that need to be implemented or needs
         // to be updated manually
         'tabs',
-        'learning-videos',
         'download-ds-button',
         'matrix-table',
     ];

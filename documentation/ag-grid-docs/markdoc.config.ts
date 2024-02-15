@@ -265,5 +265,13 @@ export default defineMarkdocConfig({
                 showHeader: { type: Boolean },
             },
         },
+        learningVideos: {
+            render: component('./src/components/learning-videos/LearningVideos.astro'),
+            attributes: {
+                id: { type: String },
+                title: { type: String },
+                showHeader: { type: Boolean },
+            },
+        },
     },
 });
