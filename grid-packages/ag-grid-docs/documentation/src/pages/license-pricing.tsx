@@ -31,7 +31,7 @@ export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
 
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 800) {
+            if (window.scrollY > 520) {
                 setShowFullWidthBar(true);
             } else {
                 setShowFullWidthBar(false);
@@ -93,9 +93,9 @@ export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
                 <div className={styles.fullWidthBar}>
                     <div className={classnames('layout-max-width-small', styles.fullWidthBarContainer)}>
                         <div className={styles.fullWidthBarLeft}> </div>
-                        <div className={styles.fullWidthBarItem}>Community</div>
-                        <div className={styles.fullWidthBarItem}>Enterprise</div>
-                        <div className={styles.fullWidthBarItem}>Grid + Charts</div>
+                        <div className={styles.fullWidthBarItem}>AG { chartsIsSelected ? 'Charts' : 'Grid' } Community</div>
+                        <div className={styles.fullWidthBarItem}>AG { chartsIsSelected ? 'Charts' : 'Grid' } Enterprise</div>
+                        <div className={styles.fullWidthBarItem}>AG Grid Bundle</div>
 
                         <div className={styles.fullWidthBarRight}></div>
                     </div>
