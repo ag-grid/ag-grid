@@ -38,7 +38,7 @@ export class PartModel {
 
     this.themePart = allParts.find((part) => part.partId === this.partId)!;
 
-    const presetParam = this.params.find((param) => param.type === 'preset');
+    const presetParam = this.params.find((param) => param.meta.type === 'preset');
     if (presetParam) {
       this.presetAtom = presetParam?.valueAtom;
     } else {

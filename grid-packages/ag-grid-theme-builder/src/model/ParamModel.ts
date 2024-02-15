@@ -5,16 +5,14 @@ import { allPartModels } from './PartModel';
 import { memoize, titleCase } from './utils';
 
 export class ParamModel {
-  readonly type: ParamMeta['type'];
   readonly property: string;
   readonly label: string;
   readonly valueAtom: PersistentAtom<any>;
 
-  constructor(paramMeta: ParamMeta) {
-    this.type = paramMeta.type;
-    this.property = paramMeta.property;
-    this.label = titleCase(paramMeta.property);
-    this.valueAtom = atomWithJSONStorage(`param.${paramMeta.property}`, undefined);
+  constructor(readonly meta: ParamMeta) {
+    this.property = meta.property;
+    this.label = titleCase(meta.property);
+    this.valueAtom = atomWithJSONStorage(`param.${meta.property}`, undefined);
   }
 }
 

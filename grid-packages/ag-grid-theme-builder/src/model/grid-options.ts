@@ -19,10 +19,7 @@ export type GridConfig = {
   [K in GridConfigBooleanField]?: boolean;
 };
 
-export const buildGridOptions = (
-  config: GridConfig,
-  icons?: Record<string, string>,
-): GridOptions => {
+export const buildGridOptions = (config: GridConfig): GridOptions => {
   const defaultColDef: ColDef = {
     sortable: true,
     resizable: config.columnResizing,
@@ -38,7 +35,6 @@ export const buildGridOptions = (
     enableRangeSelection: true,
     rowData: defaultRowData(),
     columnDefs: config.columnGroups ? buildGroupColumnDefs(columnDefs) : columnDefs,
-    icons,
   };
 
   if (config.advancedFilter) {

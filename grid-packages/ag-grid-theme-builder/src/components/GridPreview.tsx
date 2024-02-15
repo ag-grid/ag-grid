@@ -32,19 +32,19 @@ ModuleRegistry.registerModules([
 const GridPreview = () => {
   const gridConfig = useAtomValue(gridConfigAtom);
   const renderedTheme = useAtomValue(renderedThemeAtom);
-  const options = useMemo(
-    () => buildGridOptions(gridConfig, renderedTheme.icons),
-    [gridConfig, renderedTheme.icons],
-  );
-  const [internalState] = useState({ id: 1, prevConfig: gridConfig });
+  const options = useMemo(() => {
+    return buildGridOptions(gridConfig);
+  }, [gridConfig]);
 
+  const [internalState] = useState({ id: 1, prevConfig: gridConfig });
   if (gridConfig !== internalState.prevConfig) {
     internalState.id += 1;
+    internalState.prevConfig = gridConfig;
   }
 
   return (
     <Wrapper>
-      <AgGridReact key={internalState.id} {...options} />
+      <AgGridReact key={internalState.id} {...options} icons={renderedTheme.icons} />
     </Wrapper>
   );
 };
