@@ -60,14 +60,14 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         description: 'Enterprise support',
         priceFullDollars: '399',
         launchPrice: '199',
-        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
+        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
         tabGroup: 'charts'
     },
     {
         className: styles.chartsLicense,
         id: 'togther',
         subHeading: 'AG Grid Bundle',
-        description: 'AG Grid + AG Chart Enterprise',
+        description: 'AG Grid + AG Charts Enterprise',
         priceFullDollars: '1398',
         launchPrice: '1198',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
