@@ -112,8 +112,8 @@ const miniChartMapping: MiniChartMenuMapping = {
         rangeArea: { range: true, pivot: false, enterprise: true, icon: MiniRangeArea },
     },
     hierarchicalGroup: {
-        treemap: { range: true, pivot: false, enterprise: true, icon: MiniTreemap },
-        sunburst: { range: true, pivot: false, enterprise: true, icon: MiniSunburst },
+        treemap: { range: true, pivot: true, enterprise: true, icon: MiniTreemap },
+        sunburst: { range: true, pivot: true, enterprise: true, icon: MiniSunburst },
     },
     specializedGroup: {
         heatmap: { range: true, pivot: false, enterprise: true, icon: MiniHeatmap },

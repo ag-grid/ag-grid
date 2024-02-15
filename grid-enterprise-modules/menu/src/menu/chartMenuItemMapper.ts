@@ -143,6 +143,7 @@ export type PivotMenuOptionName =
     'pivotXYChart' | 'pivotScatter' | 'pivotBubble' |
     'pivotAreaChart' | 'pivotArea' | 'pivotStackedArea' | 'pivotNormalizedArea' |
     'pivotStatisticalChart' | 'pivotHistogram' |
+    'pivotHierarchicalChart' | 'pivotTreemap' | 'pivotSunburst' |
     'pivotCombinationChart' | 'pivotColumnLineCombo' | 'pivotAreaColumnCombo';
 
 class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
@@ -218,6 +219,16 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
                         ],
                 },
                 {
+                    _key: 'pivotHierarchicalChart',
+                    _enterprise: true,
+                    name: localeTextFunc('hierarchicalChart', 'Hierarchical'),
+                    subMenu:
+                        [
+                            getMenuItem('treemapChart', 'Treemap&lrm;', 'treemap', 'pivotTreemap', true),
+                            getMenuItem('sunburstChart', 'Sunburst&lrm;', 'sunburst', 'pivotSunburst', true),
+                        ],
+                },
+                {
                     _key: 'pivotCombinationChart',
                     name: localeTextFunc('combinationChart', 'Combination'),
                     subMenu: [
@@ -271,6 +282,11 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
                 areaColumnCombo: 'pivotAreaColumnCombo',
                 customCombo: null, // Not currently supported
             },
+            hierarchicalGroup: {
+                _key: 'pivotHierarchicalChart',
+                treemap: 'pivotTreemap',
+                sunburst: 'pivotSunburst',
+            },
             statisticalGroup: {
                 _key: 'pivotStatisticalChart',
                 histogram: 'pivotHistogram',
@@ -281,8 +297,6 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName>{
             },
             // Polar charts do not support pivot mode
             polarGroup: null,
-            // Hierarchical charts do not currently support pivot mode
-            hierarchicalGroup: null,
             // Specialized charts do not currently support pivot mode
             specializedGroup: null,
         }
