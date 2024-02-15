@@ -1,7 +1,7 @@
 import { Markdoc, component, defineMarkdocConfig, nodes } from '@astrojs/markdoc/config';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
-// import { DOCS_TAB_ITEM_ID_PREFIX } from './src/constants';
+import { DOCS_TAB_ITEM_ID_PREFIX } from './src/constants';
 
 export default defineMarkdocConfig({
     nodes: {
@@ -228,35 +228,26 @@ export default defineMarkdocConfig({
                 },
             },
         },
-        //     apiReference: {
-        //         render: component('./src/features/api-documentation/ApiReference.astro'),
-        //         attributes: {
-        //             id: { type: 'String' },
-        //             include: { type: 'Array' },
-        //             exclude: { type: 'Array' },
-        //             prioritise: { type: 'Array' },
-        //             hideHeader: { type: 'Boolean' },
-        //             hideRequired: { type: 'Boolean' },
-        //             specialTypes: { type: 'Object' },
-        //         },
-        //     },
-        //     tabs: {
-        //         render: component('./src/components/tabs/TabsWithHtmlChildren.astro'),
-        //         attributes: {
-        //             omitFromOverview: { type: Boolean, default: false },
-        //             tabItemIdPrefix: {
-        //                 type: String,
-        //                 default: DOCS_TAB_ITEM_ID_PREFIX,
-        //             },
-        //         },
-        //     },
-        //     tabItem: {
-        //         render: component('./src/components/tabs/TabHtmlContent', 'TabHtmlContent'),
-        //         attributes: {
-        //             id: { type: String },
-        //             label: { type: String },
-        //         },
-        //     },
+        tabs: {
+            render: component('./src/components/tabs/TabsWithHtmlChildren.astro'),
+            attributes: {
+                omitFromOverview: { type: Boolean, default: false },
+                tabItemIdPrefix: {
+                    type: String,
+                    default: DOCS_TAB_ITEM_ID_PREFIX,
+                },
+                headerLinks: {
+                    type: Array,
+                },
+            },
+        },
+        tabItem: {
+            render: component('./src/components/tabs/TabHtmlContent', 'TabHtmlContent'),
+            attributes: {
+                id: { type: String, required: true },
+                label: { type: String },
+            },
+        },
         videoSection: {
             render: component('./src/components/video-section/VideoSection.astro'),
             attributes: {

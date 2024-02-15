@@ -20,6 +20,7 @@ import { transformInterfaceDocumentation } from './transformers/transformInterfa
 import { transformLink } from './transformers/transformLink';
 import { transformResouces } from './transformers/transformResouces';
 import { transformSnippet } from './transformers/transformSnippet';
+import { transformTabs } from './transformers/transformTabs';
 import { transformAlerts } from './transformers/transfromAlerts';
 import { transformIconsPanel } from './transformers/transfromIconsPanel';
 import { markdocParagraphHandler } from './utils/convertMarkdocTag';
@@ -52,6 +53,7 @@ export async function transformMdxToMarkdoc({ contents }: { contents: string }) 
     transformLink(ast);
     transformExternalLink(ast);
     transformIconsPanel(ast);
+    transformTabs(ast);
     transformHtml(ast);
 
     // Warning transforms

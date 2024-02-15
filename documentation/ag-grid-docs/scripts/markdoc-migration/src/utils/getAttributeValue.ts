@@ -6,7 +6,7 @@ export interface Attribute {
     value: any;
 }
 
-export const getAttributeValue = ({ attributes, name }: { attributes: Attribute[]; name: string }) => {
+export const getAttributeValue = ({ attributes = [], name }: { attributes?: Attribute[]; name: string }) => {
     const attr = attributes.find((attr) => attr.name === name);
 
     if (attr === undefined) {

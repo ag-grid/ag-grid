@@ -45,6 +45,7 @@ const createMarkdocTag = ({
                 const type = (nameConfig as AttributeConfigObject)?.type || 'string';
                 const isBoolean = type === 'boolean';
                 const isString = type === 'string';
+                const isArray = type === 'array';
                 const field =
                     typeof nameConfig === 'object'
                         ? (nameConfig as AttributeConfigObject)?.name
@@ -53,7 +54,11 @@ const createMarkdocTag = ({
                 const attrValue = getAttributeValue({ attributes: attributes!, name: attrName });
 
                 const transform = (nameConfig as AttributeConfigObject)?.transform;
-                const processedValue = transform ? transform(attrValue)?.trim() : attrValue?.trim();
+                const processedValue = transform
+                    ? transform(attrValue)?.trim()
+                    : isString
+                      ? attrValue?.trim()
+                      : attrValue;
 
                 if (processedValue === undefined) {
                     return;
@@ -62,6 +67,8 @@ const createMarkdocTag = ({
                     return [field, boolValue];
                 } else if (isString) {
                     return [field, `"${processedValue}"`];
+                } else if (isArray) {
+                    return [field, JSON.stringify(processedValue)];
                 }
 
                 return [field, processedValue];
