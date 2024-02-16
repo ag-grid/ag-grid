@@ -104,7 +104,7 @@ This release includes the following deprecations:
 
 * `gridOptions.cellFlashDelay` - deprecated, use `gridOptions.cellFlashDuration` instead.
 * `gridOptions.cellFadeDelay` - deprecated, use `gridOptions.cellFadeDuration` instead.
-* `colDef.floatingFilterComponentParams.suppressFilterButton` - deprecated, use `colDef.suppressFloatingFilterButton` instead.*
+* `colDef.floatingFilterComponentParams.suppressFilterButton` - deprecated, use `colDef.suppressFloatingFilterButton` instead.
 
 ### Column Filters
 
@@ -115,6 +115,19 @@ This release includes the following deprecations:
 * `suppressMenu` - deprecated, use `suppressHeaderMenuButton` instead.
 * `columnsMenuParams` - deprecated, use `columnChooserParams` instead. 
 * `column.getMenuTabs` - deprecated, use `columns.getColDef.menuTabs ?? defaultValues` instead.
+
+### Grid API 
+
+* `getModel().getRow(index)` - deprecated, use `api.getDisplayedRowAtIndex(index)` instead.
+* `getModel().getRowNode(id)` - deprecated, use `api.getRowNode(id)` instead.
+* `getModel().getRowCount()` - deprecated, use `api.getDisplayedRowCount()` instead.
+* `getModel().isEmpty()` - deprecated, use `!!api.getDisplayedRowCount()` instead.
+* `getModel().forEachNode()` - deprecated, use `api.forEachNode()` instead.
+* `getFirstDisplayedRow`  - deprecated, use `api.getFirstDisplayedRowIndex` instead. 
+* `getLastDisplayedRow`  - deprecated, use `api.getLastDisplayedRowIndex` instead.
+* `flashCells`, `flashDelay` and `fadeDelay` params are deprecated in favor of `flashDuration` and `fadeDuration` params.
+* `showColumnMenuAfterButtonClick` - deprecated, use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere.
+* `showColumnMenuAfterMouseClick` - deprecated, use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere.
 * `removeRowGroupColumn` - deprecated, use  `removeRowGroupColumns` to provide the single string input param in an array.
 * `addRowGroupColumn` - deprecated, use `addRowGroupColumns` to provide the single string input param in an array.
 * `setColumnPinned` - deprecated, use `setColumnsPinned` to provide the single string input param in an array.
@@ -127,16 +140,3 @@ This release includes the following deprecations:
 * `moveColumn` - deprecated, use `moveColumns` to provide the single string input param in an array.
 * `setColumnWidth` - deprecated, use `setColumnWidths` to provide the single string input param in an array.
 * `setColumnVisible` - deprecated, use `setColumnsVisible` to provide the single string input param in an array.
-
-### Grid API 
-
-* `api.getModel().getRow(index)` - deprecated, use `api.getDisplayedRowAtIndex(index)` instead.
-* `api.getModel().getRowNode(id)` - deprecated, use `api.getRowNode(id)` instead.
-* `api.getModel().getRowCount()` - deprecated, use `api.getDisplayedRowCount()` instead.
-* `api.getModel().isEmpty()` - deprecated, use `!!api.getDisplayedRowCount()` instead.
-* `api.getModel().forEachNode()` - deprecated, use `api.forEachNode()` instead.
-* `api.getFirstDisplayedRow`  - deprecated, use `api.getFirstDisplayedRowIndex` instead. 
-* `api.getLastDisplayedRow`  - deprecated, use `api.getLastDisplayedRowIndex` instead.
-* `api.flashCells`, `flashDelay` and `fadeDelay` params are deprecated in favor of `flashDuration` and `fadeDuration` params.
-* `api.showColumnMenuAfterButtonClick` - deprecated, use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere.
-* `api.showColumnMenuAfterMouseClick` - deprecated, use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere.

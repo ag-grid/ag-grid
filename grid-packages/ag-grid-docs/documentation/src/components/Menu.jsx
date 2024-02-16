@@ -196,6 +196,11 @@ const MenuItem = ({item, currentFramework, activeParentItems, singleItem}) => {
         return parentItem.url ? parentItem.url === item.url : parentItem.title === item.title;
     }), [item, activeParentItems]);
 
+    const bootstrapCollapseProps = item.absoluteUrl ? {} : {
+        "data-toggle": "collapse",
+        "data-target": "#side-nav"
+    }
+
     return (
         <li>
             {item.url ? (
