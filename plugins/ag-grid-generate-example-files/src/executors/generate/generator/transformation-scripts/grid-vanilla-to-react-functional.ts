@@ -2,6 +2,7 @@ import { convertFunctionToConstProperty, getActiveTheme, getFunctionName, getInt
 import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import {integratedChartsUsesChartsEnterprise} from "../constants";
+import { PropertyKeys } from './eventKeys';
 const path = require('path');
 
 function getModuleImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {
@@ -122,18 +123,20 @@ function extractComponentInformation(properties, componentFilenames: string[]): 
 }
 
 function getEventAndCallbackNames() {
-    const interfaces = require('../../documentation/doc-pages/grid-api/interfaces.AUTO.json');
-    const docs = require('../../documentation/doc-pages/grid-api/doc-interfaces.AUTO.json');
-    const gridOptions = docs['GridOptions'];
-    const callbacksAndEvents = Object.entries(gridOptions).filter(([k, v]: [any, any]) => {
-        if (k == 'meta') { return false; }
-        const isCallback = v.type.arguments && !v.meta?.isEvent;
-        // Some callbacks use call signature interfaces and so do not have arguments like you might expect.
-        const isCallSigInterface = interfaces[v.type?.returnType]?.meta?.isCallSignature;
-        const isEvent = v.meta?.isEvent && !k.startsWith('on');
-        return isCallback || isCallSigInterface || isEvent;
-    }).map(([k, v]) => k);
-    return callbacksAndEvents;
+    // const interfaces = require('../../documentation/doc-pages/grid-api/interfaces.AUTO.json');
+    // const docs = require('../../documentation/doc-pages/grid-api/doc-interfaces.AUTO.json');
+    // const gridOptions = docs['GridOptions'];
+    // const callbacksAndEvents = Object.entries(gridOptions).filter(([k, v]: [any, any]) => {
+    //     if (k == 'meta') { return false; }
+    //     const isCallback = v.type.arguments && !v.meta?.isEvent;
+    //     // Some callbacks use call signature interfaces and so do not have arguments like you might expect.
+    //     const isCallSigInterface = interfaces[v.type?.returnType]?.meta?.isCallSignature;
+    //     const isEvent = v.meta?.isEvent && !k.startsWith('on');
+    //     return isCallback || isCallSigInterface || isEvent;
+    // }).map(([k, v]) => k);
+    // return callbacksAndEvents;
+    // TODO validate this list
+    return PropertyKeys.CALLBACK_PROPERTIES;
 }
 
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[], allStylesheets: string[]): (importType: ImportType) => string {

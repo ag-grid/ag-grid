@@ -4,6 +4,7 @@ import { ANGULAR_GENERATED_MAIN_FILE_NAME } from '../constants';
 import { vanillaToAngular } from '../transformation-scripts/grid-vanilla-to-angular';
 import { vanillaToReactFunctional } from '../transformation-scripts/grid-vanilla-to-react-functional';
 import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanilla-to-react-functional-ts';
+import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
 import { vanillaToVue } from '../transformation-scripts/grid-vanilla-to-vue';
 import { vanillaToVue3 } from '../transformation-scripts/grid-vanilla-to-vue3';
 import { readAsJsFile } from '../transformation-scripts/parser-utils';
@@ -11,7 +12,6 @@ import type { InternalFramework } from '../types';
 import type { FileContents } from '../types';
 import { deepCloneObject } from './deepCloneObject';
 import { getBoilerPlateFiles, getEntryFileName, getMainFileName } from './fileUtils';
-import { getDarkModeSnippet } from './getDarkModeSnippet';
 
 interface FrameworkFiles {
     files: FileContents;
@@ -46,6 +46,7 @@ type ConfigGenerator = ({
     otherScriptFiles: FileContents;
     ignoreDarkMode?: boolean;
     isDev: boolean;
+    importType: 'modules' | 'packages';
 }) => Promise<FrameworkFiles>;
 
 const createVueFilesGenerator =
@@ -53,18 +54,13 @@ const createVueFilesGenerator =
         sourceGenerator,
         internalFramework,
     }: {
-        sourceGenerator: (bindings: any, componentFilenames: string[]) => Promise<string>;
+        sourceGenerator: (bindings: any, componentFilenames: string[], allStylesheets: string[]) => (importType) => string;
         internalFramework: InternalFramework;
     }): ConfigGenerator =>
-    async ({ bindings, indexHtml, otherScriptFiles, isDev, ignoreDarkMode }) => {
+    async ({ bindings, indexHtml, otherScriptFiles, isDev, ignoreDarkMode, importType }) => {
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
 
-        let mainJs = await sourceGenerator(deepCloneObject(bindings), []);
-
-        // add website dark mode handling code to doc examples - this code is later striped out from the code viewer / plunker
-        if (!ignoreDarkMode) {
-            mainJs = mainJs + '\n' + getDarkModeSnippet();
-        }
+        let mainJs = sourceGenerator(deepCloneObject(bindings), [], [])(importType);
 
         mainJs = await prettier.format(mainJs, { parser: 'babel' });
 
@@ -93,23 +89,15 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         let mainJs = readAsJsFile(entryFile);
 
         // Chart classes that need scoping
-        const chartImports = typedBindings.imports.find(
-            (i: any) => i.module.includes('ag-charts-community') || i.module.includes('ag-charts-enterprise')
+        const gridImports = typedBindings.imports.find(
+            (i: any) => i.module.includes('ag-grid-community') || i.module.includes('ag-grid-enterprise')
         );
-        if (chartImports) {
-            chartImports.imports.forEach((i: any) => {
+        if (gridImports) {
+            gridImports.imports.forEach((i: any) => {
                 const toReplace = `(?<!\\.)${i}([\\s/.])`;
                 const reg = new RegExp(toReplace, 'g');
-                mainJs = mainJs.replace(reg, `agCharts.${i}$1`);
+                mainJs = mainJs.replace(reg, `agGrid.${i}$1`);
             });
-        }
-
-        // add website dark mode handling code to doc examples - this code is later striped out from the code viewer / plunker
-        if (!ignoreDarkMode) {
-            mainJs =
-                mainJs +
-                `\n
-            ${getDarkModeSnippet({ chartAPI: 'agCharts.AgCharts' })}`;
         }
 
         mainJs = await prettier.format(mainJs, { parser: 'babel' });
@@ -125,37 +113,14 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainFileName,
         };
     },
-    typescript: async ({ entryFile, indexHtml, otherScriptFiles, bindings, ignoreDarkMode, isDev }) => {
+    typescript: async ({ entryFile, indexHtml, otherScriptFiles, typedBindings, ignoreDarkMode, isDev, importType }) => {
         const internalFramework: InternalFramework = 'typescript';
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
 
-        const { externalEventHandlers } = bindings;
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
 
-
-        
-
-
-        // Attach external event handlers
-        let externalEventHandlersCode;
-        if (externalEventHandlers?.length > 0) {
-            const externalBindings = externalEventHandlers.map((e) => `   (<any>window).${e.name} = ${e.name};`);
-            externalEventHandlersCode = [
-                '\n',
-                "if (typeof window !== 'undefined') {",
-                '// Attach external event handlers to window so they can be called from index.html',
-                ...externalBindings,
-                '}',
-            ].join('\n');
-        }
-
-        let mainTs = externalEventHandlersCode ? `${entryFile}${externalEventHandlersCode}` : entryFile;
-
-        const chartAPI = 'AgCharts';
-        if (!mainTs.includes(`chart = ${chartAPI}`)) {
-            mainTs = mainTs.replace(`${chartAPI}.create(options);`, `const chart = ${chartAPI}.create(options);`);
-        }
+        let mainTs = vanillaToTypescript(deepCloneObject(typedBindings), mainFileName, entryFile)(importType);
 
         mainTs = await prettier.format(mainTs, { parser: 'typescript' });
 
@@ -171,97 +136,82 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainFileName,
         };
     },
-    // reactFunctional: async ({ bindings, indexHtml, otherScriptFiles, isDev, ignoreDarkMode }) => {
-    //     const internalFramework = 'reactFunctional';
-    //     const entryFileName = getEntryFileName(internalFramework)!;
-    //     const mainFileName = getMainFileName(internalFramework)!;
-    //     const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
+    reactFunctional: async ({ bindings, indexHtml, otherScriptFiles, isDev, ignoreDarkMode, importType }) => {
+        const internalFramework = 'reactFunctional';
+        const entryFileName = getEntryFileName(internalFramework)!;
+        const mainFileName = getMainFileName(internalFramework)!;
+        const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
 
-    //     let indexJsx = await vanillaToReactFunctional(deepCloneObject(bindings), []);
+        let indexJsx = vanillaToReactFunctional(deepCloneObject(bindings), [], [])(importType);
 
-    //     // add website dark mode handling code to doc examples - this code is later striped out from the code viewer / plunker
-    //     if (!ignoreDarkMode) {
-    //         indexJsx = indexJsx + '\n' + getDarkModeSnippet();
-    //     }
+        indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
 
-    //     indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
+        return {
+            files: {
+                ...otherScriptFiles,
+                [entryFileName]: indexJsx,
+                'index.html': indexHtml,
+            },
+            boilerPlateFiles,
+            // Other files, not including entry file
+            scriptFiles: Object.keys(otherScriptFiles),
+            entryFileName,
+            mainFileName,
+        };
+    },
+    reactFunctionalTs: async ({ typedBindings, indexHtml, otherScriptFiles, ignoreDarkMode, isDev, importType }) => {
+        const internalFramework: InternalFramework = 'reactFunctionalTs';
+        const entryFileName = getEntryFileName(internalFramework)!;
+        const mainFileName = getMainFileName(internalFramework)!;
+        const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
 
-    //     return {
-    //         files: {
-    //             ...otherScriptFiles,
-    //             [entryFileName]: indexJsx,
-    //             'index.html': indexHtml,
-    //         },
-    //         boilerPlateFiles,
-    //         // Other files, not including entry file
-    //         scriptFiles: Object.keys(otherScriptFiles),
-    //         entryFileName,
-    //         mainFileName,
-    //     };
-    // },
-    // reactFunctionalTs: async ({ typedBindings, indexHtml, otherScriptFiles, ignoreDarkMode, isDev }) => {
-    //     const internalFramework: InternalFramework = 'reactFunctionalTs';
-    //     const entryFileName = getEntryFileName(internalFramework)!;
-    //     const mainFileName = getMainFileName(internalFramework)!;
-    //     const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
+        let indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), [], [])(importType);
 
-    //     let indexTsx = await vanillaToReactFunctionalTs(deepCloneObject(typedBindings), []);
+        indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
 
-    //     // add website dark mode handling code to doc examples - this code is later striped out from the code viewer / plunker
-    //     if (!ignoreDarkMode) {
-    //         indexTsx = indexTsx + '\n' + getDarkModeSnippet();
-    //     }
+        return {
+            files: {
+                ...otherScriptFiles,
+                [entryFileName]: indexTsx,
+                'index.html': indexHtml,
+            },
+            boilerPlateFiles,
+            // NOTE: `scriptFiles` not required, as system js handles import
+            entryFileName,
+            mainFileName,
+        };
+    },
+    angular: async ({ typedBindings, otherScriptFiles, isDev, ignoreDarkMode, importType }) => {
+        const internalFramework: InternalFramework = 'angular';
+        const entryFileName = getEntryFileName(internalFramework)!;
+        const mainFileName = getMainFileName(internalFramework)!;
+        const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
 
-    //     indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
+        let appComponent = vanillaToAngular(deepCloneObject(typedBindings), [],[])(importType);
 
-    //     return {
-    //         files: {
-    //             ...otherScriptFiles,
-    //             [entryFileName]: indexTsx,
-    //             'index.html': indexHtml,
-    //         },
-    //         boilerPlateFiles,
-    //         // NOTE: `scriptFiles` not required, as system js handles import
-    //         entryFileName,
-    //         mainFileName,
-    //     };
-    // },
-    // angular: async ({ typedBindings, otherScriptFiles, isDev, ignoreDarkMode }) => {
-    //     const internalFramework: InternalFramework = 'angular';
-    //     const entryFileName = getEntryFileName(internalFramework)!;
-    //     const mainFileName = getMainFileName(internalFramework)!;
-    //     const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
+        appComponent = await prettier.format(appComponent, { parser: 'typescript' });
 
-    //     let appComponent = await vanillaToAngular(deepCloneObject(typedBindings), []);
-
-    //     // add website dark mode handling code to doc examples - this code is later striped out from the code viewer / plunker
-    //     if (!ignoreDarkMode) {
-    //         appComponent = appComponent + '\n' + getDarkModeSnippet();
-    //     }
-
-    //     appComponent = await prettier.format(appComponent, { parser: 'typescript' });
-
-    //     return {
-    //         files: {
-    //             ...otherScriptFiles,
-    //             // NOTE: No `index.html` as the contents are generated in the `app.component` file
-    //             // NOTE: Duplicating entrypoint boilerplate file here, so examples
-    //             // load from the same directory as these files, rather than
-    //             // boilerplate files
-    //             [entryFileName]: boilerPlateFiles[entryFileName],
-    //             [ANGULAR_GENERATED_MAIN_FILE_NAME]: appComponent,
-    //         },
-    //         boilerPlateFiles,
-    //         entryFileName,
-    //         mainFileName,
-    //     };
-    // },
-    // vue: createVueFilesGenerator({
-    //     sourceGenerator: vanillaToVue,
-    //     internalFramework: 'vue',
-    // }),
-    // vue3: createVueFilesGenerator({
-    //     sourceGenerator: vanillaToVue3,
-    //     internalFramework: 'vue3',
-    // }),
+        return {
+            files: {
+                ...otherScriptFiles,
+                // NOTE: No `index.html` as the contents are generated in the `app.component` file
+                // NOTE: Duplicating entrypoint boilerplate file here, so examples
+                // load from the same directory as these files, rather than
+                // boilerplate files
+                [entryFileName]: boilerPlateFiles[entryFileName],
+                [ANGULAR_GENERATED_MAIN_FILE_NAME]: appComponent,
+            },
+            boilerPlateFiles,
+            entryFileName,
+            mainFileName,
+        };
+    },
+    vue: createVueFilesGenerator({
+        sourceGenerator: vanillaToVue,
+        internalFramework: 'vue',
+    }),
+    vue3: createVueFilesGenerator({
+        sourceGenerator: vanillaToVue3,
+        internalFramework: 'vue3',
+    }),
 };

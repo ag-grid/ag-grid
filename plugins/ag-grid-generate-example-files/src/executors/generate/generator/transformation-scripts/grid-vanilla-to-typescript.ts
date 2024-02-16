@@ -1,12 +1,7 @@
 import {addBindingImports, addGenericInterfaceImport, getIntegratedDarkModeCode, getModuleRegistration, ImportType} from './parser-utils';
 import {integratedChartsUsesChartsEnterprise} from "../constants";
+import { toTitleCase } from './string-utils';
 
-const path = require('path');
-const fs = require('fs-extra');
-
-export function toTitleCase(value) {
-    return value[0].toUpperCase() + value.slice(1);
-}
 
 export function getImport(filename: string) {
     const componentName = filename.split('.')[0];
@@ -23,7 +18,7 @@ function getPropertyInterfaces(properties) {
     return [...new Set(propTypesUsed)];
 }
 
-function getModuleImports(bindings: any, allStylesheets: string[]): string[] {
+function getModuleImports(bindings: any): string[] {
     const {gridSettings, imports: bindingImports, properties} = bindings;
 
     let imports = [];
@@ -53,7 +48,7 @@ function getModuleImports(bindings: any, allStylesheets: string[]): string[] {
     return imports;
 }
 
-function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
+function getPackageImports(bindings: any): string[] {
     const {gridSettings, imports: bindingImports, properties} = bindings;
     const imports = [];
 
@@ -86,15 +81,15 @@ function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
     return imports;
 }
 
-function getImports(bindings: any, importType: ImportType, allStylesheets: string[]): string[] {
+function getImports(bindings: any, importType: ImportType): string[] {
     if (importType === "packages") {
-        return getPackageImports(bindings, allStylesheets);
+        return getPackageImports(bindings);
     } else {
-        return getModuleImports(bindings, allStylesheets);
+        return getModuleImports(bindings);
     }
 }
 
-export function vanillaToTypescript(bindings: any, mainFilePath: string, allStylesheets: string[]): (importType: ImportType) => string {
+export function vanillaToTypescript(bindings: any, mainFilePath: string, tsFile: string): (importType: ImportType) => string {
     const {gridSettings, externalEventHandlers, imports} = bindings;
 
     // attach external handlers to window
@@ -109,8 +104,6 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, allStyl
             "}"
         ].join('\n');
     }
-
-    const tsFile = fs.readFileSync(mainFilePath, 'utf8')
     let unWrapped = tsFile
         // unwrap the setup code from the DOM loaded event as the DOM is loaded before the typescript file is transpiled.
         // Regex
@@ -125,7 +118,7 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, allStyl
     }
 
     return importType => {
-        const importStrings = getImports(bindings, importType, allStylesheets);
+        const importStrings = getImports(bindings, importType);
         const formattedImports = `${importStrings.join('\n')}\n`;
 
         // Remove the original import statements

@@ -135,6 +135,7 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
         otherScriptFiles,
         ignoreDarkMode: false,
         isDev,
+        importType,
     });
 
     const result: GeneratedContents = {
