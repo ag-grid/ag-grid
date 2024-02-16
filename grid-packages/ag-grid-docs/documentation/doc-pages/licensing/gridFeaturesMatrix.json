@@ -89,58 +89,70 @@
     },
     "items": [
       {
-        "label": {
-          "name": "Simple Column Filters",
-          "link": "https://www.ag-grid.com/javascript-data-grid/filtering/"
-        },
-        "community": true,
-        "enterprise": true,
-        "chartsGrid": true
+        "name": "Basic Filters",
+        "isSubGroup": true,
+        "items": [
+          {
+            "label": {
+              "name": "Simple Column Filters",
+              "link": "https://www.ag-grid.com/javascript-data-grid/filtering/"
+            },
+            "community": true,
+            "enterprise": true,
+            "chartsGrid": true
+          },
+          {
+            "label": {
+              "name": "External Filter",
+              "link": "https://www.ag-grid.com/javascript-data-grid/filter-external/"
+            },
+            "community": true,
+            "enterprise": true,
+            "chartsGrid": true
+          },
+          {
+            "label": {
+              "name": "Quick Filter",
+              "link": "https://www.ag-grid.com/javascript-data-grid/filter-quick/"
+            },
+            "community": true,
+            "enterprise": true,
+            "chartsGrid": true
+          }
+        ]
       },
       {
-        "label": {
-          "name": "External Filter",
-          "link": "https://www.ag-grid.com/javascript-data-grid/filter-external/"
-        },
-        "community": true,
-        "enterprise": true,
-        "chartsGrid": true
-      },
-      {
-        "label": {
-          "name": "Quick Filter",
-          "link": "https://www.ag-grid.com/javascript-data-grid/filter-quick/"
-        },
-        "community": true,
-        "enterprise": true,
-        "chartsGrid": true
-      },
-      {
-        "label": {
-          "name": "Multi Filter",
-          "link": "https://www.ag-grid.com/javascript-data-grid/filter-multi/"
-        },
-        "community": false,
-        "enterprise": true,
-        "chartsGrid": true
-      },
-      {
-        "label": {
-          "name": "Set Filter",
-          "link": "https://www.ag-grid.com/javascript-data-grid/filter-set/"
-        },
-        "community": false,
-        "enterprise": true,
-        "chartsGrid": true
-      },
-      {
-        "label": {
-          "name": "Advanced Filter",
-          "link": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/"
-        },
-        "community": false,
-        "enterprise": true,
-        "chartsGrid": true
+        "name": "Pro Filters",
+        "isSubGroup": true,
+        "items": [
+            {
+                "label": {
+                  "name": "Multi Filter",
+                  "link": "https://www.ag-grid.com/javascript-data-grid/filter-multi/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+              },
+              {
+                "label": {
+                  "name": "Set Filter",
+                  "link": "https://www.ag-grid.com/javascript-data-grid/filter-set/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+              },
+              {
+                "label": {
+                  "name": "Advanced Filter",
+                  "link": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+              }
+        ]
       }
     ]
   },
