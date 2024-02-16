@@ -196,6 +196,10 @@ export abstract class ChartProxy {
 
     public destroy({ keepChartInstance = false } = {}): AgChartInstance | undefined {
         if (keepChartInstance) {
+            // Reset Charts animation state, so that future updates to this re-used chart instance
+            // behave as-if the chart is brand new. When switching chartTypes, this means we hide
+            // the fact we are reusing the chart instance; the user sees a new chart which behaves
+            // as-if it is a completely new and distinct chart instance.
             this.chart.resetAnimations();
             return this.chart;
         }

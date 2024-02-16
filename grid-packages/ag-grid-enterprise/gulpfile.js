@@ -133,9 +133,14 @@ declare module 'ag-grid-community' {
     }
 }
 `, ''))
+        .pipe(replace("export * from './agGridCoreExtension';", ''))
+        .pipe(replace('export { EnterpriseCoreModule } from "./agGridEnterpriseModule";', ''))
+        .pipe(replace('export { ExcelExportModule } from "./excelExportModule";', ''))
+        .pipe(replace("export { SetFilterModule } from './setFilterModule';", ''))
+        .pipe(replace('export { GridChartsModule } from "./gridChartsModule";', ''))
         .pipe(replace('export * from "ag-charts-community";', 'export * from "./ag-charts-community/main";'))
-        .pipe(replace("\"ag-charts-community\"", '"./ag-charts-community"'))
-        .pipe(replace("'ag-charts-community'", "'./ag-charts-community'"))
+        .pipe(replace("\"ag-charts-community\"", '"./ag-charts-community/main"'))
+        .pipe(replace("'ag-charts-community'", "'./ag-charts-community/main'"))
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
 };

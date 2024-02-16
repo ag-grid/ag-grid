@@ -59,9 +59,8 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
                         { group &&
                             <h5>{group}</h5>
                         }
-                        
 
-                        {items.map(({title, items: childItems}) => (
+                        {items?.map(({title, items: childItems}) => (
                             <MenuSection
                                 key={`${title}-menu`}
                                 title={title}
@@ -116,6 +115,24 @@ const MenuSection = ({title, items, currentFramework, activeParentItems, toggleA
         }
     };
 
+    if (!items || items.length === 0) {
+        const findMenuItemByTitle = (items, title) =>
+            items.find(item => item.title === title && (!item.items || !item.items.length)) ||
+            items.flatMap(item => item.items ? findMenuItemByTitle(item.items, title) : []).find(item => item);
+
+        // handle top level menu items that don't have groups as a simple, non-collapsible item (i.e. 'Quick Start')
+        const topLevelMenuItemWithoutChildren = findMenuItemByTitle(activeParentItems, title);
+        if (topLevelMenuItemWithoutChildren) {
+            return (
+                <MenuItem
+                    item={topLevelMenuItemWithoutChildren}
+                    currentFramework={currentFramework}
+                    activeParentItems={activeParentItems}
+                />
+            );
+        }
+    }
+
     return (
         <li className={styles.menuSection}>
             { title &&
@@ -125,6 +142,7 @@ const MenuSection = ({title, items, currentFramework, activeParentItems, toggleA
                     {title}
                 </button>
             }
+
             <MenuGroup
                 group={{group: title, items}}
                 currentFramework={currentFramework}
@@ -145,7 +163,7 @@ const MenuGroup = ({group, currentFramework, isTopLevel, isActive, activeParentI
 
     // `useMemo` is worth it here as filtered items only change when switching frameworks.
     const filteredItems = useMemo(() => {
-        return items.filter(item => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)));
+        return items?.filter(item => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)));
     }, [items, currentFramework]);
 
     const topLevelElementId = isTopLevel ? toElementId(group.group) : null;
@@ -185,7 +203,7 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
     return (
         <li>
             {item.url ? (
-                item.absoluteUrl ? 
+                item.absoluteUrl ?
                     (
                         <a href={item.url}>
                             {item.title}
