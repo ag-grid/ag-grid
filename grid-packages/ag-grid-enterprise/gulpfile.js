@@ -133,9 +133,9 @@ declare module 'ag-grid-community' {
     }
 }
 `, ''))
-        .pipe(replace('export * from "ag-charts-community";', 'export * from "./ag-charts-community/main";'))
-        .pipe(replace("\"ag-charts-community\"", '"./ag-charts-community"'))
-        .pipe(replace("'ag-charts-community'", "'./ag-charts-community'"))
+        //.pipe(replace('export * from "ag-charts-community";', 'export * from "./ag-charts-community/main";'))
+        .pipe(replace("\"ag-charts-community\"", '"./ag-charts-community/main"'))
+        .pipe(replace("'ag-charts-community'", "'./ag-charts-community/main'"))
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
 };

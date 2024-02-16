@@ -69,7 +69,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                             '@ag-grid-community/core': 'ag-grid-community',
                             '@ag-grid-community/all-modules': 'ag-grid-community',
                             '@ag-grid-community/csv-export': 'ag-grid-community',
-                            '@ag-grid-community/@ag-grid-community/client-side-row-model': 'ag-grid-community',
+                            '@ag-grid-community/client-side-row-model': 'ag-grid-community',
                             '@ag-grid-community/infinite-row-model': 'ag-grid-community'
                         },
                         delimiters: ['', '']
@@ -95,7 +95,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                             '@ag-grid-community/core': 'ag-grid-community',
                             '@ag-grid-community/all-modules': 'ag-grid-community',
                             '@ag-grid-community/csv-export': 'ag-grid-community',
-                            '@ag-grid-community/@ag-grid-community/client-side-row-model': 'ag-grid-community',
+                            '@ag-grid-community/client-side-row-model': 'ag-grid-community',
                             '@ag-grid-community/infinite-row-model': 'ag-grid-community'
                         },
                         delimiters: ['', '']
@@ -144,7 +144,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                                 '@ag-grid-community/core': 'ag-grid-community',
                                 '@ag-grid-community/all-modules': 'ag-grid-community',
                                 '@ag-grid-community/csv-export': 'ag-grid-community',
-                                '@ag-grid-community/@ag-grid-community/client-side-row-model': 'ag-grid-community',
+                                '@ag-grid-community/client-side-row-model': 'ag-grid-community',
                                 '@ag-grid-community/infinite-row-model': 'ag-grid-community'
                             },
                             delimiters: ['', '']
@@ -170,7 +170,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                                 '@ag-grid-community/core': 'ag-grid-community',
                                 '@ag-grid-community/all-modules': 'ag-grid-community',
                                 '@ag-grid-community/csv-export': 'ag-grid-community',
-                                '@ag-grid-community/@ag-grid-community/client-side-row-model': 'ag-grid-community',
+                                '@ag-grid-community/client-side-row-model': 'ag-grid-community',
                                 '@ag-grid-community/infinite-row-model': 'ag-grid-community'
                             },
                             delimiters: ['', '']
