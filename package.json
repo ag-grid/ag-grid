@@ -3,7 +3,8 @@
   "version": "32.0.2",
   "license": "MIT",
   "scripts": {
-    "postinstall": "patch-package",
+    "build-generators":"nx run-many -p ag-grid-generate-code-reference-files,ag-grid-generate-example-files,ag-grid-task-autogen -t build",
+    "postinstall": "patch-package && yarn run build-generators",
     "bootstrap": "YARN_REGISTRY=\"http://54.194.75.252:4873\" yarn"
   },
   "private": true,
@@ -12,7 +13,8 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@nx/esbuild": "17.2.6",
+    "@nx/devkit": "17.2.8",
+    "@nx/esbuild": "17.2.8",
     "@nx/eslint": "17.2.8",
     "@nx/eslint-plugin": "17.2.8",
     "@nx/jest": "17.2.8",
@@ -20,8 +22,10 @@
     "@nx/rollup": "17.2.6",
     "@nx/react": "17.2.6",
     "@nx/workspace": "17.2.8",
-    "@swc-node/register": "~1.6.7",
-    "@swc/core": "~1.3.85",
+    "@swc/helpers": "0.5.3",
+    "@swc-node/register": "1.6.8",
+    "@swc/cli": "0.1.62",
+    "@swc/core": "1.3.96",
     "@types/jest": "^29.4.0",
     "@types/node": "18.16.9",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
@@ -37,7 +41,7 @@
     "prettier": "^3.0.0",
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
-    "typescript": "~4.7.4"
+    "typescript": "^4.9.5"
   },
   "nx": {
     "includedScripts": []
@@ -72,7 +76,10 @@
       "enterprise-modules/viewport-row-model",
       "enterprise-modules/status-bar",
       "documentation/ag-grid-docs",
-      "documentation/example-generation"
+      "documentation/example-generation",
+      "plugins/ag-grid-generate-code-reference-files",
+      "plugins/ag-grid-generate-example-files",
+      "plugins/ag-grid-task-autogen"
     ],
     "nohoist": [
       "**/@vue/**",

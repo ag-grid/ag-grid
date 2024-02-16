@@ -1,0 +1,52 @@
+{
+  "name": "ag-grid-task-autogen",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "plugins/ag-grid-task-autogen/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "plugins/ag-grid-task-autogen/dist",
+        "main": "plugins/ag-grid-task-autogen/src/index.ts",
+        "tsConfig": "plugins/ag-grid-task-autogen/tsconfig.lib.json",
+        "assets": [
+          "plugins/ag-grid-task-autogen/*.md",
+          {
+            "input": "./plugins/ag-grid-task-autogen/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./plugins/ag-grid-task-autogen/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./plugins/ag-grid-task-autogen",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./plugins/ag-grid-task-autogen",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "plugins/ag-grid-task-autogen/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}
