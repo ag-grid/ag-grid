@@ -32,7 +32,7 @@ export const getGeneratedContentsFileList = async (params: FileListParams): Prom
     const entryFileName = getEntryFileName(internalFramework)!;
     const sourceFileList = await fs.readdir(folderPath);
 
-    const scriptFiles = await getOtherScriptFiles({
+    const [scriptFiles, frameworkScriptFiles] = await getOtherScriptFiles({
         folderPath,
         sourceFileList,
         transformTsFileExt: getTransformTsFileExt(internalFramework),
@@ -51,6 +51,7 @@ export const getGeneratedContentsFileList = async (params: FileListParams): Prom
     const generatedFileList = ['index.html', entryFileName]
         .concat(angularFiles)
         .concat(Object.keys(scriptFiles))
+        .concat(Object.keys(frameworkScriptFiles))
         .concat(Object.keys(styleFiles));
 
     return generatedFileList;
@@ -78,7 +79,7 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
     const entryFile = await readFile(entryFilePath);
     const indexHtml = await readFile(path.join(folderPath, 'index.html'));
 
-    const otherScriptFiles = await getOtherScriptFiles({
+    const [otherScriptFiles, componentScriptFiles] = await getOtherScriptFiles({
         folderPath,
         sourceFileList,
         transformTsFileExt: getTransformTsFileExt(internalFramework),
@@ -129,6 +130,7 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
         isEnterprise,
         bindings,
         typedBindings,
+        componentScriptFiles,
         otherScriptFiles,
         ignoreDarkMode: false,
         isDev,

@@ -1,6 +1,6 @@
 import { SOURCE_ENTRY_FILE_NAME } from '../constants';
 import { readAsJsFile } from '../transformation-scripts/parser-utils';
-import { FileContents, FRAMEWORKS, TransformTsFileExt } from '../types';
+import { FileContents, FRAMEWORKS, InternalFramework, TransformTsFileExt } from '../types';
 import { getFileList } from './fileUtils';
 
 const getOtherTsGeneratedFiles = async ({
@@ -78,21 +78,23 @@ export const getOtherScriptFiles = async ({
     });
 
     const contents = Object.assign({}, otherTsGeneratedFileContents, otherJsFileContents) as FileContents;
-
+    const frameworkComponentSuffix = (framework: InternalFramework) => framework === 'vue' || framework === 'vue3' ? 'Vue' : ''; 
     const filteredToFramework = {};
+    const others = {}
     Object.entries(contents).forEach(([file, content]) => {
         let isFrameworkFile = false;
         FRAMEWORKS.forEach((framework) => {
-            if (file.includes('_' + framework)) {
+            const suffix = '_' + framework;
+            if (file.includes(suffix)) {
                 if(internalFramework === framework) {
-                    filteredToFramework[file] = content;
+                    filteredToFramework[file.replace(suffix, frameworkComponentSuffix(framework))] = content;
                 }
                 isFrameworkFile = true;
             }
         });
         if (!isFrameworkFile) {
-            filteredToFramework[file] = content;
+            others[file] = content;
         }
     });
-    return filteredToFramework;
+    return [others, filteredToFramework];
 };

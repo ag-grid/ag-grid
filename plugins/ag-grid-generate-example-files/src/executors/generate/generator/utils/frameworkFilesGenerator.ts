@@ -35,6 +35,7 @@ type ConfigGenerator = ({
     isEnterprise,
     bindings,
     typedBindings,
+    componentScriptFiles,
     otherScriptFiles,
     ignoreDarkMode,
     isDev,
@@ -44,6 +45,7 @@ type ConfigGenerator = ({
     isEnterprise: boolean;
     bindings: any;
     typedBindings: any;
+    componentScriptFiles: FileContents;
     otherScriptFiles: FileContents;
     ignoreDarkMode?: boolean;
     isDev: boolean;
@@ -62,10 +64,10 @@ const createVueFilesGenerator =
         ) => (importType) => string;
         internalFramework: InternalFramework;
     }): ConfigGenerator =>
-    async ({ bindings, indexHtml, otherScriptFiles, isDev, ignoreDarkMode, importType }) => {
+    async ({ bindings, indexHtml, componentScriptFiles, otherScriptFiles, isDev, importType }) => {
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
 
-        const componentNames = filteredToFramework(otherScriptFiles, '_vue', 'Vue');
+        const componentNames = getComponentName(componentScriptFiles);
         let mainJs = sourceGenerator(deepCloneObject(bindings), componentNames, [])(importType);
 
         mainJs = await prettier.format(mainJs, { parser: 'babel' });
@@ -73,22 +75,24 @@ const createVueFilesGenerator =
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
 
+        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
+
         return {
             files: {
-                ...otherScriptFiles,
+                ...scriptFiles,
                 [entryFileName]: mainJs,
                 'index.html': indexHtml,
             },
             boilerPlateFiles,
             // Other files, not including entry file
-            scriptFiles: Object.keys(otherScriptFiles),
+            scriptFiles: Object.keys(scriptFiles),
             entryFileName,
             mainFileName,
         };
     };
 
 export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGenerator>> = {
-    vanilla: async ({ entryFile, indexHtml, typedBindings, otherScriptFiles, ignoreDarkMode }) => {
+    vanilla: async ({ entryFile, indexHtml, typedBindings, componentScriptFiles, otherScriptFiles, ignoreDarkMode }) => {
         const internalFramework: InternalFramework = 'vanilla';
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
@@ -106,15 +110,16 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             });
         }
 
+        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
         mainJs = await prettier.format(mainJs, { parser: 'babel' });
 
         return {
             files: {
-                ...otherScriptFiles,
+                ...scriptFiles,
                 [entryFileName]: mainJs,
                 'index.html': indexHtml,
             },
-            scriptFiles: Object.keys(otherScriptFiles).concat(entryFileName),
+            scriptFiles: Object.keys(scriptFiles).concat(entryFileName),
             entryFileName,
             mainFileName,
         };
@@ -123,8 +128,8 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         entryFile,
         indexHtml,
         otherScriptFiles,
+        componentScriptFiles,
         typedBindings,
-        ignoreDarkMode,
         isDev,
         importType,
     }) => {
@@ -138,9 +143,11 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
 
         mainTs = await prettier.format(mainTs, { parser: 'typescript' });
 
+        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
+
         return {
             files: {
-                ...otherScriptFiles,
+                ...scriptFiles,
                 [entryFileName]: mainTs,
                 'index.html': indexHtml,
             },
@@ -150,44 +157,48 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainFileName,
         };
     },
-    reactFunctional: async ({ bindings, indexHtml, otherScriptFiles, isDev, ignoreDarkMode, importType }) => {
+    reactFunctional: async ({ bindings, indexHtml, otherScriptFiles, componentScriptFiles, isDev, importType }) => {
         const internalFramework = 'reactFunctional';
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
 
-        const componentNames = filteredToFramework(otherScriptFiles, '_reactFunctional');
+        const componentNames = getComponentName(componentScriptFiles);
         let indexJsx = vanillaToReactFunctional(deepCloneObject(bindings), componentNames, [])(importType);
 
         indexJsx = await prettier.format(indexJsx, { parser: 'babel' });
 
+        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
+
         return {
             files: {
-                ...otherScriptFiles,
+                ...scriptFiles,
                 [entryFileName]: indexJsx,
                 'index.html': indexHtml,
             },
             boilerPlateFiles,
             // Other files, not including entry file
-            scriptFiles: Object.keys(otherScriptFiles),
+            scriptFiles: Object.keys(scriptFiles),
             entryFileName,
             mainFileName,
         };
     },
-    reactFunctionalTs: async ({ typedBindings, indexHtml, otherScriptFiles, ignoreDarkMode, isDev, importType }) => {
+    reactFunctionalTs: async ({ typedBindings, indexHtml, otherScriptFiles, componentScriptFiles, isDev, importType }) => {
         const internalFramework: InternalFramework = 'reactFunctionalTs';
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
 
-        const componentNames = filteredToFramework(otherScriptFiles, '_reactFunctional');
+        const componentNames = getComponentName(componentScriptFiles);
         let indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), componentNames, [])(importType);
 
         indexTsx = await prettier.format(indexTsx, { parser: 'typescript' });
 
+        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
+
         return {
             files: {
-                ...otherScriptFiles,
+                ...scriptFiles,
                 [entryFileName]: indexTsx,
                 'index.html': indexHtml,
             },
@@ -197,20 +208,22 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
             mainFileName,
         };
     },
-    angular: async ({ typedBindings, otherScriptFiles, isDev, ignoreDarkMode, importType }) => {
+    angular: async ({ typedBindings, otherScriptFiles, componentScriptFiles, isDev, importType }) => {
         const internalFramework: InternalFramework = 'angular';
         const entryFileName = getEntryFileName(internalFramework)!;
         const mainFileName = getMainFileName(internalFramework)!;
         const boilerPlateFiles = await getBoilerPlateFiles(isDev, internalFramework);
 
-        const componentNames = filteredToFramework(otherScriptFiles, '_angular');
+        const componentNames = getComponentName(componentScriptFiles);
         let appComponent = vanillaToAngular(deepCloneObject(typedBindings), componentNames, [])(importType);
 
         appComponent = await prettier.format(appComponent, { parser: 'typescript' });
 
+        const scriptFiles = {...otherScriptFiles, ...componentScriptFiles};
+
         return {
             files: {
-                ...otherScriptFiles,
+                ...scriptFiles,
                 // NOTE: No `index.html` as the contents are generated in the `app.component` file
                 // NOTE: Duplicating entrypoint boilerplate file here, so examples
                 // load from the same directory as these files, rather than
@@ -233,13 +246,6 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
     }),
 };
 
-function filteredToFramework(otherScriptFiles: FileContents, frameworkSuffix: string, toReplace: string = '') {
-    const componentFiles = [];
-    Object.entries(otherScriptFiles).forEach(([file, content]) => {
-        if (file.includes(frameworkSuffix)) {
-            componentFiles.push(basename(file).replace(frameworkSuffix, toReplace));
-        }
-    });
-
-    return componentFiles;
+function getComponentName(otherScriptFiles: FileContents) {
+    return Object.keys(otherScriptFiles).map((file) => basename(file));
 }
