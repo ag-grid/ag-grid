@@ -6,10 +6,9 @@ let chartRef: ChartRef | undefined;
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'country', width: 150, chartDataType: 'category' },
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze', chartDataType: 'series' },
+    { field: 'division', chartDataType: 'category', width: 150 },
+    { field: 'recurring', chartDataType: 'series', headerName: 'Recurring revenue' },
+    { field: 'individual', chartDataType: 'series', headerName: 'Individual sales' },
   ],
   defaultColDef: {
     flex: 1,
@@ -30,9 +29,7 @@ const gridOptions: GridOptions = {
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   chartRef = params.api.createRangeChart({
     cellRange: {
-      rowStartIndex: 0,
-      rowEndIndex: 10,
-      columns: ['country', 'gold', 'silver', 'bronze'],
+      columns: ['division', 'recurring', 'individual'],
     },
     chartType: 'radarLine',
   });

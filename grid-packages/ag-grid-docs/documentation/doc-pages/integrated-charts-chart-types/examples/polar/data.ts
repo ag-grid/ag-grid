@@ -3,17 +3,11 @@ export async function getData(delay: number = 100): Promise<any[]> {
 }
 
 function generateData(): any[] {
-    const countries = [
-        'Ireland', 'Spain', 'United Kingdom', 'France', 'Germany',
-        'Luxembourg', 'Sweden', 'Norway', 'Italy', 'Greece',
-        'Iceland', 'Portugal', 'Malta', 'Brazil', 'Argentina',
-        'Colombia', 'Peru', 'Venezuela', 'Uruguay', 'Belgium',
+    return [
+        { "division": "Sales", "recurring": 485829, "individual": 263971 },
+        { "division": "Finance", "recurring": 291245, "individual": 46821 },
+        { "division": "Consultancy", "recurring": 315284, "individual": 216473 },
+        { "division": "Operations", "recurring": 154319, "individual": 29867 },
+        { "division": "Media", "recurring": 215284, "individual": 61473 },
     ];
-
-    return countries.map((country, index) => ({
-        country,
-        gold: Math.floor(((index + 1 / 7) * 333) % 100),
-        silver: Math.floor(((index + 1 / 3) * 555) % 100),
-        bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
-    }));
 }
