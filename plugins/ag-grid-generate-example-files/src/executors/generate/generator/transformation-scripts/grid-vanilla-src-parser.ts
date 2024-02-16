@@ -1,7 +1,6 @@
 import * as cheerio from 'cheerio';
 import ts from 'typescript';
-import {Events} from '../../../../../../../community-modules/core/src/events';
-import {PropertyKeys} from '../../../../../../../community-modules/core/src/propertyKeys';
+import {Events, PropertyKeys} from './eventKeys';
 import {
     extractClassDeclarations,
     extractEventHandlers,
@@ -31,7 +30,6 @@ import {
 
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
-
 const EVENTS = (<any>Object).values(Events);
 const PROPERTIES = PropertyKeys.ALL_PROPERTIES;
 const FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
@@ -39,12 +37,17 @@ const FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
 function tsNodeIsDocumentContentLoaded(node) {
     try {
         if (tsNodeIsFunctionCall(node)) {
-            return node.expression.arguments.length > 0 &&
+            return node.expression.arguments?.length > 0 &&
                 ts.isStringLiteral(node.expression.arguments[0]) &&
                 node.expression.arguments[0].text === 'DOMContentLoaded';
         }
     } catch (e) {
         console.error('We found something which we do not understand', node);
+        if (tsNodeIsFunctionCall(node)) {
+            return node.expression.arguments?.length > 0 &&
+                ts.isStringLiteral(node.expression.arguments[0]) &&
+                node.expression.arguments[0].text === 'DOMContentLoaded';
+        }
     }
 }
 
@@ -111,15 +114,15 @@ function processGlobalComponentsForVue(propertyName: string, exampleType, provid
 }
 
 export function parser(examplePath, fileName, srcFile, html, exampleSettings, exampleType, providedExamples) {
-    const bindings = internalParser(examplePath, {
-        fileName,
-        srcFile,
-        includeTypes: false
-    }, html, exampleSettings, exampleType, providedExamples);
     const typedBindings = internalParser(examplePath, {
         fileName,
         srcFile,
         includeTypes: true
+    }, html, exampleSettings, exampleType, providedExamples);
+    const bindings = internalParser(examplePath, {
+        fileName,
+        srcFile,
+        includeTypes: false
     }, html, exampleSettings, exampleType, providedExamples);
     return {bindings, typedBindings};
 }
@@ -280,7 +283,7 @@ function internalParser(examplePath, {
         }
     });
 
-    // extract the resizeColumnsToFit
+    // extract the resizeColumnsToFit 
     tsOnReadyCollectors.push({
         matches: node => {
             if (ts.isExpressionStatement(node) && ts.isCallExpression(node.expression) && ts.isPropertyAccessExpression(node.expression.expression)) {
@@ -603,7 +606,7 @@ function internalParser(examplePath, {
         tsCollectors
     );
 
-    const gridElement = domTree.find('#myGrid').replaceWith(templatePlaceholder);
+    const gridElement = domTree('#myGrid').replaceWith(templatePlaceholder);
     const inlineClass = gridElement.attr('class');
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');

@@ -3,7 +3,7 @@ import path from 'path';
 
 import { readFile } from '../../../executors-utils';
 import { ANGULAR_GENERATED_MAIN_FILE_NAME, SOURCE_ENTRY_FILE_NAME } from './constants';
-import chartVanillaSrcParser from './transformation-scripts/chart-vanilla-src-parser';
+import gridVanillaSrcParser from './transformation-scripts/grid-vanilla-src-parser';
 import type { GeneratedContents, InternalFramework } from './types';
 import {
     getEntryFileName,
@@ -13,7 +13,6 @@ import {
     getTransformTsFileExt,
 } from './utils/fileUtils';
 import { frameworkFilesGenerator } from './utils/frameworkFilesGenerator';
-import { getDarkModeSnippet } from './utils/getDarkModeSnippet';
 import { getOtherScriptFiles } from './utils/getOtherScriptFiles';
 import { getPackageJson } from './utils/getPackageJson';
 import { getStyleFiles } from './utils/getStyleFiles';
@@ -59,7 +58,6 @@ export const getGeneratedContentsFileList = async (params: FileListParams): Prom
 type GeneratedContentParams = {
     internalFramework: InternalFramework;
     folderPath: string;
-    ignoreDarkMode?: boolean;
     isDev?: boolean;
     importType?: 'modules'| 'packages';
 };
@@ -68,14 +66,15 @@ type GeneratedContentParams = {
  * Get generated contents for an example
  */
 export const getGeneratedContents = async (params: GeneratedContentParams): Promise<GeneratedContents | undefined> => {
-    const { internalFramework, folderPath, ignoreDarkMode, isDev = false } = params;
+    const { internalFramework, folderPath, isDev = false, importType } = params;
     const sourceFileList = await fs.readdir(folderPath);
 
     if (!sourceFileList.includes(SOURCE_ENTRY_FILE_NAME)) {
         throw new Error('Unable to find example entry-point at: ' + folderPath);
     }
 
-    const entryFile = await readFile(path.join(folderPath, SOURCE_ENTRY_FILE_NAME));
+    const entryFilePath = path.join(folderPath, SOURCE_ENTRY_FILE_NAME);
+    const entryFile = await readFile(entryFilePath);
     const indexHtml = await readFile(path.join(folderPath, 'index.html'));
 
     const otherScriptFiles = await getOtherScriptFiles({
@@ -94,9 +93,9 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
         providedExampleFileNames.map(async (fileName) => {
             let contents = (await fs.readFile(path.join(providedExampleBasePath, fileName))).toString('utf-8');
 
-            if (fileName === mainEntryFilename && !ignoreDarkMode) {
-                contents = contents + '\n' + getDarkModeSnippet();
-            }
+            // if (fileName === mainEntryFilename && !ignoreDarkMode) {
+            //     contents = contents + '\n' + getDarkModeSnippet();
+            // }
 
             return [fileName, contents];
         })
@@ -107,13 +106,15 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
 
     const isEnterprise = getIsEnterprise({ entryFile });
 
-    const { bindings, typedBindings } = chartVanillaSrcParser({
-        srcFile: entryFile,
-        html: indexHtml,
-        exampleSettings: {
-            enterprise: isEnterprise,
-        },
-    });
+    const { bindings, typedBindings } = gridVanillaSrcParser(
+        folderPath,
+        entryFilePath,
+        entryFile,
+        indexHtml,
+        {}, // Hardcoded for now used to provide custom theme, width, height for inline styles
+        'generated', // Hardcoded for now,
+        providedExamples
+    );
 
     const getFrameworkFiles = frameworkFilesGenerator[internalFramework];
     if (!getFrameworkFiles) {
@@ -122,6 +123,7 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
     const packageJson = getPackageJson({
         isEnterprise,
         internalFramework,
+        importType,
     });
 
     const { files, boilerPlateFiles, scriptFiles, entryFileName, mainFileName } = await getFrameworkFiles({
@@ -131,7 +133,7 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
         bindings,
         typedBindings,
         otherScriptFiles,
-        ignoreDarkMode,
+        ignoreDarkMode: false,
         isDev,
     });
 

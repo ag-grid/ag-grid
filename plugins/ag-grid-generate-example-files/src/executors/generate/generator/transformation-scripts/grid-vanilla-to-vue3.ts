@@ -20,7 +20,7 @@ import {
     OVERRIDABLE_AG_COMPONENTS
 } from "./grid-vanilla-to-vue-common";
 import * as JSON5 from "json5";
-import {integratedChartsUsesChartsEnterprise} from "./consts";
+import {integratedChartsUsesChartsEnterprise} from "../constants";
 
 const path = require('path');
 

@@ -1,13 +1,13 @@
-import fs from 'fs';
+import { existsSync, readdirSync, readFileSync } from 'fs';
 import path from 'path';
 
 import type { InternalFramework, TransformTsFileExt } from '../types';
 import { TYPESCRIPT_INTERNAL_FRAMEWORKS } from '../types';
 
-const BOILER_PLATE_FILE_PATH = './packages/ag-charts-website/public/example-runner';
+const BOILER_PLATE_FILE_PATH = './documentation/ag-grid-docs/public/example-runner';
 
 export const getBoilerPlateName = (internalFramework: InternalFramework) => {
-    const boilerPlateTemplate = (boilerPlateKey: string) => `charts-${boilerPlateKey}-boilerplate`;
+    const boilerPlateTemplate = (boilerPlateKey: string) => `grid-${boilerPlateKey}-boilerplate`;
 
     switch (internalFramework) {
         case 'reactFunctional':
@@ -43,7 +43,7 @@ export const getBoilerPlateFiles = async (isDev: boolean, internalFramework: Int
     }
     const boilerPlatePath = path.join(BOILER_PLATE_FILE_PATH, boilerplateName);
 
-    const fileNames = fs.readdirSync(boilerPlatePath);
+    const fileNames = readdirSync(boilerPlatePath);
 
     const files: Record<string, string> = {};
     const fileContentPromises = fileNames.map(async (fileName) => {
@@ -53,7 +53,7 @@ export const getBoilerPlateFiles = async (isDev: boolean, internalFramework: Int
         }
         const filePath = path.join(boilerPlatePath, fileName);
         try {
-            const contents = fs.readFileSync(filePath, 'utf-8');
+            const contents = readFileSync(filePath, 'utf-8');
             if (contents) {
                 files[fileName] = contents;
             }
@@ -134,7 +134,7 @@ export const getProvidedExampleFiles = ({
 }) => {
     const providedFolder = getProvidedExampleFolder({ folderPath, internalFramework });
 
-    return fs.existsSync(providedFolder) ? fs.readdirSync(providedFolder) : [];
+    return existsSync(providedFolder) ? readdirSync(providedFolder) : [];
 };
 
 export const getFileList = async ({ folderPath, fileList }: { folderPath: string; fileList: string[] }) => {
@@ -142,7 +142,7 @@ export const getFileList = async ({ folderPath, fileList }: { folderPath: string
     await Promise.all(
         fileList.map(async (fileName) => {
             try {
-                const file = fs.readFileSync(path.join(folderPath, fileName));
+                const file = readFileSync(path.join(folderPath, fileName));
                 contentFiles[fileName] = file.toString('utf-8');
             } catch (e) {
                 // Skip missing files.
@@ -154,3 +154,11 @@ export const getFileList = async ({ folderPath, fileList }: { folderPath: string
 };
 
 export const getIsEnterprise = ({ entryFile }: { entryFile: string }) => entryFile?.includes('ag-grid-enterprise');
+
+/** Get the list of Grid modules so that we can fill this in for module example code */
+export function getModules() {
+    const path = `${process.cwd()}/documentation/ag-grid-docs/src/content/matrix-table/modules.json`;    
+    const modulesJsonStr = readFileSync(path, 'utf-8');
+    const modules = JSON.parse(modulesJsonStr);
+    return modules;
+}

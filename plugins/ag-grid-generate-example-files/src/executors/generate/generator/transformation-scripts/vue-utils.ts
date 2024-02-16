@@ -5,6 +5,7 @@ export const toInput = (property) => `:${property.name}="${property.name}"`;
 export const toConst = (property) => `:${property.name}="${property.value}"`;
 export const toOutput = (event) => `@${toKebabCase(event.name)}="${event.handlerName}"`;
 export const toMember = (property) => `${property.name}: null`;
+export const toRef = property => `const ${property.name} = ref(null)`;
 export const toComponent = (property) => `'${property.name}': ${property.name}`;
 
 export function toAssignment(property: any): string {

@@ -25,17 +25,16 @@ export default async function (options: ExecutorOptions) {
 }
 
 export async function generateFiles(options: ExecutorOptions) {
-    for (const ignoreDarkMode of [false, true]) {
-        const darkModePath = ignoreDarkMode ? 'plain' : 'dark-mode';
+    for (const importType of ['modules', 'packages'] as const) {        
         for (const internalFramework of FRAMEWORKS) {
             const result = await getGeneratedContents({
                 folderPath: options.examplePath,
                 internalFramework,
-                ignoreDarkMode,
                 isDev: options.mode === 'dev',
+                importType
             });
 
-            const outputPath = path.join(options.outputPath, darkModePath, internalFramework, 'contents.json');
+            const outputPath = path.join(options.outputPath, importType, internalFramework, 'contents.json');
             await writeFile(outputPath, JSON.stringify(result));
 
             for (const name in result.generatedFiles) {

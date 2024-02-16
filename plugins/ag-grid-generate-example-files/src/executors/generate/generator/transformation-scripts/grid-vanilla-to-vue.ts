@@ -1,7 +1,7 @@
 import { getActiveTheme, getIntegratedDarkModeCode, getModuleRegistration, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
 import { getImport, toOutput } from './vue-utils';
 import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
-import {integratedChartsUsesChartsEnterprise} from "./consts";
+import {integratedChartsUsesChartsEnterprise} from "../constants";
 const path = require('path');
 
 function getOnGridReadyCode(bindings: any): string {

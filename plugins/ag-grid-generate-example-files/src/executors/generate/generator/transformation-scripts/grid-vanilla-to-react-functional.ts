@@ -1,7 +1,7 @@
 import { convertFunctionToConstProperty, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getModuleRegistration, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import {integratedChartsUsesChartsEnterprise} from "./consts";
+import {integratedChartsUsesChartsEnterprise} from "../constants";
 const path = require('path');
 
 function getModuleImports(bindings: any, componentFilenames: string[], allStylesheets: string[]): string[] {

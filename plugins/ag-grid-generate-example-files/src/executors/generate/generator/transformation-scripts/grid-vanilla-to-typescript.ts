@@ -1,5 +1,5 @@
 import {addBindingImports, addGenericInterfaceImport, getIntegratedDarkModeCode, getModuleRegistration, ImportType} from './parser-utils';
-import {integratedChartsUsesChartsEnterprise} from "./consts";
+import {integratedChartsUsesChartsEnterprise} from "../constants";
 
 const path = require('path');
 const fs = require('fs-extra');

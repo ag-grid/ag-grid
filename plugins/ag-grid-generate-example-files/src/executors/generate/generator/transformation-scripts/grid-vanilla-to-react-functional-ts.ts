@@ -1,7 +1,7 @@
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
-import {integratedChartsUsesChartsEnterprise} from "./consts";
+import {integratedChartsUsesChartsEnterprise} from "../constants";
 const path = require('path');
 
 function getModuleImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[], allStylesheets: string[]): string[] {

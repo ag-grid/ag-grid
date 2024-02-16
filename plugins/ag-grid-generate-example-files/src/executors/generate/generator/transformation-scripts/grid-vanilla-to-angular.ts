@@ -1,7 +1,8 @@
-import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput, toTitleCase } from './angular-utils';
+import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getIntegratedDarkModeCode,getModuleRegistration,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
-import {integratedChartsUsesChartsEnterprise} from "./consts";
+import {integratedChartsUsesChartsEnterprise} from "../constants";
+import { toTitleCase } from './string-utils';
 const path = require('path');
 
 function getOnGridReadyCode(

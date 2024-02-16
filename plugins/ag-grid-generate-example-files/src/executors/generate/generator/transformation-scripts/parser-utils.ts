@@ -2,6 +2,7 @@ import { transform } from 'sucrase';
 import ts from 'typescript';
 
 import {integratedChartsUsesChartsEnterprise} from "../constants";
+import { getModules } from '../utils/fileUtils';
 
 export type ImportType = 'packages' | 'modules';
 
@@ -12,7 +13,7 @@ export interface BindingImport {
     imports: string[];
 }
 
-import * as moduleMapping from '../../../../../../../documentation/ag-grid-docs/src/content/matrix-table/modules.json';
+const moduleMapping  = getModules();
 
 export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
     const tsFile = srcFile
