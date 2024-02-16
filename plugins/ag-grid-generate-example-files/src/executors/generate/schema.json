@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "version": 2,
+    "title": "GenerateExampleFiles executor",
+    "description": "Generate variants of servable Plnkr examples from a source TS example.",
+    "cli": "nx",
+    "outputCapture": "pipe",
+    "type": "object",
+    "properties": {
+        "examplePath": {
+            "type": "string",
+            "description": "The source example to generate from.",
+            "x-completion-type": "directory",
+            "x-priority": "important"
+        },
+        "outputPath": {
+            "type": "string",
+            "description": "Where to write generated examples.",
+            "x-completion-type": "directory",
+            "x-priority": "important"
+        },
+        "mode": {
+            "type": "string",
+            "enum": ["dev", "prod"],
+            "description": "The source example to generate from.",
+            "x-priority": "important"
+        }
+    },
+    "required": ["mode", "examplePath", "outputPath"]
+}

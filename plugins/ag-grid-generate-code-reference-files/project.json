@@ -1,0 +1,57 @@
+{
+  "name": "ag-grid-generate-code-reference-files",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "plugins/ag-grid-generate-code-reference-files/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:swc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "plugins/ag-grid-generate-code-reference-files/dist",
+        "main": "plugins/ag-grid-generate-code-reference-files/src/index.ts",
+        "tsConfig": "plugins/ag-grid-generate-code-reference-files/tsconfig.lib.json",
+        "assets": [
+          "plugins/ag-grid-generate-code-reference-files/*.md",
+          {
+            "input": "./plugins/ag-grid-generate-code-reference-files/src",
+            "glob": "**/!(*.ts|*.snap)",
+            "output": "./src"
+          },
+          {
+            "input": "./plugins/ag-grid-generate-code-reference-files/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./plugins/ag-grid-generate-code-reference-files",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./plugins/ag-grid-generate-code-reference-files",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "plugins/ag-grid-generate-code-reference-files/jest.config.ts"
+      },
+      "configurations": {
+        "update": {
+          "updateSnapshot": true
+        }
+      }
+    }
+  },
+  "tags": []
+}

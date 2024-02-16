@@ -1,0 +1,9 @@
+{
+    "executors": {
+        "generate": {
+            "implementation": "./dist/src/executors/generate/executor.js",
+            "schema": "./src/executors/generate/schema.json",
+            "description": "generate code reference files"
+        }
+    }
+}

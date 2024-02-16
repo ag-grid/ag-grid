@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "plugins": ["./plugins/ag-grid-task-autogen"],
   "affected": {
     "defaultBase": "latest"
   },

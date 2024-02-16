@@ -103,7 +103,18 @@
         "commands": ["nx run-many -t test --parallel 1"]
       }
     },
-    "clean": { "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/'" }
+    "clean": { "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/'" },
+    "generate-examples": {
+      "executor": "nx:noop",
+      "dependsOn": ["^generate-example"],
+      "inputs": [{ "externalDependencies": ["npm:typescript"] }],
+      "outputs": [],
+      "cache": false,
+      "configurations": {
+        "staging": {},
+        "production": {}
+      }
+    }
   },
   "implicitDependencies": [
     "community-modules/core",
