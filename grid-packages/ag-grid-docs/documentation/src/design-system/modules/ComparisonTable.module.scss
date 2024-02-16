@@ -107,6 +107,10 @@
     &.isOpen .subGroupHeader .cell:first-child svg {
         transform: rotate(180deg);
     }
+
+    &.isOpen .subGroupHeader .cell:not(:first-child) span {
+        opacity: 0;
+    }
 }
 
 .subGroupHeader {
