@@ -2,6 +2,34 @@
 title: "Upgrading to AG Grid 31.1"
 ---
 
+## What's New
+
+See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31-1/) for details of what's new in this minor version.
+
+## Codemods
+
+Follow these steps to upgrade your project's AG Grid version to `31.1.0`:
+
+1. Open a terminal and navigate to your project's root folder.
+
+2. Update any AG Grid dependencies listed in your project's `package.json` to version `31.1.0`.
+
+3. Run the `migrate` command of version `31.1` of the AG Grid codemod runner:
+
+    ```
+    npx @ag-grid-community/cli@31.1 migrate
+    ```
+
+    This will update your project's source files to prepare for the new release.
+
+    By default the Codemod runner will locate all source files within the current directory. For projects with more specific requirements, pass a list of input files to the `migrate` command, or specify the `--help` argument to see more fine-grained usage instructions.
+
+<note>
+The Codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
+</note>
+
+See the [Codemods](/codemods/) documentation for more details.
+
 <framework-specific-section frameworks="react">
 <h2 id="migrating-to-use-reactivecustomcomponents">Migrating Custom Components to Use reactiveCustomComponents Option</h2>
 </framework-specific-section>
