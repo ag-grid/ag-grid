@@ -36,6 +36,7 @@ export const getGeneratedContentsFileList = async (params: FileListParams): Prom
         folderPath,
         sourceFileList,
         transformTsFileExt: getTransformTsFileExt(internalFramework),
+        internalFramework,
     });
     const styleFiles = await getStyleFiles({
         folderPath,
@@ -81,6 +82,7 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
         folderPath,
         sourceFileList,
         transformTsFileExt: getTransformTsFileExt(internalFramework),
+        internalFramework
     });
     const providedExampleFileNames = getProvidedExampleFiles({ folderPath, internalFramework });
 
@@ -92,11 +94,6 @@ export const getGeneratedContents = async (params: GeneratedContentParams): Prom
     const providedExampleEntries = await Promise.all(
         providedExampleFileNames.map(async (fileName) => {
             let contents = (await fs.readFile(path.join(providedExampleBasePath, fileName))).toString('utf-8');
-
-            // if (fileName === mainEntryFilename && !ignoreDarkMode) {
-            //     contents = contents + '\n' + getDarkModeSnippet();
-            // }
-
             return [fileName, contents];
         })
     );

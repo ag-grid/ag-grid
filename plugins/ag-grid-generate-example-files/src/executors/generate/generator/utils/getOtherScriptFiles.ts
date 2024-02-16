@@ -1,6 +1,6 @@
 import { SOURCE_ENTRY_FILE_NAME } from '../constants';
 import { readAsJsFile } from '../transformation-scripts/parser-utils';
-import type { FileContents, TransformTsFileExt } from '../types';
+import { FileContents, FRAMEWORKS, TransformTsFileExt } from '../types';
 import { getFileList } from './fileUtils';
 
 const getOtherTsGeneratedFiles = async ({
@@ -60,10 +60,12 @@ export const getOtherScriptFiles = async ({
     folderPath,
     sourceFileList,
     transformTsFileExt,
+    internalFramework,
 }: {
     folderPath: string;
     sourceFileList: string[];
     transformTsFileExt?: TransformTsFileExt;
+    internalFramework: string;
 }) => {
     const otherTsGeneratedFileContents = await getOtherTsGeneratedFiles({
         folderPath,
@@ -77,5 +79,20 @@ export const getOtherScriptFiles = async ({
 
     const contents = Object.assign({}, otherTsGeneratedFileContents, otherJsFileContents) as FileContents;
 
-    return contents;
+    const filteredToFramework = {};
+    Object.entries(contents).forEach(([file, content]) => {
+        let isFrameworkFile = false;
+        FRAMEWORKS.forEach((framework) => {
+            if (file.includes('_' + framework)) {
+                if(internalFramework === framework) {
+                    filteredToFramework[file] = content;
+                }
+                isFrameworkFile = true;
+            }
+        });
+        if (!isFrameworkFile) {
+            filteredToFramework[file] = content;
+        }
+    });
+    return filteredToFramework;
 };
