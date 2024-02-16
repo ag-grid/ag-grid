@@ -8,7 +8,7 @@ const parseVersion = (version: string) => {
     return { major, minor, patch, isMajor: !minor && !patch };
 };
 
-const Version = ({ date, version, blogUrl, highlights, notesUrl }) => {
+const Version = ({ date, version, blogUrl, highlights, notesUrl, isLatest }) => {
     const { major, minor, isMajor } = parseVersion(version);
     const blogHref = blogUrl || `https://blog.ag-grid.com/whats-new-in-ag-grid-${minor ? `${major}-${minor}` : major}/`;
 
@@ -22,7 +22,7 @@ const Version = ({ date, version, blogUrl, highlights, notesUrl }) => {
                     <span className={styles.date}>{date}</span>
 
                     <div className={styles.flex}>
-                    {version === "31.1.0" && <span className={styles.latestTag}>Latest</span>}
+                    {isLatest && <span className={styles.latestTag}>Latest</span>}
                     {isMajor && <span className={styles.majorText}>Major</span>}
                     </div>
                     
@@ -85,15 +85,16 @@ const WhatsNew = () => {
             <p className={styles.description}>See what's new in recent AG Grid versions.</p>
 
             <div className={styles.versions}>
-                {versionsData.map((versionInfo, index) => (
-                    <Version
+                {versionsData.map((versionInfo, index) => {
+                    return <Version
                         key={index}
                         version={versionInfo.version}
                         date={versionInfo.date}
                         highlights={versionInfo.highlights}
                         notesUrl={versionInfo.notesUrl} // Pass the custom button URL
+                        isLatest={index === 0}
                     />
-                ))}
+                })}
             </div>
         </div>
     );
