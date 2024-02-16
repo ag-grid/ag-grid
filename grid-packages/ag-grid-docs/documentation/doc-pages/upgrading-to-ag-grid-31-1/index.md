@@ -9,7 +9,9 @@ TODO
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-|Custom components created without `reactiveCustomComponents` may require some changes in order to work with the setting enabled.
+|Custom components can now be created more easily by setting `reactiveCustomComponents`. Custom components built in an imperative way (without setting `reactiveCustomComponents`) may need to be rebuilt in order to work with the setting enabled. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be `true` by default, and custom components built in an imperative way will still be supported as an optional behaviour.
+|
+|Please note that enabling this setting affects all custom components and you cannot use a mix of reactive custom components and imperative custom components in the same grid instance. 
 |
 |The following five component types require changes in order to migrate.
 </framework-specific-section>
