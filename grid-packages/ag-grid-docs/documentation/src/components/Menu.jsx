@@ -60,8 +60,9 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
                             <h5>{group}</h5>
                         }
 
-                        {items?.map(({title, items: childItems}) => (
-                            <MenuSection
+                        {items?.map((item) => {
+                            const {title, items: childItems} = item;
+                            return childItems ? <MenuSection
                                 key={`${title}-menu`}
                                 title={title}
                                 items={childItems}
@@ -74,8 +75,13 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
                                 setIsDocsButtonOpen={setIsDocsButtonOpen}
                                 hideChevrons={hideChevrons}
                                 expandAllGroups={expandAllGroups}
+                            /> : <MenuItem
+                                item={item}
+                                currentFramework={currentFramework}
+                                activeParentItems={activeParentItems}
+                                singleItem={true}
                             />
-                        ))}
+                        })}
                         {index < filteredMenuData.length - 1 && <hr/>}
                     </React.Fragment>
                 ))}
@@ -114,25 +120,6 @@ const MenuSection = ({title, items, currentFramework, activeParentItems, toggleA
             toggleActive(title);
         }
     };
-
-    if (!items || items.length === 0) {
-        const findMenuItemByTitle = (items, title) =>
-            items.find(item => item.title === title && (!item.items || !item.items.length)) ||
-            items.flatMap(item => item.items ? findMenuItemByTitle(item.items, title) : []).find(item => item);
-
-        // handle top level menu items that don't have groups as a simple, non-collapsible item (i.e. 'Quick Start')
-        const topLevelMenuItemWithoutChildren = findMenuItemByTitle(activeParentItems, title);
-        if (topLevelMenuItemWithoutChildren) {
-            return (
-                <MenuItem
-                    item={topLevelMenuItemWithoutChildren}
-                    currentFramework={currentFramework}
-                    activeParentItems={activeParentItems}
-                    singleItem={true}
-                />
-            );
-        }
-    }
 
     return (
         <li className={styles.menuSection}>
@@ -195,11 +182,6 @@ const MenuItem = ({item, currentFramework, activeParentItems, singleItem}) => {
     const isActiveParent = useMemo(() => activeParentItems.some(parentItem => {
         return parentItem.url ? parentItem.url === item.url : parentItem.title === item.title;
     }), [item, activeParentItems]);
-
-    const bootstrapCollapseProps = item.absoluteUrl ? {} : {
-        "data-toggle": "collapse",
-        "data-target": "#side-nav"
-    }
 
     return (
         <li>
