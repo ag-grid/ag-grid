@@ -220,6 +220,8 @@ p.name {
 }
 
 .toggleFeatureBreakdownButton {
+    display: block;
+    text-align: center;
     color: var(--color-link);
     font-weight: var(--text-semibold);
     cursor: pointer;

@@ -1,12 +1,45 @@
 @use '../core' as *;
 
 .twoColumn .cell {
+    border: none !important;
+
     &:first-child {
         width: calc(100% - #{$spacing-size-16});
     }
 
     &:last-child {
         width: $spacing-size-16;
+    }
+}
+
+.twoColumn .subGroupHeader .cell {
+    &:nth-child(2),
+    &:nth-child(3) {
+        display: none;
+    }
+}
+
+// Hack to deal with sub-groups on mobile
+:global(div[id*='community']) .twoColumn .subGroup .cell {
+    &:nth-child(3),
+    &:nth-child(4) {
+        display: none;
+    }
+}
+
+// Hack to deal with sub-groups on mobile
+:global(div[id*='enterprise']) .twoColumn .subGroup .cell {
+    &:nth-child(2),
+    &:nth-child(4) {
+        display: none;
+    }
+}
+
+// Hack to deal with sub-groups on mobile
+:global(div[id*='together']) .twoColumn .subGroup .cell {
+    &:nth-child(2),
+    &:nth-child(3) {
+        display: none;
     }
 }
 

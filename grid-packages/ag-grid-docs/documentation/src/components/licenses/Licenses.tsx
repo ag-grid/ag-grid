@@ -65,7 +65,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     },
     {
         className: styles.chartsLicense,
-        id: 'togther',
+        id: 'together',
         subHeading: 'Enterprise Bundle',
         description: 'AG Grid Enterprise +<br />AG Charts Enterprise',
         priceFullDollars: '1398',
@@ -105,7 +105,7 @@ const License = (props: LicenseData) => {
 
     return (
         <>
-            <div className={styles.top} id={id}>
+            <div className={styles.top}>
                 { launchPrice && <span className={styles.limitedTimePill}>Limited time offer</span> }
                 { !launchPrice && <span className={styles.limitedTimeSpacer}></span> }
 
@@ -175,7 +175,7 @@ export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked 
                 };
 
                 return (
-                    <div key={data.id} className={classnames(styles.license, data.className)}>
+                    <div key={data.id} id={data.id} className={classnames(styles.license, data.className)}>
                         <License {...data} />
                         
                         <span className={styles.toggleFeatureBreakdownButton} onClick={toggleFeatureBreakdown}>
