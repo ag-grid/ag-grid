@@ -22,6 +22,7 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
         super(container, 'sunburstTooltip');
 
         this.showRadiusAxisLine = false;
+        this.showAngleAxisLines = false;
         
         const { data, size, padding, angleOffset, innerRadiusRatio } = this;
 
