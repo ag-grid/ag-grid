@@ -153,9 +153,9 @@ const TableRow = ({ datum, cellRenderer, columns, id }) => {
                 <div className={classnames(styles.cell)}>
                     <span>{datum.name} <Icon name="chevronDown"/></span>
                 </div>
-                <div className={classnames(styles.cell)}><Icon name="sort"/></div>
-                <div className={classnames(styles.cell)}><Icon name="sort"/></div>
-                <div className={classnames(styles.cell)}><Icon name="sort"/></div>
+                <div className={classnames(styles.cell)}><Feature value={ datum.items.every(item => item.community) } /></div>
+                <div className={classnames(styles.cell)}><Feature value={ true } /></div>
+                <div className={classnames(styles.cell)}><Feature value={ true } /></div>
             </header>
 
             <Collapsible id={`subgroup-${id}`} isDisabled={false} isOpen={subGroupOpen}>
