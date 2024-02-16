@@ -67,7 +67,7 @@ const Version = ({ date, version, blogUrl, highlights, notesUrl, isLatest }) => 
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    See release notes
+                    See all changes
                 </a>
             </div>
 
