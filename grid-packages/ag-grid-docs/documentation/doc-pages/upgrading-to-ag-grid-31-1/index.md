@@ -2,16 +2,12 @@
 title: "Upgrading to AG Grid 31.1"
 ---
 
-TODO
-
 <framework-specific-section frameworks="react">
 <h2 id="migrating-to-use-reactivecustomcomponents">Migrating Custom Components to Use reactiveCustomComponents Option</h2>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-|Custom components can now be created more easily by setting `reactiveCustomComponents`. Custom components built in an imperative way (without setting `reactiveCustomComponents`) may need to be rebuilt in order to work with the setting enabled. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be `true` by default, and custom components built in an imperative way will still be supported as an optional behaviour.
-|
-|Please note that enabling this setting affects all custom components and you cannot use a mix of reactive custom components and imperative custom components in the same grid instance. 
+|Custom components created without `reactiveCustomComponents` may require some changes in order to work with the setting enabled.
 |
 |The following five component types require changes in order to migrate.
 </framework-specific-section>
@@ -71,3 +67,48 @@ TODO
 <framework-specific-section frameworks="react">
 |- If using `api.getStatusPanel`, the instance returned will now be a wrapper. To get the React custom status bar panel component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Status Bar Panel Instances](/component-status-bar/#accessing-status-bar-panel-instances).
 </framework-specific-section>
+
+## Deprecations
+
+This release includes the following deprecations:
+
+### GridOptions
+
+* `gridOptions.cellFlashDelay` - deprecated, use `gridOptions.cellFlashDuration` instead.
+* `gridOptions.cellFadeDelay` - deprecated, use `gridOptions.cellFadeDuration` instead.
+* `colDef.floatingFilterComponentParams.suppressFilterButton` - deprecated, use `colDef.suppressFloatingFilterButton` instead.*
+
+### Column Filters
+
+* `api.getFilterInstance` - deprecated, use `api.getColumnFilterInstance` instead.
+
+### Column API
+
+* `suppressMenu` - deprecated, use `suppressHeaderMenuButton` instead.
+* `columnsMenuParams` - deprecated, use `columnChooserParams` instead. 
+* `column.getMenuTabs` - deprecated, use `columns.getColDef.menuTabs ?? defaultValues` instead.
+* `removeRowGroupColumn` - deprecated, use  `removeRowGroupColumns` to provide the single string input param in an array.
+* `addRowGroupColumn` - deprecated, use `addRowGroupColumns` to provide the single string input param in an array.
+* `setColumnPinned` - deprecated, use `setColumnsPinned` to provide the single string input param in an array.
+* `removePivotColumn` - deprecated, use `removePivotColumns` to provide the single string input param in an array.
+* `addPivotColumn` - deprecated, use `addPivotColumns` to provide the single string input param in an array.
+* `addAggFunc` - deprecated, use `addAggFuncs` to provide the single string input param in an array.
+* `removeValueColumn` - deprecated, use `removeValueColumns` to provide the single string input param in an array.
+* `addValueColumn` - deprecated, use `addValueColumns` to provide the single string input param in an array.
+* `autoSizeColumn` - deprecated, use `autoSizeColumns` to provide the single string input param in an array.
+* `moveColumn` - deprecated, use `moveColumns` to provide the single string input param in an array.
+* `setColumnWidth` - deprecated, use `setColumnWidths` to provide the single string input param in an array.
+* `setColumnVisible` - deprecated, use `setColumnsVisible` to provide the single string input param in an array.
+
+### Grid API 
+
+* `api.getModel().getRow(index)` - deprecated, use `api.getDisplayedRowAtIndex(index)` instead.
+* `api.getModel().getRowNode(id)` - deprecated, use `api.getRowNode(id)` instead.
+* `api.getModel().getRowCount()` - deprecated, use `api.getDisplayedRowCount()` instead.
+* `api.getModel().isEmpty()` - deprecated, use `!!api.getDisplayedRowCount()` instead.
+* `api.getModel().forEachNode()` - deprecated, use `api.forEachNode()` instead.
+* `api.getFirstDisplayedRow`  - deprecated, use `api.getFirstDisplayedRowIndex` instead. 
+* `api.getLastDisplayedRow`  - deprecated, use `api.getLastDisplayedRowIndex` instead.
+* `api.flashCells`, `flashDelay` and `fadeDelay` params are deprecated in favor of `flashDuration` and `fadeDuration` params.
+* `api.showColumnMenuAfterButtonClick` - deprecated, use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere.
+* `api.showColumnMenuAfterMouseClick` - deprecated, use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere.
