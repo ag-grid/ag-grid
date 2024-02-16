@@ -1,16 +1,39 @@
-import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ChartRef, ChartType} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ChartRef, ChartType, ColDef} from '@ag-grid-community/core';
 import {getData} from "./data";
 
 let gridApi: GridApi;
 let chartRef: ChartRef | undefined;
 
+const chartConfig: Record<'heatmap' | 'waterfall', { columnDefs: ColDef[], chartColumns: string[] }> = {
+  heatmap: {
+    columnDefs: [
+      { field: "year", width: 150, chartDataType: "category" },
+      { field: "jan", chartDataType: "series" },
+      { field: "feb", chartDataType: "series" },
+      { field: "mar", chartDataType: "series" },
+      { field: "apr", chartDataType: "series" },
+      { field: "may", chartDataType: "series" },
+      { field: "jun", chartDataType: "series" },
+      { field: "jul", chartDataType: "series" },
+      { field: "aug", chartDataType: "series" },
+      { field: "sep", chartDataType: "series" },
+      { field: "oct", chartDataType: "series" },
+      { field: "nov", chartDataType: "series" },
+      { field: "dec", chartDataType: "series" },
+    ],
+    chartColumns: ['year', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
+  },
+  waterfall: {
+    columnDefs:  [
+      { field: 'financials', width: 150, chartDataType: 'category' },
+      { field: 'amount', chartDataType: 'series' },
+    ],
+    chartColumns: ['financials', 'amount'],
+  },
+}
+
 const gridOptions: GridOptions = {
-  columnDefs: [
-    { field: 'country', width: 150, chartDataType: 'category' },
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze', chartDataType: 'series' },
-  ],
+  columnDefs: chartConfig.heatmap.columnDefs,
   defaultColDef: {
     flex: 1,
     minWidth: 100,
@@ -22,26 +45,31 @@ const gridOptions: GridOptions = {
     defaultToolPanel: 'settings'
   },
   onGridReady : (params: GridReadyEvent) => {
-    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+    getData('heatmap').then(rowData => params.api.setGridOption('rowData', rowData));
   },
   onFirstDataRendered,
 };
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   chartRef = params.api.createRangeChart({
-    cellRange: {
-      columns: ['country', 'gold', 'silver', 'bronze'],
-    },
     chartType: 'heatmap',
+    cellRange: {
+      columns: chartConfig.heatmap.chartColumns,
+    },
   });
 }
 
-function updateChart(chartType: ChartType) {
-  gridApi.updateChart({
-    type: 'rangeChartUpdate',
-    chartId: `${chartRef?.chartId}`,
-    chartType: chartType
+function updateChart(chartType: 'heatmap' | 'waterfall') {
+  gridApi.setGridOption('rowData', []);
+  if (chartRef) chartRef.destroyChart();
+  gridApi.setGridOption('columnDefs', chartConfig[chartType].columnDefs);
+  chartRef = gridApi.createRangeChart({
+    chartType,
+    cellRange: {
+      columns: chartConfig[chartType].chartColumns,
+    }
   });
+  getData(chartType).then(rowData => gridApi.setGridOption('rowData', rowData));
 }
 
 // setup the grid after the page has finished loading
