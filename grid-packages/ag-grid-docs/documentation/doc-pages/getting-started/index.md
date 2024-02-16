@@ -763,7 +763,7 @@ Customise themes using CSS variables.
 
 ### Figma
 
-If you are designing within Figma, you can use the [AG Grid Design System](../ag-grid-design-system/) to replicate Alpine and Alpine Dark AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid themes.
+If you are designing within Figma, you can use the [AG Grid Design System](../ag-grid-design-system/) to replicate the  Quartz and Alpine AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes. These can then be exported and generated into new AG Grid themes.
 
 <image-caption src="getting-started/resources/FDS-Example.png" constrained=true centered=true alt="Figma Design System with AG Grid"></image-caption>
 
