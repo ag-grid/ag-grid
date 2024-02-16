@@ -480,8 +480,10 @@ export class RowRenderer extends BeanStub {
             switch (rowNode.rowPinned) {
                 case 'top':
                     destroyAndRecreateCtrl(this.topRowCtrls);
+                    break;
                 case 'bottom':
                     destroyAndRecreateCtrl(this.bottomRowCtrls);
+                    break;
                 default:
                     destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
                     this.updateAllRowCtrls();
