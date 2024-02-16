@@ -59,7 +59,7 @@ const Version = ({ date, version, blogUrl, highlights, notesUrl, isLatest }) => 
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            See migration guide
+                            {isMajor ? 'See migration guide' : 'See release notes'}
                         </a>
                     )}
                 <a
