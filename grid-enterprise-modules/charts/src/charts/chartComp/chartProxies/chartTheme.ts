@@ -149,7 +149,7 @@ function inbuiltStockThemeOverrides(params: ChartProxyParams, titleEnabled: bool
     return {
         common: {
             animation: {
-                duration: 300,
+                duration: 500,
             },
             axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
             padding: {
