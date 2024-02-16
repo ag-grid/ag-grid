@@ -171,7 +171,7 @@ const MenuGroup = ({group, currentFramework, isTopLevel, isActive, activeParentI
     return (
         <Collapsible id={topLevelElementId} isDisabled={!isTopLevel} isOpen={isTopLevel && isActive}>
             <ul id={topLevelElementId} className={classnames(styles.menuGroup, 'list-style-none')}>
-                {filteredItems.map(item => (
+                {filteredItems?.map(item => (
                     <MenuItem
                         key={item.title}
                         item={item}

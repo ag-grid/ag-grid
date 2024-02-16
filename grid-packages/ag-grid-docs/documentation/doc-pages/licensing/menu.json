@@ -6,18 +6,13 @@
     "excludeFromFeatures": true
   },
   {
-    "group": "OVERVIEW",
+    "group": "GETTING STARTED",
     "excludeFromFeatures": true,
     "items": [
       {
-        "title": "Get Started",
-        "items": [
-          {
-            "title": "Quick Start",
-            "url": "/getting-started/",
-            "icon": "framework"
-          }
-        ]
+        "title": "Quick Start",
+        "url": "/getting-started/",
+        "icon": "framework"
       },
       {
         "title": "Installation",
