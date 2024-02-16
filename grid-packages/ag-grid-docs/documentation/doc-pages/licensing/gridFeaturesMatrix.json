@@ -231,6 +231,15 @@
         "community": false,
         "enterprise": true,
         "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "Undo / Redo",
+          "link": "https://www.ag-grid.com/javascript-data-grid/undo-redo-edits/"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
       }
     ]
   },
