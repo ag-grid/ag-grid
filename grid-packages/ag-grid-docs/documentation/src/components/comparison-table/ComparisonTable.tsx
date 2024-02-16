@@ -1,6 +1,6 @@
 import styles from '@design-system/modules/ComparisonTable.module.scss';
 import classnames from 'classnames';
-import React, { useMemo, useState } from 'react';
+import React, { ReactNode, useMemo, useState } from 'react';
 import { createRowDataFilter } from './utils/createRowDataFilter';
 import { Label } from './renderers/Label';
 import { Feature } from './renderers/Feature';
@@ -55,7 +55,7 @@ const CellValue = ({
     return value;
 }
 
-const getFieldValue = ({ columnField, datum }) => {
+const getFieldValue = ({ columnField, datum }: { columnField: string, datum: Data[] }) => {
     const isNegated = columnField?.startsWith('!');
     const field = isNegated ? columnField.slice(1) : columnField;
     const value = datum[field];
@@ -63,7 +63,7 @@ const getFieldValue = ({ columnField, datum }) => {
     return isNegated ? !value : value;
 };
 
-const getColumnField = ({ datum, columnField }) => {
+const getColumnField = ({ datum, columnField }: { datum: Data[], columnField: string }) => {
     const columnFields = getColumnFields(columnField);
     if (columnFields.length === 1) {
         return {
@@ -77,7 +77,7 @@ const getColumnField = ({ datum, columnField }) => {
 
     const field = columnFields.find((f) => datum[f]);
     const value = getFieldValue({
-        columnField: field,
+        columnField: field!,
         datum,
     });
 
@@ -87,14 +87,14 @@ const getColumnField = ({ datum, columnField }) => {
     };
 }
 
-const TitleCell = ({ level, children}) => (
+const TitleCell = ({ level, children }: { level: number, children: ReactNode }) => (
     <span
         className={classnames({
             [styles.title]: level === 1,
             [styles[`level${level}`]]: level > 2,
         })}
     >
-        {children}
+        { children }
     </span>
 );
 
@@ -122,7 +122,7 @@ const TableRow = ({ datum, cellRenderer, columns, id }) => {
                 {Object.keys(columns).map((columnField, index) => {
                     const { field, value } = getColumnField({ datum, columnField });
                     const cellValue = (
-                        <CellValue field={field} value={value} cellRenderer={cellRenderer} />
+                        <CellValue field={field!} value={value} cellRenderer={cellRenderer} />
                     );
                     const isFirstColumn = index === 0;
                     const isHeaderGroup = datum[GROUP_HEADING_FIELD];
@@ -183,14 +183,12 @@ const columnsGroupRendererFields = ({ columns }: { columns: Columns;}): string[]
     getAllColumnFields(columns).filter((field) => field === 'group')
 );
 
-const recursivelyNormalizeData = ({ data, groupFields, level = 1 }) => (
+const recursivelyNormalizeData = ({ data, groupFields, level = 1 }: { data: Data, groupFields: string[], level?: number }) => (
     data.flatMap((datum) => {
         const dataFields = Object.keys(datum);
         // Take first field that is a group
-        const groupFieldName = groupFields.find((field) => {
-            return dataFields.includes(field);
-        });
-        const { [GROUP_ITEMS_FIELD]: items, ...groupData } = datum[groupFieldName] || {};
+        const groupFieldName = groupFields.find((field) => dataFields.includes(field));
+        const { [GROUP_ITEMS_FIELD]: items, ...groupData } = datum[groupFieldName!] || {};
 
         if (!groupFieldName || !items) {
             return datum;
@@ -206,7 +204,7 @@ const recursivelyNormalizeData = ({ data, groupFields, level = 1 }) => (
     }))
 );
 
-const normalizeGroupedData = ({ data, columns }) => {
+const normalizeGroupedData = ({ data, columns }: { data: Data, columns: Columns }) => {
     const groupFields = columnsGroupRendererFields({
         columns
     });
