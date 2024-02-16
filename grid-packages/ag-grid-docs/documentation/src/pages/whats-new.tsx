@@ -2,6 +2,7 @@ import React from 'react';
 import styles from "@design-system/modules/WhatsNew.module.scss";
 import { hostPrefix } from '../utils/consts';
 import versionsData from './whats-new.json';
+import classNames from 'classnames';
 
 const parseVersion = (version: string) => {
     const [major, minor, patch] = version.split('.').map(Number);
@@ -58,16 +59,16 @@ const Version = ({ date, version, blogUrl, highlights, notesUrl, isLatest }) => 
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            See migration guide
+                            {isMajor ? 'See migration guide' : 'See release notes'}
                         </a>
                     )}
                 <a
-                    className={`${styles.changelog} button-secondary`}
+                    className={classNames(styles.buttonSecondary, styles.changelog, 'button-secondary')}
                     href={`${hostPrefix}/changelog/?fixVersion=${version}`}
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    See release notes
+                    See all changes
                 </a>
             </div>
 

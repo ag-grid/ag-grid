@@ -459,6 +459,9 @@ export class RowRenderer extends BeanStub {
     public redrawRow(rowNode: RowNode, suppressEvent = false) {
         if (rowNode.sticky) {
             this.stickyRowFeature.refreshStickyNode(rowNode);
+        } else if (rowNode.detail && this.cachedRowCtrls.has(rowNode)) {
+            // delete row from cache if it needs redrawn
+            this.cachedRowCtrls.removeRow(rowNode);
         } else {
             const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | { [idx: number]: RowCtrl }) => {
                 const ctrl = dataStruct[rowNode.rowIndex!];
@@ -477,8 +480,10 @@ export class RowRenderer extends BeanStub {
             switch (rowNode.rowPinned) {
                 case 'top':
                     destroyAndRecreateCtrl(this.topRowCtrls);
+                    break;
                 case 'bottom':
                     destroyAndRecreateCtrl(this.bottomRowCtrls);
+                    break;
                 default:
                     destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
                     this.updateAllRowCtrls();
@@ -1485,7 +1490,18 @@ class RowCtrlCache {
         return rowNodeMismatch ? null : res;
     }
 
-    private removeFromCache(rowCtrl: RowCtrl): void {
+    public has(rowNode: RowNode): boolean {
+        return this.entriesMap[rowNode.id!] != null;
+    }
+
+    public removeRow(rowNode: RowNode): void {
+        const rowNodeId = rowNode.id!;
+        const ctrl = this.entriesMap[rowNodeId];
+        delete this.entriesMap[rowNodeId];
+        removeFromArray(this.entriesList, ctrl);
+    }
+
+    public removeFromCache(rowCtrl: RowCtrl): void {
         const rowNodeId = rowCtrl.getRowNode().id!;
         delete this.entriesMap[rowNodeId];
         removeFromArray(this.entriesList, rowCtrl);

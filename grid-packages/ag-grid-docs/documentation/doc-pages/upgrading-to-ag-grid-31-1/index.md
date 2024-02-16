@@ -2,14 +2,42 @@
 title: "Upgrading to AG Grid 31.1"
 ---
 
+## What's New
+
+See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31-1/) for details of what's new in this minor version.
+
+## Codemods
+
+Follow these steps to upgrade your project's AG Grid version to `31.1.0`:
+
+1. Open a terminal and navigate to your project's root folder.
+
+2. Update any AG Grid dependencies listed in your project's `package.json` to version `31.1.0`.
+
+3. Run the `migrate` command of version `31.1` of the AG Grid codemod runner:
+
+    ```
+    npx @ag-grid-community/cli@31.1 migrate
+    ```
+
+    This will update your project's source files to prepare for the new release.
+
+    By default the Codemod runner will locate all source files within the current directory. For projects with more specific requirements, pass a list of input files to the `migrate` command, or specify the `--help` argument to see more fine-grained usage instructions.
+
+<note>
+The Codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
+</note>
+
+See the [Codemods](/codemods/) documentation for more details.
+
 <framework-specific-section frameworks="react">
 <h2 id="migrating-to-use-reactivecustomcomponents">Migrating Custom Components to Use reactiveCustomComponents Option</h2>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-|Custom components created without `reactiveCustomComponents` may require some changes in order to work with the setting enabled.
+|Custom components can now be created more easily by setting `reactiveCustomComponents`. Custom components built in an imperative way (without setting `reactiveCustomComponents`) may need to be rebuilt in order to work with the setting enabled. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be `true` by default, and custom components built in an imperative way will still be supported as an optional behaviour.
 |
-|The following five component types require changes in order to migrate.
+|Please note that enabling this setting affects all custom components and you cannot use a mix of reactive custom components and imperative custom components in the same grid instance. 
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -76,7 +104,7 @@ This release includes the following deprecations:
 
 * `gridOptions.cellFlashDelay` - deprecated, use `gridOptions.cellFlashDuration` instead.
 * `gridOptions.cellFadeDelay` - deprecated, use `gridOptions.cellFadeDuration` instead.
-* `colDef.floatingFilterComponentParams.suppressFilterButton` - deprecated, use `colDef.suppressFloatingFilterButton` instead.*
+* `colDef.floatingFilterComponentParams.suppressFilterButton` - deprecated, use `colDef.suppressFloatingFilterButton` instead.
 
 ### Column Filters
 
@@ -87,6 +115,19 @@ This release includes the following deprecations:
 * `suppressMenu` - deprecated, use `suppressHeaderMenuButton` instead.
 * `columnsMenuParams` - deprecated, use `columnChooserParams` instead. 
 * `column.getMenuTabs` - deprecated, use `columns.getColDef.menuTabs ?? defaultValues` instead.
+
+### Grid API 
+
+* `getModel().getRow(index)` - deprecated, use `api.getDisplayedRowAtIndex(index)` instead.
+* `getModel().getRowNode(id)` - deprecated, use `api.getRowNode(id)` instead.
+* `getModel().getRowCount()` - deprecated, use `api.getDisplayedRowCount()` instead.
+* `getModel().isEmpty()` - deprecated, use `!!api.getDisplayedRowCount()` instead.
+* `getModel().forEachNode()` - deprecated, use `api.forEachNode()` instead.
+* `getFirstDisplayedRow`  - deprecated, use `api.getFirstDisplayedRowIndex` instead. 
+* `getLastDisplayedRow`  - deprecated, use `api.getLastDisplayedRowIndex` instead.
+* `flashCells`, `flashDelay` and `fadeDelay` params are deprecated in favor of `flashDuration` and `fadeDuration` params.
+* `showColumnMenuAfterButtonClick` - deprecated, use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere.
+* `showColumnMenuAfterMouseClick` - deprecated, use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere.
 * `removeRowGroupColumn` - deprecated, use  `removeRowGroupColumns` to provide the single string input param in an array.
 * `addRowGroupColumn` - deprecated, use `addRowGroupColumns` to provide the single string input param in an array.
 * `setColumnPinned` - deprecated, use `setColumnsPinned` to provide the single string input param in an array.
@@ -99,16 +140,3 @@ This release includes the following deprecations:
 * `moveColumn` - deprecated, use `moveColumns` to provide the single string input param in an array.
 * `setColumnWidth` - deprecated, use `setColumnWidths` to provide the single string input param in an array.
 * `setColumnVisible` - deprecated, use `setColumnsVisible` to provide the single string input param in an array.
-
-### Grid API 
-
-* `api.getModel().getRow(index)` - deprecated, use `api.getDisplayedRowAtIndex(index)` instead.
-* `api.getModel().getRowNode(id)` - deprecated, use `api.getRowNode(id)` instead.
-* `api.getModel().getRowCount()` - deprecated, use `api.getDisplayedRowCount()` instead.
-* `api.getModel().isEmpty()` - deprecated, use `!!api.getDisplayedRowCount()` instead.
-* `api.getModel().forEachNode()` - deprecated, use `api.forEachNode()` instead.
-* `api.getFirstDisplayedRow`  - deprecated, use `api.getFirstDisplayedRowIndex` instead. 
-* `api.getLastDisplayedRow`  - deprecated, use `api.getLastDisplayedRowIndex` instead.
-* `api.flashCells`, `flashDelay` and `fadeDelay` params are deprecated in favor of `flashDuration` and `fadeDuration` params.
-* `api.showColumnMenuAfterButtonClick` - deprecated, use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere.
-* `api.showColumnMenuAfterMouseClick` - deprecated, use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere.
