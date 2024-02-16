@@ -4,6 +4,7 @@ import {
   GridOptions,
   IServerSideDatasource,
   IServerSideGetRowsParams,
+  IsServerSideGroupOpenByDefaultParams
 } from '@ag-grid-community/core';
 declare var FakeServer: any;
 let gridApi: GridApi<IOlympicData>;
@@ -26,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 200,
   },
 
-  isServerSideGroupOpenByDefault: (params) => {
+  isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
     var route = params.rowNode.getRoute();
     if (!route) {
       return false;
