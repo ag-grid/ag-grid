@@ -1,20 +1,19 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import styles from "@design-system/modules/WhatsNew.module.scss";
 import { hostPrefix } from '../utils/consts';
 import versionsData from './whats-new.json';
 
-const parseVersion = (version) => {
+const parseVersion = (version: string) => {
     const [major, minor, patch] = version.split('.').map(Number);
-    return { major, minor, patch, isMajor: !minor };
+    return { major, minor, patch, isMajor: !minor && !patch };
 };
 
-const Version = ({ date, version, blogUrl, highlights, buttonURL, majorMinor }) => {
+const Version = ({ date, version, blogUrl, highlights, notesUrl }) => {
     const { major, minor, isMajor } = parseVersion(version);
     const blogHref = blogUrl || `https://blog.ag-grid.com/whats-new-in-ag-grid-${minor ? `${major}-${minor}` : major}/`;
 
-
     return (
-        <div className={`${styles.version} ${majorMinor ? styles.major : ''}`}>
+        <div className={`${styles.version} ${isMajor ? styles.major : ''}`}>
 
             <div className={styles.topheader}>
                 <header>
@@ -23,8 +22,8 @@ const Version = ({ date, version, blogUrl, highlights, buttonURL, majorMinor }) 
                     <span className={styles.date}>{date}</span>
 
                     <div className={styles.flex}>
-                    {version === "31.1.0" && <span className={styles['latest-tag']}>Latest</span>}
-                    {majorMinor && <span className={styles['major-text']}>Major</span>}
+                    {version === "31.1.0" && <span className={styles.latestTag}>Latest</span>}
+                    {isMajor && <span className={styles.majorText}>Major</span>}
                     </div>
                     
                     </div>
@@ -49,27 +48,28 @@ const Version = ({ date, version, blogUrl, highlights, buttonURL, majorMinor }) 
                         ))}
                     </ul>
                 )}
-
-                {buttonURL && (
-                    <a
-                        className={`${styles.buttonSecondary} button-secondary`}
-                        href={`${hostPrefix}${buttonURL}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        See migration guide
-                    </a>
-                )}
             </div>
 
-            <a
-                className={`${styles.changelog} button-secondary`}
-                href={`${hostPrefix}/changelog/?fixVersion=${version}`}
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                See release notes
-            </a>
+            <div>
+                {notesUrl && (
+                        <a
+                            className={`${styles.buttonSecondary} button-secondary`}
+                            href={`${hostPrefix}${notesUrl}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            See migration guide
+                        </a>
+                    )}
+                <a
+                    className={`${styles.changelog} button-secondary`}
+                    href={`${hostPrefix}/changelog/?fixVersion=${version}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    See release notes
+                </a>
+            </div>
 
         </div>
     );
@@ -91,8 +91,7 @@ const WhatsNew = () => {
                         version={versionInfo.version}
                         date={versionInfo.date}
                         highlights={versionInfo.highlights}
-                        buttonURL={versionInfo.buttonURL} // Pass the custom button URL
-                        majorMinor={versionInfo.majorMinor} 
+                        notesUrl={versionInfo.notesUrl} // Pass the custom button URL
                     />
                 ))}
             </div>
