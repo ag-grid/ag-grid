@@ -34,11 +34,6 @@
     margin-bottom: $spacing-size-8;
     text-align: center;
 
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        margin-top: $spacing-size-4;
-        text-align: left;
-    }
-
     p:global(.font-size-large) {
         max-width: 44rem;
         margin: 0 auto;
