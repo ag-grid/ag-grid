@@ -10,13 +10,10 @@ import GridInactive from '../images/inline-svgs/pricing/grid-inactive.svg';
 import SocialProof from '../components/SocialProof';
 import { trackOnceInfoEmail } from '../utils/analytics';
 import SEO from './components/SEO';
-import ToggleBackground from '../images/inline-svgs/pricing/toggle-background.svg';
 import { ComparisonTable } from '../components/comparison-table/ComparisonTable';
 import gridFeaturesData from '../../doc-pages/licensing/gridFeaturesMatrix.json'
 import chartsFeaturesData from '../../doc-pages/licensing/chartsFeaturesMatrix.json'
-import pricingFAQData from '../../doc-pages/licensing/pricingFAQs.json'
 
-import FAQ from '../components/licenses/FAQ';
 import { CHARTS_URL } from '../utils/consts';
 
 export type LicenseTab = 'grid' | 'charts';

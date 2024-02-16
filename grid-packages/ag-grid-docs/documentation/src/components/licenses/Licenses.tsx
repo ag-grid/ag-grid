@@ -1,9 +1,7 @@
 import classnames from 'classnames';
 import React, { FunctionComponent, useState } from 'react';
 import { trackBuyButton } from '../../utils/analytics';
-import GridCommunity from '../../images/inline-svgs/pricing-community.svg';
-import GridEnterprise from '../../images/inline-svgs/pricing-enterprise.svg';
-import ChartsGrid from '../../images/inline-svgs/pricing-grid-charts.svg';
+
 // @ts-ignore
 import styles from '@design-system/modules/Licenses.module.scss';
 import { ComparisonTable } from '../../components/comparison-table/ComparisonTable';
@@ -30,7 +28,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         description: '',
         priceFullDollars: '0',
         launchPrice: null,
-        buyLink: 'https://ag-grid.com/javascript-data-grid/getting-started/',
+        buyLink: '/javascript-data-grid/getting-started/',
         tabGroup: 'grid'
     },
     {

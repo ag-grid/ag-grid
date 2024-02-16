@@ -1,4 +1,3 @@
-import { type Framework } from '@ag-grid-types';
 import styles from '@design-system/modules/ComparisonTable.module.scss';
 import classnames from 'classnames';
 import React, { useMemo, useState } from 'react';
@@ -25,22 +24,22 @@ const getColumnFields = (column: string) => column.split('||').map((col) => col.
  */
 const getAllColumnFields = (columns: Columns) => Object.keys(columns).flatMap(getColumnFields);
 
-function CellValue({
-    framework,
+const CellValue = ({
     value,
     field,
     cellRenderer = {},
 }: {
-    framework: Framework;
     value: any;
-    field?: string;
+    field: string;
     cellRenderer?: CellRendererDef;
-}) {
+}) => {
     const renderer = cellRenderer[field] as CellRenderer;
 
     if (renderer === 'label') {
         return <Label value={value} />;
-    } else if (renderer === 'feature') {
+    }
+
+    if (renderer === 'feature') {
       return <Feature value={value} />;
     }
 
@@ -64,7 +63,7 @@ const getFieldValue = ({ columnField, datum }) => {
     return isNegated ? !value : value;
 };
 
-function getColumnField({ datum, columnField }) {
+const getColumnField = ({ datum, columnField }) => {
     const columnFields = getColumnFields(columnField);
     if (columnFields.length === 1) {
         return {
@@ -77,7 +76,6 @@ function getColumnField({ datum, columnField }) {
     }
 
     const field = columnFields.find((f) => datum[f]);
-    const isNegated = field?.startsWith('!');
     const value = getFieldValue({
         columnField: field,
         datum,
@@ -89,83 +87,78 @@ function getColumnField({ datum, columnField }) {
     };
 }
 
-function TitleCell({ level, children}) {
-    return (
-        <span
-            className={classnames({
-                [styles.title]: level === 1,
-                [styles[`level${level}`]]: level > 2,
-            })}
-        >
-            {children}
-        </span>
-    );
-}
+const TitleCell = ({ level, children}) => (
+    <span
+        className={classnames({
+            [styles.title]: level === 1,
+            [styles[`level${level}`]]: level > 2,
+        })}
+    >
+        {children}
+    </span>
+);
 
-function TableRows({
-    framework,
+
+const TableRows = ({
     data,
     columns,
     cellRenderer,
 }: {
-    framework: Framework;
     data: Data;
     columns: Columns;
     cellRenderer: CellRendererDef;
-}) {
-    const columnFields = getAllColumnFields(columns);
+}) => data.map((datum: any, i: number) => <TableRow datum={datum} cellRenderer={cellRenderer} columns={columns} key={i} id={i} />);
 
-    return data.map((datum: any, i: number) => {
-        const [subGroupOpen, setSubGroupOpen] = useState(false);
-  
-        const toggleSubGroupOpen = () => setSubGroupOpen(!subGroupOpen);
+const TableRow = ({ datum, cellRenderer, columns, id }) => {
+    const [subGroupOpen, setSubGroupOpen] = useState(false);
 
-        const { [LEVEL_FIELD]: level } = datum;
+    const { [LEVEL_FIELD]: level } = datum;
 
-        const subGroup = datum.isSubGroup;
+    const subGroup = datum.isSubGroup;
 
-        if(!subGroup) {
-            return (
-                <div className={styles.row} key={i}>
-                    {Object.keys(columns).map((columnField, index) => {
-                        const { field, value } = getColumnField({ datum, columnField });
-                        const cellValue = (
-                            <CellValue framework={framework} field={field} value={value} cellRenderer={cellRenderer} />
-                        );
-                        const isFirstColumn = index === 0;
-                        const isHeaderGroup = datum[GROUP_HEADING_FIELD];
-    
-                        if (!isFirstColumn && isHeaderGroup) {
-                            return <td key={`column-${columnField}`}></td>;
-                        }
-    
-                        return (
-                            <div className={styles.cell} key={`column-${columnField}`}>
-                                {isFirstColumn ? (
-                                    <TitleCell level={level}>
-                                        {cellValue}
-                                    </TitleCell>
-                                ) : (
-                                    cellValue
-                                )}
-                            </div>
-                        );
-                    })}
+    if(!subGroup) {
+        return (
+            <div className={styles.row}>
+                {Object.keys(columns).map((columnField, index) => {
+                    const { field, value } = getColumnField({ datum, columnField });
+                    const cellValue = (
+                        <CellValue field={field} value={value} cellRenderer={cellRenderer} />
+                    );
+                    const isFirstColumn = index === 0;
+                    const isHeaderGroup = datum[GROUP_HEADING_FIELD];
+
+                    if (!isFirstColumn && isHeaderGroup) {
+                        return <td key={`column-${columnField}`}></td>;
+                    }
+
+                    return (
+                        <div className={styles.cell} key={`column-${columnField}`}>
+                            {isFirstColumn ? (
+                                <TitleCell level={level}>
+                                    {cellValue}
+                                </TitleCell>
+                            ) : (
+                                cellValue
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    } 
+
+    return (
+        <div className={classnames(styles.subGroup, subGroupOpen ? styles.isOpen : undefined)}>
+            <header className={styles.subGroupHeader} onClick={() => { setSubGroupOpen(!subGroupOpen) }}>
+                <div className={classnames(styles.cell)}>
+                    <span>{datum.name} <Icon name="chevronDown"/></span>
                 </div>
-            );
-        } else {
-            return <div className={classnames(styles.subGroup, subGroupOpen ? styles.isOpen : undefined)} key={i}>
-                <header className={styles.subGroupHeader} onClick={() => { toggleSubGroupOpen(!subGroupOpen) }}>
-                    <div className={classnames(styles.cell)}>
-                        <span>{datum.name} <Icon name="chevronDown"/></span>
-                    </div>
-                    <div className={classnames(styles.cell)}><Icon name="sort"/></div>
-                    <div className={classnames(styles.cell)}><Icon name="sort"/></div>
-                    <div className={classnames(styles.cell)}><Icon name="sort"/></div>
-                </header>
-                
-                <Collapsible id={`subgroup-${i}`} isDisabled={false} isOpen={subGroupOpen}>
-                    
+                <div className={classnames(styles.cell)}><Icon name="sort"/></div>
+                <div className={classnames(styles.cell)}><Icon name="sort"/></div>
+                <div className={classnames(styles.cell)}><Icon name="sort"/></div>
+            </header>
+
+            <Collapsible id={`subgroup-${id}`} isDisabled={false} isOpen={subGroupOpen}>
                 <ComparisonTable
                     data={datum.items}
                     columns={{
@@ -180,58 +173,44 @@ function TableRows({
                         'enterprise': "feature",
                         'chartsGrid': "feature",
                     }}
-                    />
-                </Collapsible>
-            </div>
-        }
-    });
+                />
+            </Collapsible>
+        </div>
+    );
 }
 
-function columnsGroupRendererFields({
-    columns,
-    cellRenderer,
-}: {
-    columns: Columns;
-    cellRenderer?: CellRendererDef;
-}): boolean {
-    const allFields = getAllColumnFields(columns);
+const columnsGroupRendererFields = ({ columns }: { columns: Columns;}): string[] => (
+    getAllColumnFields(columns).filter((field) => field === 'group')
+);
 
-    return allFields.filter((field) => {
-        return field === 'group';
-    });
-}
-
-function recursivelyNormalizeData({ data, groupFields, level = 1 }) {
-    return data
-        .flatMap((datum) => {
-            const dataFields = Object.keys(datum);
-            // Take first field that is a group
-            const groupFieldName = groupFields.find((field) => {
-                return dataFields.includes(field);
-            });
-            const { [GROUP_ITEMS_FIELD]: items, ...groupData } = datum[groupFieldName] || {};
-
-            if (!groupFieldName || !items) {
-                return datum;
-            }
-
-            const children = recursivelyNormalizeData({ data: items, groupFields, level: level + 1 });
-
-            return [{ [GROUP_HEADING_FIELD]: true, ...groupData }].concat(children);
-        })
-        .map((datum) => {
-            return {
-                [LEVEL_FIELD]: level,
-                ...datum,
-            };
+const recursivelyNormalizeData = ({ data, groupFields, level = 1 }) => (
+    data.flatMap((datum) => {
+        const dataFields = Object.keys(datum);
+        // Take first field that is a group
+        const groupFieldName = groupFields.find((field) => {
+            return dataFields.includes(field);
         });
-}
+        const { [GROUP_ITEMS_FIELD]: items, ...groupData } = datum[groupFieldName] || {};
 
-function normalizeGroupedData({ data, columns, cellRenderer }) {
+        if (!groupFieldName || !items) {
+            return datum;
+        }
+
+        const children = recursivelyNormalizeData({ data: items, groupFields, level: level + 1 });
+
+        return [{ [GROUP_HEADING_FIELD]: true, ...groupData }].concat(children);
+    })
+    .map((datum) => ({
+        [LEVEL_FIELD]: level,
+        ...datum,
+    }))
+);
+
+const normalizeGroupedData = ({ data, columns }) => {
     const groupFields = columnsGroupRendererFields({
-        columns,
-        cellRenderer,
+        columns
     });
+
     if (!groupFields.length) {
         return data;
     }
@@ -245,7 +224,7 @@ function normalizeGroupedData({ data, columns, cellRenderer }) {
 /**
  * This presents a matrix of information, e.g. to show which features are available with different versions of the grid.
  */
-export function ComparisonTable({
+export const ComparisonTable = ({
     data,
     columns,
     filter,
@@ -254,10 +233,10 @@ export function ComparisonTable({
     data: Data;
     columns: Columns;
     filter?: string;
-    cellRenderer?: CellRendererDef;
-}) {
+    cellRenderer: CellRendererDef;
+}) => {
     const tableData = useMemo(() => {
-        const normalizedData = normalizeGroupedData({ data, columns, cellRenderer });
+        const normalizedData = normalizeGroupedData({ data, columns });
         const filteredData = filter ? normalizedData.filter(createRowDataFilter(filter)) : normalizedData;
 
         return filteredData;

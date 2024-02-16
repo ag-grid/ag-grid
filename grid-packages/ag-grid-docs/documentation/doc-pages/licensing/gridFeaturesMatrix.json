@@ -7,7 +7,7 @@
       {
         "label": {
           "name": "Sparklines",
-          "link": "https://ag-grid.com/javascript-data-grid/sparklines/"
+          "link": "/javascript-data-grid/sparklines/"
         },
         "community": true,
         "enterprise": true,
@@ -16,7 +16,7 @@
       {
         "label": {
           "name": "Integrated Charts",
-          "link": "https://ag-grid.com/javascript-data-grid/integrated-charts/"
+          "link": "/javascript-data-grid/integrated-charts/"
         },
         "community": false,
         "enterprise": false,
@@ -45,7 +45,7 @@
           {
             "label": {
               "name": "Text Filter",
-              "link": "https://www.ag-grid.com/javascript-data-grid/filter-text/"
+              "link": "/javascript-data-grid/filter-text/"
             },
             "community": true,
             "enterprise": true,
@@ -54,7 +54,7 @@
           {
             "label": {
               "name": "Number Filter",
-              "link": "https://www.ag-grid.com/javascript-data-grid/filter-number/"
+              "link": "/javascript-data-grid/filter-number/"
             },
             "community": true,
             "enterprise": true,
@@ -63,7 +63,7 @@
           {
             "label": {
               "name": "Date Filter",
-              "link": "https://www.ag-grid.com/javascript-data-grid/filter-date/"
+              "link": "/javascript-data-grid/filter-date/"
             },
             "community": true,
             "enterprise": true,
@@ -78,7 +78,7 @@
           {
             "label": {
               "name": "Multi Filter",
-              "link": "https://www.ag-grid.com/javascript-data-grid/filter-multi/"
+              "link": "/javascript-data-grid/filter-multi/"
             },
             "community": false,
             "enterprise": true,
@@ -87,7 +87,7 @@
           {
             "label": {
               "name": "Set Filter",
-              "link": "https://www.ag-grid.com/javascript-data-grid/filter-set/"
+              "link": "/javascript-data-grid/filter-set/"
             },
             "community": false,
             "enterprise": true,
@@ -96,7 +96,7 @@
           {
             "label": {
               "name": "Advanced Filter",
-              "link": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/"
+              "link": "/javascript-data-grid/filter-advanced/"
             },
             "community": false,
             "enterprise": true,
@@ -107,7 +107,7 @@
       {
         "label": {
           "name": "External Filter",
-          "link": "https://www.ag-grid.com/javascript-data-grid/filter-external/"
+          "link": "/javascript-data-grid/filter-external/"
         },
         "community": true,
         "enterprise": true,
@@ -116,7 +116,7 @@
       {
         "label": {
           "name": "Quick Filter",
-          "link": "https://www.ag-grid.com/javascript-data-grid/filter-quick/"
+          "link": "/javascript-data-grid/filter-quick/"
         },
         "community": true,
         "enterprise": true,
@@ -132,7 +132,7 @@
       {
         "label": {
           "name": "Row Selection",
-          "link": "https://www.ag-grid.com/javascript-data-grid/row-selection/"
+          "link": "/javascript-data-grid/row-selection/"
         },
         "community": true,
         "enterprise": true,
@@ -141,7 +141,7 @@
       {
         "label": {
           "name": "Cell Range Selection",
-          "link": "https://www.ag-grid.com/javascript-data-grid/range-selection/"
+          "link": "/javascript-data-grid/range-selection/"
         },
         "community": false,
         "enterprise": true,
@@ -150,7 +150,7 @@
       {
         "label": {
           "name": "Fill Handle",
-          "link": "https://www.ag-grid.com/javascript-data-grid/range-selection-fill-handle/"
+          "link": "/javascript-data-grid/range-selection-fill-handle/"
         },
         "community": false,
         "enterprise": true,
@@ -170,7 +170,7 @@
           {
             "label": {
               "name": "Text Editor",
-              "link": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-text/"
+              "link": "/javascript-data-grid/provided-cell-editors-text/"
             },
             "community": true,
             "enterprise": true,
@@ -179,7 +179,7 @@
           {
             "label": {
               "name": "Number Editor",
-              "link": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-number/"
+              "link": "/javascript-data-grid/provided-cell-editors-number/"
             },
             "community": true,
             "enterprise": true,
@@ -188,7 +188,7 @@
           {
             "label": {
               "name": "Date Editor",
-              "link": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-date/"
+              "link": "/javascript-data-grid/provided-cell-editors-date/"
             },
             "community": true,
             "enterprise": true,
@@ -197,7 +197,7 @@
           {
             "label": {
               "name": "Checkbox Editor",
-              "link": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-checkbox/"
+              "link": "/javascript-data-grid/provided-cell-editors-checkbox/"
             },
             "community": true,
             "enterprise": true,
@@ -206,7 +206,7 @@
           {
             "label": {
               "name": "Large Text Editor",
-              "link": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-large-text/"
+              "link": "/javascript-data-grid/provided-cell-editors-large-text/"
             },
             "community": true,
             "enterprise": true,
@@ -215,7 +215,7 @@
           {
             "label": {
               "name": "Select Editor",
-              "link": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-select/"
+              "link": "/javascript-data-grid/provided-cell-editors-select/"
             },
             "community": true,
             "enterprise": true,
@@ -226,7 +226,7 @@
       {
         "label": {
           "name": "Advanced Select Editor",
-          "link": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors-rich-select/"
+          "link": "/javascript-data-grid/provided-cell-editors-rich-select/"
         },
         "community": false,
         "enterprise": true,
@@ -235,7 +235,7 @@
       {
         "label": {
           "name": "Undo / Redo",
-          "link": "https://www.ag-grid.com/javascript-data-grid/undo-redo-edits/"
+          "link": "/javascript-data-grid/undo-redo-edits/"
         },
         "community": true,
         "enterprise": true,
@@ -251,7 +251,7 @@
       {
         "label": {
           "name": "Drag & Drop",
-          "link": "https://www.ag-grid.com/javascript-data-grid/drag-and-drop/"
+          "link": "/javascript-data-grid/drag-and-drop/"
         },
         "community": true,
         "enterprise": true,
@@ -260,7 +260,7 @@
       {
         "label": {
           "name": "CSV Export",
-          "link": "https://www.ag-grid.com/javascript-data-grid/csv-export/"
+          "link": "/javascript-data-grid/csv-export/"
         },
         "community": true,
         "enterprise": true,
@@ -269,7 +269,7 @@
       {
         "label": {
           "name": "Excel Export",
-          "link": "https://www.ag-grid.com/javascript-data-grid/excel-export/"
+          "link": "/javascript-data-grid/excel-export/"
         },
         "community": false,
         "enterprise": true,
@@ -278,7 +278,7 @@
       {
         "label": {
           "name": "Clipboard Operations",
-          "link": "https://www.ag-grid.com/javascript-data-grid/clipboard/"
+          "link": "/javascript-data-grid/clipboard/"
         },
         "community": false,
         "enterprise": true,
@@ -294,7 +294,7 @@
       {
         "label": {
           "name": "Aggregation",
-          "link": "https://www.ag-grid.com/javascript-data-grid/aggregation/"
+          "link": "/javascript-data-grid/aggregation/"
         },
         "community": false,
         "enterprise": true,
@@ -303,7 +303,7 @@
       {
         "label": {
           "name": "Row Grouping",
-          "link": "https://www.ag-grid.com/javascript-data-grid/grouping/"
+          "link": "/javascript-data-grid/grouping/"
         },
         "community": false,
         "enterprise": true,
@@ -312,7 +312,7 @@
       {
         "label": {
           "name": "Pivoting",
-          "link": "https://www.ag-grid.com/javascript-data-grid/pivoting/"
+          "link": "/javascript-data-grid/pivoting/"
         },
         "community": false,
         "enterprise": true,
@@ -321,7 +321,7 @@
       {
         "label": {
           "name": "Tree Data",
-          "link": "https://www.ag-grid.com/javascript-data-grid/tree-data/"
+          "link": "/javascript-data-grid/tree-data/"
         },
         "community": false,
         "enterprise": true,
@@ -330,7 +330,7 @@
       {
         "label": {
           "name": "Master Detail",
-          "link": "https://www.ag-grid.com/javascript-data-grid/server-side-model-master-detail/"
+          "link": "/javascript-data-grid/server-side-model-master-detail/"
         },
         "community": false,
         "enterprise": true,
@@ -350,7 +350,7 @@
           {
             "label": {
               "name": "Sorting",
-              "link": "https://ag-grid.com/javascript-data-grid/infinite-scrolling/#sorting--filtering"
+              "link": "/javascript-data-grid/infinite-scrolling/#sorting--filtering"
             },
             "community": true,
             "enterprise": true,
@@ -359,7 +359,7 @@
           {
             "label": {
               "name": "Filtering",
-              "link": "https://ag-grid.com/javascript-data-grid/infinite-scrolling/#sorting--filtering"
+              "link": "/javascript-data-grid/infinite-scrolling/#sorting--filtering"
             },
             "community": true,
             "enterprise": true,
@@ -368,7 +368,7 @@
           {
             "label": {
               "name": "Selection",
-              "link": "https://ag-grid.com/javascript-data-grid/infinite-scrolling/#selection"
+              "link": "/javascript-data-grid/infinite-scrolling/#selection"
             },
             "community": true,
             "enterprise": true,
@@ -377,7 +377,7 @@
           {
             "label": {
               "name": "Pagination",
-              "link": "https://ag-grid.com/javascript-data-grid/infinite-scrolling/#pagination"
+              "link": "/javascript-data-grid/infinite-scrolling/#pagination"
             },
             "community": true,
             "enterprise": true,
@@ -392,7 +392,7 @@
           {
             "label": {
               "name": "Row Grouping",
-              "link": "https://www.ag-grid.com/javascript-data-grid/grouping/"
+              "link": "/javascript-data-grid/grouping/"
             },
             "community": false,
             "enterprise": true,
@@ -401,7 +401,7 @@
           {
             "label": {
               "name": "Pivoting",
-              "link": "https://www.ag-grid.com/javascript-data-grid/pivoting/"
+              "link": "/javascript-data-grid/pivoting/"
             },
             "community": false,
             "enterprise": true,
@@ -410,7 +410,7 @@
           {
             "label": {
               "name": "Updating Data",
-              "link": "https://www.ag-grid.com/javascript-data-grid/server-side-model-updating/"
+              "link": "/javascript-data-grid/server-side-model-updating/"
             },
             "community": false,
             "enterprise": true,
@@ -419,7 +419,7 @@
           {
             "label": {
               "name": "Tree Data",
-              "link": "https://www.ag-grid.com/javascript-data-grid/server-side-model-tree-data/"
+              "link": "/javascript-data-grid/server-side-model-tree-data/"
             },
             "community": false,
             "enterprise": true,
@@ -428,7 +428,7 @@
           {
             "label": {
               "name": "Master Detail",
-              "link": "https://www.ag-grid.com/javascript-data-grid/server-side-model-master-detail/"
+              "link": "/javascript-data-grid/server-side-model-master-detail/"
             },
             "community": false,
             "enterprise": true,
@@ -446,7 +446,7 @@
       {
         "label": {
           "name": "Column Menu",
-          "link": "https://www.ag-grid.com/javascript-data-grid/column-menu/"
+          "link": "/javascript-data-grid/column-menu/"
         },
         "community": false,
         "enterprise": true,
@@ -455,7 +455,7 @@
       {
         "label": {
           "name": "Context Menu",
-          "link": "https://www.ag-grid.com/javascript-data-grid/context-menu/"
+          "link": "/javascript-data-grid/context-menu/"
         },
         "community": false,
         "enterprise": true,
@@ -464,7 +464,7 @@
       {
         "label": {
           "name": "Columns Tool Panel",
-          "link": "https://www.ag-grid.com/javascript-data-grid/tool-panel-columns/"
+          "link": "/javascript-data-grid/tool-panel-columns/"
         },
         "community": false,
         "enterprise": true,
@@ -473,7 +473,7 @@
       {
         "label": {
           "name": "Filters Tool Panel",
-          "link": "https://www.ag-grid.com/javascript-data-grid/tool-panel-filters/"
+          "link": "/javascript-data-grid/tool-panel-filters/"
         },
         "community": false,
         "enterprise": true,
@@ -482,7 +482,7 @@
       {
         "label": {
           "name": "Status Bar",
-          "link": "https://www.ag-grid.com/javascript-data-grid/status-bar/"
+          "link": "/javascript-data-grid/status-bar/"
         },
         "community": false,
         "enterprise": true,
@@ -498,7 +498,7 @@
       {
         "label": {
           "name": "Accessibility",
-          "link": "https://ag-grid.com/javascript-data-grid/accessibility/"
+          "link": "/javascript-data-grid/accessibility/"
         },
         "community": true,
         "enterprise": true,
@@ -507,7 +507,7 @@
       {
         "label": {
           "name": "Localisation",
-          "link": "https://ag-grid.com/javascript-data-grid/localisation/"
+          "link": "/javascript-data-grid/localisation/"
         },
         "community": true,
         "enterprise": true,
@@ -516,7 +516,7 @@
       {
         "label": {
           "name": "Custom Components",
-          "link": "https://ag-grid.com/javascript-data-grid/components/"
+          "link": "/javascript-data-grid/components/"
         },
         "community": true,
         "enterprise": true,
@@ -532,7 +532,7 @@
       {
         "label": {
           "name": "Enterprise support",
-          "link": "https://ag-grid.com/javascript-data-grid/licensing/"
+          "link": "/javascript-data-grid/licensing/"
         },
         "community": {
           "value": false,
@@ -550,7 +550,7 @@
       {
         "label": {
           "name": "Perpetual license",
-          "link": "https://ag-grid.com/javascript-data-grid/licensing/"
+          "link": "/javascript-data-grid/licensing/"
         },
         "community": {
           "value": false,
