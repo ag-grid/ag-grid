@@ -100,7 +100,7 @@ The following example shows Column Definitions using **stateful attributes**. No
 
 <grid-example title='Updating Column State' name='changing-state' type='mixed' options='{ "modules": true }'></grid-example>
 
-## **null** vs **undefined**
+## null vs undefined
 
 When a stateful attribute is set to `undefined` the grid ignores the attribute.
 

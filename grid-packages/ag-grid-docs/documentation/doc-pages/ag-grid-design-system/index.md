@@ -6,7 +6,7 @@ Our Figma design system allows designers to prototype & customise AG Grid applic
 
 <image-caption src="ag-grid-design-system/resources/FDS-Example.png" alt="AG Grid Design System" constrained="false" centered="true" toggledarkmode="true"></image-caption>
 
-The AG Grid design system replicates the Alpine & Alpine Dark AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes.
+The AG Grid design system replicates the Quartz and Alpine AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes.
 
 The design system has been built from the ground up to be consistent with the javascript library, aiding in the designer - developer handoff process.
 
@@ -32,7 +32,7 @@ The Figma file contains comprehensive documentation for how to use the design sy
 
 ## Customising the Design System
 
-The AG Grid design system utilises [Figma's native variables feature](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma) for all of it's customisable attributes. All of the [CSS variables](/global-style-customisation-variables/) used by the Alpine & Alpine Dark themes are referenced within Figma and can be extended to your own theme.
+The AG Grid design system utilises [Figma's native variables feature](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma) for all of it's customisable attributes. All of the [CSS variables](/global-style-customisation-variables/) used by the Quartz and Alpine themes are referenced within Figma and can be extended to your own theme.
 
 You can find more information about how to create and manage themes within the Figma file under the **Create your own theme** page in the Figma file.
 

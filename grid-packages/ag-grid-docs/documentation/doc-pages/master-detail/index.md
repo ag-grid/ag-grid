@@ -4,7 +4,7 @@ enterprise: true
 ---
 
 <video-section id="8OeJn75or2w" title="Master / Detail Video Tutorial" header="true">
-    Master Detail refers to a top level grid called a Master Grid having rows that expand. When the row is expanded, another grid is displayed with more details related to the expanded row. The grid that appears is known as the Detail Grid.
+Master Detail refers to a top level grid called a Master Grid having rows that expand. When the row is expanded, another grid is displayed with more details related to the expanded row. The grid that appears is known as the Detail Grid.
 </video-section>
 
 ## Enabling Master / Detail

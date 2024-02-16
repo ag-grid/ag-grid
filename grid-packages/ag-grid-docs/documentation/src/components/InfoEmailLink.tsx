@@ -1,4 +1,3 @@
-import classnames from 'classnames';
 import React, { FunctionComponent, ReactElement } from 'react';
 import { trackInfoEmail } from '../utils/analytics';
 import { Icon } from './Icon';
@@ -23,12 +22,7 @@ export const InfoEmailLink: FunctionComponent<Props> = ({
     const href = emailSubject ? `mailto:info@ag-grid.com?subject=${emailSubject}` : 'mailto:info@ag-grid.com';
     return (
         <a
-            className={classnames(
-                {
-                    button: isButton,
-                },
-                className
-            )}
+            className={className}
             href={href}
             onClick={() => {
                 trackingType &&

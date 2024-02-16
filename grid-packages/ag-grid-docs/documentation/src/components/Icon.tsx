@@ -1,4 +1,5 @@
 import * as CarbonIcon from '@carbon/icons-react';
+import * as LucideIcon from 'lucide-react';
 import classNames from 'classnames';
 import React from 'react';
 import ApiIcon from '../images/inline-svgs/api.svg';
@@ -73,6 +74,35 @@ const HOMEPAGE_FEATURES_ICON_MAP = {
     'feature-tree': CarbonIcon.TreeViewAlt,
 };
 
+const CHARTS_ICON_MAP = {
+    chartsBar: CarbonIcon.ChartBar,
+    chartsColumn: CarbonIcon.ChartColumn,
+    chartsLine: CarbonIcon.ChartLine,
+    chartsArea: CarbonIcon.ChartArea,
+    chartsScatter: CarbonIcon.ChartScatter,
+    chartsBubble: CarbonIcon.ChartBubble,
+    chartsPie: CarbonIcon.ChartPie,
+    chartsDonut: CarbonIcon.ChartRing,
+    chartsCombination: CarbonIcon.ChartCombo,
+    chartsHistogram: CarbonIcon.Ordinal,
+    chartsHeatmap: CarbonIcon.HeatMap_03,
+    chartsRangeArea: CarbonIcon.ChartRiver,
+    chartsRangeBar: CarbonIcon.ChartBarFloating,
+    chartsBoxPlot: CarbonIcon.BoxPlot,
+    chartsErrorBar: CarbonIcon.ChartErrorBar,
+    chartsWaterfall: CarbonIcon.ChartWaterfall,
+    chartsRadar: CarbonIcon.ChartRadar,
+    chartsNightingale: CarbonIcon.ChartRose,
+    chartsRadialColumn: CarbonIcon.ChartSpiral,
+    chartsRadialBar: CarbonIcon.ChartRadial,
+    chartsTreemap: CarbonIcon.ChartTreemap,
+    chartsSunburst: CarbonIcon.ChartSunburst,
+    chartsIcicle: CarbonIcon.ChartClusterBar,
+    chartsFunnel: CarbonIcon.Filter,
+    chartsPyramid: CarbonIcon.UpToTop,
+    chartsBullet: CarbonIcon.ChartBullet,
+};
+
 export const ICON_MAP = {
     info: CarbonIcon.Information,
     warning: CarbonIcon.WarningAlt,
@@ -91,6 +121,7 @@ export const ICON_MAP = {
     chevronRight: BoldChevronRight,
     chevronDown: BoldChevronDown,
     chevronLeft: BoldChevronLeft,
+    chevronDownAlt: LucideIcon.ChevronDown,
     replaydemo: ReplayDemoIcon,
     takeControl: TakeControlIcon,
     playCircle: CarbonIcon.PlayFilled,
@@ -111,6 +142,7 @@ export const ICON_MAP = {
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,
+    ...CHARTS_ICON_MAP
 };
 
 export type IconName = keyof typeof ICON_MAP;

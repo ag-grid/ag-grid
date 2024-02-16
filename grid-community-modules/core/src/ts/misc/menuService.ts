@@ -10,6 +10,7 @@ import { AnimationFrameService } from "./animationFrameService";
 import { IColumnChooserFactory, ShowColumnChooserParams } from "../interfaces/iColumnChooserFactory";
 import { FilterManager } from "../filter/filterManager";
 import { isIOSUserAgent } from "../utils/browser";
+import { warnOnce } from "../utils/function";
 
 interface BaseShowColumnMenuParams {
     column?: Column,
@@ -169,7 +170,11 @@ export class MenuService extends BeanStub {
 
     public isFloatingFilterButtonEnabled(column: Column): boolean {
         const colDef = column.getColDef();
-        return colDef.suppressFloatingFilterButton == null ? !colDef.floatingFilterComponentParams?.suppressFilterButton : !colDef.suppressFloatingFilterButton;
+        const legacySuppressFilterButton = colDef.floatingFilterComponentParams?.suppressFilterButton;
+        if (legacySuppressFilterButton != null) {
+            warnOnce(`As of v31.1, 'colDef.floatingFilterComponentParams.suppressFilterButton' is deprecated. Use 'colDef.suppressFloatingFilterButton' instead.`);
+        }
+        return colDef.suppressFloatingFilterButton == null ? !legacySuppressFilterButton : !colDef.suppressFloatingFilterButton;
     }
 
     private getColumnMenuType(): 'legacy' | 'new' {

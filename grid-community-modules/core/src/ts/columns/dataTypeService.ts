@@ -745,7 +745,6 @@ export class DataTypeService extends BeanStub {
                 valueFormatter: (params: ValueFormatterLiteParams<any, number>) => {
                     if (params.value == null) { return ''; }
                     if (typeof params.value !== 'number' || isNaN(params.value)) {
-                        console.log('was', typeof params.value, params.value, params);
                         return translate('invalidNumber', 'Invalid Number');
                     }
                     return String(params.value);

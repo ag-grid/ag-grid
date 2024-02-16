@@ -1,0 +1,41 @@
+@use '../core' as *;
+
+.twoColumn .cell {
+    &:first-child {
+        width: calc(100% - #{$spacing-size-16});
+    }
+
+    &:last-child {
+        width: $spacing-size-16;
+    }
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    min-height: $spacing-size-12;
+    border-top: 1px solid var(--color-border-secondary);
+
+    &:first-child {
+        border-top: none;
+    }
+
+    &:first-child .cell {
+        padding-top: $spacing-size-4 + 8px;
+    }
+
+    &:last-child .cell {
+        padding-bottom: $spacing-size-4 + 12px;
+    }
+}
+
+.cell {
+    width: calc(100% / var(--num-columns));
+    padding-top: $spacing-size-4;
+    padding-bottom: $spacing-size-4;
+
+    &:nth-child(3) {
+        border-right: 1px solid var(--color-border-tertiary);
+        border-left: 1px solid var(--color-border-tertiary);
+    }
+}

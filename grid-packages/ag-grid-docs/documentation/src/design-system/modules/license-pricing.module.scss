@@ -1,26 +1,31 @@
 @use '../core' as *;
 
 .container {
-    margin-top: $spacing-size-12;
-    margin-bottom: calc($spacing-size-12 * 4);
+    margin-top: $spacing-size-8;
 }
 
 .topSection {
     display: flex;
     flex-wrap: wrap;
     gap: $spacing-size-8;
-    margin-top: $spacing-size-24;
-    margin-bottom: $spacing-size-16;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         flex-wrap: nowrap;
     }
+}
 
-    h1 {
-        font-size: 44px;
-        font-weight: var(--text-bold);
-        margin-bottom: $spacing-size-2;
-        line-height: var(--text-lh-ultra-tight);
+.introSection {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: $spacing-size-8;
+    border-bottom: 1px solid var(--color-border-secondary);
+
+    p {
+        text-align: center;
+        text-wrap: balance;
     }
 }
 
@@ -30,7 +35,7 @@
     text-align: center;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
-        margin-top: 36px;
+        margin-top: $spacing-size-4;
         text-align: left;
     }
 
@@ -42,12 +47,17 @@
 
 .salesEmail {
     margin-top: $spacing-size-4;
-    margin-bottom: $spacing-size-4;
+    margin-bottom: $spacing-size-8;
 
     a {
         @media screen and (max-width: $breakpoint-pricing-small) {
             font-size: var(--text-fs-base);
         }
+    }
+
+    svg {
+        height: 32px;
+        width: 32px;
     }
 }
 
@@ -55,11 +65,16 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     text-align: center;
     gap: $spacing-size-2 $spacing-size-4;
+    margin: 0 auto;
     margin-top: $spacing-size-12;
     line-height: var(--text-lh-tight);
+    max-width: 600px;
+    padding: $spacing-size-3;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
 
     @media screen and (min-width: $breakpoint-pricing-small) {
         text-align: left;
@@ -80,21 +95,19 @@
     min-width: 160px;
     max-width: 220px;
     border-radius: var(--radius-md);
-
     img {
         width: 100%;
         aspect-ratio: 16 / 9;
-        margin-top: $spacing-size-2;
         object-fit: cover;
         border-radius: var(--radius-md);
     }
 }
 
 .licensesOuter {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    gap: $spacing-size-8;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    // gap: $spacing-size-8;
+    padding-top: $spacing-size-5;
 }
 
 .buyTogether {
@@ -240,8 +253,6 @@
 }
 
 .bulkLicenses,
-.communityEnterprise,
-.videoExplainer,
 .licensesInDetail {
     margin-bottom: $spacing-size-24;
 }
@@ -253,101 +264,6 @@
     p {
         max-width: 48em;
         margin: 0 auto $spacing-size-2;
-    }
-}
-
-.ukraineNotice {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: $spacing-size-4;
-    max-width: 48em;
-    margin: $spacing-size-16 auto $spacing-size-24;
-
-    @media screen and (min-width: $breakpoint-alert-flag-small) {
-        flex-direction: row;
-    }
-
-    img {
-        width: 80px;
-    }
-}
-
-.communityEnterprise {
-    grid-template-columns: 1fr 2fr;
-    gap: $spacing-size-6;
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        display: grid;
-    }
-
-    :global(.button-secondary):not(:last-child) {
-        margin-bottom: $spacing-size-2;
-    }
-}
-
-.community {
-    margin-bottom: $spacing-size-8;
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        margin-bottom: 0;
-    }
-}
-
-.enterprise h3 {
-    position: relative;
-    display: inline-block;
-    padding-right: 32px;
-
-    svg {
-        --color-icon: var(--color-enterprise-icon);
-
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin-left: 4px;
-        width: 26px;
-    }
-}
-
-.NpmButton svg {
-    display: inline-block;
-    height: 2.5em;
-    margin: -1.15em 0.33em -1em 0;
-    fill: var(--color-fg-primary);
-}
-
-.videoExplainer {
-    display: grid;
-
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        grid-template-columns: 2fr 1fr;
-        grid-auto-flow: dense;
-        gap: $spacing-size-6;
-    }
-
-    div {
-        margin-bottom: $spacing-size-8;
-
-        @media screen and (min-width: $breakpoint-pricing-large) {
-            grid-column: 2;
-        }
-    }
-
-    h3 {
-        font-weight: var(--text-bold);
-        line-height: var(--text-lh-tight);
-
-        @media screen and (min-width: $breakpoint-pricing-large) {
-            margin-top: -$spacing-size-2;
-        }
-    }
-
-    iframe {
-        width: 100%;
-        aspect-ratio: 16/9;
-        border-radius: var(--radius-md);
-        border: none;
     }
 }
 
@@ -415,20 +331,52 @@
     }
 }
 
-.contactSales {
-    margin-bottom: $spacing-size-20;
+.faqSection {
     text-align: center;
+    margin-top: $spacing-size-20;
+}
+.contactSales {
+    text-align: center;
+    margin-top: $spacing-size-12;
+    padding-top: $spacing-size-24;
+    padding-bottom: $spacing-size-24;
+    position: relative;
 
     p {
-        max-width: 740px;
-        margin-right: auto;
-        margin-bottom: $spacing-size-2;
-        margin-left: auto;
+        max-width: 800px;
+        margin: $spacing-size-2 auto $spacing-size-10;
     }
 
-    a {
-        font-size: var(--text-fs-lg);
-        display: inline-block;
+    p a {
+        text-decoration: underline;
+    }
+
+    background-color: #fbfbfc;
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
+    }
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        height: 100%;
+        width: 100vw;
+        top: 0;
+        background-color: #fbfbfc;
+        #{$selector-darkmode} & {
+            background: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
+        }
+        z-index: -1;
+        pointer-events: none;
+    }
+    &::before {
+        left: -100vw;
+    }
+
+    &::after {
+        right: -100vw;
     }
 }
 
@@ -442,5 +390,322 @@
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         min-height: 3200px;
+    }
+}
+
+.backgroundPricing {
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    margin-top: -7px;
+    opacity: 0.15;
+
+    #{$selector-darkmode} & {
+        opacity: 1;
+    }
+}
+
+.fullWidthBar {
+    width: 100%;
+    position: fixed;
+    top: 64px;
+    background-color: var(--color-bg-primary);
+    border-bottom: 1px solid var(--color-border-secondary);
+    height: 56px;
+    padding-top: $spacing-size-4;
+    z-index: 2;
+}
+@media screen and (max-width: $breakpoint-pricing-large) {
+    .fullWidthBar {
+        display: none;
+    }
+}
+
+.fullWidthBarContainer {
+    margin: 0 auto; /* Center the container horizontally */
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; /* Create a 3-column grid */
+    font-weight: bold; /* Add font-weight as needed */
+}
+
+/* Style for the left part of the full-width bar (Pricing) */
+.fullWidthBarLeft {
+    font-weight: bold; /* Add font-weight as needed */
+}
+
+/* Style for the right part of the full-width bar (Community, Enterprise, Grid + Charts) */
+.fullWidthBarRight {
+    display: flex;
+    gap: 10px; /* Adjust the gap between items as needed */
+}
+
+.fullWidthBarItem {
+    display: flex;
+    justify-content: center;
+}
+
+/* Remove the border-right for the last item to avoid an extra separator */
+.fullWidthBarItem:last-child {
+    border-right: none;
+}
+
+/* Show the fullWidthBar when it appears */
+.fullWidthBar.active {
+    opacity: 1;
+    transform: translateY(0%);
+}
+
+.pricingHeading {
+    margin-bottom: $spacing-size-3;
+}
+
+/* products toggle */
+
+.toggleCheckbox {
+    display: none;
+}
+
+.toggleContainer {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: fit-content;
+    padding: 3px;
+    border: 2px solid var(--color-button-primary-fg);
+    outline: 2px solid var(--color-border-secondary);
+    border-radius: 32px;
+    background: var(--color-bg-primary);
+    font-weight: bold;
+    color: var(--color-button-primary-fg);
+    cursor: pointer;
+    user-select: none;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: $spacing-size-4;
+
+    #{$selector-darkmode} & {
+        border: 2px solid var(--color-bg-primary);
+    }
+}
+
+.toggleContainer::before {
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    left: 0%;
+    border-radius: 32px;
+    background: var(--color-bg-brand-solid);
+    transition: all 0.2s;
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 40%);
+    }
+}
+
+.toggleContainer div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px;
+    margin-left: 8px;
+    text-align: center;
+    cursor: pointer;
+    z-index: 1;
+
+    &.chartsToggle {
+        padding-right: 18px;
+    }
+}
+
+.toggleCheckbox:checked + .toggleContainer::before {
+    left: 50%;
+}
+
+.toggleCheckbox:checked + .toggleContainer .gridToggle {
+    margin-left: 0;
+    padding-left: 0;
+    border-radius: 32px;
+    color: var(--color-text-secondary);
+    transition: color 0.3s;
+
+    .gridInactive {
+        display: inline;
+    }
+
+    .gridActive {
+        display: none;
+    }
+
+    #{$selector-darkmode} & {
+        .gridInactive {
+            display: none;
+        }
+
+        .gridActive {
+            display: inline;
+        }
+    }
+}
+
+.toggleCheckbox:checked + .toggleContainer .gridToggle:hover {
+    background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 15%);
+    transition: all 0.3s ease-in;
+}
+
+.toggleCheckbox:checked + .toggleContainer .chartsToggle {
+    border-radius: 32px;
+    color: var(--color-button-primary-fg);
+    transition: color 0.3s;
+
+    .chartsInactive {
+        display: none;
+    }
+
+    .chartsActive {
+        display: inline;
+    }
+}
+.toggleCheckbox + .toggleContainer .gridToggle {
+    margin-left: 0;
+    padding-left: 0;
+    color: var(--color-button-primary-fg);
+    transition: color 0.3s;
+
+    .gridInactive {
+        display: none;
+    }
+
+    .gridActive {
+        display: inline;
+    }
+}
+.toggleCheckbox + .toggleContainer .chartsToggle {
+    border-radius: 32px;
+    color: var(--color-text-secondary);
+    transition: color 0.3s;
+
+    .chartsInactive {
+        display: inline;
+    }
+
+    .chartsActive {
+        display: none;
+    }
+
+    #{$selector-darkmode} & {
+        .chartsInactive {
+            display: none;
+        }
+
+        .chartsActive {
+            display: inline;
+        }
+    }
+}
+
+.toggleCheckbox:not(:checked) + .toggleContainer .chartsToggle:hover {
+    background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 15%);
+    transition: all 0.3s ease-in;
+}
+
+.switchContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: 42px;
+}
+
+.toggleBackground {
+    opacity: 0.7;
+    position: absolute;
+    top: 29px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    #{$selector-darkmode} & {
+        opacity: 0.2;
+    }
+}
+
+.toggleCheckbox {
+    position: relative;
+    z-index: 2;
+}
+
+.horizontalRule {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid #000;
+}
+
+.toggleWrapper {
+    top: 48px;
+    max-height: 70px; // Prevents 1px height change on toggle
+}
+
+.gradient {
+    position: absolute;
+    top: -70px;
+    height: 100px;
+    width: 100vw;
+    background: linear-gradient(transparent, var(--color-bg-brand-solid));
+    opacity: 0.05;
+
+    #{$selector-darkmode} & {
+        background: linear-gradient(transparent, var(--color-fg-primary));
+    }
+}
+
+.videoPrompt {
+    margin-bottom: $spacing-size-12;
+}
+
+.categoryTableHeader {
+    margin-top: $spacing-size-3;
+    margin-bottom: 0;
+    padding-top: $spacing-size-3;
+    background-color: var(--color-bg-secondary);
+    padding-bottom: $spacing-size-3;
+    padding-left: $spacing-size-3;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-secondary);
+    color: var(--color-text-secondary);
+    z-index: 1;
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        position: sticky;
+        top: 119px;
+    }
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    @media screen and (min-width: $breakpoint-pricing-large) {
+        position: sticky;
+        top: 119px;
+    }
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+    }
+}
+
+/* mobile breakpoint responsive */
+@media screen and (max-width: $breakpoint-pricing-medium) {
+    .licensesOuter {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-size-8;
+        padding-top: $spacing-size-3;
+    }
+
+    .desktopTableContainer {
+        display: none;
     }
 }

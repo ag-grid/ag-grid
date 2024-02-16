@@ -898,6 +898,14 @@ export class CellCtrl extends BeanStub {
 
     // called by rowRenderer when user navigates via tab key
     public startRowOrCellEdit(key?: string | null, event: KeyboardEvent | MouseEvent | null = null): void {
+        
+        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
+        // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
+        if (!this.cellComp) {
+            this.onCellCompAttachedFuncs.push(() => { this.startRowOrCellEdit(key, event); });
+            return;
+        }
+        
         if (this.beans.gridOptionsService.get('editType') === 'fullRow') {
             this.rowCtrl.startRowEditing(key, this);
         } else {

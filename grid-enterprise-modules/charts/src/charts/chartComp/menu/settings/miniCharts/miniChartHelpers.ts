@@ -32,7 +32,7 @@ export function createColumnRects(params: CreateColumnRectsParams) {
             rect.y = top;
             rect.width = xScale.bandwidth;
             rect.height = yScale.convert(0) - top;
-            rect.strokeWidth = 1;
+            rect.strokeWidth = 0;
             rect.crisp = true;
 
             return rect;
@@ -98,6 +98,7 @@ export function createPolarPaths(
     const paths: _Scene.Path[] = data.map((series) => {
         const path = new _Scene.Path();
         path.strokeWidth = 1;
+        path.strokeOpacity = 0.5;
         path.lineCap = 'round';
         path.fill = undefined;
         path.fillOpacity = 0.8;

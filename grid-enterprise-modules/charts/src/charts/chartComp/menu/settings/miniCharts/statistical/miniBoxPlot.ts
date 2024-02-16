@@ -74,6 +74,7 @@ export class MiniBoxPlot extends MiniChartWithAxes {
             box.width = bandwidth;
             box.height = bottom - top;
             box.strokeWidth = 1;
+            box.strokeOpacity = 0.75;
             box.crisp = true;
 
             this.setLineProperties(median, left, right, mid, mid);
@@ -114,5 +115,6 @@ export class MiniBoxPlot extends MiniChartWithAxes {
         line.x2 = x2;
         line.y1 = y1;
         line.y2 = y2;
+        line.strokeOpacity = 0.75;
     }
 }

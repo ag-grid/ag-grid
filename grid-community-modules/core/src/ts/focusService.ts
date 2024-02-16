@@ -5,7 +5,7 @@ import { CellFocusedParams, CellFocusedEvent, Events, CellFocusClearedEvent, Com
 import { ColumnModel } from "./columns/columnModel";
 import { CellPosition, CellPositionUtils } from "./entities/cellPositionUtils";
 import { RowNode } from "./entities/rowNode";
-import { HeaderPosition } from "./headerRendering/common/headerPosition";
+import { HeaderPosition, HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 import { RowPositionUtils } from "./entities/rowPositionUtils";
 import { IRangeService } from "./interfaces/IRangeService";
 import { RowRenderer } from "./rendering/rowRenderer";
@@ -34,6 +34,7 @@ export class FocusService extends BeanStub {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
+    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private readonly rowPositionUtils: RowPositionUtils;
     @Autowired('cellPositionUtils') private readonly cellPositionUtils: CellPositionUtils;
@@ -324,11 +325,11 @@ export class FocusService extends BeanStub {
         allowUserOverride?: boolean;
         event?: KeyboardEvent;
         fromCell?: boolean;
-        resetHeaderRowWithoutSpan?: boolean;
+        rowWithoutSpanValue?: number;
     }): boolean {
         if (this.gridOptionsService.get('suppressHeaderFocus')) { return false; }
 
-        const { direction, fromTab, allowUserOverride, event, fromCell, resetHeaderRowWithoutSpan } = params;
+        const { direction, fromTab, allowUserOverride, event, fromCell, rowWithoutSpanValue } = params;
         let { headerPosition } = params;
 
         if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
@@ -381,8 +382,9 @@ export class FocusService extends BeanStub {
         // this will automatically call the setFocusedHeader method above
         const focusSuccess = headerRowContainerCtrl.focusHeader(headerPosition.headerRowIndex, headerPosition.column, event);
 
-        if (focusSuccess && (resetHeaderRowWithoutSpan || fromCell)) {
-            this.headerNavigationService.resetHeaderRowWithoutSpan();
+        if (focusSuccess && (rowWithoutSpanValue != null || fromCell)) {
+
+            this.headerNavigationService.setCurrentHeaderRowWithoutSpan(rowWithoutSpanValue ?? -1);
         }
 
         return focusSuccess;
@@ -396,9 +398,11 @@ export class FocusService extends BeanStub {
             firstColumn = this.columnModel.getColumnGroupAtLevel(firstColumn, 0)!;
         }
 
+        const headerPosition = this.headerPositionUtils.getHeaderIndexToFocus(firstColumn, 0);
+
         return this.focusHeaderPosition({
-            headerPosition: { headerRowIndex: 0, column: firstColumn },
-            resetHeaderRowWithoutSpan: true
+            headerPosition,
+            rowWithoutSpanValue: 0
         });
     }
 
@@ -408,7 +412,7 @@ export class FocusService extends BeanStub {
 
         return this.focusHeaderPosition({
             headerPosition: { headerRowIndex, column },
-            resetHeaderRowWithoutSpan: true,
+            rowWithoutSpanValue: -1,
             event
         });
     }

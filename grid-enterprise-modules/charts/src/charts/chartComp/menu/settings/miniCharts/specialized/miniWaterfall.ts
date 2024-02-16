@@ -64,7 +64,7 @@ export class MiniWaterfall extends MiniChartWithAxes {
 
         const connectorLine = new _Scene.Path();
         connectorLine.stroke = '#575757';
-        connectorLine.strokeWidth = 1;
+        connectorLine.strokeWidth = 0;
         const pixelAlignmentOffset = (Math.floor(connectorLine.strokeWidth) % 2) / 2;
 
         const connectorPath = connectorLine.path;
@@ -90,7 +90,7 @@ export class MiniWaterfall extends MiniChartWithAxes {
             rect.y = barAlongX ? x : y;
             rect.width = barAlongX ? height : width;
             rect.height = barAlongX ? width : height;
-            rect.strokeWidth = 1;
+            rect.strokeWidth = 0;
             rect.crisp = true;
 
             const moveTo = currY + pixelAlignmentOffset;

@@ -116,7 +116,6 @@ const copyGridCoreStyles = (done) => {
 
 const copyAndConcatMainTypings = () => {
     const typingsDirs = exportedEnterpriseModules
-        .filter(exportedEnterpriseModule => exportedEnterpriseModule !== "@ag-grid-enterprise/charts")
         .map(exportedEnterpriseModule => `./node_modules/${exportedEnterpriseModule}/typings/main.*`);
 
     return gulp.src([
@@ -124,9 +123,19 @@ const copyAndConcatMainTypings = () => {
         ...typingsDirs,
         './dist/lib/agGridCoreExtension.d.ts'
     ])
-        // the next line is specifically for AgChartThemeOverrides etc
-        .pipe(replace("import * as agCharts from 'ag-charts-community';", 'import * as agCharts from "./ag-charts-community/options/agChartOptions";'))
-        // .pipe(replace("import * as agCharts from 'ag-charts-enterprise';", '// @ts-ignore\nimport * as agCharts from \'ag-charts-enterprise\';'))
+        .pipe(replace(`import * as agCharts from 'ag-charts-community';
+declare module 'ag-grid-community' {
+    interface AgChartThemeOverrides extends agCharts.AgChartThemeOverrides {
+    }
+    interface AgChartThemePalette extends agCharts.AgChartThemePalette {
+    }
+    interface AgChartThemeDefinition extends agCharts.AgChartTheme {
+    }
+}
+`, ''))
+        .pipe(replace('export * from "ag-charts-community";', 'export * from "./ag-charts-community/main";'))
+        .pipe(replace("\"ag-charts-community\"", '"./ag-charts-community"'))
+        .pipe(replace("'ag-charts-community'", "'./ag-charts-community'"))
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
 };

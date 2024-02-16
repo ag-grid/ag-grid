@@ -59,7 +59,7 @@ export class MiniStackedArea extends MiniChartWithAxes {
 
         this.areas = pathData.map(points => {
             const area = new _Scene.Path();
-            area.strokeWidth = 1;
+            area.strokeWidth = 0;
 
             const path = area.path;
             path.clear();

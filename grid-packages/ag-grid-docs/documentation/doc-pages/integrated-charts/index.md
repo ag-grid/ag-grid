@@ -36,4 +36,4 @@ If you are not using ES6 Modules and are instead using the bundled version of AG
 
 ## Next Up
 
-Continue to the next section to learn about the: [User Created Charts](/integrated-charts-user-created/).
+Continue to the next section to learn about: [Chart Types](/integrated-charts-chart-types/).

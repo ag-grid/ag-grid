@@ -56,7 +56,7 @@ export class MiniTreemap extends MiniChart {
                 rect.y = previousY;
                 rect.width = width;
                 rect.height = height;
-                rect.strokeWidth = 1;
+                rect.strokeWidth = 0.75;
                 rect.crisp = true;
 
                 previousY += height + rowPadding;

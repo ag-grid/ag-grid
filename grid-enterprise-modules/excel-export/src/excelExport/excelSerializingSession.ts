@@ -68,7 +68,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     private mixedStyles: { [key: string]: ExcelMixedStyle } = {};
     private mixedStyleCounter: number = 0;
 
-    private readonly excelStyles: ExcelStyle[];
+    private readonly excelStyles: (ExcelStyle & { quotePrefix?: 1 })[];
 
     private rows: ExcelRow[] = [];
     private cols: ExcelColumn[];
@@ -81,7 +81,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         this.config.baseExcelStyles.forEach(style => {
             this.stylesByIds[style.id] = style;
         });
-        this.excelStyles = [...this.config.baseExcelStyles];
+        this.excelStyles = [...this.config.baseExcelStyles, { id: '_quotePrefix', quotePrefix: 1 }];
     }
 
     public addCustomContent(customContent: ExcelRow[]): void {
@@ -298,7 +298,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return this.isNumerical(valueForCell) ? 'n' : 's';
     }
 
-    private getType(type: ExcelOOXMLDataType, style: ExcelStyle | null, value: string | null): ExcelOOXMLDataType | null {
+    private getTypeFromStyle(style: ExcelStyle | null, value: string | null): ExcelOOXMLDataType | null {
         if (this.isFormula(value)) { return 'f'; }
 
         if (style && style.dataType) {
@@ -320,7 +320,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             }
         }
 
-        return type;
+        return null;
     }
 
     private addImage(rowIndex: number, column: Column, value: string): { image: ExcelImage, value?: string } | undefined {
@@ -335,18 +335,31 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return addedImage;
     }
 
-    private createCell(styleId: string | null, type: ExcelOOXMLDataType, value: string, valueFormatted?: string | null): ExcelCell {
+    private createCell(styleId: string | null | undefined, type: ExcelOOXMLDataType, value: string, valueFormatted?: string | null): ExcelCell {
         const actualStyle: ExcelStyle | null = this.getStyleById(styleId);
         if (!actualStyle?.dataType && type === 's' && valueFormatted) {
             value = valueFormatted;
         }
-        const typeTransformed = this.getType(type, actualStyle, value) || type;
+        const processedType = this.getTypeFromStyle(actualStyle, value) || type;
+
+        const { value: processedValue, escaped } = this.getCellValue(processedType, value);
+        const styles: string[] = [];
+
+        if (actualStyle) {
+            styles.push(styleId!);
+        }
+
+        if (escaped) {
+            styles.push('_quotePrefix');
+        }
+
+        styleId = this.getStyleId(styles) || undefined;
 
         return {
-            styleId: actualStyle ? styleId! : undefined,
+            styleId,
             data: {
-                type: typeTransformed,
-                value: this.getCellValue(typeTransformed, value)
+                type: processedType,
+                value: processedValue
             }
         };
     }
@@ -363,19 +376,28 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         };
     }
 
-    private getCellValue(type: ExcelOOXMLDataType, value: string | null): string | null {
-        if (value == null) { return ExcelXlsxFactory.getStringPosition('').toString(); }
+    private getCellValue(type: ExcelOOXMLDataType, value: string | null): { value: string | null, escaped?: boolean } {
+        let escaped = false;
 
-        switch (type) {
-            case 's':
-                return value === '' ? '' : ExcelXlsxFactory.getStringPosition(value).toString();
-            case 'f':
-                return value.slice(1);
-            case 'n':
-                return Number(value).toString();
-            default:
-                return value;
+        if (value == null) {
+            type = 's';
+            value = '';
         }
+
+        if (type === 's') {
+            if (value && value[0] === "'") {
+                escaped = true;
+                value = value.slice(1);
+            }
+
+            value = ExcelXlsxFactory.getStringPosition(value).toString()
+        } else if (type === 'f') {
+            value = value.slice(1);
+        } else  if (type === 'n') {
+            value = Number(value).toString();
+        }
+
+        return { value, escaped };
     }
 
     private getStyleId(styleIds?: string[] | null): string | null {
@@ -398,13 +420,13 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         const excelId = `mixedStyle${this.mixedStyleCounter}`;
         const resultantStyle: ExcelStyle = {} as ExcelStyle;
 
-        styleIds.forEach((styleId: string) => {
-            this.excelStyles.forEach((excelStyle: ExcelStyle) => {
+        for (const styleId of styleIds) {
+            for (const excelStyle of this.excelStyles) {
                 if (excelStyle.id === styleId) {
                     _.mergeDeep(resultantStyle, this.deepCloneObject(excelStyle));
                 }
-            });
-        });
+            }
+        }
 
         resultantStyle.id = excelId;
         resultantStyle.name = excelId;

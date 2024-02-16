@@ -628,11 +628,14 @@ export class StateService extends BeanStub {
 
     private suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {
         this.suppressEvents = true;
+        const columnAnimation = this.gridOptionsService.get('suppressColumnMoveAnimation');
+        this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: true }});
         updateFunc();
         // We want to suppress any grid events, but not user events.
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
         setTimeout(() => {
             this.suppressEvents = false;
+            this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: columnAnimation }});
             // We only want the grid initializing source.
             this.queuedUpdateSources.clear();
             this.dispatchStateUpdateEvent(['gridInitializing']);
