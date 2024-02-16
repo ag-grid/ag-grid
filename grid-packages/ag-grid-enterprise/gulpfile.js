@@ -123,6 +123,15 @@ const copyAndConcatMainTypings = () => {
         ...typingsDirs,
         './dist/lib/agGridCoreExtension.d.ts'
     ])
+        .pipe(replace('import { time, AgChart } from "ag-charts-community";', 'import * as AgCharts from "ag-charts-community"'))
+        .pipe(replace(`export declare const agCharts: {
+    time: typeof time;
+    AgChart: typeof AgChart;
+};`,
+            `export declare const agCharts: {
+    time: typeof AgCharts.time;
+    AgChart: typeof AgCharts.AgChart;
+};`))
         .pipe(replace(`import * as agCharts from 'ag-charts-community';
 declare module 'ag-grid-community' {
     interface AgChartThemeOverrides extends agCharts.AgChartThemeOverrides {
@@ -132,7 +141,16 @@ declare module 'ag-grid-community' {
     interface AgChartThemeDefinition extends agCharts.AgChartTheme {
     }
 }
-`, ''))
+`, `
+declare module 'ag-grid-community' {
+    interface AgChartThemeOverrides extends AgCharts.AgChartThemeOverrides {
+    }
+    interface AgChartThemePalette extends AgCharts.AgChartThemePalette {
+    }
+    interface AgChartThemeDefinition extends AgCharts.AgChartTheme {
+    }
+}
+`))
         .pipe(replace("export * from './agGridCoreExtension';", ''))
         .pipe(replace('export { EnterpriseCoreModule } from "./agGridEnterpriseModule";', ''))
         .pipe(replace('export { ExcelExportModule } from "./excelExportModule";', ''))
