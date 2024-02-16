@@ -201,8 +201,6 @@ const MenuItem = ({item, currentFramework, activeParentItems, singleItem}) => {
         "data-target": "#side-nav"
     }
 
-    console.log(item, activeParentItems);
-
     return (
         <li>
             {item.url ? (
