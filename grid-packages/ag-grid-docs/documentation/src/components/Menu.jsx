@@ -128,6 +128,7 @@ const MenuSection = ({title, items, currentFramework, activeParentItems, toggleA
                     item={topLevelMenuItemWithoutChildren}
                     currentFramework={currentFramework}
                     activeParentItems={activeParentItems}
+                    singleItem={true}
                 />
             );
         }
@@ -186,7 +187,7 @@ const MenuGroup = ({group, currentFramework, isTopLevel, isActive, activeParentI
     );
 }
 
-const MenuItem = ({item, currentFramework, activeParentItems}) => {
+const MenuItem = ({item, currentFramework, activeParentItems, singleItem}) => {
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
     const { width } = useWindowSize();
     const isDesktop = width >= SITE_HEADER_SMALL_WIDTH;
@@ -199,6 +200,8 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
         "data-toggle": "collapse",
         "data-target": "#side-nav"
     }
+
+    console.log(item, activeParentItems);
 
     return (
         <li>
@@ -220,7 +223,7 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
                             to={convertToFrameworkUrl(item.url, currentFramework)}
                             activeClassName={styles.activeMenuItem}
                             target={item.newWindow ? '_blank' : '_self'}
-                            className={isActiveParent ? styles.activeItemParent : undefined}
+                            className={classnames(isActiveParent ? styles.activeItemParent : undefined, singleItem ? styles.singleItem : undefined)}
                             onClick={(event) => {
                                 isDocsButtonOpen && setIsDocsButtonOpen(false);
 
