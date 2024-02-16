@@ -6,6 +6,7 @@ import { createRowDataFilter } from './utils/createRowDataFilter';
 import { Label } from './renderers/Label';
 import { Feature } from './renderers/Feature';
 import { Collapsible } from '../Collapsible';
+import { Icon } from '../Icon';
 
 type Columns = Record<string, string>;
 type Data = Record<string, any>;
@@ -153,8 +154,16 @@ function TableRows({
                 </div>
             );
         } else {
-            return <div className={styles.subGroup} key={i}>
-                <header onClick={() => { toggleSubGroupOpen(!subGroupOpen) }}>{datum.name}</header>
+            return <div className={classnames(styles.subGroup, subGroupOpen ? styles.isOpen : undefined)} key={i}>
+                <header className={styles.subGroupHeader} onClick={() => { toggleSubGroupOpen(!subGroupOpen) }}>
+                    <div className={classnames(styles.cell)}>
+                        <span>{datum.name} <Icon name="chevronDown"/></span>
+                    </div>
+                    <div className={classnames(styles.cell)}><Icon name="sort"/></div>
+                    <div className={classnames(styles.cell)}><Icon name="sort"/></div>
+                    <div className={classnames(styles.cell)}><Icon name="sort"/></div>
+                </header>
+                
                 <Collapsible id={`subgroup-${i}`} isDisabled={false} isOpen={subGroupOpen}>
                     
                 <ComparisonTable

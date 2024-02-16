@@ -14,11 +14,6 @@
     display: flex;
     align-items: center;
     min-height: $spacing-size-12;
-    border-top: 1px solid var(--color-border-secondary);
-
-    &:first-child {
-        border-top: none;
-    }
 
     &:first-child .cell {
         padding-top: $spacing-size-4 + 8px;
@@ -26,6 +21,10 @@
 
     &:last-child .cell {
         padding-bottom: $spacing-size-4 + 12px;
+    }
+
+    &:not(:first-child) {
+        border-top: 1px solid var(--color-border-secondary);
     }
 }
 
@@ -37,5 +36,80 @@
     &:nth-child(3) {
         border-right: 1px solid var(--color-border-tertiary);
         border-left: 1px solid var(--color-border-tertiary);
+    }
+}
+
+.subGroup {
+    transition: background-color $transition-default-timing;
+
+    .row .cell {
+        padding-top: $spacing-size-4;
+        padding-bottom: $spacing-size-4;
+
+        &:first-child {
+            padding-left: $spacing-size-6;
+        }
+    }
+
+    .row:first-child {
+        margin-top: -$spacing-size-2;
+    }
+
+    &:last-child .row:first-child {
+        margin-top: -$spacing-size-5;
+    }
+
+    &:first-child .subGroupHeader .cell {
+        padding-top: $spacing-size-4 + 8px;
+    }
+
+    &:last-child .subGroupHeader .cell {
+        padding-bottom: $spacing-size-4 + 12px;
+    }
+
+    &:not(:first-child) {
+        border-top: 1px solid var(--color-border-secondary);
+    }
+
+    &.isOpen .subGroupHeader .cell:first-child svg {
+        transform: rotate(180deg);
+    }
+
+    &.isOpen .subGroupHeader .cell:not(:first-child) svg {
+        opacity: 0;
+    }
+}
+
+.subGroupHeader {
+    --icon-size: #{$spacing-size-5};
+
+    display: flex;
+    align-items: center;
+    min-height: $spacing-size-12;
+    cursor: pointer;
+
+    .cell:first-child {
+        span {
+            --color-icon: var(--color-link);
+    
+            padding-left: $spacing-size-3;
+            font-weight: var(--text-semibold);
+            color: var(--color-link);
+        }
+
+        svg {
+            transition: transform $transition-default-timing;
+        }
+    }
+
+    .cell:not(:first-child) {
+        --color-icon: var(--color-util-gray-500);
+
+        display: flex;
+        justify-content: center;
+        
+        svg {
+            transition: opacity $transition-default-timing;
+        }
     }
 }

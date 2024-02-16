@@ -139,6 +139,7 @@ export const ICON_MAP = {
     sun: CarbonIcon.Sun,
     moon: CarbonIcon.Moon,
     newTab: NewTabIcon,
+    sort: CarbonIcon.ChevronSort,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,
