@@ -22,12 +22,9 @@
     "vuejs"
   ],
   "scripts": {
-    "clean": "rimraf dist lib",
     "bundle": "NODE_OPTIONS=--openssl-legacy-provider npx vue-cli-service build --target lib src/AgGridVue.ts",
     "npm": "npx tsc -p tsconfig-lib.json",
     "build": "echo \"module.exports = require('./build')\" > ./node_modules/vue-template-compiler/index.js && npm run npm && npm run bundle && rm ./dist/demo.html",
-    "build-docs": "npm run build",
-    "build-prod": "npm run build",
     "lint": "npx vue-cli-service lint"
   },
   "devDependencies": {
@@ -36,8 +33,6 @@
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
-    "gulp": "^4.0.0",
-    "gulp-typescript": "^5.0.0",
     "typescript": "~4.7.4",
     "vue": "2.6.10",
     "vue-class-component": "^7.0.0",

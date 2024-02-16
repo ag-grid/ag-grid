@@ -8,6 +8,10 @@
     "bootstrap": "YARN_REGISTRY=\"http://54.194.75.252:4873\" yarn"
   },
   "private": true,
+  "engines": {
+    "node": "^20.10.0",
+    "yarn": "^1.22.21"
+  },
   "dependencies": {
     "fs-extra": "^11.2.0",
     "tslib": "^2.3.0"
@@ -55,6 +59,8 @@
       "community-modules/infinite-row-model",
       "community-modules/angular",
       "community-modules/react",
+      "community-modules/vue",
+      "community-modules/vue3",
       "enterprise-modules/core",
       "enterprise-modules/advanced-filter",
       "enterprise-modules/charts",

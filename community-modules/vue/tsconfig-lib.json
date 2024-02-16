@@ -3,11 +3,12 @@
     "target": "es6",
     "module": "esnext",
     "moduleResolution": "node",
-    "strict": true,
+    "strict": false,
     "experimentalDecorators": true,
     "declaration": true,
     "rootDir": "src",
     "outDir": "lib",
+    "skipLibCheck": true,
     "lib": [
       "esnext",
       "dom",

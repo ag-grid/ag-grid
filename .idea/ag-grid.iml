@@ -78,10 +78,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/ag-grid/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue-legacy/lib" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue-legacy/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue3/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/vue/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/polymer/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/infinite-row-model/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-community-modules/infinite-row-model/dist" />
@@ -132,6 +128,10 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/nm" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise-charts-enterprise/nm" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue3/lib" />
     </content>
     <content url="file://$MODULE_DIR$/community-modules/react/dev" />
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
