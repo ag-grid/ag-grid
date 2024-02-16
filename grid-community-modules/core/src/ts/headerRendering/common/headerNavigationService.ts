@@ -32,7 +32,7 @@ export class HeaderNavigationService extends BeanStub {
         });
 
         const eDocument = this.gridOptionsService.getDocument();
-        this.addManagedListener(eDocument, 'mousedown', this.resetHeaderRowWithoutSpan.bind(this));
+        this.addManagedListener(eDocument, 'mousedown', () => this.setCurrentHeaderRowWithoutSpan(-1));
     }
 
     public getHeaderRowCount(): number {
@@ -69,7 +69,7 @@ export class HeaderNavigationService extends BeanStub {
 
         if (nextRow >= rowLen) {
             nextRow = -1; // -1 indicates the focus should move to grid rows.
-            this.resetHeaderRowWithoutSpan();
+            this.setCurrentHeaderRowWithoutSpan(-1);
         } else if (headerRowIndexWithoutSpan !== undefined) {
             this.currentHeaderRowWithoutSpan = headerRowIndexWithoutSpan;
         }
@@ -86,8 +86,8 @@ export class HeaderNavigationService extends BeanStub {
         });
     }
 
-    public resetHeaderRowWithoutSpan(): void {
-        this.currentHeaderRowWithoutSpan = -1;
+    public setCurrentHeaderRowWithoutSpan(row: number): void {
+        this.currentHeaderRowWithoutSpan = row;
     }
 
     /*
@@ -145,7 +145,7 @@ export class HeaderNavigationService extends BeanStub {
             if (this.currentHeaderRowWithoutSpan < this.getHeaderRowCount()) {
                 this.currentHeaderRowWithoutSpan += 1;
             } else {
-                this.resetHeaderRowWithoutSpan();
+                this.setCurrentHeaderRowWithoutSpan(-1);
             }
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
         }
