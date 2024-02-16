@@ -26,7 +26,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'community',
-        subHeading: 'Community',
+        subHeading: 'AG Grid Community',
         description: '',
         priceFullDollars: '0',
         launchPrice: null,
@@ -36,7 +36,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'enterprise-grid',
-        subHeading: 'Enterprise',
+        subHeading: 'AG Grid Enterprise',
         description: '',
         priceFullDollars: '999',
         launchPrice: null,
@@ -46,7 +46,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'community',
-        subHeading: 'Community',
+        subHeading: 'AG Charts Community',
         description: '',
         priceFullDollars: '0',
         launchPrice: null,
@@ -56,7 +56,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.gridLicense,
         id: 'enterprise-charts',
-        subHeading: 'Enterprise',
+        subHeading: 'AG Charts Enterprise',
         description: '',
         priceFullDollars: '399',
         launchPrice: '199',
@@ -67,7 +67,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         className: styles.chartsLicense,
         id: 'togther',
         subHeading: 'Enterprise Bundle',
-        description: 'AG Grid + AG Charts Enterprise',
+        description: 'AG Grid Enterprise +<br />AG Charts Enterprise',
         priceFullDollars: '1398',
         launchPrice: '1198',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
@@ -110,8 +110,8 @@ const License = (props: LicenseData) => {
                 { !launchPrice && <span className={styles.limitedTimeSpacer}></span> }
 
                 <div className={styles.licenseMeta}>
-                    <h2 className="">{subHeading}</h2>
-                    <p className="">{description}</p>
+                    <h2>{subHeading}</h2>
+                    <p dangerouslySetInnerHTML={{ __html: description }}></p>
                 </div>
 
                 <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />

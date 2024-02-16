@@ -122,12 +122,12 @@ export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
                                         <div className={styles.gridToggle}>
                                             <GridActive className={styles.gridActive} />
                                             <GridInactive className={styles.gridInactive} />
-                                            Grid
+                                            AG Grid
                                         </div>
                                         <div className={styles.chartsToggle}>
                                             <ChartsActive className={styles.chartsActive} />
                                             <ChartsInactive className={styles.chartsInactive} />
-                                            Charts
+                                            AG Charts
                                         </div>
                                     </label>
                                 </div>
