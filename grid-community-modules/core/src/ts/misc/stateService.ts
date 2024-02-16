@@ -635,9 +635,13 @@ export class StateService extends BeanStub {
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
         setTimeout(() => {
             this.suppressEvents = false;
+            this.queuedUpdateSources.clear();
+            if(!this.isAlive()){
+                // Ensure the grid is still alive before dispatching the event.
+                return;
+            }
             this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: columnAnimation }});
             // We only want the grid initializing source.
-            this.queuedUpdateSources.clear();
             this.dispatchStateUpdateEvent(['gridInitializing']);
         });
     }
