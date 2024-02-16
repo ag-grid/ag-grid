@@ -72,6 +72,24 @@
         ]
       },
       {
+        "label": {
+          "name": "Quick Filter",
+          "link": "/javascript-data-grid/filter-quick/"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
+        "label": {
+          "name": "External Filter",
+          "link": "/javascript-data-grid/filter-external/"
+        },
+        "community": true,
+        "enterprise": true,
+        "chartsGrid": true
+      },
+      {
         "name": "Advanced Column Filters",
         "isSubGroup": true,
         "items": [
@@ -92,33 +110,15 @@
             "community": false,
             "enterprise": true,
             "chartsGrid": true
-          },
-          {
-            "label": {
-              "name": "Advanced Filter",
-              "link": "/javascript-data-grid/filter-advanced/"
-            },
-            "community": false,
-            "enterprise": true,
-            "chartsGrid": true
           }
         ]
       },
       {
         "label": {
-          "name": "External Filter",
-          "link": "/javascript-data-grid/filter-external/"
+          "name": "Advanced Filter",
+          "link": "/javascript-data-grid/filter-advanced/"
         },
-        "community": true,
-        "enterprise": true,
-        "chartsGrid": true
-      },
-      {
-        "label": {
-          "name": "Quick Filter",
-          "link": "/javascript-data-grid/filter-quick/"
-        },
-        "community": true,
+        "community": false,
         "enterprise": true,
         "chartsGrid": true
       }
@@ -225,19 +225,19 @@
       },
       {
         "label": {
-          "name": "Advanced Select Editor",
-          "link": "/javascript-data-grid/provided-cell-editors-rich-select/"
+          "name": "Undo / Redo",
+          "link": "/javascript-data-grid/undo-redo-edits/"
         },
-        "community": false,
+        "community": true,
         "enterprise": true,
         "chartsGrid": true
       },
       {
         "label": {
-          "name": "Undo / Redo",
-          "link": "/javascript-data-grid/undo-redo-edits/"
+          "name": "Advanced Select Editor",
+          "link": "/javascript-data-grid/provided-cell-editors-rich-select/"
         },
-        "community": true,
+        "community": false,
         "enterprise": true,
         "chartsGrid": true
       }
