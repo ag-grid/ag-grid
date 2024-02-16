@@ -11,26 +11,36 @@ We are not aware of any other Datagrid that provides such integration. Other com
 
 ## What is Integrated Charts 
 
-Integrated Chart combines the powerful data visualisation capabilities of AG Charts with the highly customisable, feature-rich AG Grid. It provides users with a powerful toolset for data analysis.
+Integrated Charts combines the powerful data visualisation capabilities of AG Charts with AG Grid. It provides users with a powerful toolset for data analysis all with the Datagrid.
 
 Some of the key features of Integrated Charts include: 
 
-1. **Extensive Chart Types** - Integrated Charts supports a variety of chart types, from the common bar / column charts to more specialised charts such as hierachical charts and heatmap. This allows the users to choose the most suitable visualisations based on the data analysis needs from our ever expanding chart library. 
+- **Seamless Integration with AG Grid** - set `enableCharts=true` in GridOptions to [allow users create a chart](/integrated-charts-user-created/) using the grid's UI. Alternatively, the application can request the grid to create a chart through the grid's [charting API](/integrated-charts-application-created/).
 
-2. **Interactivity** - Integrated Charts has a wide range of interactivity features that enhance the use experience and enables a deeper exploration of data. Features like interactive highlight and tooltip, animation, navigator and zooming empower users to dynamically manipulate and analyse the charts, with minimised configuration and development required. 
+- **Real-time Updates** - Users can interactively select data points or series within the chart by clicking and dragging, allowing for focused analysis of specific subsets of data. Filtering and sorting of Grid data are also dynamically reflected in the charts. 
 
-3. **Real-time Updates** - Users can interactively select data points or series within the chart by click and dragging, allowing for focused analysis of specific subsets of data. Filters and sorting of Grid data are also dynamically reflected in the charts. 
+- **[Extensive Chart Types](/integrated-charts-chart-types/)** - Integrated Charts supports an ever-expanding range of chart types:
+    - Column / Bar
+    - Pie 
+    - Line 
+    - Scatter
+    - Area
+    - Polar
+    - Statistical
+    - Hierarchical 
+    - Specialised 
+    - Combination 
 
-4. **Customisation** - Integrated Charts comes with high level of customisaton for developers and the end users. Theme-override can provide a template for charts created. Developers can also customise the types of charts made available to the users. An easy-to-use formatting panel provides the end users the ability to tailor their charts to different styling needs. 
+- **Interactivity** - Integrated Charts has a wide range of interactivity features such as: 
+    - Interactive highlight 
+    - Tooltip
+    - Animation
+    - Navigator 
+    - Zooming 
 
-5. **Exporting** -  Users can export charts as images, making it easy to collaborate and communicate insights with others.
+- **[Highly Customisable](/integrated-charts-customisation/)** - Integrated Charts comes with high level of customisation for developers and the end users. Theme-override can provide a template for charts created. Developers can also customise the types of charts made available to the users. An easy-to-use formatting panel provides the end users the ability to tailor their charts to different styling needs. 
 
-## Creating an Integrated Chart
-
-The following sections cover the alternative ways grid data can be charted using Integrated Charts:
-
-- [User Created Charts](/integrated-charts-user-created/): A user creates a chart using the grid's UI by selecting a range of cells or entering pivot mode and then creating a chart via the context menu.
-- [Application Created Charts](/integrated-charts-application-created/): The application requests the grid to create a chart through the grid's charting API.
+- **[Exporting](/integrated-charts-api-downloading-image/)** - Users can export charts as images, making it easy to collaborate and communicate insights with others.
 
 ## Charts Module
 
