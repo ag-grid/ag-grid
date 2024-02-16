@@ -1,11 +1,11 @@
 import { type Framework } from '@ag-grid-types';
 import styles from '@design-system/modules/ComparisonTable.module.scss';
 import classnames from 'classnames';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { createRowDataFilter } from './utils/createRowDataFilter';
 import { Label } from './renderers/Label';
 import { Feature } from './renderers/Feature';
-import { number } from 'yargs';
+import { Collapsible } from '../Collapsible';
 
 type Columns = Record<string, string>;
 type Data = Record<string, any>;
@@ -115,35 +115,66 @@ function TableRows({
     const columnFields = getAllColumnFields(columns);
 
     return data.map((datum: any, i: number) => {
+        const [subGroupOpen, setSubGroupOpen] = useState(false);
+  
+        const toggleSubGroupOpen = () => setSubGroupOpen(!subGroupOpen);
+
         const { [LEVEL_FIELD]: level } = datum;
-        return (
-            <div className={styles.row} key={i}>
-                {Object.keys(columns).map((columnField, index) => {
-                    const { field, value } = getColumnField({ datum, columnField });
-                    const cellValue = (
-                        <CellValue framework={framework} field={field} value={value} cellRenderer={cellRenderer} />
-                    );
-                    const isFirstColumn = index === 0;
-                    const isHeaderGroup = datum[GROUP_HEADING_FIELD];
 
-                    if (!isFirstColumn && isHeaderGroup) {
-                        return <td key={`column-${columnField}`}></td>;
-                    }
+        const subGroup = datum.isSubGroup;
 
-                    return (
-                        <div className={styles.cell} key={`column-${columnField}`}>
-                            {isFirstColumn ? (
-                                <TitleCell level={level}>
-                                    {cellValue}
-                                </TitleCell>
-                            ) : (
-                                cellValue
-                            )}
-                        </div>
-                    );
-                })}
+        if(!subGroup) {
+            return (
+                <div className={styles.row} key={i}>
+                    {Object.keys(columns).map((columnField, index) => {
+                        const { field, value } = getColumnField({ datum, columnField });
+                        const cellValue = (
+                            <CellValue framework={framework} field={field} value={value} cellRenderer={cellRenderer} />
+                        );
+                        const isFirstColumn = index === 0;
+                        const isHeaderGroup = datum[GROUP_HEADING_FIELD];
+    
+                        if (!isFirstColumn && isHeaderGroup) {
+                            return <td key={`column-${columnField}`}></td>;
+                        }
+    
+                        return (
+                            <div className={styles.cell} key={`column-${columnField}`}>
+                                {isFirstColumn ? (
+                                    <TitleCell level={level}>
+                                        {cellValue}
+                                    </TitleCell>
+                                ) : (
+                                    cellValue
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            );
+        } else {
+            return <div className={styles.subGroup} key={i}>
+                <header onClick={() => { toggleSubGroupOpen(!subGroupOpen) }}>{datum.name}</header>
+                <Collapsible id={`subgroup-${i}`} isDisabled={false} isOpen={subGroupOpen}>
+                    
+                <ComparisonTable
+                    data={datum.items}
+                    columns={{
+                        'label': '',
+                        'community': '',
+                        'enterprise': '',
+                        'chartsGrid': '',
+                    }}
+                    cellRenderer={{
+                        'label': 'label',
+                        'community': "feature",
+                        'enterprise': "feature",
+                        'chartsGrid': "feature",
+                    }}
+                    />
+                </Collapsible>
             </div>
-        );
+        }
     });
 }
 
