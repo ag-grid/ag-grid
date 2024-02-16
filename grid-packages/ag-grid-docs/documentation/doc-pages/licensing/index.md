@@ -268,9 +268,3 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.
  
 <grid-example title='Invalid License' name='forceWatermark' type='generated' options='{ "enterprise": true, "licenseKey":true, "modules": ["clientside",  "rowgrouping"] }'></grid-example>
-
-## Feature Comparison
-
-The below table summarizes the features included in AG Grid Community and AG Grid Enterprise. Note that AG Grid Enterprise builds on AG Grid Community, it offers everything AG Grid Community offers plus more.
-
-<matrix-table src='licensing/menu.json' tree='true' childpropertyname='items' booleanonly='true' columns='{ "title": "", "not(enterprise)": "Community", "enterprise": "Enterprise<enterprise-icon></enterprise-icon>" }' showcondition="notIn(excludeFromFeatures)"></matrix-table>
