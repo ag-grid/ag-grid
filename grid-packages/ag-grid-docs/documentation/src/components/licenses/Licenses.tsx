@@ -65,7 +65,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         className: styles.chartsLicense,
         id: 'together',
         subHeading: 'Enterprise Bundle',
-        description: 'AG Grid Enterprise +<br />AG Charts Enterprise',
+        description: 'AG Grid Enterprise &<br />AG Charts Enterprise',
         priceFullDollars: '1398',
         launchPrice: '1198',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
@@ -79,7 +79,7 @@ const Price = ({ priceFullDollars, launchPrice }) => {
 
     return (
         <div className={styles.price}>
-            { hasCost && <span className={styles.developerText}>From</span> }
+            { hasCost && <span className={styles.fromText}>From</span> }
 
             <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '' )}>
                 <span>{ hasCost ? `$${ price }` : 'Free' }</span>

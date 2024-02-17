@@ -10,7 +10,7 @@
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         max-height: 480px;
-        border-right: 1px solid var(--color-border-tertiary);
+        border-right: 3px solid var(--color-border-tertiary);
     }
 
     p {
@@ -35,7 +35,8 @@
 .limitedTimePill,
 .limitedTimeSpacer {
     height: 30px;
-    margin-bottom: $spacing-size-4;
+    margin-top: -15px;
+    margin-bottom: $spacing-size-2;
 }
 
 .limitedTimePill {
@@ -115,9 +116,8 @@ p.name {
     flex-direction: row;
     align-items: end;
     height: 52px;
-    padding-top: $spacing-size-1;
-    padding-bottom: $spacing-size-2;
-    font-size: 34px;
+    padding-bottom: $spacing-size-4;
+    font-size: 32px;
     line-height: var(--text-lh-ultra-tight);
     font-weight: var(--text-bold);
     letter-spacing: -0.05em;
@@ -175,7 +175,13 @@ p.name {
     }
 }
 
+.fromText {
+    margin-top: -25px;
+    color: var(--color-text-tertiary);
+}
+
 .developerText {
+    margin-top: -10px !important;
     color: var(--color-text-tertiary);
 }
 
