@@ -63,7 +63,7 @@
 
 .cell {
     width: calc(100% / var(--num-columns));
-    padding-top: $spacing-size-2;
+    padding-top: $spacing-size-4;
     padding-bottom: $spacing-size-4;
 
     &:nth-child(3) {
@@ -93,7 +93,7 @@
     }
 
     &:first-child .subGroupHeader .cell {
-        padding-top: $spacing-size-4 + 8px;
+        padding-top: $spacing-size-4;
     }
 
     &:last-child .subGroupHeader .cell {
