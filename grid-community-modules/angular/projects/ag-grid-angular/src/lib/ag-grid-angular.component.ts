@@ -287,7 +287,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         }
     }
 
-    // we'll emit the emit if a user is listening for a given event either on the component via normal angular binding
+    // we'll emit the event if a user is listening for a given event either on the component via normal angular binding
     // or via gridOptions
     protected isEmitterUsed(eventType: string): boolean {
         const emitter = <EventEmitter<any>>(<any>this)[eventType];
