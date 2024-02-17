@@ -409,15 +409,6 @@
           },
           {
             "label": {
-              "name": "Updating Data",
-              "link": "/react-data-grid/server-side-model-updating/"
-            },
-            "community": false,
-            "enterprise": true,
-            "chartsGrid": true
-          },
-          {
-            "label": {
               "name": "Tree Data",
               "link": "/react-data-grid/server-side-model-tree-data/"
             },
@@ -429,6 +420,15 @@
             "label": {
               "name": "Master Detail",
               "link": "/react-data-grid/server-side-model-master-detail/"
+            },
+            "community": false,
+            "enterprise": true,
+            "chartsGrid": true
+          },
+          {
+            "label": {
+              "name": "Transactions",
+              "link": "/react-data-grid/server-side-model-updating-transactions/"
             },
             "community": false,
             "enterprise": true,
