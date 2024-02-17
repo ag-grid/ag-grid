@@ -2,7 +2,7 @@ import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent
 import {getData} from "./data";
 
 let gridApi: GridApi;
-let chartRef: ChartRef | undefined;
+let chartRef: ChartRef;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -29,17 +29,18 @@ const gridOptions: GridOptions = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   chartRef = params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as any,
     cellRange: {
       columns: ['period', 'client', 'recurring', 'individual'],
     },
     chartType: 'boxPlot',
-  });
+  })!;
 }
 
 function updateChart(chartType: ChartType) {
   gridApi.updateChart({
     type: 'rangeChartUpdate',
-    chartId: `${chartRef?.chartId}`,
+    chartId: `${chartRef.chartId}`,
     chartType: chartType
   });
 }

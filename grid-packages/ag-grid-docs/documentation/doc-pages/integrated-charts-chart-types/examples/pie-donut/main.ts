@@ -2,7 +2,7 @@ import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent
 import {getData} from "./data";
 
 let gridApi: GridApi;
-let chartRef: ChartRef | undefined;
+let chartRef: ChartRef;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -28,19 +28,20 @@ const gridOptions: GridOptions = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   chartRef = params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as any,
     cellRange: {
-      rowStartIndex: 4,
-      rowEndIndex: 7,
+      rowStartIndex: 0,
+      rowEndIndex: 3,
       columns: ['period', 'individual'],
     },
     chartType: 'pie',
-  });
+  })!;
 }
 
 function updateChart(chartType: ChartType) {
   gridApi.updateChart({
     type: 'rangeChartUpdate',
-    chartId: `${chartRef?.chartId}`,
+    chartId: `${chartRef.chartId}`,
     chartType: chartType
   });
 }

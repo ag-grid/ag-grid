@@ -2,7 +2,7 @@ import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent
 import {getData} from "./data";
 
 let gridApi: GridApi;
-let chartRef: ChartRef | undefined;
+let chartRef: ChartRef;
 
 const chartConfig: Record<'heatmap' | 'waterfall', { columnDefs: ColDef[], chartColumns: string[] }> = {
   heatmap: {
@@ -52,11 +52,12 @@ const gridOptions: GridOptions = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   chartRef = params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as any,
     chartType: 'heatmap',
     cellRange: {
       columns: chartConfig.heatmap.chartColumns,
     },
-  });
+  })!;
 }
 
 function updateChart(chartType: 'heatmap' | 'waterfall') {
@@ -68,7 +69,7 @@ function updateChart(chartType: 'heatmap' | 'waterfall') {
     cellRange: {
       columns: chartConfig[chartType].chartColumns,
     }
-  });
+  })!;
   getData(chartType).then(rowData => gridApi.setGridOption('rowData', rowData));
 }
 

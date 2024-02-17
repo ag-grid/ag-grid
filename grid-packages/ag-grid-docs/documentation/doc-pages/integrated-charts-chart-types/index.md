@@ -3,98 +3,95 @@ title: "Chart Types"
 enterprise: true
 ---
 
-This section provides an overview of the different chart types available in Integrated Charts.
-
-For more information on series configuration options see the AG Charts documentation.
+This section provides an overview of the chart types available in Integrated Charts.
 
 ## Column / Bar
 
-<grid-example title='Column / Bar' name='column-bar' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+<grid-example title='Column / Bar' name='column-bar' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-For more information on series configuration options see the AG Charts documentation.
+More Details:
 
-- [AG Charts Bar Series](https://charts.ag-grid.com/react/bar-series/)
+- [Bar Series](https://charts.ag-grid.com/react/bar-series/)
 
 ## Pie / Donut
 
-<grid-example title='Pie / Donut' name='pie-donut' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+<grid-example title='Pie / Donut' name='pie-donut' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-For more information on series configuration options see the AG Charts documentation.
+More Details:
 
-- [AG Charts Pie Series](https://charts.ag-grid.com/react/pie-series/)
-- [AG Charts Donut Series](https://charts.ag-grid.com/react/donut-series/)
+- [Pie Series](https://charts.ag-grid.com/react/pie-series/)
+- [Donut Series](https://charts.ag-grid.com/react/donut-series/)
 
 ## Line / Area
 
-<grid-example title='Line / Area' name='line-area' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+<grid-example title='Line / Area' name='line-area' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-For more information on series configuration options see the AG Charts documentation.
+More Details:
 
-- [AG Charts Line Series](https://charts.ag-grid.com/react/line-series/)
-- [AG Charts Area Series](https://charts.ag-grid.com/react/area-series/)
+- [Line Series](https://charts.ag-grid.com/react/line-series/)
+- [Area Series](https://charts.ag-grid.com/react/area-series/)
 
 ## Scatter / Bubble
 
-<grid-example title='Scatter / Bubble' name='scatter-bubble' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+<grid-example title='Scatter / Bubble' name='scatter-bubble' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-For more information on series configuration options see the AG Charts documentation.
+More Details:
 
-- [AG Charts Scatter Series](https://charts.ag-grid.com/react/scatter-series/)
+- [Scatter Series](https://charts.ag-grid.com/react/scatter-series/)
+- [Bubble Series](https://charts.ag-grid.com/react/bubble-series/)
 
 ## Polar
 
-<grid-example title='Polar' name='polar' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+<grid-example title='Polar' name='polar' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-For more information on series configuration options see the AG Charts documentation.
+More Details:
 
-- [AG Charts Radar Line Series](https://charts.ag-grid.com/react/radar-line-series/)
-- [AG Charts Radar Area Series](https://charts.ag-grid.com/react/radar-area-series/)
-- [AG Charts Nightingale Series](https://charts.ag-grid.com/react/nightingale-series/)
-- [AG Charts Radial Column Series](https://charts.ag-grid.com/react/radial-column-series/)
-- [AG Charts Radial Bar Series](https://charts.ag-grid.com/react/radial-bar-series/)
+- [Radar Line Series](https://charts.ag-grid.com/react/radar-line-series/)
+- [Radar Area Series](https://charts.ag-grid.com/react/radar-area-series/)
+- [Nightingale Series](https://charts.ag-grid.com/react/nightingale-series/)
+- [Radial Column Series](https://charts.ag-grid.com/react/radial-column-series/)
+- [Radial Bar Series](https://charts.ag-grid.com/react/radial-bar-series/)
 
 ## Statistical
 
-<grid-example title='Statistical' name='statistical' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+<grid-example title='Statistical' name='statistical' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-For more information on series configuration options see the AG Charts documentation.
+More Details:
 
-- [AG Charts Histogram Series](https://charts.ag-grid.com/react/histogram-series/)
-- [AG Charts Range Bar Series](https://charts.ag-grid.com/react/range-bar-series/)
-- [AG Charts Range Area Series](https://charts.ag-grid.com/react/range-area-series/)
-- [AG Charts Box Plot Series](https://charts.ag-grid.com/react/box-plot-series/)
+- [Histogram Series](https://charts.ag-grid.com/react/histogram-series/)
+- [Range Bar Series](https://charts.ag-grid.com/react/range-bar-series/)
+- [Range Area Series](https://charts.ag-grid.com/react/range-area-series/)
+- [Box Plot Series](https://charts.ag-grid.com/react/box-plot-series/)
 
 ## Hierarchical
 
-<grid-example title='Hierarchical' name='hierarchical' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "rowgrouping", "charts-enterprise"] }'></grid-example>
+<grid-example title='Hierarchical' name='hierarchical' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "rowgrouping", "charts-enterprise"] }'></grid-example>
 
-For more information on series configuration options see the AG Charts documentation.
+More Details:
 
-- [AG Charts Treemap Series](https://charts.ag-grid.com/react/treemap-series/)
-- [AG Charts Sunburst Series](https://charts.ag-grid.com/react/sunburst-series/)
+- [Treemap Series](https://charts.ag-grid.com/react/treemap-series/)
+- [Sunburst Series](https://charts.ag-grid.com/react/sunburst-series/)
 
 ## Specialized
 
-For more information on series configuration options see the AG Charts documentation.
+<grid-example title='Specialized' name='specialized' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-<grid-example title='Specialized' name='specialized' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+More Details:
 
-- [AG Charts Heatmap Series](https://charts.ag-grid.com/react/heatmap-series/)
-- [AG Charts Waterfall Series](https://charts.ag-grid.com/react/waterfall-series/)
+- [Heatmap Series](https://charts.ag-grid.com/react/heatmap-series/)
+- [Waterfall Series](https://charts.ag-grid.com/react/waterfall-series/)
 
 ## Combination
 
-<grid-example title='Combination' name='combo' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
+<grid-example title='Combination' name='combo' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-For more information on series configuration options see the AG Charts documentation.
+More Details:
 
-- [AG Charts Bar Series](https://charts.ag-grid.com/react/bar-series/)
-- [AG Charts Line Series](https://charts.ag-grid.com/react/line-series/)
-- [AG Charts Area Series](https://charts.ag-grid.com/react/area-series/)
+- [Combination Charts](https://charts.ag-grid.com/react/combination-series/)
 
 ## Next Up
 
-Continue to the next section to learn about the: [User Created Charts](/integrated-charts-user-created/).
+Continue to the next section to learn about: [Chart Tool Panels](/integrated-charts-chart-tool-panels/).
 
 
 
