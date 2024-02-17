@@ -36,7 +36,7 @@
 .limitedTimeSpacer {
     height: 30px;
     margin-top: -10px;
-    margin-bottom: $spacing-size-2;
+    margin-bottom: $spacing-size-4;
 }
 
 .limitedTimePill {
@@ -117,7 +117,7 @@ p.name {
     align-items: end;
     height: 52px;
     padding-bottom: $spacing-size-4;
-    font-size: 32px;
+    font-size: 30px;
     line-height: var(--text-lh-ultra-tight);
     font-weight: var(--text-bold);
     letter-spacing: -0.05em;
