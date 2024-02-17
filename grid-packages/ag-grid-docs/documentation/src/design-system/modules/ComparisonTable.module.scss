@@ -49,11 +49,11 @@
     min-height: $spacing-size-12;
 
     &:first-child .cell {
-        padding-top: $spacing-size-4 + 8px;
+        padding-top: $spacing-size-4;
     }
 
     &:last-child .cell {
-        padding-bottom: $spacing-size-4 + 12px;
+        padding-bottom: $spacing-size-4;
     }
 
     &:not(:first-child) {
@@ -63,7 +63,7 @@
 
 .cell {
     width: calc(100% / var(--num-columns));
-    padding-top: $spacing-size-4;
+    padding-top: $spacing-size-2;
     padding-bottom: $spacing-size-4;
 
     &:nth-child(3) {
