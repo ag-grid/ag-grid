@@ -531,7 +531,7 @@
     "items": [
       {
         "label": {
-          "name": "Enterprise support",
+          "name": "Enterprise Support",
           "link": "/react-data-grid/licensing/"
         },
         "community": {
@@ -549,7 +549,7 @@
       },
       {
         "label": {
-          "name": "Perpetual license",
+          "name": "Perpetual License",
           "link": "/react-data-grid/licensing/"
         },
         "community": {
