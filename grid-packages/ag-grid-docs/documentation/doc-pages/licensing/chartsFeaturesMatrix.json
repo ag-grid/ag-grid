@@ -337,7 +337,7 @@
     "items": [
       {
         "label": {
-          "name": "Enterprise support",
+          "name": "Enterprise Support",
           "link": "https://ag-grid.com/react-data-grid/licensing/"
         },
         "community": {
@@ -355,7 +355,7 @@
       },
       {
         "label": {
-          "name": "Perpetual license",
+          "name": "Perpetual License",
           "link": "https://ag-grid.com/react-data-grid/licensing/"
         },
         "community": {

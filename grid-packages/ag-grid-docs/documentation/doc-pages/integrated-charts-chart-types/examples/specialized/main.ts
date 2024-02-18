@@ -65,6 +65,7 @@ function updateChart(chartType: 'heatmap' | 'waterfall') {
   if (chartRef) chartRef.destroyChart();
   gridApi.setGridOption('columnDefs', chartConfig[chartType].columnDefs);
   chartRef = gridApi.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as any,
     chartType,
     cellRange: {
       columns: chartConfig[chartType].chartColumns,
