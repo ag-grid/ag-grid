@@ -2,14 +2,14 @@ import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent
 import {getData} from "./data";
 
 let gridApi: GridApi;
-let chartRef: ChartRef | undefined;
+let chartRef: ChartRef;
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'country', width: 150, chartDataType: 'category' },
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze', chartDataType: 'series' },
+    { field: 'period', chartDataType: 'category', headerName: 'Financial Period', width: 150 },
+    { field: 'client', chartDataType: 'category', headerName: 'Client name' },
+    { field: 'recurring', chartDataType: 'series', headerName: 'Recurring revenue' },
+    { field: 'individual', chartDataType: 'series', headerName: 'Individual sales' },
   ],
   defaultColDef: {
     flex: 1,
@@ -29,17 +29,18 @@ const gridOptions: GridOptions = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   chartRef = params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as any,
     cellRange: {
-      columns: ['country', 'gold', 'silver', 'bronze'],
+      columns: ['period', 'client', 'recurring', 'individual'],
     },
     chartType: 'boxPlot',
-  });
+  })!;
 }
 
 function updateChart(chartType: ChartType) {
   gridApi.updateChart({
     type: 'rangeChartUpdate',
-    chartId: `${chartRef?.chartId}`,
+    chartId: `${chartRef.chartId}`,
     chartType: chartType
   });
 }

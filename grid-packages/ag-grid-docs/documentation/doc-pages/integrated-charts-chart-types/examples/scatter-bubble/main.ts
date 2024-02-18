@@ -2,14 +2,15 @@ import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent
 import {getData} from "./data";
 
 let gridApi: GridApi;
-let chartRef: ChartRef | undefined;
+let chartRef: ChartRef;
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'country', width: 150, chartDataType: 'category' },
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze', chartDataType: 'series' },
+    { field: 'division', width: 150, chartDataType: 'category' },
+    { field: 'resource', width: 150, chartDataType: 'category' },
+    { field: 'revenue', chartDataType: 'series' },
+    { field: 'expenses', chartDataType: 'series' },
+    { field: 'headcount', chartDataType: 'series' },
   ],
   defaultColDef: {
     flex: 1,
@@ -29,19 +30,18 @@ const gridOptions: GridOptions = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   chartRef = params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as any,
     cellRange: {
-      rowStartIndex: 6,
-      rowEndIndex: 7,
-      columns: ['country', 'gold', 'silver', 'bronze'],
+      columns: ['resource', 'revenue', 'expenses', 'headcount'],
     },
     chartType: 'scatter',
-  });
+  })!;
 }
 
 function updateChart(chartType: ChartType) {
   gridApi.updateChart({
     type: 'rangeChartUpdate',
-    chartId: `${chartRef?.chartId}`,
+    chartId: `${chartRef.chartId}`,
     chartType: chartType
   });
 }

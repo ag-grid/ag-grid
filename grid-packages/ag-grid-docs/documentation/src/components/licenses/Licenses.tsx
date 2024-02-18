@@ -1,9 +1,7 @@
 import classnames from 'classnames';
 import React, { FunctionComponent, useState } from 'react';
 import { trackBuyButton } from '../../utils/analytics';
-import GridCommunity from '../../images/inline-svgs/pricing-community.svg';
-import GridEnterprise from '../../images/inline-svgs/pricing-enterprise.svg';
-import ChartsGrid from '../../images/inline-svgs/pricing-grid-charts.svg';
+
 // @ts-ignore
 import styles from '@design-system/modules/Licenses.module.scss';
 import { ComparisonTable } from '../../components/comparison-table/ComparisonTable';
@@ -30,7 +28,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         description: '',
         priceFullDollars: '0',
         launchPrice: null,
-        buyLink: 'https://ag-grid.com/javascript-data-grid/getting-started/',
+        buyLink: '/javascript-data-grid/getting-started/',
         tabGroup: 'grid'
     },
     {
@@ -65,9 +63,9 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     },
     {
         className: styles.chartsLicense,
-        id: 'togther',
+        id: 'together',
         subHeading: 'Enterprise Bundle',
-        description: 'AG Grid Enterprise +<br />AG Charts Enterprise',
+        description: 'AG Grid Enterprise &<br />AG Charts Enterprise',
         priceFullDollars: '1398',
         launchPrice: '1198',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
@@ -81,7 +79,7 @@ const Price = ({ priceFullDollars, launchPrice }) => {
 
     return (
         <div className={styles.price}>
-            { hasCost && <span className={styles.developerText}>From</span> }
+            { hasCost && <span className={styles.fromText}>From</span> }
 
             <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '' )}>
                 <span>{ hasCost ? `$${ price }` : 'Free' }</span>
@@ -105,7 +103,7 @@ const License = (props: LicenseData) => {
 
     return (
         <>
-            <div className={styles.top} id={id}>
+            <div className={styles.top}>
                 { launchPrice && <span className={styles.limitedTimePill}>Limited time offer</span> }
                 { !launchPrice && <span className={styles.limitedTimeSpacer}></span> }
 
@@ -175,7 +173,7 @@ export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked 
                 };
 
                 return (
-                    <div key={data.id} className={classnames(styles.license, data.className)}>
+                    <div key={data.id} id={data.id} className={classnames(styles.license, data.className)}>
                         <License {...data} />
                         
                         <span className={styles.toggleFeatureBreakdownButton} onClick={toggleFeatureBreakdown}>
