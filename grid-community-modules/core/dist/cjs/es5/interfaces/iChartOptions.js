@@ -1,0 +1,72 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CHART_TOOL_PANEL_MENU_OPTIONS = exports.CHART_TOOLBAR_ALLOW_LIST = exports.CHART_TOOL_PANEL_ALLOW_LIST = exports.DEFAULT_CHART_GROUPS = void 0;
+exports.DEFAULT_CHART_GROUPS = {
+    columnGroup: [
+        'column',
+        'stackedColumn',
+        'normalizedColumn',
+    ],
+    barGroup: [
+        'bar',
+        'stackedBar',
+        'normalizedBar'
+    ],
+    pieGroup: [
+        'pie',
+        'donut',
+    ],
+    lineGroup: [
+        'line',
+    ],
+    scatterGroup: [
+        'scatter',
+        'bubble',
+    ],
+    areaGroup: [
+        'area',
+        'stackedArea',
+        'normalizedArea',
+    ],
+    polarGroup: [
+        'radarLine',
+        'radarArea',
+        'nightingale',
+        'radialColumn',
+        'radialBar',
+    ],
+    statisticalGroup: [
+        'boxPlot',
+        'histogram',
+        'rangeBar',
+        'rangeArea',
+    ],
+    hierarchicalGroup: [
+        'treemap',
+        'sunburst',
+    ],
+    specializedGroup: [
+        'heatmap',
+        'waterfall',
+    ],
+    combinationGroup: [
+        'columnLineCombo',
+        'areaColumnCombo',
+        'customCombo',
+    ]
+};
+exports.CHART_TOOL_PANEL_ALLOW_LIST = [
+    'chartSettings',
+    'chartData',
+    'chartFormat'
+];
+exports.CHART_TOOLBAR_ALLOW_LIST = [
+    'chartUnlink',
+    'chartLink',
+    'chartDownload'
+];
+exports.CHART_TOOL_PANEL_MENU_OPTIONS = {
+    settings: "chartSettings",
+    data: "chartData",
+    format: "chartFormat"
+};

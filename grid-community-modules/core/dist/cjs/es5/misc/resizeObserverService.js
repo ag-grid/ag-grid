@@ -1,0 +1,100 @@
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ResizeObserverService = void 0;
+var context_1 = require("../context/context");
+var beanStub_1 = require("../context/beanStub");
+var DEBOUNCE_DELAY = 50;
+var ResizeObserverService = /** @class */ (function (_super) {
+    __extends(ResizeObserverService, _super);
+    function ResizeObserverService() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.polyfillFunctions = [];
+        return _this;
+    }
+    ResizeObserverService.prototype.observeResize = function (element, callback) {
+        var _this = this;
+        var win = this.gridOptionsService.getWindow();
+        var useBrowserResizeObserver = function () {
+            var resizeObserver = new win.ResizeObserver(callback);
+            resizeObserver.observe(element);
+            return function () { return resizeObserver.disconnect(); };
+        };
+        var usePolyfill = function () {
+            var _a, _b;
+            // initialise to the current width and height, so first call will have no changes
+            var widthLastTime = (_a = element === null || element === void 0 ? void 0 : element.clientWidth) !== null && _a !== void 0 ? _a : 0;
+            var heightLastTime = (_b = element === null || element === void 0 ? void 0 : element.clientHeight) !== null && _b !== void 0 ? _b : 0;
+            // when finished, this gets turned to false.
+            var running = true;
+            var periodicallyCheckWidthAndHeight = function () {
+                var _a, _b;
+                if (running) {
+                    var newWidth = (_a = element === null || element === void 0 ? void 0 : element.clientWidth) !== null && _a !== void 0 ? _a : 0;
+                    var newHeight = (_b = element === null || element === void 0 ? void 0 : element.clientHeight) !== null && _b !== void 0 ? _b : 0;
+                    var changed = newWidth !== widthLastTime || newHeight !== heightLastTime;
+                    if (changed) {
+                        widthLastTime = newWidth;
+                        heightLastTime = newHeight;
+                        callback();
+                    }
+                    _this.doNextPolyfillTurn(periodicallyCheckWidthAndHeight);
+                }
+            };
+            periodicallyCheckWidthAndHeight();
+            // the callback function we return sets running to false
+            return function () { return running = false; };
+        };
+        var suppressResize = this.gridOptionsService.get('suppressBrowserResizeObserver');
+        var resizeObserverExists = !!win.ResizeObserver;
+        if (resizeObserverExists && !suppressResize) {
+            return useBrowserResizeObserver();
+        }
+        return this.getFrameworkOverrides().wrapIncoming(function () { return usePolyfill(); }, 'resize-observer');
+    };
+    ResizeObserverService.prototype.doNextPolyfillTurn = function (func) {
+        this.polyfillFunctions.push(func);
+        this.schedulePolyfill();
+    };
+    ResizeObserverService.prototype.schedulePolyfill = function () {
+        var _this = this;
+        if (this.polyfillScheduled) {
+            return;
+        }
+        var executeAllFuncs = function () {
+            var funcs = _this.polyfillFunctions;
+            // make sure set scheduled to false and clear clear array
+            // before executing the funcs, as the funcs could add more funcs
+            _this.polyfillScheduled = false;
+            _this.polyfillFunctions = [];
+            funcs.forEach(function (f) { return f(); });
+        };
+        this.polyfillScheduled = true;
+        window.setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
+    };
+    ResizeObserverService = __decorate([
+        (0, context_1.Bean)('resizeObserverService')
+    ], ResizeObserverService);
+    return ResizeObserverService;
+}(beanStub_1.BeanStub));
+exports.ResizeObserverService = ResizeObserverService;

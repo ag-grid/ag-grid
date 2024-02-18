@@ -1,0 +1,38 @@
+import { Column, Component, ITooltipParams, WithoutGridCommon } from "@ag-grid-community/core";
+import { ColumnModelItem } from "./columnModelItem";
+export declare class ToolPanelColumnComp extends Component {
+    private readonly allowDragging;
+    private readonly groupsExist;
+    private readonly focusWrapper;
+    private static TEMPLATE;
+    private readonly columnModel;
+    private readonly dragAndDropService;
+    private readonly modelItemUtils;
+    private eLabel;
+    private cbSelect;
+    private column;
+    private columnDept;
+    private eDragHandle;
+    private displayName;
+    private processingColumnStateChange;
+    constructor(modelItem: ColumnModelItem, allowDragging: boolean, groupsExist: boolean, focusWrapper: HTMLElement);
+    init(): void;
+    getColumn(): Column;
+    private setupTooltip;
+    getTooltipParams(): WithoutGridCommon<ITooltipParams>;
+    private onContextMenu;
+    protected handleKeyDown(e: KeyboardEvent): void;
+    private onLabelClicked;
+    private onCheckboxChanged;
+    private onChangeCommon;
+    private refreshAriaLabel;
+    private setupDragging;
+    private createDragItem;
+    private onColumnStateChanged;
+    getDisplayName(): string | null;
+    onSelectAllChanged(value: boolean): void;
+    isSelected(): boolean | undefined;
+    isSelectable(): boolean;
+    isExpandable(): boolean;
+    setExpanded(value: boolean): void;
+}

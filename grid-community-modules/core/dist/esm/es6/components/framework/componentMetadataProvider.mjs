@@ -1,0 +1,104 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+import { Autowired, Bean, PostConstruct } from "../../context/context.mjs";
+import { BeanStub } from "../../context/beanStub.mjs";
+let ComponentMetadataProvider = class ComponentMetadataProvider extends BeanStub {
+    postConstruct() {
+        this.componentMetaData = {
+            dateComponent: {
+                mandatoryMethodList: ['getDate', 'setDate'],
+                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel', 'setDisabled', 'onParamsUpdated', 'refresh']
+            },
+            detailCellRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            headerComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh']
+            },
+            headerGroupComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
+            loadingCellRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
+            loadingOverlayComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh']
+            },
+            noRowsOverlayComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh']
+            },
+            floatingFilterComponent: {
+                mandatoryMethodList: ['onParentModelChanged'],
+                optionalMethodList: ['afterGuiAttached', 'onParamsUpdated', 'refresh']
+            },
+            cellRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh', 'afterGuiAttached'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            cellEditor: {
+                mandatoryMethodList: ['getValue'],
+                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached', 'refresh']
+            },
+            innerRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            fullWidthCellRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh', 'afterGuiAttached'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            groupRowRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            filter: {
+                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
+                optionalMethodList: ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'onAnyFilterChanged', 'refresh']
+            },
+            statusPanel: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh'],
+            },
+            toolPanel: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['refresh', 'getState']
+            },
+            tooltipComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
+            menuItem: {
+                mandatoryMethodList: [],
+                optionalMethodList: ['setActive', 'select', 'setExpanded', 'configureDefaults']
+            },
+        };
+    }
+    retrieve(name) {
+        return this.componentMetaData[name];
+    }
+};
+__decorate([
+    Autowired("agComponentUtils")
+], ComponentMetadataProvider.prototype, "agComponentUtils", void 0);
+__decorate([
+    PostConstruct
+], ComponentMetadataProvider.prototype, "postConstruct", null);
+ComponentMetadataProvider = __decorate([
+    Bean("componentMetadataProvider")
+], ComponentMetadataProvider);
+export { ComponentMetadataProvider };

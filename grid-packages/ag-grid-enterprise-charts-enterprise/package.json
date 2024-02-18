@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise-charts-enterprise",
-  "version": "31.0.2",
+  "version": "31.1.0",
   "description": "AG Grid Enterprise Features",
   "main": "./dist/ag-grid-enterprise-charts-enterprise.cjs.js",
   "module": "./dist/ag-grid-enterprise-charts-enterprise.auto.esm.js",
@@ -47,10 +47,10 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "ag-grid-community": "~31.0.2"
+    "ag-grid-community": "~31.1.0"
   },
   "devDependencies": {
-    "ag-grid-enterprise": "~31.0.2",
+    "ag-grid-enterprise": "~31.1.0",
     "gulp": "^4.0.0",
     "merge2": "^1.2.0",
     "rimraf": "3.0.2"

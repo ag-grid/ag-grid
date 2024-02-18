@@ -1,0 +1,1 @@
+{"version":3,"sources":["shared/keyGenerator.ts"],"names":[],"mappings":";AAAA,IAAI,OAAO,GAAG,CAAC,CAAC;AAChB,MAAM,CAAC,OAAO,UAAU,cAAc;IAClC,OAAO,eAAe,EAAE,OAAO,EAAE,CAAC;AACtC,CAAC","file":"keyGenerator.mjs","sourcesContent":["let counter = 0;\nexport default function generateNewKey() {\n    return `agPortalKey_${++counter}`;\n}\n"]}
