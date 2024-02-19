@@ -66,7 +66,7 @@ This example demonstrates globally changing the icon font, and also selectively 
 
 ### Example: SVG icons
 
-This example demonstrates using the `--ag-icon-image-icon-name` variables to set an 
+This example demonstrates using the `--ag-icon-image-icon-name` variables to set SVG images for specific icons.
 
 ```css
 .ag-theme-quartz {
