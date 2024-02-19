@@ -206,26 +206,27 @@ a.metaValue {
     pre {
         min-width: 100%;
     }
-
-    svg {
-        --icon-size: 1em;
-
-        margin: -0.1em 0 0;
-        transition: fill $transition-default-timing;
-    }
 }
 
-.seeMore {
-    --color-icon: var(--color-link);
-
+button.seeMore {
     min-width: 10.5ch;
     color: var(--color-link);
     transition: color $transition-default-timing;
 
     &:hover {
-        --color-icon: var(--color-link-hover);
-
         color: var(--color-link-hover);
+
+        svg {
+            fill: var(--color-link-hover);
+        }
+    }
+
+    svg {
+        --icon-size: 1em;
+
+        margin: -0.1em 0 0;
+        fill: var(--color-link);
+        transition: fill $transition-default-timing;
     }
 }
 
