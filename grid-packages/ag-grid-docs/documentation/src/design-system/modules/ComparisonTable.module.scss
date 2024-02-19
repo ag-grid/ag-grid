@@ -75,6 +75,7 @@
 .subGroup {
     transition: background-color $transition-default-timing;
     transition: all 0.3s;
+    user-select: none;
 
     .row .cell {
         padding-top: $spacing-size-4;
@@ -163,4 +164,32 @@
             transition: opacity $transition-default-timing;
         }
     }
+}
+
+.subGroupIconWrapper {
+    height: 24px;
+    width: 24px;
+    padding: 2px;
+    margin-left: $spacing-size-2;
+    display: inline-flex;
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 80%);
+    transition: all 1s;
+}
+.subGroupIconWrapper:hover {
+    border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 40%);
+    box-shadow: var(--shadow-sm);
+    transition: all 1s;
+}
+
+.subGroupTitleIcon:hover {
+    .subGroupIconWrapper {
+        border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 40%);
+        box-shadow: var(--shadow-sm);
+        transition: all 1s;
+    }
+}
+
+.subGroupTitleIcon {
+    display: flex;
 }
