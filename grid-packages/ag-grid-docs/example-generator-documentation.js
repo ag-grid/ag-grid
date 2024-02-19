@@ -667,7 +667,7 @@ function addPackageJson(type, framework, importType, basePath) {
                 addDependency('ag-grid-react', agGridReactVersion);
             }
             addDependency('ag-grid-community', agGridVersion);
-            addDependency(`ag-grid-enterprise${integratedChartsUsesChartsEnterprise ? '-charts-enterprise' : ''}`, agGridEnterpriseVersion);
+            addDependency(`ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise`, agGridEnterpriseVersion);
         }
     }
 

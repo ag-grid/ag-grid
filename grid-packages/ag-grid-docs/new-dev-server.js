@@ -261,10 +261,10 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         type: linkType,
         rename: 'ag-grid-enterprise'
     });
-    lnk('../../grid-packages/ag-grid-enterprise-charts-enterprise/', '_dev/', {
+    lnk('../../grid-packages/ag-grid-charts-enterprise/', '_dev/', {
         force: true,
         type: linkType,
-        rename: 'ag-grid-enterprise-charts-enterprise'
+        rename: 'ag-grid-charts-enterprise'
     });
     lnk('../../grid-packages/ag-grid-angular/', '_dev/', {
         force: true,
@@ -618,7 +618,7 @@ const addWebpackMiddleware = (app) => {
 
     // for js examples that just require grid & charts enterprise functionality (vanilla integrated charts examples etc (not main demo))
     // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
-    addWebpackMiddlewareForConfig(app, 'webpack.grid-charts-enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise-charts-enterprise.js');
+    addWebpackMiddlewareForConfig(app, 'webpack.grid-charts-enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-charts-enterprise.js');
 };
 
 const watchCoreModulesAndCss = async (skipFrameworks) => {
@@ -743,7 +743,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
     servePackage(app, 'ag-charts-vue3');
     servePackage(app, 'ag-grid-community');
     servePackage(app, 'ag-grid-enterprise');
-    servePackage(app, 'ag-grid-enterprise-charts-enterprise');
+    servePackage(app, 'ag-grid-charts-enterprise');
     servePackage(app, 'ag-grid-angular');
     servePackage(app, 'ag-grid-vue');
     servePackage(app, 'ag-grid-vue3');

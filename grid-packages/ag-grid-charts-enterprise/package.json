@@ -1,9 +1,9 @@
 {
-  "name": "ag-grid-enterprise-charts-enterprise",
+  "name": "ag-grid-charts-enterprise",
   "version": "31.0.2",
   "description": "AG Grid Enterprise Features",
-  "main": "./dist/ag-grid-enterprise-charts-enterprise.cjs.js",
-  "module": "./dist/ag-grid-enterprise-charts-enterprise.auto.esm.js",
+  "main": "./dist/ag-grid-charts-enterprise.cjs.js",
+  "module": "./dist/ag-grid-charts-enterprise.auto.esm.js",
   "types": "main.d.ts",
   "scripts": {
     "clean": "rimraf dist main.d.ts",
