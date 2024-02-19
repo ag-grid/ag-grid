@@ -105,10 +105,13 @@ This release includes the following deprecations:
 * `gridOptions.cellFlashDelay` - deprecated, use `gridOptions.cellFlashDuration` instead.
 * `gridOptions.cellFadeDelay` - deprecated, use `gridOptions.cellFadeDuration` instead.
 * `colDef.floatingFilterComponentParams.suppressFilterButton` - deprecated, use `colDef.suppressFloatingFilterButton` instead.
+* `suppressServerSideInfiniteScroll` - deprecated without replacement.
+* `serverSideSortOnServer` - deprecated without replacement.
+* `serverSideFilterOnServer` - deprecated without replacement.
 
 ### Column Filters
 
-* `api.getFilterInstance` - deprecated, use `api.getColumnFilterInstance` instead.
+* `api.getFilterInstance` - deprecated, use `api.getColumnFilterInstance` instead. To get/set individual filter models, use `api.getColumnFilterModel` or `api.setColumnFilterModel` instead. 
 
 ### Column API
 
@@ -118,6 +121,7 @@ This release includes the following deprecations:
 
 ### Grid API 
 
+* `getModel` - deprecated.
 * `getModel().getRow(index)` - deprecated, use `api.getDisplayedRowAtIndex(index)` instead.
 * `getModel().getRowNode(id)` - deprecated, use `api.getRowNode(id)` instead.
 * `getModel().getRowCount()` - deprecated, use `api.getDisplayedRowCount()` instead.
