@@ -76,6 +76,7 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
                                 hideChevrons={hideChevrons}
                                 expandAllGroups={expandAllGroups}
                             /> : <MenuItem
+                                key={`${title}`}
                                 item={item}
                                 currentFramework={currentFramework}
                                 activeParentItems={activeParentItems}
