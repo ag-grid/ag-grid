@@ -166,6 +166,11 @@
     }
 }
 
+.subGroupHeader:hover {
+    background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 50%);
+    transition: all 0.6s;
+}
+
 .subGroupIconWrapper {
     height: 24px;
     width: 24px;
@@ -192,4 +197,9 @@
 
 .subGroupTitleIcon {
     display: flex;
+}
+
+.row:hover {
+    background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 50%);
+    transition: all 0.4s;
 }
