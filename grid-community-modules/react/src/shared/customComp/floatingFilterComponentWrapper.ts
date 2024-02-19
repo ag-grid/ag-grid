@@ -30,11 +30,9 @@ export class FloatingFilterComponentWrapper extends CustomComponentWrapper<IFloa
     }
 
     protected getProps(): CustomFloatingFilterProps {
-        return {
-            ...this.sourceParams,
-            model: this.model,
-            onModelChange: this.onModelChange,
-            key: this.key
-        } as any;
+        const props = super.getProps();
+        props.model = this.model;
+        props.onModelChange = this.onModelChange;
+        return props;
     }
 }

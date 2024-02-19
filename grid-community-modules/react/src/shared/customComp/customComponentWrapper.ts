@@ -81,7 +81,8 @@ export class CustomComponentWrapper<TInputParams, TOutputParams, TMethods> exten
     protected getProps(): TOutputParams {
         return {
             ...this.sourceParams,
-            key: this.key
+            key: this.key,
+            ref: this.ref
          } as any;
     }
 

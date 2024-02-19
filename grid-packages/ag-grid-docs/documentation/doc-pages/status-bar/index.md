@@ -48,7 +48,7 @@ Components can be aligned either to the `left`, in the `center` of the bar or on
 
 ### Labels and Number Formats
 
-Labels within the Status Bar (ie. "Rows", "Total Rows", "Average"), the decimal and thousand separators can be changed by using the grid's [Localisation](/localisation/).
+For labels within the Status Bar (ie. "Rows", "Total Rows", "Average"), the decimal and thousand separators can be changed by using the grid's [Localisation](/localisation/).
 
 ### Simple Status Bar Example
 

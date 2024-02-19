@@ -664,7 +664,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                             role="presentation"
                         >
                             {!isExpanded ? 'More' : 'Hide'} details{' '}
-                            <Icon name={isExpanded ? 'chevronUp' : 'chevronDown'} />
+                            <Icon name={isExpanded ? 'chevronDown' : 'chevronRight'} />
                         </button>
                     )}
                     {more != null && more.url && !config.hideMore && (

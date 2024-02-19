@@ -5,11 +5,11 @@ import {
     FirstDataRenderedEvent,
     RowDataUpdatedEvent,
 } from '@ag-grid-community/core';
-import { getDataSetA, getDataSetB, TAthlete } from './data';
+import { getData, TAthlete } from './data';
 
-const updateRowCount = (value?: string | number) => {
-    const element = document.querySelector('#rowCount > .value');
-    element!.innerHTML = value !== undefined ? value.toString() : '-';
+const updateRowCount = (id: string) => {
+    const element = document.querySelector(`#${id} > .value`);
+    element!.textContent = `${new Date().toLocaleTimeString()}`;
 }
 
 let gridApi: GridApi;
@@ -17,24 +17,22 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'name', headerName: 'Athlete' },
-        { field: 'medals.gold', headerName: 'Gold Medals' },
         { field: 'person.age', headerName: 'Age' },
+        { field: 'medals.gold', headerName: 'Gold Medals' },
     ],
-    rowData: getDataSetA(),
+    rowData: getData(),
     onFirstDataRendered: (event: FirstDataRenderedEvent) => {
-        updateRowCount(event.api.getDisplayedRowCount());
+        updateRowCount('firstDataRendered');
+        console.log('First Data Rendered');
     },
     onRowDataUpdated: (event: RowDataUpdatedEvent<TAthlete>) => {
-        updateRowCount(event.api.getDisplayedRowCount());
+        updateRowCount('rowDataUpdated');
+        console.log('Row Data Updated');
     },
 };
 
-function loadDataSetA() {
-    gridApi!.setGridOption('rowData', getDataSetA());
-}
-
-function loadDataSetB() {
-    gridApi!.setGridOption('rowData', getDataSetB());
+function loadData() {
+    gridApi!.setGridOption('rowData', getData());
 }
 
 document.addEventListener('DOMContentLoaded', () => {

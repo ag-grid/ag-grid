@@ -19,6 +19,8 @@ import { ColumnHeaderClickedEvent, ColumnHeaderContextMenuEvent } from "../../..
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { WithoutGridCommon } from "../../../interfaces/iCommon";
 import { MenuService } from "../../../misc/menuService";
+import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
+import { getInnerWidth } from "../../../utils/dom";
 
 let instanceIdSequence = 0;
 
@@ -34,6 +36,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
+    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('focusService') protected readonly focusService: FocusService;
     @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
@@ -58,7 +61,7 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
 
     protected dragSource: DragSource | null = null;
 
-    protected abstract resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void;
+    protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
 
     constructor(columnGroupChild: IHeaderColumn, beans: Beans, parentRowCtrl: HeaderRowCtrl) {
@@ -168,11 +171,48 @@ export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellCo
         if (e.altKey) {
             this.isResizing = true;
             this.resizeMultiplier += 1;
-            this.resizeHeader(direction, e.shiftKey);
+            const diff = this.getViewportAdjustedResizeDiff(e);
+            this.resizeHeader(diff, e.shiftKey);
             this.resizeFeature?.toggleColumnResizing(true);
         } else {
             this.moveHeader(direction);
         }
+    }
+
+    private getViewportAdjustedResizeDiff(e: KeyboardEvent): number {
+        let diff = this.getResizeDiff(e);
+
+        const pinned = this.column.getPinned();
+        if (pinned) {
+            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+
+            if (leftWidth + rightWidth + diff > bodyWidth) {
+                if (bodyWidth > leftWidth + rightWidth) {
+                    // allow body width to ignore resize multiplier and fill space for last tick
+                    diff = bodyWidth - leftWidth - rightWidth;
+                } else {
+                    return 0;
+                }
+            }
+        }
+        
+        return diff;
+    }
+
+    private getResizeDiff(e: KeyboardEvent): number {
+        let isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
+
+        const pinned = this.column.getPinned();
+        const isRtl = this.gridOptionsService.get('enableRtl');
+        if (pinned) {
+            if (isRtl !== (pinned === 'right')) {
+                isLeft = !isLeft;
+            }
+        }
+
+        return (isLeft ? -1 : 1) * this.resizeMultiplier;
     }
 
     private onGuiKeyUp(): void {

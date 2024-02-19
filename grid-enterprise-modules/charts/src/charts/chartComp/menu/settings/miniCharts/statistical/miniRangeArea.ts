@@ -156,8 +156,9 @@ function zigzag(options: {
         const patternInflectionPoints = [0, 0.5];
         const inflectionPoints = patternInflectionPoints
             .map((x) => x - scaledOffset)
+            // Clamp offset points to the unit range [0, 1)
             .map(getRemainderAbs)
-            .sort();
+            .sort((a, b) => a - b);
         const repeatedPoints = Array.from(
             { length: Math.floor(inflectionPoints.length * (period / length)) },
             (_, i) => inflectionPoints[i % inflectionPoints.length] + Math.floor(i / inflectionPoints.length)
