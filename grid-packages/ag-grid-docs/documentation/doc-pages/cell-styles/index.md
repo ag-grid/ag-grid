@@ -200,11 +200,11 @@ It's possible to style the cells in the first and last columns using CSS by targ
 
 ```css
 .ag-cell.ag-column-first {
-    background-color: darkblue;
+    background-color: #2244CC44;
 }
 
 .ag-cell.ag-column-last {
-    background-color: gold;
+    background-color: #CC333344;
 }
 ```
 
