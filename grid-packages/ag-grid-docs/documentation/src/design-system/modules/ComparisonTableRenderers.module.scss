@@ -16,6 +16,12 @@
     gap: $spacing-size-2;
 }
 
+@media screen and (max-width: $breakpoint-pricing-medium) {
+    .feature {
+        margin-right: $spacing-size-12;
+    }
+}
+
 .detail {
     text-align: center;
     font-size: var(--text-fs-sm);

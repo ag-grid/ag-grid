@@ -355,6 +355,12 @@
             "showInCollapsed": true
           },
           {
+            "title": "Installation",
+            "url": "/integrated-charts-installation/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
             "title": "User Created Charts",
             "url": "/integrated-charts-user-created/",
             "enterprise": true,

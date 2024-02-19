@@ -9,7 +9,7 @@ This section provides an overview of the chart types available in Integrated Cha
 
 <grid-example title='Column / Bar' name='column-bar' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-More Details:
+**More Details**:
 
 - [Bar Series](https://charts.ag-grid.com/javascript/bar-series/)
 
@@ -17,7 +17,7 @@ More Details:
 
 <grid-example title='Pie / Donut' name='pie-donut' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-More Details:
+**More Details:**
 
 - [Pie Series](https://charts.ag-grid.com/javascript/pie-series/)
 - [Donut Series](https://charts.ag-grid.com/javascript/donut-series/)
@@ -26,7 +26,7 @@ More Details:
 
 <grid-example title='Line / Area' name='line-area' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-More Details:
+**More Details:**
 
 - [Line Series](https://charts.ag-grid.com/javascript/line-series/)
 - [Area Series](https://charts.ag-grid.com/javascript/area-series/)
@@ -35,7 +35,7 @@ More Details:
 
 <grid-example title='Scatter / Bubble' name='scatter-bubble' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-More Details:
+**More Details:**
 
 - [Scatter Series](https://charts.ag-grid.com/javascript/scatter-series/)
 - [Bubble Series](https://charts.ag-grid.com/javascript/bubble-series/)
@@ -44,7 +44,7 @@ More Details:
 
 <grid-example title='Polar' name='polar' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-More Details:
+**More Details:**
 
 - [Radar Line Series](https://charts.ag-grid.com/javascript/radar-line-series/)
 - [Radar Area Series](https://charts.ag-grid.com/javascript/radar-area-series/)
@@ -56,7 +56,7 @@ More Details:
 
 <grid-example title='Statistical' name='statistical' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-More Details:
+**More Details:**
 
 - [Histogram Series](https://charts.ag-grid.com/javascript/histogram-series/)
 - [Range Bar Series](https://charts.ag-grid.com/javascript/range-bar-series/)
@@ -67,7 +67,7 @@ More Details:
 
 <grid-example title='Hierarchical' name='hierarchical' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "rowgrouping", "charts-enterprise"] }'></grid-example>
 
-More Details:
+**More Details:**
 
 - [Treemap Series](https://charts.ag-grid.com/javascript/treemap-series/)
 - [Sunburst Series](https://charts.ag-grid.com/javascript/sunburst-series/)
@@ -76,7 +76,7 @@ More Details:
 
 <grid-example title='Specialized' name='specialized' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-More Details:
+**More Details:**
 
 - [Heatmap Series](https://charts.ag-grid.com/javascript/heatmap-series/)
 - [Waterfall Series](https://charts.ag-grid.com/javascript/waterfall-series/)
@@ -85,7 +85,7 @@ More Details:
 
 <grid-example title='Combination' name='combo' type='generated' options='{ "exampleHeight": 850, "enterprise": true,  "modules": ["clientside", "menu", "charts-enterprise"] }'></grid-example>
 
-More Details:
+**More Details:**
 
 - [Combination Charts](https://charts.ag-grid.com/javascript/combination-series/)
 

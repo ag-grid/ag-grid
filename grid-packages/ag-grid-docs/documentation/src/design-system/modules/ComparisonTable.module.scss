@@ -117,9 +117,18 @@
     .subGroupHeader .cell:not(:first-child) span {
         transition: all 0.3s;
     }
+}
 
-
-    
+@media screen and (max-width: $breakpoint-pricing-medium) {
+   .subGroup {
+    .row .cell {
+        &:nth-child(2) {
+            div {
+            margin-right: -36px; // TODO: refactor to spacing variable
+            }
+        }
+    }
+   }
 }
 
 .subGroupHeader {

@@ -156,7 +156,6 @@
 
 .products {
     width: 100%;
-    margin-top: -10px;
     font-size: var(--text-fs-2xl);
 
     span {
@@ -173,7 +172,6 @@
 .productLogos svg {
     height: 54px;
     width: fit-content;
-    margin-left: -10px;
 
     #{$selector-darkmode} & {
         :global(#LogoType) * {
