@@ -113,6 +113,13 @@
         opacity: 0;
         transition: all 0.3s;
     }
+
+    .subGroupHeader .cell:not(:first-child) span {
+        transition: all 0.3s;
+    }
+
+
+    
 }
 
 .subGroupHeader {
