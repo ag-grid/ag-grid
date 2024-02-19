@@ -29,7 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function onGridSizeChanged(params: GridSizeChangedEvent) {
   // get the current grids width
-  var gridWidth = document.getElementById('grid-wrapper')!.offsetWidth
+  var gridWidth = document.querySelector('.ag-body-viewport')!.clientWidth;
 
   // keep track of which columns to hide/show
   var columnsToShow = []
@@ -55,8 +55,11 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
   params.api.setColumnsVisible(columnsToShow, true)
   params.api.setColumnsVisible(columnsToHide, false)
 
-  // fill out any available space to ensure there are no gaps
-  params.api.sizeColumnsToFit()
+  // wait until columns stopped moving and fill out
+  // any available space to ensure there are no gaps
+  window.setTimeout(() => {
+    params.api.sizeColumnsToFit();
+  }, 10)
 }
 
 // setup the grid after the page has finished loading

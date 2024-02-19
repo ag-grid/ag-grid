@@ -27,7 +27,7 @@ If you are not using ES6 Modules and are instead using the [bundled](/packages/)
 npm install --save ag-grid-enterprise-charts-enterpise
 ```
 
-For example:
+Usage:
 
 ```ts
 // import the AG Grid Enteprise package - this includes all enterprise features and performs all 

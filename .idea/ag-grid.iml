@@ -146,7 +146,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-enterprise-modules/charts/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/nm" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise-charts-enterprise/nm" />
     </content>
     <content url="file://$MODULE_DIR$/grid-community-modules/react/dev" />
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />

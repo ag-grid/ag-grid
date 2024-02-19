@@ -48,7 +48,7 @@ const builds = {
     },
     'enterprise-charts-cjs-dev': {
         entry: path.resolve(__dirname, './src/main-charts.ts'),
-        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.cjs.js'),
+        dest: path.resolve(__dirname, './dist/ag-grid-charts-enterprise.cjs.js'),
         format: 'cjs',
         env: 'development',
         nodeFormatOverride: 'es5-cjs',
@@ -56,7 +56,7 @@ const builds = {
     },
     'enterprise-charts-cjs-prod': {
         entry: path.resolve(__dirname, './src/main-charts.ts'),
-        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.cjs.min.js'),
+        dest: path.resolve(__dirname, './dist/ag-grid-charts-enterprise.cjs.min.js'),
         format: 'cjs',
         env: 'production',
         nodeFormatOverride: 'es5-cjs',
@@ -64,14 +64,14 @@ const builds = {
     },
     'enterprise-charts-esm-dev': {
         entry: path.resolve(__dirname, './src/main-charts.ts'),
-        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.esm.js'),
+        dest: path.resolve(__dirname, './dist/ag-grid-charts-enterprise.esm.js'),
         format: 'esm',
         env: 'development',
         banner
     },
     'enterprise-charts-esm-prod': {
         entry: path.resolve(__dirname, './src/main-charts.ts'),
-        dest: path.resolve(__dirname, './dist/ag-grid-enterprise-charts-enterprise.esm.min.js'),
+        dest: path.resolve(__dirname, './dist/ag-grid-charts-enterprise.esm.min.js'),
         format: 'esm',
         env: 'production',
         banner
