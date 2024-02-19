@@ -166,7 +166,8 @@ const GridComp = (props: {context: Context, class?: string})=> {
                             ref={ setTabGuardRef }
                             eFocusableElement= { eGui! }
                             onTabKeyDown={ onTabKeyDown }
-                            gridCtrl={ gridCtrl! }>
+                            gridCtrl={ gridCtrl! }
+                            forceFocusOutWhenTabGuardsAreEmpty={ true }>
                             <GridBodyComp/>
                         </TabGuardComp>
                     </BeansContext.Provider>
