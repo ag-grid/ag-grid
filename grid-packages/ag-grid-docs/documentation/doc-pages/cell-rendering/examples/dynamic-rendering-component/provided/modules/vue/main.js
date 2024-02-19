@@ -66,7 +66,7 @@ const VueExample = {
                     type: "age"
                 },
                 {
-                    value: "female",
+                    value: "Female",
                     type: "gender"
                 },
                 {
@@ -78,7 +78,7 @@ const VueExample = {
                     type: "age"
                 },
                 {
-                    value: "male",
+                    value: "Male",
                     type: "gender"
                 },
                 {
