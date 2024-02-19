@@ -22,10 +22,10 @@ const gridOptions: GridOptions = {
     ],
     rowData: getData(),
     onFirstDataRendered: (event: FirstDataRenderedEvent) => {
-        updateRowCount('firstDataRendered', event.api.getDisplayedRowCount());
+        updateRowCount('firstDataRendered');
     },
     onRowDataUpdated: (event: RowDataUpdatedEvent<TAthlete>) => {
-        updateRowCount('rowDataUpdated', event.api.getDisplayedRowCount());
+        updateRowCount('rowDataUpdated');
     },
 };
 
