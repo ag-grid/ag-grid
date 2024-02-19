@@ -9,7 +9,7 @@ export default {
                 @mouseenter="onMouseEnter()"
                 @mouseleave="onMouseLeave()"
                 @click="onClick()"
-                @keydown="onOptionKeyDown(event)"
+                @keydown="onOptionKeyDown($event)"
             >
                 <span class="ag-menu-option-part ag-menu-option-icon" role="presentation">
                     <span class="ag-icon ag-icon-filter" unselectable="on" role="presentation"></span>
@@ -22,7 +22,7 @@ export default {
             <div
                 ref="filterWrapper"
                 :style="{ 'display': expanded ? 'block' : 'none' }"
-                @keydown="onFilterWrapperKeyDown(event)"
+                @keydown="onFilterWrapperKeyDown($event)"
             ></div>
         </div>
     `,
