@@ -10,101 +10,30 @@
             "url": "/community/",
             "absoluteUrl": true,
             "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "AG Grid Content",
-        "showInCollapsed": true,
-        "items": [
-          {
-            "title": "Videos",
-            "url": "/community/videos/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
           },
           {
-            "title": "Events",
-            "url": "/community/events/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
-          },
-          {
-            "title": "Podcasts",
-            "url": "/community/podcasts/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
-          },
-          {
-            "title": "Blog",
-            "url": "https://blog.ag-grid.com",
-            "showInCollapsed": true,
+            "title": "News & Updates",
+            "url": "/community/news-updates/",
             "absoluteUrl": true,
-            "newWindow": true
+            "showInCollapsed": true
           },
-          {
-            "title": "Meet the Team",
-            "url": "/community/meet-the-team/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
-          },
-          {
-            "title": "Samples & Demos",
-            "url": "/community/samples-demos/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
-          }
-        ]
-      },
-      {
-        "title": "Community Content",
-        "items": [
           {
             "title": "Showcase",
             "url": "/community/showcase/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
+            "absoluteUrl": true,
+            "showInCollapsed": true
           },
           {
-            "title": "Wrappers & Integrations",
-            "url": "/community/wrappers-integrations/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
+            "title": "Tools & Extensions",
+            "url": "/community/tools-extensions/",
+            "absoluteUrl": true,
+            "showInCollapsed": true
           },
           {
-            "title": "Utilities & Extensions",
-            "url": "/community/utilities-extensions/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
-          },
-          {
-            "title": "Blogs & Tutorials",
-            "url": "/community/blogs-tutorials/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
-          },
-          {
-            "title": "Friends & Partners",
-            "url": "/community/friends-partners/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
-          },
-          {
-            "title": "Sponsorships",
-            "url": "/community/sponsorships/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
-          }
-        ]
-      },
-        {
-            "title": "Get Involved",
-            "items": [
-          {
-            "title": "Submit Your Content",
-            "url": "/community/submit-content/",
-            "showInCollapsed": true,
-            "absoluteUrl": true
+            "title": "Community Content",
+            "url": "/community/content/",
+            "absoluteUrl": true,
+            "showInCollapsed": true
           }
         ]
       }
