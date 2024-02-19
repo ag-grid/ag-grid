@@ -8,7 +8,7 @@ integrates with the grid, requiring minimal effort from developers.
 
 ## Built-In Charting
 
-Just set `enableCharts=true` to [allow users to create charts](/integrated-charts-user-created/) from inside the grid.
+Just set `enableCharts=true` to [create charts](/integrated-charts-user-created/) from inside the grid.
 
 <image-caption src="integrated-charts/resources/built-in-charting.gif" alt="Built-In Charting" auto="true" maxWidth="95%" centered="true" toggledarkmode="true"></image-caption>
 
@@ -21,6 +21,8 @@ Any updates within the grid, including operations such as sorting and filtering,
 ## Extensive Chart Types
 
 An ever-expanding selection of chart types are provided.
+
+<image-caption src="integrated-charts/resources/extensive-chart-types.gif" alt="Extensive Chart Types" auto="true" maxWidth="95%" centered="true" toggledarkmode="true"></image-caption>
 
 ## Highly Interactive 
 
