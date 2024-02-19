@@ -1,6 +1,5 @@
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired } from "../../../context/context";
 import { DragAndDropService, DragItem, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
 import { Events } from "../../../eventKeys";
@@ -15,11 +14,10 @@ import { HoverFeature } from "../hoverFeature";
 import { HeaderComp, IHeader, IHeaderParams } from "./headerComp";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
-import { getElementSize, getInnerWidth } from "../../../utils/dom";
+import { getElementSize } from "../../../utils/dom";
 import { SortDirection } from "../../../entities/colDef";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
-import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 import { WithoutGridCommon } from "../../../interfaces/iCommon";
 import { ColumnHeaderMouseOverEvent, ColumnHeaderMouseLeaveEvent } from "../../../events";
 import { Beans } from "../../../rendering/beans";
@@ -34,8 +32,6 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
 type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Column, ResizeFeature> {
-
-    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
 
     private refreshFunctions: (() => void)[] = [];
     private selectAllFeature: SelectAllFeature;
@@ -102,37 +98,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
 
-    protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void {
+    protected resizeHeader(delta: number, shiftKey: boolean): void {
         if (!this.column.isResizable()) { return; }
-
-        const pinned = this.column.getPinned();
-        const isRtl = this.gridOptionsService.get('enableRtl');
 
         const actualWidth = this.column.getActualWidth();
         const minWidth = this.column.getMinWidth() ?? 0;
         const maxWidth = this.column.getMaxWidth() ?? Number.MAX_SAFE_INTEGER;
     
-        let isLeft = direction === HorizontalDirection.Left;
-
-        if (pinned) {
-            if (isRtl !== (pinned === 'right')) {
-                isLeft = !isLeft;
-            }
-        }
-
-        const diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
-
-        const newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
-
-        if (pinned) {
-            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
-
-            if (leftWidth + rightWidth + diff > bodyWidth) {
-                return;
-            }
-        }
+        const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
 
         this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
     }
