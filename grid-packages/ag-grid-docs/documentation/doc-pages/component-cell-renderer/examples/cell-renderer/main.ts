@@ -51,22 +51,21 @@ function getColumnDefs() {
       headerName: 'Month',
       field: 'Month',
       width: 75,
-      cellStyle: { backgroundColor: '#CC222244' },
     },
     {
-      headerName: 'Max Temp (˚C)',
+      headerName: 'Max Temp',
       field: 'Max temp (C)',
       width: 120,
       cellRenderer: deltaIndicator, // Function cell renderer
     },
     {
-      headerName: 'Min Temp (˚C)',
+      headerName: 'Min Temp',
       field: 'Min temp (C)',
       width: 120,
       cellRenderer: deltaIndicator, // Function cell renderer
     },
     {
-      headerName: 'Days of Air Frost',
+      headerName: 'Frost',
       field: 'Days of air frost (days)',
       width: 233,
       cellRenderer: DaysFrostRenderer, // Component Cell Renderer
@@ -76,7 +75,7 @@ function getColumnDefs() {
       },
     },
     {
-      headerName: 'Days Sunshine',
+      headerName: 'Sunshine',
       field: 'Sunshine (hours)',
       width: 190,
       cellRenderer: daysSunshineRenderer,
@@ -85,7 +84,7 @@ function getColumnDefs() {
       },
     },
     {
-      headerName: 'Rainfall (10mm)',
+      headerName: 'Rainfall',
       field: 'Rainfall (mm)',
       width: 180,
       cellRenderer: rainPerTenMmRenderer,

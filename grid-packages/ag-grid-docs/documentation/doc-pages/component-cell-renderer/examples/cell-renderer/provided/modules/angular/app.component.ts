@@ -145,8 +145,7 @@ export class AppComponent {
             {
                 headerName: "Month",
                 field: "Month",
-                width: 75,
-                cellStyle: { backgroundColor: "#CC222244" }
+                width: 75
             },
             {
                 headerName: "Max Temp (\u02DAC)",
