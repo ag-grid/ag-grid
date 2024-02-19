@@ -205,6 +205,9 @@ p.name {
     }
 }
 @media screen and (min-width: $breakpoint-pricing-medium) {
+    .toggleFeatureBreakdownButton {
+        display: none;
+    }
     .license:nth-child(3) {
         border-bottom: none;
         border-bottom-left-radius: 0;
@@ -215,23 +218,11 @@ p.name {
         border-right: none;
     }
 
-    .toggleFeatureBreakdownButton {
-        display: none;
-    }
 
     .mobileFeatureMatrix {
         display: none;
         padding-top: $spacing-size-4;
     }
-}
-
-.toggleFeatureBreakdownButton {
-    display: block;
-    text-align: center;
-    color: var(--color-link);
-    font-weight: var(--text-semibold);
-    cursor: pointer;
-    user-select: none;
 }
 
 .mobileFeatureMatrix {
@@ -242,4 +233,15 @@ p.name {
 .mobileFeatureMatrix h4 {
     padding-left: $spacing-size-3;
     padding-top: $spacing-size-4;
+}
+
+@media screen and (max-width: $breakpoint-pricing-medium) {
+.toggleFeatureBreakdownButton {
+    display: block;
+    text-align: center;
+    color: var(--color-link);
+    font-weight: var(--text-semibold);
+    cursor: pointer;
+    user-select: none;
+}
 }

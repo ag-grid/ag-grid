@@ -30,6 +30,13 @@
     border-radius: 24px;
     fill: var(--color-util-brand-700);
     background: color-mix(in srgb, var(--color-util-brand-700), var(--color-bg-primary) 95%);
+    transition: all 0.3s;
+    opacity: 1;
+}
+
+.tick span {
+    transition: all 0.3s;
+    opacity: 1
 }
 
 .dash {

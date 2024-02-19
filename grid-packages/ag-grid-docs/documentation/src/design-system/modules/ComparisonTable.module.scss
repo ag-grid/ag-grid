@@ -74,6 +74,7 @@
 
 .subGroup {
     transition: background-color $transition-default-timing;
+    transition: all 0.3s;
 
     .row .cell {
         padding-top: $spacing-size-4;
@@ -110,6 +111,7 @@
 
     &.isOpen .subGroupHeader .cell:not(:first-child) span {
         opacity: 0;
+        transition: all 0.3s;
     }
 }
 
