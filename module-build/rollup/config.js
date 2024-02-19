@@ -132,7 +132,8 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                     inputMainFile: './esm-main-charts-enterprise.auto.js',
                     format: 'es',
                     env: 'development',
-                    extension: '-charts-enterprise.auto.esm.js',
+                    chartsEnterprise: true,
+                    extension: '.auto.esm.js',
                     useEsmEs5: true,
                     config: {
                         external: id => bundlePrefix === 'ag-grid-enterprise' ? 'ag-grid-community' === id || id.startsWith('@ag-grid-community') : false
@@ -158,7 +159,8 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                     inputMainFile: './esm-main-charts-enterprise.auto.js',
                     format: 'es',
                     env: 'production',
-                    extension: '-charts-enterprise.auto.esm.min.js',
+                    chartsEnterprise: true,
+                    extension: '.auto.esm.min.js',
                     useEsmEs5: true,
                     config: {
                         external: id => bundlePrefix === 'ag-grid-enterprise' ? 'ag-grid-community' === id || id.startsWith('@ag-grid-community') : false
@@ -185,7 +187,8 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                     inputMainFile: './esm-main-charts-enterprise.complete.js',
                     format: 'es',
                     env: 'development',
-                    extension: '-charts-enterprise.auto.complete.esm.js'
+                    chartsEnterprise: true,
+                    extension: '.auto.complete.esm.js'
                 });
                 entries.push({
                     // like the umd bundles in that every is in here - both community and enterprise (if doing @ag-grid-enterprise/all-modules)
@@ -195,7 +198,8 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
                     inputMainFile: './esm-main-charts-enterprise.complete.js',
                     format: 'es',
                     env: 'production',
-                    extension: '-charts-enterprise.auto.complete.esm.min.js'
+                    chartsEnterprise: true,
+                    extension: '.auto.complete.esm.min.js'
                 });
             }
         }
@@ -235,6 +239,10 @@ function genConfig(build, sourceDirectory, moduleName) {
           * @license ${packageJson.license}
           */`;
 
+    let file = path.resolve(sourceDirectory, `./dist/${moduleName}${build.extension}`);
+    if(build.chartsEnterprise) {
+        file = path.resolve(sourceDirectory, `./dist/ag-grid-charts-enterprise${build.extension}`);
+    }
     const config = {
         ...(build.config ? build.config : {}),
         input: path.resolve(sourceDirectory, build.inputMainFile),
@@ -242,7 +250,7 @@ function genConfig(build, sourceDirectory, moduleName) {
             nodeResolve({dedupe: ['ag-charts-community'], useEsmEs5: build.useEsmEs5})      // for utils package - defaulting to use index.js
         ].concat(build.plugins || []),
         output: {
-            file: path.resolve(sourceDirectory, `./dist/${moduleName}${build.extension}`),
+            file,
             format: build.format,
             banner,
             name: build.moduleName

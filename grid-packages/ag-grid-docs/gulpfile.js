@@ -57,7 +57,7 @@ const populateDevFolder = () => {
 
     const packageCommunity = createCopyTask('../../grid-packages/ag-grid-community/**/*.*', '../../grid-packages/ag-grid-community/', 'ag-grid-community');
     const packageEnterprise = createCopyTask('../../grid-packages/ag-grid-enterprise/**/*.*', '../../grid-packages/ag-grid-enterprise/', 'ag-grid-enterprise');
-    const packageGridChartsEnterprise = createCopyTask('../../grid-packages/ag-grid-enterprise-charts-enterprise/**/*.*', '../../grid-packages/ag-grid-enterprise-charts-enterprise/', 'ag-grid-enterprise-charts-enterprise');
+    const packageGridChartsEnterprise = createCopyTask('../../grid-packages/ag-grid-charts-enterprise/**/*.*', '../../grid-packages/ag-grid-charts-enterprise/', 'ag-grid-charts-enterprise');
     const packageAngular = createCopyTask('../../grid-packages/ag-grid-angular/dist/ag-grid-angular/**/*.*', '../../grid-packages/ag-grid-angular/', 'ag-grid-angular');
     const packageReact = createCopyTask('../../grid-packages/ag-grid-react/**/*.*', '../../grid-packages/ag-grid-react/', 'ag-grid-react');
     const packageVue = createCopyTask('../../grid-packages/ag-grid-vue/**/*.*', '../../grid-packages/ag-grid-vue/', 'ag-grid-vue');
@@ -92,7 +92,7 @@ const processSource = () => {
                 './src/**/*',
                 '!./src/dist/ag-grid-community/',
                 '!./src/dist/ag-grid-enterprise/',
-                '!./src/dist/ag-grid-enterprise-charts-enterprise/',
+                '!./src/dist/ag-grid-charts-enterprise/',
                 '!./src/dist/@ag-grid-community/',
                 '!./src/dist/@ag-grid-enterprise/',
                 `!${DEV_DIR}`

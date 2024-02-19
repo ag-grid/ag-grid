@@ -66,7 +66,7 @@ const webpackTask = (minify, styles, libraryTarget, chartsEnterprise) => {
 
     const isUmd = libraryTarget === 'umd';
 
-    let fileName = `ag-grid-enterprise${chartsEnterprise ? '-charts-enterprise' : ''}`;
+    let fileName = `ag-grid-${chartsEnterprise ? 'charts-' : ''}enterprise`;
     fileName += isUmd ? '' : `.${libraryTarget}`;
     fileName += minify ? '.min' : '';
     fileName += styles ? '' : '.noStyle';
