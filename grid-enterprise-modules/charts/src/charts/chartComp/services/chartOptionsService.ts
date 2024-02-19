@@ -2,6 +2,7 @@ import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon 
 import { AgCartesianAxisType, AgCharts, AgChartOptions, AgPolarAxisType } from "ag-charts-community";
 
 import { ChartController } from "../chartController";
+import { flatMap } from '../utils/array';
 import { AgChartActual } from "../utils/integration";
 import { deepMerge, get, set } from "../utils/object";
 import { ChartSeriesType, VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
@@ -53,28 +54,33 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public setAxisProperty<T = string>(expression: string, value: T) {
+        this.setAxisProperties([{ expression, value }]);
+    }
+
+    public setAxisProperties<T = string>(properties: Array<{ expression: string, value: T }>) {
         const chart = this.getChart();
-        let chartOptions = {};
-
-        const relevantAxes = chart.axes?.filter((axis: any) => {
-            const parts = expression.split('.');
-            let current = axis;
-            for (const part of parts) {
-                if (!(part in current)) {
-                    return false;
+        const chartOptions = flatMap(properties, ({ expression, value }) => {
+            // Only apply the property to axes that declare the property on their prototype chain
+            const relevantAxes = chart.axes?.filter((axis) => {
+                const parts = expression.split('.');
+                let current: any = axis;
+                for (const part of parts) {
+                    if (!(part in current)) {
+                        return false;
+                    }
+                    current = current[part];
                 }
-                current = current[part];
-            }
-            return true;
-        });
-
-        relevantAxes?.forEach((axis: any) => {
-            const updateOptions = this.getUpdateAxisOptions<T>(axis, expression, value);
-            if (updateOptions) {
-                chartOptions = deepMerge(chartOptions, updateOptions);
-            }
-        });
-
+                return true;
+            });
+            if (!relevantAxes) return [];
+            return relevantAxes.map((axis) => this.getUpdateAxisOptions<T>(axis, expression, value));
+        })
+        // Combine all property updates into a single merged object
+        .reduce(
+            (chartOptions, axisOptions): AgChartOptions => deepMerge(chartOptions, axisOptions),
+            {} as AgChartOptions
+        );
+    
         if (Object.keys(chartOptions).length > 0) {
             this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();

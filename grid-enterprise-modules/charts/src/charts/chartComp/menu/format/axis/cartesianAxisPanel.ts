@@ -73,13 +73,22 @@ export class CartesianAxisPanel extends Component {
             .setTitle(this.translate("axis"))
             .toggleGroupExpand(this.isExpandedOnInit)
             .hideEnabledCheckbox(true);
-
+        
+        // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line settings are
+        // changed, the value for `line.enabled` is inferred based on the current `line.width` value.
+    
         this.axisColorInput
             .setLabel(this.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth("flex")
             .setValue(this.chartOptionsService.getAxisProperty("line.color"))
-            .onValueChange(newColor => this.chartOptionsService.setAxisProperty("line.color", newColor));
+            .onValueChange(newColor => {
+                const isLineEnabled = this.chartOptionsService.getAxisProperty<number>("line.width") > 0;
+                this.chartOptionsService.setAxisProperties<string | null | undefined | boolean>([
+                    { expression: "line.enabled", value: isLineEnabled }, 
+                    { expression: "line.color", value: newColor }, 
+                ]);
+            });
 
         const currentValue = this.chartOptionsService.getAxisProperty<number>("line.width");
         this.axisLineWidthSlider
@@ -87,7 +96,10 @@ export class CartesianAxisPanel extends Component {
             .setLabel(this.translate("thickness"))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
-            .onValueChange(newValue => this.chartOptionsService.setAxisProperty("line.width", newValue));
+            .onValueChange(newValue => this.chartOptionsService.setAxisProperties<number | boolean>([
+                { expression: "line.enabled", value: (newValue !== 0) },
+                { expression: "line.width", value: newValue },
+            ]));
     }
 
     private initAxisTicks() {
