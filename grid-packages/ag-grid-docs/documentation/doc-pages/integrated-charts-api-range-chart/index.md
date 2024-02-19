@@ -39,7 +39,6 @@ location other than the grid's popup window. Note the following:
 
 - The charts are placed in `div` elements outside the grid.
 - The two pie charts are showing aggregations rather than charting individual rows.
-- Clicking on a chart highlights the range in the grid for which the chart is based.
 - The bar chart is sensitive to changes in the rows. For example if you sort, the chart updates to always chart the first five rows.
 - All data is editable in the grid. Changes to the grid data is reflected in the charts.
 - The pie charts have legends on the right side. This is configured in the `chartThemeOverrides`.
