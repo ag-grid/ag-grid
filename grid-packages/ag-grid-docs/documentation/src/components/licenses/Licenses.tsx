@@ -94,6 +94,7 @@ const Price = ({ priceFullDollars, launchPrice }) => {
             </p>
 
             { hasCost && <p className={styles.developerText}>per developer</p> }
+            { !hasCost && <p className={styles.developerText}>under MIT-license</p> }
         </div>
     );
 };

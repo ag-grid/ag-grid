@@ -14,6 +14,7 @@ export class ColumnAnimationService extends BeanStub {
     private executeLaterFuncs: Function[] = [];
 
     private active = false;
+    private suppressAnimation = false;
 
     private animationThreadCount = 0;
 
@@ -23,7 +24,11 @@ export class ColumnAnimationService extends BeanStub {
     }
 
     public isActive(): boolean {
-        return this.active;
+        return this.active && !this.suppressAnimation;
+    }
+
+    public setSuppressAnimation(suppress: boolean): void {
+        this.suppressAnimation = suppress;
     }
 
     public start(): void {

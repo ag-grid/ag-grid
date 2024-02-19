@@ -47,15 +47,11 @@ This example combines all of the above techniques to style the column menus. Cli
 }
 
 .ag-theme-quartz .ag-menu {
-    background-color: rgb(244, 220, 250); /* light purple */
+    background-color: #55AA77;
 }
 
-.ag-theme-quartz .ag-menu-header {
-    background-color: rgb(100, 32, 119); /* dark purple */
-}
-
-.ag-theme-quartz .ag-menu-header .ag-icon {
-    color: white;
+.ag-theme-quartz .ag-tabs-header {
+    background-color: #AA5577;
 }
 ```
 

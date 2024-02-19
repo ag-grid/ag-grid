@@ -151,7 +151,7 @@ const TableRow = ({ datum, cellRenderer, columns, id }) => {
         <div className={classnames(styles.subGroup, subGroupOpen ? styles.isOpen : undefined)}>
             <header className={styles.subGroupHeader} onClick={() => { setSubGroupOpen(!subGroupOpen) }}>
                 <div className={classnames(styles.cell)}>
-                    <span>{datum.name} <Icon name="chevronDown"/></span>
+                    <span className={styles.subGroupTitleIcon}>{datum.name} <div className={styles.subGroupIconWrapper}><Icon name="chevronDown"/></div></span>
                 </div>
                 <div className={classnames(styles.cell)}><Feature value={ datum.items.every(item => item.community) } /></div>
                 <div className={classnames(styles.cell)}><Feature value={ true } /></div>

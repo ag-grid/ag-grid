@@ -6,8 +6,20 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'day', maxWidth: 90 },
-    { field: 'month', chartDataType: 'category' },
+    { field: 'day', maxWidth: 120 },
+    { field: 'month', chartDataType: 'category', filterParams: {
+        comparator: (a: string, b: string) => {
+          const months: { [key: string]: number } = {
+            jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+            jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12
+          };
+          const valA = months[a.toLowerCase()];
+          const valB = months[b.toLowerCase()];
+          if (valA === valB) return 0;
+          return valA > valB ? 1 : -1;
+        }
+      }
+    },
     { field: 'rain', chartDataType: 'series' },
     { field: 'pressure', chartDataType: 'series' },
     { field: 'temp', chartDataType: 'series' },
@@ -18,8 +30,10 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     editable: true,
     filter: true,
+    floatingFilter: true,
   },
   enableRangeSelection: true,
+  columnMenu: 'new',
   enableCharts: true,
   popupParent: document.body,
   chartThemeOverrides: {
@@ -45,6 +59,9 @@ const gridOptions: GridOptions = {
       series: {
         strokeWidth: 5,
         strokeOpacity: 0.8,
+        marker: {
+          enabled: false
+        },
       },
     },
   },
@@ -53,8 +70,6 @@ const gridOptions: GridOptions = {
   },
   onFirstDataRendered,
 };
-
-
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({

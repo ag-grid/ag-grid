@@ -170,7 +170,7 @@ const gridOptions = {
 | ]);
 </snippet>
 
-Notice from the snippet above that it's possible to define groups in the tool panel that don't exist in the grid. Also note that filters can be omitted or positioned in a different order however note that all referenced columns (that contain filters) must already exist in the grid.
+Notice from the snippet above that it's possible to define groups in the tool panel that don't exist in the grid. Also note that filters can be omitted or positioned in a different order. However note that all referenced columns (that contain filters) must already exist in the grid.
 
 <note>
 When providing a custom layout it is recommend to enable `suppressSyncLayoutWithGrid` in the

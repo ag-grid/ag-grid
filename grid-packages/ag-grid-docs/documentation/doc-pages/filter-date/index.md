@@ -4,7 +4,7 @@ title: "Date Filter"
 
 Date Filters allow you to filter date data. 
 
-<image-caption src="filter-date/resources/date-filter.png" alt="Date Filter" width="12.5rem" centered="true" toggleDarkMode="true"></image-caption>
+<image-caption src="filter-date/resources/date-filter.png" alt="Date Filter" centered="true" toggleDarkMode="true"></image-caption>
 
 ## Enabling Date Filters
 
