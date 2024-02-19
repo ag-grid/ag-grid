@@ -804,7 +804,7 @@ And then adding `cellRenderer: CompanyLogoRenderer` to the 'company' column defi
 <snippet transform={false} language="jsx">
 |columnDefs: [
 |  {
-|    field: "country",
+|    field: "company",
 |    cellRenderer: CompanyLogoRenderer
 |  },
 |  // ...
@@ -958,7 +958,7 @@ And then adding the `cellRenderer` property to the 'company' column:
 |  },
 |  setup() {
 |    const colDefs = ref([
-|      { field: "country", cellRenderer: "companyLogoRenderer" },
+|      { field: "company", cellRenderer: "companyLogoRenderer" },
 |      // ...
 |    ]);
 |    // ...
