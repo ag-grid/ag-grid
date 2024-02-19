@@ -48,7 +48,13 @@ To turn off Column Virtualisation set the grid property `suppressColumnVirtualis
 
 Note if `suppressRowVirtualisation=true`, then there is no Row Buffer and the `rowBuffer` property is ignored.
 
-The example below demonstrates these two properties. Note that each Cell uses a Value Formatter that prints to the console when it is used, which equates to each time a Cell is created. Note that it is called 900 times when the grid starts, as there are 900 Cells of data (9 Columns x 100 Rows). If you were to edit this example, and remove `suppressColumnVirtualisation` and `suppressRowVirtualisation`, you would observe the Cells getting created as the grid is scrolled.
+The example below demonstrates these two properties.
+
+- Note that each Cell uses a Value Formatter that prints to the console when it is used, which equates to each time a Cell is created. 
+
+- Open the console and note that the Value Formatter is called 900 times when the grid is rendered, as there are 900 Cells of data (9 Columns x 100 Rows). Note that scrolling the grid doesn’t call Value Formatters anymore.
+
+ - If you were to edit this example, remove suppressColumnVirtualisation and suppressRowVirtualisation, and re-run the example. Open the console and note the Cells are only getting created and the Value Formatter getting called as the grid is scrolled.
 
 <grid-example title='Suppress Virtualisation' name='suppress-virtualisation' type='generated'></grid-example>
 
