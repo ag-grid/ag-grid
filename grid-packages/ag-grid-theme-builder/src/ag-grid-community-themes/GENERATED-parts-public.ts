@@ -161,7 +161,6 @@ export const borders = definePart<BordersParam>({
 
 import quartzIconsCssImport from './css/quartz-icons/quartz-icons.css?inline';
 import quartzIconsEmbeddedTsImport from './css/quartz-icons/quartz-icons-embedded';
-import quartzIconsFragmentsImport from './css/quartz-icons/quartz-icons-fragments';
 
 export const quartzIcons = definePart<QuartzIconsParam>({
   partId: 'quartz-icons',
@@ -180,7 +179,6 @@ export const quartzIcons = definePart<QuartzIconsParam>({
     iconStrokeWidth: '1.5px',
   },
   css: [quartzIconsCssImport, quartzIconsEmbeddedTsImport],
-  icons: quartzIconsFragmentsImport,
 });
 
 export type VariableTypes = {

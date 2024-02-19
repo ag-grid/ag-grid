@@ -24,6 +24,8 @@ export type ParamEditorProps = {
 export const ParamEditor = ({ param }: ParamEditorProps) => {
   const [value, setValue] = useParamAtom(param);
 
+  if (value == null) return null;
+
   const renderEditor = (): ReactElement => {
     const { meta } = param;
     switch (meta.type) {

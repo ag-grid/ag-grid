@@ -1,7 +1,7 @@
 import { logErrorMessageOnce } from '../model/utils';
 import { VariableTypes } from './GENERATED-parts-public';
 import commonStructuralCSS from './css/common-structural.css?inline';
-import { AnyPart, Part } from './theme-types';
+import { AnyPart, CssFragment, Part } from './theme-types';
 import { kebabCase, logErrorMessage, presetParamName } from './theme-utils';
 
 export type Theme = {
@@ -89,12 +89,12 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
   for (const part of parts) {
     if (part.css) {
       mainCSS.push(`/* Part ${part.partId} */`);
-      mainCSS.push(...part.css.map(cssPartToString));
+      mainCSS.push(...part.css.map((p) => cssPartToString(p, mergedParams)));
     }
     for (const [property, css] of Object.entries(part.conditionalCss || {})) {
       if (css && mergedParams[property]) {
         mainCSS.push(`/* Sub-part ${part.partId}.${property} */`);
-        mainCSS.push(cssPartToString(css));
+        mainCSS.push(cssPartToString(css, mergedParams));
       }
     }
   }
@@ -115,7 +115,8 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
   return result;
 };
 
-const cssPartToString = (p: string | (() => string)): string => (typeof p === 'function' ? p() : p);
+const cssPartToString = (p: CssFragment, params: Record<string, any>): string =>
+  typeof p === 'function' ? p(params) : p;
 
 // TODO get type from metadata - assume params are strings, include a list of non-string params in definePart
 const _tmpExpectedType = (property: string) =>

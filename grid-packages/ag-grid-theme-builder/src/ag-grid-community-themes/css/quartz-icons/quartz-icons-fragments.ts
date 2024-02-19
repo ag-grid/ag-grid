@@ -1,4 +1,4 @@
-const agIconNameToSvgFragment: Record<string, string | undefined> = {
+export const agIconNameToSvgFragment: Record<string, string | undefined> = {
   aggregation: '<path d="M18 7V4H6l6 8-6 8h12v-3"/>',
   arrows:
     '<polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/>',
@@ -62,7 +62,7 @@ const agIconNameToSvgFragment: Record<string, string | undefined> = {
   unlinked:
     '<path d="M9 17H7A5 5 0 0 1 7 7"/><path d="M15 7h2a5 5 0 0 1 4 8"/><line x1="8" x2="12" y1="12" y2="12"/><line x1="2" x2="22" y1="2" y2="22"/>',
   up: '<path d="m5 12 7-7 7 7"/><path d="M12 19V5"/>',
-  grip: '<circle cx="5" cy="8" r="0.5"/><circle cx="12" cy="8" r="0.5"/><circle cx="19" cy="8" r="0.5"/><circle cx="5" cy="16" r="0.5"/><circle cx="12" cy="16" r="0.5"/><circle cx="19" cy="16" r="0.5"/>',
+  grip: '<circle vector-effect="non-scaling-stroke" cx="5" cy="8" r="0.5"/><circle cx="12" cy="8" r="0.5"/><circle cx="19" cy="8" r="0.5"/><circle cx="5" cy="16" r="0.5"/><circle cx="12" cy="16" r="0.5"/><circle cx="19" cy="16" r="0.5"/>',
 };
 
 const wrapSvgContent = (name: string): string => {
@@ -70,8 +70,7 @@ const wrapSvgContent = (name: string): string => {
   if (!svgFragment) {
     throw new Error(name);
   }
-  // TODO remove these extra attributes when we're using the theme grid option for icons
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon ag-icon-${name}" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-width="2.34" viewBox="0 0 24 24">${svgFragment}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon ag-icon-${name}" viewBox="0 0 24 24">${svgFragment}</svg>`;
 };
 
 export default Object.fromEntries(
