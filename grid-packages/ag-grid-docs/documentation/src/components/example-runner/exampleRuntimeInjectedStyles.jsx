@@ -110,6 +110,25 @@ html[data-color-scheme='dark'] body {
   color: #fff;
 }
 
+html textarea {
+  padding: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: 8px;
+  color: #0c111d;
+  border: 1px solid rgba(0,0,0, 0.2);
+}
+
+html[data-color-scheme='dark'] textarea {
+  border: 1px solid rgba(255,255,255, 0.2);
+  background-color: #0c111d;
+  color: #fff;
+}
+
+html[data-color-scheme='dark'] textarea::placeholder {
+  color: #98a2b3;
+}
+
 #myChart, .my-chart {
     margin-top: 8px;
     margin-bottom: 8px;

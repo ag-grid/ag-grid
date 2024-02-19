@@ -459,9 +459,12 @@ export class RowRenderer extends BeanStub {
     public redrawRow(rowNode: RowNode, suppressEvent = false) {
         if (rowNode.sticky) {
             this.stickyRowFeature.refreshStickyNode(rowNode);
-        } else if (rowNode.detail && this.cachedRowCtrls.has(rowNode)) {
+        } else if (this.cachedRowCtrls?.has(rowNode)) {
             // delete row from cache if it needs redrawn
+            // if it's in the cache no updates need fired, as nothing
+            // has been rendered
             this.cachedRowCtrls.removeRow(rowNode);
+            return;
         } else {
             const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | { [idx: number]: RowCtrl }) => {
                 const ctrl = dataStruct[rowNode.rowIndex!];

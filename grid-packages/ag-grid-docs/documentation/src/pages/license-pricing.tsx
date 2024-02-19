@@ -1,6 +1,6 @@
 import styles from '@design-system/modules/license-pricing.module.scss';
 import classnames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { InfoEmailLink } from '../components/InfoEmailLink';
 import { Licenses } from '../components/licenses/Licenses';
 import ChartsActive from '../images/inline-svgs/pricing/charts-active.svg';
@@ -25,10 +25,16 @@ interface Props {
 
 export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
     const [showFullWidthBar, setShowFullWidthBar] = useState(false);
-
+    
+    const contactSalesRef = useRef(null); // Step 1: Create a ref for the contactSales div
+    
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 520) {
+            // Step 2: Determine the position of the contactSales div
+            const contactSalesPosition = contactSalesRef.current ? contactSalesRef.current.getBoundingClientRect().top : 0;
+            
+            // Check if contactSales div is at the top of the viewport or if the scroll is beyond a certain point
+            if (window.scrollY > 390 && contactSalesPosition > 0) {
                 setShowFullWidthBar(true);
             } else {
                 setShowFullWidthBar(false);
@@ -106,7 +112,7 @@ export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
                             <div className={styles.switchContainer}>
                                 <div className={styles.gradient}></div>
                                 {/* <ToggleBackground className={styles.toggleBackground} /> */}
-                                <hr className={styles.horizontalRule} />
+                                {/* <hr className={styles.horizontalRule} /> */}
                                 <div className={styles.toggleWrapper}>
                                     <input
                                         type="checkbox"
@@ -158,7 +164,7 @@ export const LicensePricing = ({ initialTab, isWithinIframe }: Props) => {
                         })}
                         </div>
 
-                        <div className={styles.contactSales}>
+                        <div ref={contactSalesRef} className={styles.contactSales}>
                     <h3 className="text-2xl">Need help?</h3>
 
                     <p className="text-secondary">

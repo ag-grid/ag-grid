@@ -100,15 +100,48 @@ See the [Codemods](/codemods/) documentation for more details.
 
 This release includes the following deprecations:
 
+<framework-specific-section frameworks="react">
+<h3 id="react">React</h2>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|- `AgReactUiProps` - deprecated, use `AgGridReactProps` instead.
+|- `AgGridReactProps.disableStaticMarkup`, `AgGridReactProps.legacyComponentRendering` - deprecated, as they are no longer used.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+The following React custom component interfaces are deprecated along with their methods:
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|- `getReactContainerStyle` and `getReactContainerClasses` - deprecated, apply styling directly to the CSS class `.ag-react-container` if needed. 
+|- `IHeaderGroupReactComp` - deprecated, use `IHeaderGroup` instead. 
+|- `IHeaderReactComp` - deprecated, use `IHeader` instead. 
+|- `IDateReactComp` - deprecated, use `IDate` instead. 
+|- `IFilterReactComp` - deprecated, use `IFilter` instead. 
+|- `IFloatingFilterReactComp` - deprecated, use `IFloatingFilter` instead.
+|- `ICellRendererReactComp` - deprecated, use `ICellRenderer` instead.
+|- `ICellEditorReactComp` - deprecated, use `ICellEditor` instead.
+|- `ILoadingCellRendererReactComp` - deprecated, no interface needed.
+|- `ILoadingOverlayReactComp` - deprecated, use `ILoadingOverlay` instead.
+|- `INoRowsOverlayReactComp` - deprecated, use `INoRowsOverlay` instead.
+|- `IStatusPanelReactComp` - deprecated, use `IStatusPanel` instead.
+|- `IToolPanelReactComp` - deprecated, use `IToolPanel` instead.
+|- `ITooltipReactComp` - deprecated, no interface needed.
+</framework-specific-section>
+
 ### GridOptions
 
 * `gridOptions.cellFlashDelay` - deprecated, use `gridOptions.cellFlashDuration` instead.
 * `gridOptions.cellFadeDelay` - deprecated, use `gridOptions.cellFadeDuration` instead.
 * `colDef.floatingFilterComponentParams.suppressFilterButton` - deprecated, use `colDef.suppressFloatingFilterButton` instead.
+* `suppressServerSideInfiniteScroll` - deprecated without replacement.
+* `serverSideSortOnServer` - deprecated without replacement.
+* `serverSideFilterOnServer` - deprecated without replacement.
 
 ### Column Filters
 
-* `api.getFilterInstance` - deprecated, use `api.getColumnFilterInstance` instead.
+* `api.getFilterInstance` - deprecated, use `api.getColumnFilterInstance` instead. To get/set individual filter models, use `api.getColumnFilterModel` or `api.setColumnFilterModel` instead. 
 
 ### Column API
 
@@ -118,6 +151,7 @@ This release includes the following deprecations:
 
 ### Grid API 
 
+* `getModel` - deprecated.
 * `getModel().getRow(index)` - deprecated, use `api.getDisplayedRowAtIndex(index)` instead.
 * `getModel().getRowNode(id)` - deprecated, use `api.getRowNode(id)` instead.
 * `getModel().getRowCount()` - deprecated, use `api.getDisplayedRowCount()` instead.
@@ -128,15 +162,20 @@ This release includes the following deprecations:
 * `flashCells`, `flashDelay` and `fadeDelay` params are deprecated in favor of `flashDuration` and `fadeDuration` params.
 * `showColumnMenuAfterButtonClick` - deprecated, use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere.
 * `showColumnMenuAfterMouseClick` - deprecated, use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere.
-* `removeRowGroupColumn` - deprecated, use  `removeRowGroupColumns` to provide the single string input param in an array.
-* `addRowGroupColumn` - deprecated, use `addRowGroupColumns` to provide the single string input param in an array.
-* `setColumnPinned` - deprecated, use `setColumnsPinned` to provide the single string input param in an array.
-* `removePivotColumn` - deprecated, use `removePivotColumns` to provide the single string input param in an array.
-* `addPivotColumn` - deprecated, use `addPivotColumns` to provide the single string input param in an array.
-* `addAggFunc` - deprecated, use `addAggFuncs` to provide the single string input param in an array.
-* `removeValueColumn` - deprecated, use `removeValueColumns` to provide the single string input param in an array.
-* `addValueColumn` - deprecated, use `addValueColumns` to provide the single string input param in an array.
-* `autoSizeColumn` - deprecated, use `autoSizeColumns` to provide the single string input param in an array.
-* `moveColumn` - deprecated, use `moveColumns` to provide the single string input param in an array.
-* `setColumnWidth` - deprecated, use `setColumnWidths` to provide the single string input param in an array.
-* `setColumnVisible` - deprecated, use `setColumnsVisible` to provide the single string input param in an array.
+* `removeRowGroupColumn` - deprecated, use  `removeRowGroupColumns` providing the single string input param in an array instead.
+* `addRowGroupColumn` - deprecated, use `addRowGroupColumns` providing the single string input param in an array instead.
+* `setColumnPinned` - deprecated, use `setColumnsPinned` providing the single string input param in an array instead.
+* `removePivotColumn` - deprecated, use `removePivotColumns` providing the single string input param in an array instead.
+* `addPivotColumn` - deprecated, use `addPivotColumns` providing the single string input param in an array instead.
+* `addAggFunc` - deprecated, use `addAggFuncs` providing the single string input param in an array instead.
+* `removeValueColumn` - deprecated, use `removeValueColumns` providing the single string input param in an array instead.
+* `addValueColumn` - deprecated, use `addValueColumns` providing the single string input param in an array instead.
+* `autoSizeColumn` - deprecated, use `autoSizeColumns` providing the single string input param in an array instead.
+* `moveColumn` - deprecated, use `moveColumns` providing the single string input param in an array instead.
+* `setColumnWidth` - deprecated, use `setColumnWidths` providing the single string input param in an array instead.
+* `setColumnVisible` - deprecated, use `setColumnsVisible` providing the single string input param in an array instead.
+
+### Custom Components
+
+* When implementing a custom date component, `IDate.onParamsUpdated` has been deprecated in favour of `IDate.refresh`.
+* When implementing a custom floating filter component, `IFloatingFilter.onParamsUpdated` has been deprecated in favour of `IFloatingFilter.refresh`.

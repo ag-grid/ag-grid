@@ -4,7 +4,7 @@ title: "Text Filter"
 
 Text Filters allow you to filter string data.
 
-<image-caption src="filter-text/resources/text-filter.png" alt="Text Filter" width="12.5rem" centered="true" toggleDarkMode="true"></image-caption>
+<image-caption src="filter-text/resources/text-filter.png" alt="Text Filter" centered="true" toggleDarkMode="true"></image-caption>
 
 ## Enabling Text Filters
 
