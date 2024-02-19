@@ -1,79 +1,45 @@
 'use strict';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
+import './styles.css';
 import { AgGridReact } from 'ag-grid-react';
 import React, { useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import DaysFrostRenderer from './daysFrostRenderer.jsx';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import './styles.css';
-import { ModuleRegistry } from '@ag-grid-community/core';
 
-// Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-/*
- * It's unlikely you'll use functions that create and manipulate DOM elements like this in an React application, but it
- * demonstrates what is at least possible, and may be preferable in certain use cases
- */
-const createImageSpan = (imageMultiplier, image) => {
-  const resultElement = document.createElement('span');
+const createImageArr = (imageMultiplier, image) => {
+  const arr = [];
   for (let i = 0; i < imageMultiplier; i++) {
-    const imageElement = document.createElement('img');
-    imageElement.src =
-      'https://www.ag-grid.com/example-assets/weather/' + image;
-    resultElement.appendChild(imageElement);
+    const imgSrc = 'https://www.ag-grid.com/example-assets/weather/' + image;
+    arr.push(imgSrc);
   }
-  return resultElement;
+  return arr;
+}
+
+const DeltaRenderer = (params) => {
+  const imgSrc = params.value > 15 ? 'https://www.ag-grid.com/example-assets/weather/fire-plus.png' : 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
+  return (
+    <span>
+      <img src={imgSrc} />
+        {params.value}
+    </span>
+  )
 };
 
-// This is a plain JS (not React) component
-class DeltaIndicator {
-  init(params) {
-    const element = document.createElement('span');
-    const imageElement = document.createElement('img');
-    if (params.value > 15) {
-      imageElement.src =
-        'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
-    } else {
-      imageElement.src =
-        'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
-    }
-    element.appendChild(imageElement);
-    element.appendChild(document.createTextNode(params.value));
-    this.eGui = element;
-  }
-  getGui() {
-    return this.eGui;
-  }
-}
-
-// This is a plain JS (not React) component
-class DaysSunshineRenderer {
-  init(params) {
-    const daysSunshine = params.value / 24;
-    this.eGui = createImageSpan(daysSunshine, params.rendererImage);
-  }
-  getGui() {
-    return this.eGui;
-  }
-}
-
-// This is a plain JS (not React) component
-class RainPerTenMmRenderer {
-  init(params) {
-    const rainPerTenMm = params.value / 10;
-    this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
-  }
-  getGui() {
-    return this.eGui;
-  }
-}
+const IconRenderer = (params) => {
+  const value = params.value / (params.divisor ? params.divisor : 1);
+  const imgSrcArr = createImageArr(value, params.rendererImage);
+  return (
+    <span>
+        {imgSrcArr.map((image, index) => (
+          <img key={index} src={image} />)
+    )}
+    </span>
+  )
+};
 
 const GridExample = () => {
   const [rowData, setRowData] = useState();
-
-  const [frostPrefix, setFrostPrefix] = useState(false);
 
   const columnDefs = useMemo(
     () => [
@@ -86,40 +52,45 @@ const GridExample = () => {
         headerName: 'Max Temp',
         field: 'Max temp (C)',
         width: 120,
-        cellRenderer: DeltaIndicator,
+        cellRenderer: DeltaRenderer,
       },
       {
         headerName: 'Min Temp',
         field: 'Min temp (C)',
         width: 120,
-        cellRenderer: DeltaIndicator,
+        cellRenderer: DeltaRenderer,
       },
       {
         headerName: 'Frost',
         field: 'Days of air frost (days)',
         width: 233,
-        cellRenderer: DaysFrostRenderer,
+        cellRenderer: IconRenderer,
         cellRendererParams: {
           rendererImage: 'frost.png',
-          showPrefix: frostPrefix,
         },
       },
       {
         headerName: 'Sunshine',
         field: 'Sunshine (hours)',
         width: 190,
-        cellRenderer: DaysSunshineRenderer,
-        cellRendererParams: { rendererImage: 'sun.png' },
+        cellRenderer: IconRenderer,
+        cellRendererParams: {
+          rendererImage: 'sun.png',
+          divisor: 24,
+        },
       },
       {
         headerName: 'Rainfall',
         field: 'Rainfall (mm)',
         width: 180,
-        cellRenderer: RainPerTenMmRenderer,
-        cellRendererParams: { rendererImage: 'rain.png' },
+        cellRenderer: IconRenderer,
+        cellRendererParams: {
+          rendererImage: 'rain.png',
+          divisor: 10,
+        },
       },
     ],
-    [frostPrefix]
+    []
   );
 
   const gridRef = useRef(null);
@@ -161,12 +132,6 @@ const GridExample = () => {
       <div className="example-wrapper">
         <div style={{ marginBottom: '5px' }}>
           <button onClick={frostierYear}>Frostier Year</button>
-          <button
-            style={{ marginLeft: '5px' }}
-            onClick={() => setFrostPrefix((oldFrostPrefix) => !oldFrostPrefix)}
-          >
-            Toggle Frost Prefix
-          </button>
         </div>
 
         <div

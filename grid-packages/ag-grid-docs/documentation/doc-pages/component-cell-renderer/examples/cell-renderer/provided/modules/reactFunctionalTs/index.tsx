@@ -1,15 +1,18 @@
 'use strict';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ICellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, ICellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { AgGridReact } from '@ag-grid-community/react';
+import { AgGridReact } from 'ag-grid-react';
 import React, { useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import DaysFrostRenderer, {
-  ImageCellRendererParams,
-} from './daysFrostRenderer';
+import { CustomCellRendererProps } from '@ag-grid-community/react';
 import './styles.css';
+
+export interface ImageCellRendererParams extends CustomCellRendererProps {
+    rendererImage: string;
+    divisor?: number;
+}
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -33,24 +36,12 @@ const DeltaRenderer = (params: ICellRendererParams) => {
   )
 };
 
-const SunshineRenderer = (params: ImageCellRendererParams) => {
-  const daysSunshine = params.value / 24;
-  const sunshineImage = createImageArr(daysSunshine, params.rendererImage);
+const IconRenderer = (params: ImageCellRendererParams) => {
+  const value = params.value / (params.divisor ?? 1);
+  const imgSrcArr = createImageArr(value, params.rendererImage);
   return (
     <span>
-        {sunshineImage.map((image, index) => (
-          <img key={index} src={image} />)
-    )}
-    </span>
-  )
-};
-
-const RainRenderer = (params: ImageCellRendererParams) => {
-  const rainPerTenMm = params.value / 10;
-  const rainImg = createImageArr(rainPerTenMm, params.rendererImage);
-  return (
-    <span>
-        {rainImg.map((image, index) => (
+        {imgSrcArr.map((image, index) => (
           <img key={index} src={image} />)
     )}
     </span>
@@ -59,9 +50,8 @@ const RainRenderer = (params: ImageCellRendererParams) => {
 
 const GridExample = () => {
   const [rowData, setRowData] = useState<any[]>();
-  const [frostPrefix, setFrostPrefix] = useState(false);
 
-  const columnDefs = useMemo<ColDef[]>(
+  const columnDefs = useMemo<(ColDef<any, any> | ColGroupDef<any>)[]>(
     () => [
       {
         headerName: 'Month',
@@ -84,28 +74,33 @@ const GridExample = () => {
         headerName: 'Frost',
         field: 'Days of air frost (days)',
         width: 233,
-        cellRenderer: DaysFrostRenderer,
+        cellRenderer: IconRenderer,
         cellRendererParams: {
           rendererImage: 'frost.png',
-          showPrefix: frostPrefix,
         },
       },
       {
         headerName: 'Sunshine',
         field: 'Sunshine (hours)',
         width: 190,
-        cellRenderer: SunshineRenderer,
-        cellRendererParams: { rendererImage: 'sun.png' },
+        cellRenderer: IconRenderer,
+        cellRendererParams: {
+          rendererImage: 'sun.png',
+          divisor: 24,
+        },
       },
       {
         headerName: 'Rainfall',
         field: 'Rainfall (mm)',
         width: 180,
-        cellRenderer: RainRenderer,
-        cellRendererParams: { rendererImage: 'rain.png' },
+        cellRenderer: IconRenderer,
+        cellRendererParams: {
+          rendererImage: 'rain.png',
+          divisor: 10,
+        },
       },
     ],
-    [frostPrefix]
+    []
   );
 
   const gridRef = useRef<AgGridReact>(null);
@@ -147,12 +142,6 @@ const GridExample = () => {
       <div className="example-wrapper">
         <div style={{ marginBottom: '5px' }}>
           <button onClick={frostierYear}>Frostier Year</button>
-          <button
-            style={{ marginLeft: '5px' }}
-            onClick={() => setFrostPrefix((oldFrostPrefix) => !oldFrostPrefix)}
-          >
-            Toggle Frost Prefix
-          </button>
         </div>
 
         <div

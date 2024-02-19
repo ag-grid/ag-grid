@@ -249,7 +249,6 @@ md-include:renderer-function-vue.md
 
 The example below combines many of the features above and shows the following:
 
-- `Month` column uses `cellStyle` to format each cell in the column with the same style.
 - `Max Temp` and `Min Temp` columns uses a function Cell Component.
 - `Days of Air Frost` column uses the Cell Component that takes a custom prop `showPrefix`.
 - `Days Sunshine` and `Rainfall (10mm)` use functions to display icons.
