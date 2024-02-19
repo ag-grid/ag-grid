@@ -31,6 +31,10 @@ The following artifacts are "`packages`" and are designed to work together:
         <td><code>ag-grid-enterprise</code></td>
         <td>All Enterprise Features</td>
     </tr>
+    <tr>
+        <td><code>ag-grid-charts-enterprise</code></td>
+        <td>All AG Grid & AG Charts Enterprise Features</td>
+    </tr>
     </tbody>
 </table>
 </framework-specific-section>
