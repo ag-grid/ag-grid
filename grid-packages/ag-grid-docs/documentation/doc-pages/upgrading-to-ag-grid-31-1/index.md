@@ -140,3 +140,8 @@ This release includes the following deprecations:
 * `moveColumn` - deprecated, use `moveColumns` providing the single string input param in an array instead.
 * `setColumnWidth` - deprecated, use `setColumnWidths` providing the single string input param in an array instead.
 * `setColumnVisible` - deprecated, use `setColumnsVisible` providing the single string input param in an array instead.
+
+### Custom Components
+
+* When implementing a custom date component, `IDate.onParamsUpdated` has been deprecated in favour of `IDate.refresh`.
+* When implementing a custom floating filter component, `IFloatingFilter.onParamsUpdated` has been deprecated in favour of `IFloatingFilter.refresh`.
