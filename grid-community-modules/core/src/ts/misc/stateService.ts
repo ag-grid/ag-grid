@@ -40,6 +40,7 @@ import { jsonEquals } from "../utils/generic";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { debounce } from "../utils/function";
+import { ColumnAnimationService } from "../rendering/columnAnimationService";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
@@ -53,6 +54,7 @@ export class StateService extends BeanStub {
     @Autowired('rowModel') private readonly rowModel: IRowModel;
     @Autowired('selectionService') private readonly selectionService: ISelectionService;
     @Autowired('expansionService') private readonly expansionService: IExpansionService;
+    @Autowired('columnAnimationService') private readonly columnAnimationService: ColumnAnimationService;
 
     private isClientSideRowModel: boolean;
     private cachedState: GridState;
@@ -628,8 +630,7 @@ export class StateService extends BeanStub {
 
     private suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {
         this.suppressEvents = true;
-        const columnAnimation = this.gridOptionsService.get('suppressColumnMoveAnimation');
-        this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: true }});
+        this.columnAnimationService.setSuppressAnimation(true);
         updateFunc();
         // We want to suppress any grid events, but not user events.
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
@@ -641,7 +642,7 @@ export class StateService extends BeanStub {
                 // Ensure the grid is still alive before dispatching the event.
                 return;
             }
-            this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: columnAnimation }});
+            this.columnAnimationService.setSuppressAnimation(false);
             this.dispatchStateUpdateEvent(['gridInitializing']);
         });
     }
