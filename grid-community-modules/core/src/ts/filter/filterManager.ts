@@ -600,6 +600,8 @@ export class FilterManager extends BeanStub {
                 defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
                 defaultFloatingFilterType = 'agDateColumnFloatingFilter';
+            } else if (cellDataType === 'boolean') {
+                defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
             } else {
                 defaultFloatingFilterType = 'agTextColumnFloatingFilter';
             }
