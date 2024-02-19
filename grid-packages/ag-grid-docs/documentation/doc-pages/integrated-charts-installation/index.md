@@ -1,8 +1,8 @@
 ---
-title: "Integrated Module / Package"
+title: "Install Integrated Charts"
 enterprise: true
 ---
-This section shows how Integrated Charts can be installed using Modules or Packages. 
+This section shows how to install Integrated Charts using Modules or Packages. 
 
 ## Integrated Charts Module
 
