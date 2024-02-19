@@ -9,7 +9,7 @@
           "name": "Sparklines",
           "link": "/react-data-grid/sparklines-overview/"
         },
-        "community": true,
+        "community": false,
         "enterprise": true,
         "chartsGrid": true
       },

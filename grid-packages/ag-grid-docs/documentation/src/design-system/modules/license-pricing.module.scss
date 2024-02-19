@@ -488,10 +488,6 @@
     background: var(--color-bg-brand-solid);
     transition: all 0.2s;
     transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
-
-    #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 40%);
-    }
 }
 
 .toggleContainer div {
@@ -541,7 +537,7 @@
 }
 
 .toggleCheckbox:checked + .toggleContainer .gridToggle:hover {
-    background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 15%);
+    background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 5%);
     transition: all 0.3s ease-in;
 }
 
