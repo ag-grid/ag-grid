@@ -24,32 +24,20 @@ In this example, `gridReady` applies user pinning preferences before rendering d
 
 ## First Data Rendered
 
-The `firstDataRendered` event fires the first time data is rendered into the grid.
-
-**Common Uses**
-- Resizing Columns.
-- Execute row-based logic.
-- Hiding loaders.
-- Capture post-render stats.
-
-This example demonstrates using `firstDataRendered` to capture auto-calculated column widths. Click "Load Grid Data" 
-to calculate the first column's width.
-
-<grid-example title='Using First Data Rendered Event' name='first-data-rendered' type='mixed'></grid-example>
+The `firstDataRendered` event fires the first time data is rendered into the grid. It will only be fired once unlike `rowDataUpdated` which is fired on every data change.
 
 ## Row Data Updated
 
-The `rowDataUpdated` event fires when the grid's data changes, by setting [Updating Row Data](/data-update-row-data/) or
+The `rowDataUpdated` event fires every time the grid's data changes, by [Updating Row Data](/data-update-row-data/) or
 by applying [Transaction Updates](/data-update-transactions/). In the [Server Side Row Model](/server-side-model), use
 the [Model Updated Event](/grid-events/#reference-miscellaneous-modelUpdated) instead.
 
 **Common Uses**
 
+- Hiding loaders.
 - Refreshing related UI elements on data changes.
-- Triggering calculations or application logic based on data changes.
-- Broadcasting data changes to other parts of the app.
 
-In this example, `rowDataUpdated` refreshes another component when the grid's data changes.
+In this example the time at which `firstDataRendered` and `rowDataUpdated` are fired is recorded above the grid. Note that `firstDataRendered` is only set on the initial load of the grid and is not updated when reloading data.
 
 <grid-example title='Using Row Data Event' name='row-data-updated' type='mixed'></grid-example>
 

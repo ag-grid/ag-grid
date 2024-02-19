@@ -11,36 +11,15 @@ export interface TAthlete {
     },
 }
 
-export function getDataSetA(): TAthlete[] {
-    return [
-        {
-            "name": "Allison Schmitt",
-            "person": {
-                "age": 22,
-                "country": "United States"
-            },
-            "medals": {
-                "gold": 3,
-                "silver": 1,
-                "bronze": 1
-            }
-        },
-        {
-            "name": "Michael Phelps",
-            "person": {
-                "age": 23,
-                "country": "United States"
-            },
-            "medals": {
-                "gold": 8,
-                "silver": 0,
-                "bronze": 0
-            }
-        },
-    ]
+function getRandomMedals() {
+    return {
+        gold: Math.floor(Math.random() * 10),
+        silver: Math.floor(Math.random() * 10),
+        bronze: Math.floor(Math.random() * 10),
+    }
 }
 
-export function getDataSetB(): TAthlete[] {
+export function getData(): TAthlete[] {
     return [
         {
             "name": "Michael Phelps",
@@ -48,11 +27,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 23,
                 "country": "United States"
             },
-            "medals": {
-                "gold": 8,
-                "silver": 0,
-                "bronze": 0
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Michael Phelps",
@@ -60,11 +35,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 19,
                 "country": "United States"
             },
-            "medals": {
-                "gold": 6,
-                "silver": 0,
-                "bronze": 2
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Michael Phelps",
@@ -72,11 +43,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 27,
                 "country": "United States"
             },
-            "medals": {
-                "gold": 4,
-                "silver": 2,
-                "bronze": 0
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Natalie Coughlin",
@@ -84,11 +51,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 25,
                 "country": "United States"
             },
-            "medals": {
-                "gold": 1,
-                "silver": 2,
-                "bronze": 3
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Aleksey Nemov",
@@ -96,11 +59,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 24,
                 "country": "Russia"
             },
-            "medals": {
-                "gold": 2,
-                "silver": 1,
-                "bronze": 3
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Alicia Coutts",
@@ -108,11 +67,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 24,
                 "country": "Australia"
             },
-            "medals": {
-                "gold": 1,
-                "silver": 3,
-                "bronze": 1
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Missy Franklin",
@@ -120,11 +75,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 17,
                 "country": "United States"
             },
-            "medals": {
-                "gold": 4,
-                "silver": 0,
-                "bronze": 1
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Ryan Lochte",
@@ -132,11 +83,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 27,
                 "country": "United States"
             },
-            "medals": {
-                "gold": 2,
-                "silver": 2,
-                "bronze": 1
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Allison Schmitt",
@@ -144,11 +91,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 22,
                 "country": "United States"
             },
-            "medals": {
-                "gold": 3,
-                "silver": 1,
-                "bronze": 1
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Natalie Coughlin",
@@ -156,11 +99,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 21,
                 "country": "United States"
             },
-            "medals": {
-                "gold": 2,
-                "silver": 2,
-                "bronze": 1
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Ian Thorpe",
@@ -168,11 +107,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 17,
                 "country": "Australia"
             },
-            "medals": {
-                "gold": 3,
-                "silver": 2,
-                "bronze": 0
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Dara Torres",
@@ -180,11 +115,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 33,
                 "country": "United States"
             },
-            "medals": {
-                "gold": 2,
-                "silver": 0,
-                "bronze": 3
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Cindy Klassen",
@@ -192,11 +123,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 26,
                 "country": "Canada"
             },
-            "medals": {
-                "gold": 1,
-                "silver": 2,
-                "bronze": 2
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Nastia Liukin",
@@ -204,11 +131,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 18,
                 "country": "United States"
             },
-            "medals": {
-                "gold": 1,
-                "silver": 3,
-                "bronze": 1
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Marit Bjørgen",
@@ -216,11 +139,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 29,
                 "country": "Norway"
             },
-            "medals": {
-                "gold": 3,
-                "silver": 1,
-                "bronze": 1
-            }
+            "medals": getRandomMedals()
         },
         {
             "name": "Sun Yang",
@@ -228,59 +147,7 @@ export function getDataSetB(): TAthlete[] {
                 "age": 20,
                 "country": "China"
             },
-            "medals": {
-                "gold": 2,
-                "silver": 1,
-                "bronze": 1
-            }
+            "medals": getRandomMedals()
         },
-        {
-            "name": "Kirsty Coventry",
-            "person": {
-                "age": 24,
-                "country": "Zimbabwe"
-            },
-            "medals": {
-                "gold": 1,
-                "silver": 3,
-                "bronze": 0
-            }
-        },
-        {
-            "name": "Libby Lenton-Trickett",
-            "person": {
-                "age": 23,
-                "country": "Australia"
-            },
-            "medals": {
-                "gold": 2,
-                "silver": 1,
-                "bronze": 1
-            }
-        },
-        {
-            "name": "Ryan Lochte",
-            "person": {
-                "age": 24,
-                "country": "United States"
-            },
-            "medals": {
-                "gold": 2,
-                "silver": 0,
-                "bronze": 2
-            }
-        },
-        {
-            "name": "Inge de Bruijn",
-            "person": {
-                "age": 30,
-                "country": "Netherlands"
-            },
-            "medals": {
-                "gold": 1,
-                "silver": 1,
-                "bronze": 2
-            }
-        }
     ]
 }
