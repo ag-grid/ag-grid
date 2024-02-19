@@ -1,5 +1,5 @@
 ---
-title: "Installation"
+title: "Charts Enterprise Installation"
 enterprise: true
 ---
 
@@ -14,14 +14,28 @@ The Charts module can be imported as follows:
 // Import minimal modules required for charts
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-import { GridChartsModule } from "@ag-grid-enterprise/charts";
+import { GridChartsModule } from "@ag-grid-enterprise/charts-enterprise";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule]);
 ```
 
-<note>
-If you are not using ES6 Modules and are instead using the bundled version of AG Grid Enterprise, note that `ag-grid-enterprise.js` already contains the charting module.
-</note>
+## Charts Package
+
+If you are not using ES6 Modules and are instead using the [bundled](/packages/) version of AG Grid Enterprise: 
+
+```bash
+npm install --save ag-grid-enterprise-charts-enterpise
+```
+
+For example:
+
+```ts
+// import the AG Grid Enteprise package - this includes all enterprise features and performs all 
+// required registration
+import  "ag-grid-charts-enterprise";
+
+// rest of your code 
+```
 
 ## Next Up
 
