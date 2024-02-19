@@ -28,7 +28,7 @@ An ever-expanding selection of chart types are provided.
 
 Explore how to chart grid data with Integrated Charts:
 
-- [User Created Charts](/integrated-charts-user-created/): Charts are made directly through the grid's UI, by selecting cells or using pivot mode, then creating a chart from the context menu.
-- [Application Created Charts](/integrated-charts-application-created/): Charts are generated via the grid's charting API on application request.
+- [User Created Charts](/integrated-charts-user-created/): charts created by users through the grid's UI.
+- [Application Created Charts](/integrated-charts-application-created/): charts created programmatically via the Grid API.
 
 Alternatively, continue to the next section to learn how to: [Install Integrated Charts](/integrated-charts-installation/).
