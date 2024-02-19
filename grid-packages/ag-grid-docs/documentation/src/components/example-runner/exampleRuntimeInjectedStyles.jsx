@@ -80,14 +80,6 @@ html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart se
     border: 1px solid rgb(0,0,0,0.1);
 }
 
-html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']):hover {
-    background-color: #2a343e;
-}
-
-html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']):hover {
-    background-color: rgba(0,0,0, 0.1);
-}
-
 html[data-color-scheme='dark'] input:not(.ag-root-wrapper input):not(.ag-chart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']):not(.flatpickr-calendar input) {
     appearance: none;
     background-color: #202A34;
