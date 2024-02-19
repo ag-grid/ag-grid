@@ -3,74 +3,72 @@ import { AgGridVue } from '@ag-grid-community/vue';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import DaysFrostRenderer from './daysFrostRendererVue.js';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-/*
-* It's unlikely you'll use functions that create and manipulate DOM elements like this in an React application, but it
-* demonstrates what is at least possible, and may be preferable in certain use cases
-*/
-const createImageSpan = (imageMultiplier, image) => {
-    const resultElement = document.createElement('span');
-    for (let i = 0; i < imageMultiplier; i++) {
-        const imageElement = document.createElement('img');
-        imageElement.src = 'https://www.ag-grid.com/example-assets/weather/' + image;
-        resultElement.appendChild(imageElement);
-    }
-    return resultElement;
+const DeltaRenderer = {
+    template: `<span>
+        <img :src="src" />
+        {{displayValue}}
+        </span>`,
+    data: function () {
+        return {
+            src: '',
+            displayValue: '',
+        };
+    },
+    beforeMount() {
+        this.updateDisplay(this.params);
+    },
+    methods: {
+        refresh(params) {
+            this.updateDisplayValue(params);
+        },
+        updateDisplay(params) {
+            this.displayValue = params.value;
+            if (params.value > 15) {
+                this.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png'
+            } else {
+                this.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png'
+            }
+        },
+    },
 };
 
-// This is a plain JS (not Vue) component
-class DeltaIndicator {
-    init(params) {
-        const element = document.createElement('span');
-        const imageElement = document.createElement('img');
-        if (params.value > 15) {
-            imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
-        } else {
-            imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
-        }
-        element.appendChild(imageElement);
-        element.appendChild(document.createTextNode(params.value));
-        this.eGui = element;
-    }
-    getGui() {
-        return this.eGui;
-    }
-}
-
-// This is a plain JS (not Vue) component
-class DaysSunshineRenderer {
-    init(params) {
-        const daysSunshine = params.value / 24;
-        this.eGui = createImageSpan(daysSunshine, params.rendererImage);
-    }
-    getGui() {
-        return this.eGui;
-    }
-}
-
-// This is a plain JS (not Vue) component
-class RainPerTenMmRenderer {
-    init(params) {
-        const rainPerTenMm = params.value / 10;
-        this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
-    }
-    getGui() {
-        return this.eGui;
-    }
-}
+const IconRenderer = {
+    template: `<span>
+        <img v-for="images in arr" :src="src" />
+        </span>`,
+    data: function () {
+        return {
+            arr: [],
+            src: '',
+        };
+    },
+    beforeMount() {
+        this.updateDisplay(this.params);
+    },
+    methods: {
+        refresh(params) {
+            this.updateDisplay(params);
+        },
+        updateDisplay(params) {
+            this.src = `https://www.ag-grid.com/example-assets/weather/${params.rendererImage}`;
+            this.arr = new Array(
+                Math.floor(params.value / (params.divisor || 1))
+            );
+        },
+    },
+};
 
 const VueExample = {
     template: `
         <div style="height: 100%">
         <div class="example-wrapper">
             <div style="margin-bottom: 5px;">
-                <button v-on:click="frostierYear(Math.floor(Math.random() * 2) + 1)">Frostier Year</button>
-                <button style="margin-left: 5px;" v-on:click="togglePrefix()">Toggle Frost Prefix</button>
+                <button v-on:click="randomiseFrost()">Randomise Frost</button>
             </div>
             <ag-grid-vue
                     style="width: 100%; height: 100%;"
@@ -87,14 +85,14 @@ const VueExample = {
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-        "daysFrostRenderer": DaysFrostRenderer
+        "iconRenderer": IconRenderer,
+        "deltaRenderer": DeltaRenderer,
     },
     data: function () {
         return {
             components: {
-                deltaIndicator: DeltaIndicator,
-                daysSunshineRenderer: DaysSunshineRenderer,
-                rainPerTenMmRenderer: RainPerTenMmRenderer
+                deltaRenderer: DeltaRenderer,
+                iconRenderer: IconRenderer,
             },
             gridApi: null,
             columnDefs: this.getColumnDefs(false),
@@ -105,7 +103,7 @@ const VueExample = {
                 
             },
             rowData: null,
-            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
+            themeClass: "ag-theme-quartz",
             frostPrefix: false,
         }
     },
@@ -119,21 +117,13 @@ const VueExample = {
                 .then(resp => resp.json())
                 .then(data => updateData(data));
         },
-        /**
-         * Updates the Days of Air Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
-         * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
-         */
-        frostierYear(extraDaysFrost) {
-            // iterate over the rows and make each "days of air frost"
+        randomiseFrost() {
+            // iterate over "days of air frost" and randomise each value
             this.gridApi.forEachNode(rowNode => {
-                rowNode.setDataValue('Days of air frost (days)', rowNode.data['Days of air frost (days)'] + extraDaysFrost);
+                rowNode.setDataValue('Days of air frost (days)', (Math.floor(Math.random() * 4) + 1));
             });
         },
-        togglePrefix() {
-            this.frostPrefix = !this.frostPrefix;
-            this.columnDefs = this.getColumnDefs(this.frostPrefix);
-        },
-        getColumnDefs(frostPrefix) {
+        getColumnDefs() {
             return [
                 {
                     headerName: "Month",
@@ -141,37 +131,37 @@ const VueExample = {
                     width: 75
                 },
                 {
-                    headerName: "Max Temp (\u02DAC)",
+                    headerName: "Max Temp",
                     field: "Max temp (C)",
                     width: 120,
-                    cellRenderer: "deltaIndicator"
+                    cellRenderer: "deltaRenderer"
                 },
                 {
-                    headerName: "Min Temp (\u02DAC)",
+                    headerName: "Min Temp",
                     field: "Min temp (C)",
                     width: 120,
-                    cellRenderer: "deltaIndicator"
+                    cellRenderer: "deltaRenderer"
                 },
                 {
-                    headerName: "Days of Air Frost",
+                    headerName: "Frost",
                     field: "Days of air frost (days)",
                     width: 233,
-                    cellRenderer: "daysFrostRenderer",
-                    cellRendererParams: { rendererImage: "frost.png", showPrefix: frostPrefix }    // Complementing the Cell Renderer parameters
+                    cellRenderer: "iconRenderer",
+                    cellRendererParams: { rendererImage: "frost.png" }    // Complementing the Cell Renderer parameters
                 },
                 {
-                    headerName: "Days Sunshine",
+                    headerName: "Sunshine",
                     field: "Sunshine (hours)",
                     width: 190,
-                    cellRenderer: "daysSunshineRenderer",
-                    cellRendererParams: { rendererImage: "sun.png" }      // Complementing the Cell Renderer parameters
+                    cellRenderer: "iconRenderer",
+                    cellRendererParams: { rendererImage: "sun.png", divisor: 24 }      // Complementing the Cell Renderer parameters
                 },
                 {
-                    headerName: "Rainfall (10mm)",
+                    headerName: "Rainfall",
                     field: "Rainfall (mm)",
                     width: 180,
-                    cellRenderer: "rainPerTenMmRenderer",
-                    cellRendererParams: { rendererImage: "rain.png" }     // Complementing the Cell Renderer parameters
+                    cellRenderer: "iconRenderer",
+                    cellRendererParams: { rendererImage: "rain.png", divisor: 10 }     // Complementing the Cell Renderer parameters
                 }
             ];
         }
