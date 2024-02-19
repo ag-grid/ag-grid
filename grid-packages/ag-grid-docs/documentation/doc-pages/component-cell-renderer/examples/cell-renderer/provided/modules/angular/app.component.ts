@@ -1,103 +1,105 @@
 import { Component } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { DaysFrostRenderer } from './days-frost-renderer.component';
-import { ColDef, GridApi, ICellRenderer, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import {
+    ColDef,
+    GridApi,
+    ICellRenderer,
+    ICellRendererParams,
+    IRowNode,
+} from '@ag-grid-community/core';
 import { AgGridAngular } from '@ag-grid-community/angular';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { NgFor } from '@angular/common';
 
 // Register the required feature modules with the Grid
-ModuleRegistry.registerModules([ClientSideRowModelModule])
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-/*
-* It's unlikely you'll use functions that create and manipulate DOM elements like this in an Angular application, but it
-* demonstrates what is at least possible, and may be preferable in certain use cases
-*/
-const createImageSpan = (imageMultiplier: number, image: string) => {
-    const resultElement = document.createElement('span');
-    for (let i = 0; i < imageMultiplier; i++) {
-        const imageElement = document.createElement('img');
-        imageElement.src = 'https://www.ag-grid.com/example-assets/weather/' + image;
-        resultElement.appendChild(imageElement);
-    }
-    return resultElement;
-};
+@Component({
+    standalone: true,
+    template: `
+        <span>
+            <img [src]="src" />
+            {{displayValue}}
+        </span>
+    `,
+})
+export class DeltaRenderer implements ICellRenderer {
+    src!: string;
+    displayValue!: number;
 
-// This is a plain JS (not Angular) component
-class DeltaIndicator implements ICellRenderer {
-    private eGui!: HTMLElement;
-    init(params: ICellRendererParams) {
-        const element = document.createElement('span');
-        const imageElement = document.createElement('img');
+    agInit(params: ImageCellRendererParams): void {
+        this.displayValue = params.value;
         if (params.value > 15) {
-            imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png';
+            this.src = 'https://www.ag-grid.com/example-assets/weather/fire-plus.png'
         } else {
-            imageElement.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png';
+            this.src = 'https://www.ag-grid.com/example-assets/weather/fire-minus.png'
         }
-        element.appendChild(imageElement);
-        element.appendChild(document.createTextNode(params.value));
-        this.eGui = element;
     }
-    getGui() {
-        return this.eGui;
+
+    refresh(): boolean {
+        return true;
     }
-    refresh() { return false; }
 }
 
-// This is a plain JS (not Angular) component
-class DaysSunshineRenderer implements ICellRenderer {
-    private eGui!: HTMLElement;
-    init(params: ICellRendererParams) {
-        const pAny = params as any;
-        const daysSunshine = params.value / 24;
-        this.eGui = createImageSpan(daysSunshine, pAny.rendererImage);
-    }
-    getGui() {
-        return this.eGui;
-    }
-    refresh() { return false; }
+export interface ImageCellRendererParams extends ICellRendererParams {
+    rendererImage: string;
+    divisor: number;
 }
+@Component({
+    standalone: true,
+    imports: [NgFor],
+    template: `
+        <span>
+            <img *ngFor="let number of arr" [src]="src" />
+        </span>
+    `,
+})
+export class IconRenderer implements ICellRenderer {
+    arr!: number[];
+    src!: string;
 
-// This is a plain JS (not Angular) component
-class RainPerTenMmRenderer implements ICellRenderer {
-    private eGui!: HTMLElement;
-    init(params: ICellRendererParams & { rendererImage: string }) {
-        const rainPerTenMm = params.value / 10;
-        this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
+    agInit(params: ImageCellRendererParams): void {
+        this.src = `https://www.ag-grid.com/example-assets/weather/${params.rendererImage}`;
+        this.arr = new Array(
+            Math.floor(params.value! / (params.divisor ?? 1))
+        );
     }
-    getGui() {
-        return this.eGui;
+
+    refresh(params: ImageCellRendererParams): boolean {
+        this.src = `https://www.ag-grid.com/example-assets/weather/${params.rendererImage}`;
+        this.arr = new Array(
+            Math.floor(params.value! / (params.divisor ?? 1))
+        );
+        return true;
     }
-    refresh() { return false; }
 }
 
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [DaysFrostRenderer, HttpClientModule, AgGridAngular],
+    imports: [HttpClientModule, AgGridAngular],
     template: `
         <div class="example-wrapper">
-        <div style="margin-bottom: 5px;">
-            <button (click)="frostierYear()">Frostier Year</button>
-            <button style="margin-left: 5px;" (click)="togglePrefix()">Toggle Frost Prefix</button>
-        </div>
-        <ag-grid-angular
+            <div style="margin-bottom: 5px;">
+                <button (click)="randomiseFrost()">Randomise Frost</button>
+            </div>
+            <ag-grid-angular
                 #agGrid
                 style="width: 100%; height: 100%;"
                 [class]="themeClass"
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"
-        ></ag-grid-angular>
+            ></ag-grid-angular>
         </div>
-    `
+    `,
 })
-
 export class AppComponent {
-    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
+    themeClass = 'ag-theme-quartz';
 
     private gridApi!: GridApi;
 
@@ -108,80 +110,70 @@ export class AppComponent {
         flex: 1,
         minWidth: 100,
         filter: true,
-        
     };
 
-    private frostPrefix: boolean = false;
+    constructor(private http: HttpClient) {}
 
-    constructor(private http: HttpClient) {
-    }
-
-    /**
-     * Updates the Days of Air Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
-     * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
-     */
-    frostierYear() {
-        const extraDaysFrost = Math.floor(Math.random() * 2) + 1;
-
-        // iterate over the rows and make each "days of air frost"
+    randomiseFrost() {
+        // iterate over the "days of air frost" and randomise each.
         this.gridApi.forEachNode((rowNode: IRowNode) => {
-            rowNode.setDataValue('Days of air frost (days)', rowNode.data['Days of air frost (days)'] + extraDaysFrost);
+            rowNode.setDataValue(
+                'Days of air frost (days)',
+                Math.floor(Math.random() * 4) + 1
+            );
         });
-    }
-
-    togglePrefix() {
-        this.frostPrefix = !this.frostPrefix;
-        this.columnDefs = this.getColumnDefs();
     }
 
     onGridReady(params: any) {
         this.gridApi = params.api;
 
-        this.http.get('https://www.ag-grid.com/example-assets/weather-se-england.json').subscribe(data => params.api.setGridOption('rowData', data));
+        this.http
+            .get(
+                'https://www.ag-grid.com/example-assets/weather-se-england.json'
+            )
+            .subscribe((data) => params.api.setGridOption('rowData', data));
     }
 
     private getColumnDefs() {
         return [
             {
-                headerName: "Month",
-                field: "Month",
-                width: 75
+                headerName: 'Month',
+                field: 'Month',
+                width: 75,
             },
             {
-                headerName: "Max Temp (\u02DAC)",
-                field: "Max temp (C)",
+                headerName: 'Max Temp',
+                field: 'Max temp (C)',
                 width: 120,
-                cellRenderer: DeltaIndicator
+                cellRenderer: DeltaRenderer,
             },
             {
-                headerName: "Min Temp (\u02DAC)",
-                field: "Min temp (C)",
+                headerName: 'Min Temp',
+                field: 'Min temp (C)',
                 width: 120,
-                cellRenderer: DeltaIndicator
+                cellRenderer: DeltaRenderer,
             },
             {
-                headerName: "Days of Air Frost",
-                field: "Days of air frost (days)",
+                headerName: 'Frost',
+                field: 'Days of air frost (days)',
                 width: 233,
-                cellRenderer: DaysFrostRenderer,
-                cellRendererParams: { rendererImage: "frost.png", showPrefix: this.frostPrefix }
+                cellRenderer: IconRenderer,
+                cellRendererParams: { rendererImage: 'frost.png' },
             },
             {
-                headerName: "Days Sunshine",
-                field: "Sunshine (hours)",
+                headerName: 'Sunshine',
+                field: 'Sunshine (hours)',
                 width: 190,
-                cellRenderer: DaysSunshineRenderer,
-                cellRendererParams: { rendererImage: "sun.png" }
+                cellRenderer: IconRenderer,
+                cellRendererParams: { rendererImage: 'sun.png', divisor: 24 },
             },
             {
-                headerName: "Rainfall (10mm)",
-                field: "Rainfall (mm)",
+                headerName: 'Rainfall',
+                field: 'Rainfall (mm)',
                 width: 180,
-                cellRenderer: RainPerTenMmRenderer,
-                cellRendererParams: { rendererImage: "rain.png" }
-            }
+                cellRenderer: IconRenderer,
+                cellRendererParams: { rendererImage: 'rain.png', divisor: 10 },
+            },
         ];
     }
 }
-
-

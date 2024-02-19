@@ -111,18 +111,12 @@ const GridExample = () => {
       .then((data) => setRowData(data));
   };
 
-  /**
-   * Updates the Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
-   * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
-   */
-  const frostierYear = () => {
-    const extraDaysFrost = Math.floor(Math.random() * 2) + 1;
-
-    // iterate over the rows and make each "days of air frost"
+  const randomiseFrost = () => {
+    // iterate over the "days of air frost" and make each a random number.
     gridRef.current!.api.forEachNode((rowNode) => {
       rowNode.setDataValue(
         'Days of air frost (days)',
-        rowNode.data['Days of air frost (days)'] + extraDaysFrost
+        (Math.floor(Math.random() * 4) + 1)
       );
     });
   };
@@ -141,7 +135,7 @@ const GridExample = () => {
     <div style={{ width: '100%', height: '100%' }}>
       <div className="example-wrapper">
         <div style={{ marginBottom: '5px' }}>
-          <button onClick={frostierYear}>Frostier Year</button>
+          <button onClick={randomiseFrost}>Randomise Frost</button>
         </div>
 
         <div
