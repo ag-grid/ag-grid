@@ -24,14 +24,6 @@ An ever-expanding selection of chart types are provided.
 
 <image-caption src="integrated-charts/resources/extensive-chart-types.gif" alt="Extensive Chart Types" auto="true" maxWidth="95%" centered="true" toggledarkmode="true"></image-caption>
 
-## Highly Interactive 
-
-A wide range of chart interactivity features are available.
-
-## Fully Customisable
-
-Integrated Charts comes with high level of customisation for developers and the end users.
-
 ## Next Up
 
 Continue to the next section to learn about: [Installing Integrated Charts](/integrated-charts-installation/).
