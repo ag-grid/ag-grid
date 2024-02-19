@@ -100,6 +100,36 @@ See the [Codemods](/codemods/) documentation for more details.
 
 This release includes the following deprecations:
 
+<framework-specific-section frameworks="react">
+<h3 id="react">React</h2>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|- `AgReactUiProps` - deprecated, use `AgGridReactProps` instead.
+|- `AgGridReactProps.disableStaticMarkup`, `AgGridReactProps.legacyComponentRendering` - deprecated, as they are no longer used.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+The following React custom component interfaces are deprecated along with their methods:
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|- `getReactContainerStyle` and `getReactContainerClasses` - deprecated, apply styling directly to the CSS class `.ag-react-container` if needed. 
+|- `IHeaderGroupReactComp` - deprecated, use `IHeaderGroup` instead. 
+|- `IHeaderReactComp` - deprecated, use `IHeader` instead. 
+|- `IDateReactComp` - deprecated, use `IDate` instead. 
+|- `IFilterReactComp` - deprecated, use `IFilter` instead. 
+|- `IFloatingFilterReactComp` - deprecated, use `IFloatingFilter` instead.
+|- `ICellRendererReactComp` - deprecated, use `ICellRenderer` instead.
+|- `ICellEditorReactComp` - deprecated, use `ICellEditor` instead.
+|- `ILoadingCellRendererReactComp` - deprecated, no interface needed.
+|- `ILoadingOverlayReactComp` - deprecated, use `ILoadingOverlay` instead.
+|- `INoRowsOverlayReactComp` - deprecated, use `INoRowsOverlay` instead.
+|- `IStatusPanelReactComp` - deprecated, use `IStatusPanel` instead.
+|- `IToolPanelReactComp` - deprecated, use `IToolPanel` instead.
+|- `ITooltipReactComp` - deprecated, no interface needed.
+</framework-specific-section>
+
 ### GridOptions
 
 * `gridOptions.cellFlashDelay` - deprecated, use `gridOptions.cellFlashDuration` instead.
