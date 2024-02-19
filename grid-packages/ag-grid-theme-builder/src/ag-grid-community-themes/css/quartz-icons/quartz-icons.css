@@ -4,6 +4,8 @@
     height: var(--ag-icon-size);
   }
 
+  /*
+    TODO restore once we pass icons in through the theme grid option
   .ag-icon {
     width: var(--ag-icon-size);
     height: var(--ag-icon-size);
@@ -16,9 +18,9 @@
     > * {
       vector-effect: non-scaling-stroke;
     }
-  }
 
-  .ag-icon-grip {
-    fill: currentColor;
-  }
+    .ag-icon-grip {
+      fill: currentColor;
+    }
+  } */
 }

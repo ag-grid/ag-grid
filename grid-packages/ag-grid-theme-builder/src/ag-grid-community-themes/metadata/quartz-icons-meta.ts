@@ -37,6 +37,6 @@ export const quartzIconsMeta = definePartMeta({
       step: 0.1,
     },
   ],
-  cssFiles: ['quartz-icons.css'],
+  cssFiles: ['quartz-icons.css', 'quartz-icons-embedded.ts'],
   iconsFile: 'quartz-icons-fragments',
 });

@@ -7,24 +7,6 @@
     border-radius: var(--ag-wrapper-border-radius);
   }
 
-  /*
-  TODO replace with calc and var
-  support 100 levels here because row group indentation is used for tree data which can be quite deep
-  @for $i from 1 to 100 {
-    .ag-row > .ag-cell-wrapper.ag-row-group-indent-#{$i} {
-      padding-left: calc(var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * #{$i});
-    }
-
-    .ag-row-group-indent-#{$i} {
-      padding-left: calc(#{$i} * var(--ag-row-group-indent-size));
-    }
-
-    .ag-row-level-#{$i} .ag-pivot-leaf-group {
-      margin-left: var(--ag-row-group-indent-size);
-    }
-  }
-  */
-
   .ag-row-group-leaf-indent {
     margin-left: var(--ag-row-group-indent-size);
   }
@@ -112,7 +94,7 @@
   .ag-row-hover:not(.ag-full-width-row)::before,
   .ag-row-hover.ag-full-width-row.ag-row-group::before {
     content: '';
-    background-color: var(--ag-row-hover-color, transparent);
+    background-color: var(--ag-row-hover-color);
     display: block;
     position: absolute;
     inset: 0;
@@ -169,36 +151,6 @@
     opacity: 0.5;
   }
 
-  .ag-cell-inline-editing {
-    /* TODO I think removing background and border is OK for Quartz style themes, check (cell editos provide their own borders) */
-    /* border: 1px solid var(--ag-border-color);
-    background-color: var(--ag-chrome-background-color); */
-    border-radius: var(--ag-card-radius);
-    box-shadow: var(--ag-card-shadow);
-    padding: 0;
-  }
-
-  .ag-popup-editor .ag-large-text,
-  .ag-autocomplete-list-popup {
-    /* TODO Reconsider how to do cards */
-    border: var(--ag-borders) var(--ag-border-color);
-    border-radius: var(--ag-border-radius);
-    box-shadow: var(--ag-card-shadow);
-    padding: var(--ag-grid-size);
-
-    background-color: var(--ag-control-panel-background-color);
-    padding: 0;
-  }
-
-  .ag-large-text-input {
-    height: auto;
-    padding: var(--ag-cell-horizontal-padding);
-  }
-
-  .ag-rtl .ag-large-text-input textarea {
-    resize: none;
-  }
-
   .ag-details-row {
     padding: calc(var(--ag-grid-size) * 3.5);
     background-color: var(--ag-background-color);
@@ -214,15 +166,6 @@
 
   .ag-overlay-loading-wrapper {
     background-color: var(--ag-modal-overlay-background-color);
-  }
-
-  .ag-overlay-loading-center {
-    /* TODO: Reconsider how to do cards */
-    border: var(--ag-borders) var(--ag-border-color);
-    border-radius: var(--ag-border-radius);
-    box-shadow: var(--ag-card-shadow);
-    padding: var(--ag-grid-size);
-    background-color: var(--ag-background-color);
   }
 
   /* in auto-height mode with no rows, add padding to prevent grid being too small */

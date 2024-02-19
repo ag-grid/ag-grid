@@ -61,7 +61,7 @@ const makePublicFile = (): string => {
       args.css = [];
       for (const fileName of part.cssFiles) {
         const importName = fileToImportName(fileName);
-        result += `import ${importName} from './css/${part.partId}/${fileName}?inline';\n`;
+        result += `import ${importName} from './css/${part.partId}/${fileToImportPath(fileName)}';\n`;
         args.css.push(codeLiteral(importName));
       }
     }
@@ -69,7 +69,7 @@ const makePublicFile = (): string => {
       args.conditionalCss = {};
       for (const [paramName, fileName] of Object.entries(part.conditionalCssFiles)) {
         const importName = fileToImportName(fileName);
-        result += `import ${importName} from './css/${part.partId}/${fileName}?inline';\n`;
+        result += `import ${importName} from './css/${part.partId}/${fileToImportPath(fileName)}';\n`;
         args.conditionalCss[paramName] = codeLiteral(importName);
       }
     }
@@ -259,7 +259,17 @@ const fatalError = (message: string) => {
   process.exit(1);
 };
 
-const fileToImportName = (str: string) => `${camelCase(str)}Import`;
+const fileToImportName = (file: string) => `${camelCase(file)}Import`;
+
+const fileToImportPath = (file: string) => {
+  if (file.endsWith('.css')) {
+    return `${file}?inline`;
+  }
+  if (file.endsWith('.ts')) {
+    return file.slice(0, -3);
+  }
+  throw new Error(`Unexpected kind of import: ${file}`);
+};
 
 const upperCamelCase = (str: string) => camelCase(str[0].toUpperCase() + str.slice(1));
 

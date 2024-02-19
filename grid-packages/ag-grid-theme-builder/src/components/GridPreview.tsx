@@ -15,7 +15,6 @@ import { memo, useMemo, useState } from 'react';
 import { withErrorBoundary } from '../components/ErrorBoundary';
 import { gridConfigAtom } from '../features/grid-config/grid-config-atom';
 import { buildGridOptions } from '../model/grid-options';
-import { renderedThemeAtom } from '../model/rendered-theme';
 
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
@@ -31,7 +30,6 @@ ModuleRegistry.registerModules([
 
 const GridPreview = () => {
   const gridConfig = useAtomValue(gridConfigAtom);
-  const renderedTheme = useAtomValue(renderedThemeAtom);
   const options = useMemo(() => {
     return buildGridOptions(gridConfig);
   }, [gridConfig]);
@@ -44,7 +42,7 @@ const GridPreview = () => {
 
   return (
     <Wrapper>
-      <AgGridReact key={internalState.id} {...options} icons={renderedTheme.icons} />
+      <AgGridReact key={internalState.id} {...options} />
     </Wrapper>
   );
 };

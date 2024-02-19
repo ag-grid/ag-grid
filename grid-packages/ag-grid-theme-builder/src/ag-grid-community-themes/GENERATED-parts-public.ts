@@ -10,17 +10,26 @@ import * as helpers from './css-helpers';
 export type BorderStyle = 'solid' | 'dotted' | 'dashed' | 'none';
 
 export type CoreParam =
-  | 'rangeSelectionBorderColor'
   | 'rangeSelectionBorderStyle'
+  | 'rangeSelectionBorderColor'
   | 'rangeSelectionBackgroundColor'
+  | 'rangeSelectionChartBackgroundColor'
+  | 'rangeSelectionChartCategoryBackgroundColor'
   | 'rangeSelectionHighlightColor'
   | 'rowHoverColor'
   | 'columnHoverColor'
   | 'selectedRowBackgroundColor'
+  | 'modalOverlayBackgroundColor'
   | 'oddRowBackgroundColor'
   | 'borderRadius'
   | 'wrapperBorderRadius'
-  | 'rowGroupIndentSize';
+  | 'cellWidgetSpacing'
+  | 'rowGroupIndentSize'
+  | 'valueChangeDeltaUpColor'
+  | 'valueChangeDeltaDownColor'
+  | 'valueChangeValueHighlightBackgroundColor'
+  | 'gridSize'
+  | 'cellHorizontalPadding';
 
 export type ColorsPreset = 'light' | 'dark';
 
@@ -30,7 +39,9 @@ export type ColorsParam =
   | 'foregroundColor'
   | 'accentColor'
   | 'borderColor'
-  | 'chromeBackgroundColor';
+  | 'chromeBackgroundColor'
+  | 'dataColor'
+  | 'rowBorderColor';
 
 export type BordersPreset = 'horizontal' | 'default' | 'full';
 
@@ -56,17 +67,26 @@ import gridLayoutCssImport from './css/core/grid-layout.css?inline';
 export const core = definePart<CoreParam>({
   partId: 'core',
   defaults: {
-    rangeSelectionBorderColor: helpers.ref('accentColor'),
     rangeSelectionBorderStyle: 'solid',
+    rangeSelectionBorderColor: helpers.ref('accentColor'),
     rangeSelectionBackgroundColor: helpers.transparentAccent(0.2),
+    rangeSelectionChartBackgroundColor: '#0058FF1A',
+    rangeSelectionChartCategoryBackgroundColor: '#00FF841A',
     rangeSelectionHighlightColor: helpers.transparentAccent(0.5),
     rowHoverColor: helpers.transparentAccent(0.12),
     columnHoverColor: helpers.transparentAccent(0.05),
     selectedRowBackgroundColor: helpers.transparentAccent(0.08),
+    modalOverlayBackgroundColor: helpers.transparentBackground(0.08),
     oddRowBackgroundColor: helpers.ref('backgroundColor'),
     borderRadius: '4px',
     wrapperBorderRadius: '8px',
+    cellWidgetSpacing: helpers.calc('gridSize * 1.5'),
     rowGroupIndentSize: helpers.calc('cellWidgetSpacing + iconSize'),
+    valueChangeDeltaUpColor: '#43a047',
+    valueChangeDeltaDownColor: '#e53935',
+    valueChangeValueHighlightBackgroundColor: '#16a08580',
+    gridSize: '8px',
+    cellHorizontalPadding: helpers.calc('gridSize * 2'),
   },
   css: [resetCssImport, gridBordersCssImport, gridLayoutCssImport],
 });
@@ -89,6 +109,8 @@ export const colors = definePart<ColorsParam>({
     accentColor: '#2196f3',
     borderColor: helpers.transparentForeground(0.15),
     chromeBackgroundColor: helpers.transparentForeground(0.02),
+    dataColor: helpers.ref('foregroundColor'),
+    rowBorderColor: helpers.ref('borderColor'),
   },
   css: [colorsCssImport],
 });
@@ -138,6 +160,7 @@ export const borders = definePart<BordersParam>({
 });
 
 import quartzIconsCssImport from './css/quartz-icons/quartz-icons.css?inline';
+import quartzIconsEmbeddedTsImport from './css/quartz-icons/quartz-icons-embedded';
 import quartzIconsFragmentsImport from './css/quartz-icons/quartz-icons-fragments';
 
 export const quartzIcons = definePart<QuartzIconsParam>({
@@ -156,20 +179,11 @@ export const quartzIcons = definePart<QuartzIconsParam>({
     iconSize: '16px',
     iconStrokeWidth: '1.5px',
   },
-  css: [quartzIconsCssImport],
+  css: [quartzIconsCssImport, quartzIconsEmbeddedTsImport],
   icons: quartzIconsFragmentsImport,
 });
 
 export type VariableTypes = {
-  /**
-   * The color used for borders around range selections. The selection background defaults to a semi-transparent version of this colour.
-   *
-   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
-   *
-   * @default ref("accentColor")
-   */
-  rangeSelectionBorderColor: string;
-
   /**
    * Style of the border around range selections.
    *
@@ -180,6 +194,15 @@ export type VariableTypes = {
   rangeSelectionBorderStyle: BorderStyle;
 
   /**
+   * The color used for borders around range selections. The selection background defaults to a semi-transparent version of this colour.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("accentColor")
+   */
+  rangeSelectionBorderColor: string;
+
+  /**
    * Background colour of selected cell ranges. Choosing a semi-transparent colour ensure that multiple overlapping ranges look correct.
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
@@ -187,6 +210,24 @@ export type VariableTypes = {
    * @default transparentAccent(0.2)
    */
   rangeSelectionBackgroundColor: string;
+
+  /**
+   * Background colour for cells that provide data to the current range chart
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#0058FF1A"
+   */
+  rangeSelectionChartBackgroundColor: string;
+
+  /**
+   * Background colour for cells that provide categories to the current range chart
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#00FF841A"
+   */
+  rangeSelectionChartCategoryBackgroundColor: string;
 
   /**
    * Background colour to briefly apply to a cell range when the user copies from or pastes into it.
@@ -225,6 +266,15 @@ export type VariableTypes = {
   selectedRowBackgroundColor: string;
 
   /**
+   * Background color of the overlay shown over the grid e.g. a data loading indicator.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default transparentBackground(0.08)
+   */
+  modalOverlayBackgroundColor: string;
+
+  /**
    * Background colour applied to every other row
    *
    * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
@@ -252,6 +302,15 @@ export type VariableTypes = {
   wrapperBorderRadius: string;
 
   /**
+   * Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes).
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default calc("gridSize * 1.5")
+   */
+  cellWidgetSpacing: string;
+
+  /**
    * The indentation applied to each level of row grouping - deep rows are indented by a multiple of this value.
    *
    * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
@@ -259,6 +318,51 @@ export type VariableTypes = {
    * @default calc("cellWidgetSpacing + iconSize")
    */
   rowGroupIndentSize: string;
+
+  /**
+   * Colour to temporarily apply to cell data when its value increases in an agAnimateShowChangeCellRenderer cell
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#43a047"
+   */
+  valueChangeDeltaUpColor: string;
+
+  /**
+   * Colour to temporarily apply to cell data when its value decreases in an agAnimateShowChangeCellRenderer cell
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#e53935"
+   */
+  valueChangeDeltaDownColor: string;
+
+  /**
+   * Colour to apply when a cell value changes and enableCellChangeFlash is enabled
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default "#16a08580"
+   */
+  valueChangeValueHighlightBackgroundColor: string;
+
+  /**
+   * Control how tightly data and UI elements are packed together. All padding and spacing in the grid is defined as a multiple of the grid size, so increasing it will make most components larger by increasing their internal white space while leaving the size of text and icons unchanged.
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default "8px"
+   */
+  gridSize: string;
+
+  /**
+   * Colour to apply when a cell value changes and enableCellChangeFlash is enabled
+   *
+   * A CSS number value with length units, e.g. "1px" or "2em". If a JavaScript number is provided, its units are assumed to be 'px'.
+   *
+   * @default calc("gridSize * 2")
+   */
+  cellHorizontalPadding: string;
 
   /**
    * Use one of the built-in sets of preset colors values. Available presets are: "light", "dark".
@@ -313,6 +417,24 @@ export type VariableTypes = {
    * @default transparentForeground(0.02)
    */
   chromeBackgroundColor: string;
+
+  /**
+   * Colour of text in grid cells.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("foregroundColor")
+   */
+  dataColor: string;
+
+  /**
+   * Colour of the border between grid rows.
+   *
+   * Any valid CSS color expression is accepted. A JavaScript number between 0 and 1 is interpreted as a semi-transparent foreground color.
+   *
+   * @default ref("borderColor")
+   */
+  rowBorderColor: string;
 
   /**
    * Use one of the built-in sets of preset borders values. Available presets are: "horizontal", "default", "full".

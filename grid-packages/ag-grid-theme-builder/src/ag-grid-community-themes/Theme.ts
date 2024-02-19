@@ -1,3 +1,4 @@
+import { logErrorMessageOnce } from '../model/utils';
 import { VariableTypes } from './GENERATED-parts-public';
 import commonStructuralCSS from './css/common-structural.css?inline';
 import { AnyPart, Part } from './theme-types';
@@ -66,7 +67,9 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
   for (const [property, value] of Object.entries(overrideParams)) {
     if (value === undefined) continue;
     if (allowedParams.has(property)) {
-      mergedParams[property] = value;
+      if (validateParam(property, value)) {
+        mergedParams[property] = value;
+      }
     } else {
       logErrorMessage(
         `Invalid parameter ${property} provided. It may be misspelled, or your theme may not include the part that defines it.`,
@@ -86,12 +89,12 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
   for (const part of parts) {
     if (part.css) {
       mainCSS.push(`/* Part ${part.partId} */`);
-      mainCSS.push(...part.css);
+      mainCSS.push(...part.css.map(cssPartToString));
     }
     for (const [property, css] of Object.entries(part.conditionalCss || {})) {
       if (css && mergedParams[property]) {
         mainCSS.push(`/* Sub-part ${part.partId}.${property} */`);
-        mainCSS.push(css);
+        mainCSS.push(cssPartToString(css));
       }
     }
   }
@@ -112,6 +115,29 @@ export const defineTheme = <P extends AnyPart, V extends object = VariableTypes>
   return result;
 };
 
+const cssPartToString = (p: string | (() => string)): string => (typeof p === 'function' ? p() : p);
+
+// TODO get type from metadata - assume params are strings, include a list of non-string params in definePart
+const _tmpExpectedType = (property: string) =>
+  property.startsWith('borders') ? 'boolean' : 'string';
+
+const validateParam = (property: string, value: any): boolean => {
+  const expectedType = _tmpExpectedType(property);
+  const actualType = typeof value;
+  if (expectedType !== actualType) {
+    logErrorMessageOnce(
+      `Invalid value for ${property} (expected ${expectedType}, got ${describeValue(value)})`,
+    );
+    return false;
+  }
+  return true;
+};
+
+const describeValue = (value: any): string => {
+  if (value == null) return String(value);
+  return `${typeof value} ${value}`;
+};
+
 const preprocessCss = (themeName: string, variables: Record<string, string>, css: string) => {
   const themeSelector = `.ag-theme-${themeName}`;
   const themeSelectorPlaceholder = ':ag-current-theme';
@@ -121,6 +147,11 @@ const preprocessCss = (themeName: string, variables: Record<string, string>, css
   // `var(--ag-foo, var(--ag-bar, [bar default]))`
   const addVariableDefaults = (css: string): string =>
     css.replaceAll(/var\((--ag-[^)]+)\)/g, (match, variable) => {
+      if (!/^[\w-]+$/.test(variable)) {
+        throw new Error(`${match} - variables should not contain default values.`);
+      } else if (!Object.hasOwn(variables, variable)) {
+        logErrorMessageOnce(`${variable} does not match a theme param`);
+      }
       const defaultValue = variables[variable];
       if (defaultValue) {
         return `var(${variable}, ${addVariableDefaults(defaultValue)})`;

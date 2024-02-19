@@ -70,7 +70,8 @@ const wrapSvgContent = (name: string): string => {
   if (!svgFragment) {
     throw new Error(name);
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon ag-icon-${name}" viewBox="0 0 24 24">${svgFragment}</svg>`;
+  // TODO remove these extra attributes when we're using the theme grid option for icons
+  return `<svg xmlns="http://www.w3.org/2000/svg" class="ag-icon ag-icon-${name}" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="black" stroke-width="2.34" viewBox="0 0 24 24">${svgFragment}</svg>`;
 };
 
 export default Object.fromEntries(

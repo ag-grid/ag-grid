@@ -132,8 +132,4 @@
   .ag-range-handle {
     cursor: nwse-resize;
   }
-
-  .ag-cell-inline-editing {
-    border-color: var(--ag-input-focus-border-color) !important;
-  }
 }

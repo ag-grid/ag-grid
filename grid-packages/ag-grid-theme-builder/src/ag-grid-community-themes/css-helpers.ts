@@ -15,6 +15,13 @@ export const transparentForeground = (alpha: number) => transparentRef('foregrou
 export const transparentAccent = (alpha: number) => transparentRef('accentColor', alpha);
 
 /**
+ * Create a CSS color-mix expression for a semi transparent backgroundColor
+ *
+ * @param alpha - 0 for fully transparent, 1 for fully opaque
+ */
+export const transparentBackground = (alpha: number) => transparentRef('backgroundColor', alpha);
+
+/**
  * Create a CSS color-mix expression for a semi transparent version of a color variable
  *
  * @param alpha - 0 for fully transparent, 1 for fully opaque
