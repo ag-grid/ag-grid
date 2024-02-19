@@ -23,9 +23,11 @@ const gridOptions: GridOptions = {
     rowData: getData(),
     onFirstDataRendered: (event: FirstDataRenderedEvent) => {
         updateRowCount('firstDataRendered');
+        console.log('First Data Rendered');
     },
     onRowDataUpdated: (event: RowDataUpdatedEvent<TAthlete>) => {
         updateRowCount('rowDataUpdated');
+        console.log('Row Data Updated');
     },
 };
 
