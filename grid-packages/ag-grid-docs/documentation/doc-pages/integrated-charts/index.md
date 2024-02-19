@@ -32,11 +32,11 @@ Some of the key features of Integrated Charts include:
     - Combination 
 
 - **Interactivity** - Integrated Charts has a wide range of interactivity features such as: 
-    - Interactive highlight 
-    - Tooltip
-    - Animation
-    - Navigator 
-    - Zooming 
+    - [Tooltips](https://charts.ag-grid.com/javascript/tooltips/)
+    - [Series highlighting](https://charts.ag-grid.com/javascript/series-highlighting/)
+    - [Navigator](https://charts.ag-grid.com/javascript/navigator/)
+    - [Animation](https://charts.ag-grid.com/javascript/animation/)
+    - [Zoom](https://charts.ag-grid.com/javascript/zoom/)
 
 - **[Highly Customisable](/integrated-charts-customisation/)** - Integrated Charts comes with high level of customisation for developers and the end users. Theme-override can provide a template for charts created. Developers can also customise the types of charts made available to the users. An easy-to-use formatting panel provides the end users the ability to tailor their charts to different styling needs. 
 

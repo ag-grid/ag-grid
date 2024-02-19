@@ -11,7 +11,7 @@ This section provides an overview of the chart types available in Integrated Cha
 
 More Details:
 
-- [Bar Series](https://charts.ag-grid.com/react/bar-series/)
+- [Bar Series](https://charts.ag-grid.com/javascript/bar-series/)
 
 ## Pie / Donut
 
@@ -19,8 +19,8 @@ More Details:
 
 More Details:
 
-- [Pie Series](https://charts.ag-grid.com/react/pie-series/)
-- [Donut Series](https://charts.ag-grid.com/react/donut-series/)
+- [Pie Series](https://charts.ag-grid.com/javascript/pie-series/)
+- [Donut Series](https://charts.ag-grid.com/javascript/donut-series/)
 
 ## Line / Area
 
@@ -28,8 +28,8 @@ More Details:
 
 More Details:
 
-- [Line Series](https://charts.ag-grid.com/react/line-series/)
-- [Area Series](https://charts.ag-grid.com/react/area-series/)
+- [Line Series](https://charts.ag-grid.com/javascript/line-series/)
+- [Area Series](https://charts.ag-grid.com/javascript/area-series/)
 
 ## Scatter / Bubble
 
@@ -37,8 +37,8 @@ More Details:
 
 More Details:
 
-- [Scatter Series](https://charts.ag-grid.com/react/scatter-series/)
-- [Bubble Series](https://charts.ag-grid.com/react/bubble-series/)
+- [Scatter Series](https://charts.ag-grid.com/javascript/scatter-series/)
+- [Bubble Series](https://charts.ag-grid.com/javascript/bubble-series/)
 
 ## Polar
 
@@ -46,11 +46,11 @@ More Details:
 
 More Details:
 
-- [Radar Line Series](https://charts.ag-grid.com/react/radar-line-series/)
-- [Radar Area Series](https://charts.ag-grid.com/react/radar-area-series/)
-- [Nightingale Series](https://charts.ag-grid.com/react/nightingale-series/)
-- [Radial Column Series](https://charts.ag-grid.com/react/radial-column-series/)
-- [Radial Bar Series](https://charts.ag-grid.com/react/radial-bar-series/)
+- [Radar Line Series](https://charts.ag-grid.com/javascript/radar-line-series/)
+- [Radar Area Series](https://charts.ag-grid.com/javascript/radar-area-series/)
+- [Nightingale Series](https://charts.ag-grid.com/javascript/nightingale-series/)
+- [Radial Column Series](https://charts.ag-grid.com/javascript/radial-column-series/)
+- [Radial Bar Series](https://charts.ag-grid.com/javascript/radial-bar-series/)
 
 ## Statistical
 
@@ -58,10 +58,10 @@ More Details:
 
 More Details:
 
-- [Histogram Series](https://charts.ag-grid.com/react/histogram-series/)
-- [Range Bar Series](https://charts.ag-grid.com/react/range-bar-series/)
-- [Range Area Series](https://charts.ag-grid.com/react/range-area-series/)
-- [Box Plot Series](https://charts.ag-grid.com/react/box-plot-series/)
+- [Histogram Series](https://charts.ag-grid.com/javascript/histogram-series/)
+- [Range Bar Series](https://charts.ag-grid.com/javascript/range-bar-series/)
+- [Range Area Series](https://charts.ag-grid.com/javascript/range-area-series/)
+- [Box Plot Series](https://charts.ag-grid.com/javascript/box-plot-series/)
 
 ## Hierarchical
 
@@ -69,8 +69,8 @@ More Details:
 
 More Details:
 
-- [Treemap Series](https://charts.ag-grid.com/react/treemap-series/)
-- [Sunburst Series](https://charts.ag-grid.com/react/sunburst-series/)
+- [Treemap Series](https://charts.ag-grid.com/javascript/treemap-series/)
+- [Sunburst Series](https://charts.ag-grid.com/javascript/sunburst-series/)
 
 ## Specialized
 
@@ -78,8 +78,8 @@ More Details:
 
 More Details:
 
-- [Heatmap Series](https://charts.ag-grid.com/react/heatmap-series/)
-- [Waterfall Series](https://charts.ag-grid.com/react/waterfall-series/)
+- [Heatmap Series](https://charts.ag-grid.com/javascript/heatmap-series/)
+- [Waterfall Series](https://charts.ag-grid.com/javascript/waterfall-series/)
 
 ## Combination
 
@@ -87,7 +87,7 @@ More Details:
 
 More Details:
 
-- [Combination Charts](https://charts.ag-grid.com/react/combination-series/)
+- [Combination Charts](https://charts.ag-grid.com/javascript/combination-series/)
 
 ## Next Up
 
