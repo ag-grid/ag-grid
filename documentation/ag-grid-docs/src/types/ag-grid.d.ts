@@ -1,5 +1,7 @@
 export type Framework = 'javascript' | 'react' | 'angular' | 'vue';
 
+export type ImportType = 'modules' | 'packages';
+
 export type InternalFramework =
     | 'vanilla'
     | 'typescript'
@@ -8,6 +10,8 @@ export type InternalFramework =
     | 'angular'
     | 'vue'
     | 'vue3';
+
+export type Library = 'charts' | 'grid';
 
 /**
  * Menu types

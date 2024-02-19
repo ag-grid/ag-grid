@@ -1,4 +1,4 @@
-import type { Framework, InternalFramework } from './types/ag-grid';
+import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 
 export const FRAMEWORKS: readonly Framework[] = ['react', 'angular', 'vue', 'javascript'] as const;
 export const DEFAULT_FRAMEWORK: Framework = FRAMEWORKS[0];
@@ -19,6 +19,8 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
     angular: 'Angular',
     vue: 'Vue',
 };
+
+export const IMPORT_TYPES: ImportType[] = ['modules', 'packages'];
 
 export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
 
@@ -49,3 +51,8 @@ export const PRODUCTION_SITE_URL = 'https://ag-grid.com';
  * Number of URL segments in `SITE_BASE_URL`
  */
 export const SITE_BASE_URL_SEGMENTS = SITE_BASE_URL?.split('/').filter(Boolean).length || 0;
+
+/**
+ * URL prefix to serve files for dev server
+ */
+export const DEV_FILE_BASE_PATH = '/dev';

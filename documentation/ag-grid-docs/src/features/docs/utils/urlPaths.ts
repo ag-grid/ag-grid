@@ -1,4 +1,4 @@
-import type { InternalFramework } from '@ag-grid-types';
+import type { ImportType, InternalFramework } from '@ag-grid-types';
 import type { Framework } from '@ag-grid-types';
 import { SITE_BASE_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
@@ -20,12 +20,14 @@ export const getExampleUrl = ({
     internalFramework,
     pageName,
     exampleName,
+    importType,
 }: {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
+    importType: ImportType;
 }) => {
-    return pathJoin(SITE_BASE_URL, internalFramework, pageName, 'examples', exampleName);
+    return pathJoin(SITE_BASE_URL, 'examples', pageName, exampleName, importType, internalFramework);
 };
 
 /**
@@ -80,16 +82,19 @@ export const getExampleContentsUrl = ({
     internalFramework,
     pageName,
     exampleName,
+    importType,
 }: {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
+    importType: ImportType;
 }) => {
     return pathJoin(
         getExampleUrl({
             internalFramework,
             pageName,
             exampleName,
+            importType,
         }),
         'contents.json'
     );
@@ -102,17 +107,20 @@ export const getExampleFileUrl = ({
     internalFramework,
     pageName,
     exampleName,
+    importType,
     fileName,
 }: {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
+    importType: ImportType;
     fileName: string;
 }) => {
     return pathJoin(
         getExampleUrl({
             internalFramework,
             pageName,
+            importType,
             exampleName,
         }),
         fileName

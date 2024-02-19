@@ -1,3 +1,4 @@
+import type { ImportType } from '@ag-grid-types';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -16,18 +17,21 @@ type DocsExampleParams = {
     type: 'docs';
     framework: InternalFramework;
     pageName: string;
+    importType: ImportType;
 };
 
 const getFolderPath = (params: GeneratedExampleParams) => {
-    const { exampleName, ignoreDarkMode = false } = params;
+    const { exampleName, ignoreDarkMode = false, importType } = params;
 
     const contentRoot = getExampleRootFileUrl();
 
     const result = [contentRoot.pathname];
-    const darkMode = ignoreDarkMode ? 'plain' : 'dark-mode';
+    // TODO: Ignore darkMode for now
+    // const darkMode = ignoreDarkMode ? 'plain' : 'dark-mode';
     if (params.type === 'docs') {
         result.push(params.type, params.pageName, '_examples', exampleName);
-        result.push(darkMode, params.framework);
+        // result.push(darkMode, params.framework);
+        result.push(importType, params.framework);
     }
 
     return path.join(...result);

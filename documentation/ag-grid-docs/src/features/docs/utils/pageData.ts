@@ -1,4 +1,4 @@
-import { FRAMEWORKS } from '@constants';
+import { FRAMEWORKS, IMPORT_TYPES } from '@constants';
 import { type DocsPage, getContentRootFileUrl } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 
@@ -39,47 +39,68 @@ export function getDocsFrameworkPages() {
     });
 }
 
-export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
-    const examples = await getInternalFrameworkExamples({ pages });
+async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }) {
+    const internalFrameworkExamples = await getInternalFrameworkExamples({ pages });
+    return internalFrameworkExamples.flatMap((example) => {
+        return IMPORT_TYPES.map((importType) => {
+            return {
+                ...example,
+                importType,
+            };
+        });
+    });
+}
 
-    return examples.map(({ internalFramework, pageName, exampleName }) => {
+export async function getDocsExamplePages({ pages }: { pages: DocsPage[] }) {
+    const examples = await getDocsExampleNameParts({ pages });
+
+    return examples.map(({ internalFramework, pageName, exampleName, importType }) => {
         return {
             params: {
                 internalFramework,
                 pageName,
                 exampleName,
+                importType,
             },
         };
     });
 }
 
 export async function getDocExampleFiles({ pages }: { pages: DocsPage[] }) {
-    const examples = await getInternalFrameworkExamples({ pages });
-    const exampleFilesPromises = examples.map(async ({ internalFramework, pageName, exampleName }) => {
-        const exampleFileList = await getGeneratedContentsFileList({
-            type: 'docs',
-            framework: internalFramework,
-            pageName,
-            exampleName,
-        });
-
-        return exampleFileList.map((fileName) => {
-            return {
-                internalFramework,
+    const examples = await getDocsExampleNameParts({ pages });
+    const exampleFilesPromises = examples.flatMap(async ({ internalFramework, pageName, exampleName, importType }) => {
+        try {
+            const filesList = await getGeneratedContentsFileList({
+                type: 'docs',
+                framework: internalFramework,
                 pageName,
                 exampleName,
-                fileName,
-            };
-        });
+                importType,
+            });
+            return filesList.map((fileName) => {
+                return {
+                    internalFramework,
+                    pageName,
+                    exampleName,
+                    importType,
+                    fileName,
+                };
+            });
+        } catch (error) {
+            console.error('File not generated - ', error.message);
+            return [];
+        }
     });
-    const exampleFiles = (await Promise.all(exampleFilesPromises)).flat();
 
-    return exampleFiles.map(({ internalFramework, pageName, exampleName, fileName }) => {
+    const exampleFiles = (await Promise.all(exampleFilesPromises)).flat(2);
+
+    return exampleFiles.map(({ internalFramework, pageName, exampleName, importType, fileName }) => {
         return {
             params: {
                 internalFramework,
                 pageName,
                 exampleName,
+                importType,
                 fileName,
             },
         };

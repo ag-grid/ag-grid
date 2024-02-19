@@ -1,4 +1,6 @@
+import type { InternalFramework } from '@ag-grid-types';
 import type { CollectionEntry } from 'astro:content';
+import glob from 'glob';
 
 import { getIsDev } from './env';
 import { pathJoin } from './pathJoin';
@@ -14,6 +16,22 @@ export interface InternalFrameworkExample {
     pageName: string;
     exampleName: string;
 }
+
+export interface DevFileRoute {
+    params: {
+        filePath: string;
+    };
+    props: {
+        fullFilePath: string;
+    };
+}
+
+/**
+ * Mapping for dev files, from route to file path
+ *
+ * NOTE: File path is after `getRootUrl()`
+ */
+export const DEV_FILE_PATH_MAP: Record<string, string> = {};
 
 /**
  * The root url where the monorepo exists
@@ -32,7 +50,7 @@ export const getRootUrl = (): URL => {
  */
 export const getExampleRootFileUrl = (): URL => {
     const root = getRootUrl().pathname;
-    return new URL(`${root}/dist/generated-examples/ag-grid-website/`, import.meta.url);
+    return new URL(`${root}/dist/generated-examples/ag-grid-docs/`, import.meta.url);
 };
 
 /**
@@ -52,3 +70,32 @@ export const getContentRootFileUrl = ({ isDev }: { isDev?: boolean } = {}): URL 
     const contentRoot = pathJoin(websiteRoot, 'src/content');
     return new URL(contentRoot, import.meta.url);
 };
+
+export function getDevFiles(): DevFileRoute[] {
+    const result = [];
+
+    for (const [filePath, sourceFilePath] of Object.entries(DEV_FILE_PATH_MAP)) {
+        const fullFilePath = pathJoin(getRootUrl().pathname, sourceFilePath);
+        if (fullFilePath.includes('**')) {
+            const pathPrefix = filePath.substring(0, filePath.indexOf('**'));
+            const sourcePrefix = fullFilePath.substring(0, fullFilePath.indexOf('**'));
+
+            const matches = glob.sync(fullFilePath);
+            if (matches.length === 0) throw new Error(`No files match the glob ${fullFilePath}`);
+
+            for (const globFile of matches) {
+                const relativeFile = globFile.replace(sourcePrefix, '');
+
+                result.push({
+                    params: { filePath: `${pathPrefix}${relativeFile}` },
+                    props: { fullFilePath: globFile },
+                });
+            }
+            continue;
+        }
+
+        result.push({ params: { filePath }, props: { fullFilePath } });
+    }
+
+    return result;
+}
