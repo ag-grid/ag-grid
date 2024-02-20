@@ -21,7 +21,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule]);
 ```
 
 <note>
-| Integrated Community Charts can be imported from `@ag-grid-enterprise/charts`.
+| When importing from `@ag-grid-enterprise/charts`, only AG Chart Community features are available.
 </note>
 
 ## Integrated Charts Package
@@ -46,7 +46,7 @@ import  "ag-grid-charts-enterprise";
 The `ag-grid-charts-enterpise` package includes AG Grid Enterprise and AG Charts Enterprise.
 
 <note>
-| Integrated Community Charts is included in the `ag-grid-enterprise` package.
+| When importing from `@ag-grid-enterprise/charts`, only AG Chart Community features are available.
 </note>
 
 ## Next Up
