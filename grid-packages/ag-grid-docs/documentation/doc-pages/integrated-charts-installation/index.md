@@ -46,7 +46,7 @@ import  "ag-grid-charts-enterprise";
 The `ag-grid-charts-enterpise` package includes AG Grid Enterprise and AG Charts Enterprise.
 
 <note>
-| When importing from `@ag-grid-enterprise/charts`, only AG Chart Community features are available.
+| The `ag-grid-enterprise` package is limited to AG Chart Community features.
 </note>
 
 ## Next Up
