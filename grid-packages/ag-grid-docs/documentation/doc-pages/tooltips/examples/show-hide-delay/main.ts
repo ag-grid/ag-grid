@@ -1,4 +1,4 @@
-import { GridApi, createGrid, ITooltipParams, ColDef, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, ColDef, GridOptions, ITooltipParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   {
@@ -32,10 +32,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 100
   },
-  tooltipMouseTrack: true,
+  tooltipShowDelay: 0,
+  tooltipHideDelay: 2000,
   rowData: null,
   columnDefs: columnDefs,
-
 }
 
 // setup the grid after the page has finished loading

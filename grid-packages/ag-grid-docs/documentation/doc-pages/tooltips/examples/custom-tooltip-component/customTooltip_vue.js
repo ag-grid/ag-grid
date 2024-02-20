@@ -1,9 +1,8 @@
 export default {
     template: `
       <div class="custom-tooltip" v-bind:style="{ backgroundColor: color }">
-          <p><span>{{ data.athlete }}</span></p>
-          <p><span>Country: </span>{{ data.country }}</p>
-          <p><span>Total: </span>{{ data.total }}</p>
+          <div><b>Custom Tooltip</b></div>
+          <div>{{ value }}</div>
       </div>
     `,
     data: function () {
@@ -15,7 +14,7 @@ export default {
         };
     },
     beforeMount() {
-        this.data = this.params.api.getDisplayedRowAtIndex(this.params.rowIndex).data;
+        this.value = this.params.value;
         this.color = this.params.color || '#999';
     }
 };

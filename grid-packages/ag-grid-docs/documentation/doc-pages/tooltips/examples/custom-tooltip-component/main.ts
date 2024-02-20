@@ -1,4 +1,5 @@
 import { GridApi, createGrid, ITooltipParams, ColDef, GridOptions } from '@ag-grid-community/core';
+import { CustomTooltip } from "./customTooltip_typescript";
 
 const columnDefs: ColDef[] = [
   {
@@ -30,12 +31,16 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
-    minWidth: 100
+    minWidth: 100,
+    tooltipComponent: CustomTooltip
   },
-  tooltipMouseTrack: true,
+
+  tooltipShowDelay: 0,
+  tooltipHideDelay: 2000,
+
+  // set rowData to null or undefined to show loading panel by default
   rowData: null,
   columnDefs: columnDefs,
-
 }
 
 // setup the grid after the page has finished loading

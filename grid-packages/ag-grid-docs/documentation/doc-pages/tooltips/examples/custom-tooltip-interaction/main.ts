@@ -6,32 +6,23 @@ const columnDefs: ColDef[] = [
     field: 'athlete',
     minWidth: 150,
     tooltipField: 'athlete',
-    tooltipComponentParams: { color: '#55AA77' },
+    tooltipComponentParams: { type: 'success' },
   },
-  { field: 'age' },
-  { field: 'country', minWidth: 130, tooltipField: 'country' },
+  { field: 'age', minWidth: 130, tooltipField: 'age' },
   { field: 'year' },
-  { field: 'date' },
-  { field: 'sport' },
-  { field: 'gold' },
-  { field: 'silver' },
-  { field: 'bronze' },
-  { field: 'total' },
+  { field: 'sport' }
 ]
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    editable: true,
     flex: 1,
     minWidth: 100,
-    filter: true,
     tooltipComponent: CustomTooltip
   },
 
-  tooltipShowDelay: 0,
-  tooltipHideDelay: 2000,
+  tooltipInteraction: true,
 
   // set rowData to null or undefined to show loading panel by default
   rowData: null,

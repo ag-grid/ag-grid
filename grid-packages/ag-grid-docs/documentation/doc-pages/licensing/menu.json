@@ -457,7 +457,7 @@
                 "showInCollapsed": true
               },
               {
-                "title": "Formatting Values",
+                "title": "Text Formatting",
                 "url": "/value-formatters/",
                 "showInCollapsed": true
               },
@@ -1530,11 +1530,6 @@
           {
             "title": "Date Component",
             "url": "/component-date/"
-          },
-          {
-            "title": "Tooltip Component",
-            "url": "/component-tooltip/",
-            "showInCollapsed": true
           },
           {
             "title": "Higher Order Components",

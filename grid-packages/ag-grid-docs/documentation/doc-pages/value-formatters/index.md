@@ -1,5 +1,5 @@
 ---
-title: "Formatting Values"
+title: "Text Formatting"
 ---
 
 Use a Value Formatter to provide text formatting of values.
