@@ -68,7 +68,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/seans-react-examples/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/ignore" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules.nosync" />
-      <excludeFolder url="file://$MODULE_DIR$/packages" />
       <excludeFolder url="file://$MODULE_DIR$/t" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-community/styles" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/styles" />

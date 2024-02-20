@@ -5,10 +5,9 @@
     "emitDeclarationOnly": true
   },
   "include": [
-    "src/main.ts"
+    "src/*.ts"
   ],
   "exclude": [
-    "src/main-umd.ts",
     "src/*.test.ts"
   ]
 }
