@@ -37,12 +37,20 @@ export const getExampleRunnerExampleUrl = ({
     internalFramework,
     pageName,
     exampleName,
+    importType,
 }: {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
+    importType: ImportType;
 }) => {
-    return pathJoin(SITE_BASE_URL, internalFramework, pageName, 'examples', exampleName, 'example-runner');
+    const exampleUrl = getExampleUrl({
+        internalFramework,
+        pageName,
+        exampleName,
+        importType,
+    });
+    return pathJoin(exampleUrl, 'example-runner');
 };
 
 /**
@@ -52,12 +60,20 @@ export const getExamplePlunkrUrl = ({
     internalFramework,
     pageName,
     exampleName,
+    importType,
 }: {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
+    importType: ImportType;
 }) => {
-    return pathJoin(SITE_BASE_URL, internalFramework, pageName, 'examples', exampleName, 'plunkr');
+    const exampleUrl = getExampleUrl({
+        internalFramework,
+        pageName,
+        exampleName,
+        importType,
+    });
+    return pathJoin(exampleUrl, 'plunkr');
 };
 
 /**
@@ -67,12 +83,20 @@ export const getExampleCodeSandboxUrl = ({
     internalFramework,
     pageName,
     exampleName,
+    importType,
 }: {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
+    importType: ImportType;
 }) => {
-    return pathJoin(SITE_BASE_URL, internalFramework, pageName, 'examples', exampleName, 'codesandbox');
+    const exampleUrl = getExampleUrl({
+        internalFramework,
+        pageName,
+        exampleName,
+        importType,
+    });
+    return pathJoin(exampleUrl, 'codesandbox');
 };
 
 /**
@@ -89,15 +113,13 @@ export const getExampleContentsUrl = ({
     exampleName: string;
     importType: ImportType;
 }) => {
-    return pathJoin(
-        getExampleUrl({
-            internalFramework,
-            pageName,
-            exampleName,
-            importType,
-        }),
-        'contents.json'
-    );
+    const exampleUrl = getExampleUrl({
+        internalFramework,
+        pageName,
+        exampleName,
+        importType,
+    });
+    return pathJoin(exampleUrl, 'contents.json');
 };
 
 /**
@@ -116,15 +138,13 @@ export const getExampleFileUrl = ({
     importType: ImportType;
     fileName: string;
 }) => {
-    return pathJoin(
-        getExampleUrl({
-            internalFramework,
-            pageName,
-            importType,
-            exampleName,
-        }),
-        fileName
-    );
+    const exampleUrl = getExampleUrl({
+        internalFramework,
+        pageName,
+        exampleName,
+        importType,
+    });
+    return pathJoin(exampleUrl, fileName);
 };
 
 export const getGifStillImageUrl = ({ pageName, imagePath }: { pageName: string; imagePath: string }) => {

@@ -5,7 +5,7 @@ import { ExternalLinks } from '@features/example-runner/components/ExternalLinks
 import type { ExampleOptions } from '@features/example-runner/types';
 import { getLoadingIFrameId } from '@features/example-runner/utils/getLoadingLogoId';
 import { useStore } from '@nanostores/react';
-import { $internalFramework, updateInternalFrameworkBasedOnFramework } from '@stores/frameworkStore';
+import { $frameworkContext, $internalFramework, updateInternalFrameworkBasedOnFramework } from '@stores/frameworkStore';
 import { getFrameworkFromInternalFramework } from '@utils/framework';
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
@@ -55,8 +55,10 @@ const queryOptions = {
     refetchOnReconnect: false,
 };
 
-const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, pageName, importType }: Props) => {
+const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, pageName }: Props) => {
     const internalFramework = useStore($internalFramework);
+    const frameworkStore = useStore($frameworkContext);
+    const importType = frameworkStore['importType'];
     const [initialSelectedFile, setInitialSelectedFile] = useState();
     const [exampleUrl, setExampleUrl] = useState<string>();
     const [exampleRunnerExampleUrl, setExampleRunnerExampleUrl] = useState<string>();
@@ -70,32 +72,34 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, 
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
 
-    // const {
-    //     isLoading: contentsIsLoading,
-    //     isError: contentsIsError,
-    //     data: [contents, exampleFileHtml] = [],
-    // } = useQuery(
-    //     ['docsExampleContents', internalFramework, pageName, exampleName],
-    //     () => {
-    //         const getContents = fetch(
-    //             getExampleContentsUrl({
-    //                 internalFramework,
-    //                 pageName,
-    //                 exampleName,
-    //             })
-    //         ).then((res) => res.json());
+    const {
+        isLoading: contentsIsLoading,
+        isError: contentsIsError,
+        data: [contents, exampleFileHtml] = [],
+    } = useQuery(
+        ['docsExampleContents', internalFramework, pageName, exampleName],
+        () => {
+            const getContents = fetch(
+                getExampleContentsUrl({
+                    internalFramework,
+                    pageName,
+                    exampleName,
+                    importType,
+                })
+            ).then((res) => res.json());
 
-    //         const getExampleFileHtml = fetch(
-    //             getExampleUrl({
-    //                 internalFramework,
-    //                 pageName,
-    //                 exampleName,
-    //             })
-    //         ).then((res) => res.text());
-    //         return Promise.all([getContents, getExampleFileHtml]);
-    //     },
-    //     queryOptions
-    // );
+            const getExampleFileHtml = fetch(
+                getExampleUrl({
+                    internalFramework,
+                    pageName,
+                    exampleName,
+                    importType,
+                })
+            ).then((res) => res.text());
+            return Promise.all([getContents, getExampleFileHtml]);
+        },
+        queryOptions
+    );
 
     useEffect(() => {
         if (!exampleName) {
@@ -115,6 +119,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, 
                 internalFramework,
                 pageName,
                 exampleName,
+                importType,
             })
         );
     }, [internalFramework, pageName, exampleName]);
@@ -132,6 +137,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, 
                 internalFramework,
                 pageName,
                 exampleName,
+                importType,
             })
         );
 
@@ -140,6 +146,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, 
                 internalFramework,
                 pageName,
                 exampleName,
+                importType,
             })
         );
     }, [internalFramework, pageName, exampleName]);

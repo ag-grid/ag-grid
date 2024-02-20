@@ -1,10 +1,11 @@
-import type { Framework, InternalFramework } from '@ag-grid-types';
+import type { Framework, ImportType, InternalFramework } from '@ag-grid-types';
 import { persistentAtom, persistentMap } from '@nanostores/persistent';
 import { getInternalFramework } from '@utils/framework';
 
 export type FrameworkContext = {
     useTypescript: string;
     useVue3: string;
+    importType: ImportType;
 };
 
 const LOCALSTORAGE_PREFIX = 'documentation';
@@ -18,6 +19,7 @@ export const $internalFramework = persistentAtom<InternalFramework>(
 export const $frameworkContext = persistentMap<FrameworkContext>(`${LOCALSTORAGE_PREFIX}:context`, {
     useTypescript: 'false',
     useVue3: 'false',
+    importType: 'modules',
 });
 
 /**
@@ -46,10 +48,20 @@ export const setInternalFramework = (internalFramework: InternalFramework) => {
  * Get framework context key converting from localstorage string to
  * boolean value
  */
-export const getFrameworkContextKey = (key: keyof FrameworkContext): boolean => {
+export const getFrameworkContextKeyBoolean = (key: keyof FrameworkContext): boolean => {
+    const value = getFrameworkContextKey(key);
+
+    return value === 'true';
+};
+
+/**
+ * Get framework context key converting from localstorage string to
+ * boolean value
+ */
+export const getFrameworkContextKey = (key: keyof FrameworkContext): string => {
     const context = $frameworkContext.get();
 
-    return context[key] === 'true';
+    return context[key];
 };
 
 /**
@@ -58,8 +70,8 @@ export const getFrameworkContextKey = (key: keyof FrameworkContext): boolean => 
 export const updateInternalFrameworkBasedOnFramework = (framework: Framework) => {
     const internalFramework = getInternalFramework({
         framework,
-        useVue3: getFrameworkContextKey('useVue3'),
-        useTypescript: getFrameworkContextKey('useTypescript'),
+        useVue3: getFrameworkContextKeyBoolean('useVue3'),
+        useTypescript: getFrameworkContextKeyBoolean('useTypescript'),
     });
 
     // NOTE: Set store directly instead of `setInternalFramework`, as
