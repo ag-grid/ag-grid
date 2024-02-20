@@ -21,6 +21,7 @@ export interface IHeaderResizeFeature {
 }
 export declare abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellComp = any, TColumn extends IHeaderColumn = any, TFeature extends IHeaderResizeFeature = any> extends BeanStub {
     static DOM_DATA_KEY_HEADER_CTRL: string;
+    private pinnedWidthService;
     protected readonly focusService: FocusService;
     protected readonly userComponentFactory: UserComponentFactory;
     protected readonly ctrlsService: CtrlsService;
@@ -39,7 +40,7 @@ export declare abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHead
     protected column: TColumn;
     lastFocusEvent: KeyboardEvent | null;
     protected dragSource: DragSource | null;
-    protected abstract resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void;
+    protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
     constructor(columnGroupChild: IHeaderColumn, beans: Beans, parentRowCtrl: HeaderRowCtrl);
     private postConstruct;
@@ -52,6 +53,8 @@ export declare abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHead
     protected addResizeAndMoveKeyboardListeners(): void;
     private refreshTabIndex;
     private onGuiKeyDown;
+    private getViewportAdjustedResizeDiff;
+    private getResizeDiff;
     private onGuiKeyUp;
     protected handleKeyDown(e: KeyboardEvent): void;
     private addDomData;

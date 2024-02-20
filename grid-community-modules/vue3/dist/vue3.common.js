@@ -15855,7 +15855,7 @@ class simpleFloatingFilter_SimpleFloatingFilter extends component_Component {
         // 1) there is a type (user has configured filter wrong if not type)
         //  AND
         // 2) the default type is not 'inRange'
-        const editable = this.isTypeEditable(this.lastType);
+        const editable = this.isTypeEditable(this.optionsFactory.getDefaultOption());
         this.setEditable(editable);
     }
     onParamsUpdated(params) {
@@ -34349,6 +34349,7 @@ var abstractHeaderCellCtrl_decorate = (undefined && undefined.__decorate) || fun
 
 
 
+
 let abstractHeaderCellCtrl_instanceIdSequence = 0;
 class abstractHeaderCellCtrl_AbstractHeaderCellCtrl extends beanStub_BeanStub {
     constructor(columnGroupChild, beans, parentRowCtrl) {
@@ -34443,12 +34444,43 @@ class abstractHeaderCellCtrl_AbstractHeaderCellCtrl extends beanStub_BeanStub {
         if (e.altKey) {
             this.isResizing = true;
             this.resizeMultiplier += 1;
-            this.resizeHeader(direction, e.shiftKey);
+            const diff = this.getViewportAdjustedResizeDiff(e);
+            this.resizeHeader(diff, e.shiftKey);
             (_a = this.resizeFeature) === null || _a === void 0 ? void 0 : _a.toggleColumnResizing(true);
         }
         else {
             this.moveHeader(direction);
         }
+    }
+    getViewportAdjustedResizeDiff(e) {
+        let diff = this.getResizeDiff(e);
+        const pinned = this.column.getPinned();
+        if (pinned) {
+            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            if (leftWidth + rightWidth + diff > bodyWidth) {
+                if (bodyWidth > leftWidth + rightWidth) {
+                    // allow body width to ignore resize multiplier and fill space for last tick
+                    diff = bodyWidth - leftWidth - rightWidth;
+                }
+                else {
+                    return 0;
+                }
+            }
+        }
+        return diff;
+    }
+    getResizeDiff(e) {
+        let isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
+        const pinned = this.column.getPinned();
+        const isRtl = this.gridOptionsService.get('enableRtl');
+        if (pinned) {
+            if (isRtl !== (pinned === 'right')) {
+                isLeft = !isLeft;
+            }
+        }
+        return (isLeft ? -1 : 1) * this.resizeMultiplier;
     }
     onGuiKeyUp() {
         if (!this.isResizing) {
@@ -34545,6 +34577,9 @@ class abstractHeaderCellCtrl_AbstractHeaderCellCtrl extends beanStub_BeanStub {
     }
 }
 abstractHeaderCellCtrl_AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
+abstractHeaderCellCtrl_decorate([
+    Autowired('pinnedWidthService')
+], abstractHeaderCellCtrl_AbstractHeaderCellCtrl.prototype, "pinnedWidthService", void 0);
 abstractHeaderCellCtrl_decorate([
     Autowired('focusService')
 ], abstractHeaderCellCtrl_AbstractHeaderCellCtrl.prototype, "focusService", void 0);
@@ -35364,13 +35399,6 @@ selectAllFeature_decorate([
 ], selectAllFeature_SelectAllFeature.prototype, "selectionService", void 0);
 
 // CONCATENATED MODULE: ../core/dist/esm/es6/headerRendering/cells/column/headerCellCtrl.mjs
-var headerCellCtrl_decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-
 
 
 
@@ -35433,32 +35461,15 @@ class headerCellCtrl_HeaderCellCtrl extends abstractHeaderCellCtrl_AbstractHeade
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
-    resizeHeader(direction, shiftKey) {
+    resizeHeader(delta, shiftKey) {
         var _a, _b;
         if (!this.column.isResizable()) {
             return;
         }
-        const pinned = this.column.getPinned();
-        const isRtl = this.gridOptionsService.get('enableRtl');
         const actualWidth = this.column.getActualWidth();
         const minWidth = (_a = this.column.getMinWidth()) !== null && _a !== void 0 ? _a : 0;
         const maxWidth = (_b = this.column.getMaxWidth()) !== null && _b !== void 0 ? _b : Number.MAX_SAFE_INTEGER;
-        let isLeft = direction === HorizontalDirection.Left;
-        if (pinned) {
-            if (isRtl !== (pinned === 'right')) {
-                isLeft = !isLeft;
-            }
-        }
-        const diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
-        const newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
-        if (pinned) {
-            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
-            if (leftWidth + rightWidth + diff > bodyWidth) {
-                return;
-            }
-        }
+        const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
         this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
     }
     moveHeader(hDirection) {
@@ -35579,7 +35590,9 @@ class headerCellCtrl_HeaderCellCtrl extends abstractHeaderCellCtrl_AbstractHeade
             this.focusService.setFocusedHeader(rowIndex, this.column);
             this.announceAriaDescription();
         }
-        this.setActiveHeader(true);
+        if (this.focusService.isKeyboardMode()) {
+            this.setActiveHeader(true);
+        }
     }
     onFocusOut(e) {
         if (this.getGui().contains(e.relatedTarget)) {
@@ -36012,9 +36025,6 @@ class headerCellCtrl_HeaderCellCtrl extends abstractHeaderCellCtrl_AbstractHeade
         this.ariaDescriptionProperties = null;
     }
 }
-headerCellCtrl_decorate([
-    Autowired('pinnedWidthService')
-], headerCellCtrl_HeaderCellCtrl.prototype, "pinnedWidthService", void 0);
 
 // CONCATENATED MODULE: ../core/dist/esm/es6/headerRendering/cells/columnGroup/groupResizeFeature.mjs
 var groupResizeFeature_decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
@@ -36333,15 +36343,13 @@ class headerGroupCellCtrl_HeaderGroupCellCtrl extends abstractHeaderCellCtrl_Abs
         this.addManagedPropertyListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners();
     }
-    resizeHeader(direction, shiftKey) {
+    resizeHeader(delta, shiftKey) {
         // check to avoid throwing when a component has not been setup yet (React 18)
         if (!this.resizeFeature) {
             return;
         }
-        const isLeft = direction === HorizontalDirection.Left;
-        const diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
         const initialValues = this.resizeFeature.getInitialValues(shiftKey);
-        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + diff, 'uiColumnResized', true);
+        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + delta, 'uiColumnResized', true);
     }
     moveHeader(hDirection) {
         const { beans, eGui, column, gridOptionsService, ctrlsService } = this;
@@ -37841,13 +37849,14 @@ class tabGuardCtrl_TabGuardCtrl extends beanStub_BeanStub {
         super();
         this.skipTabGuardFocus = false;
         this.forcingFocusOut = false;
-        const { comp, eTopGuard, eBottomGuard, focusTrapActive, focusInnerElement, onFocusIn, onFocusOut, shouldStopEventPropagation, onTabKeyDown, handleKeyDown, eFocusableElement } = params;
+        const { comp, eTopGuard, eBottomGuard, focusTrapActive, forceFocusOutWhenTabGuardsAreEmpty, focusInnerElement, onFocusIn, onFocusOut, shouldStopEventPropagation, onTabKeyDown, handleKeyDown, eFocusableElement } = params;
         this.comp = comp;
         this.eTopGuard = eTopGuard;
         this.eBottomGuard = eBottomGuard;
         this.providedFocusInnerElement = focusInnerElement;
         this.eFocusableElement = eFocusableElement;
         this.focusTrapActive = !!focusTrapActive;
+        this.forceFocusOutWhenTabGuardsAreEmpty = !!forceFocusOutWhenTabGuardsAreEmpty;
         this.providedFocusIn = onFocusIn;
         this.providedFocusOut = onFocusOut;
         this.providedShouldStopEventPropagation = shouldStopEventPropagation;
@@ -37898,9 +37907,12 @@ class tabGuardCtrl_TabGuardCtrl extends beanStub_BeanStub {
         // when there are no focusable items within the TabGuard, focus gets stuck
         // in the TabGuard itself and has nowhere to go, so we need to manually find
         // the closest element to focus by calling `forceFocusOutWhenTabGuardAreEmpty`.
-        if (this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0) {
-            this.forceFocusOutWhenTabGuardsAreEmpty(e.target === this.eBottomGuard);
-            return;
+        if (this.forceFocusOutWhenTabGuardsAreEmpty) {
+            const isEmpty = this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0;
+            if (isEmpty) {
+                this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+                return;
+            }
         }
         const fromBottom = e.target === this.eBottomGuard;
         if (this.providedFocusInnerElement) {
@@ -37910,7 +37922,7 @@ class tabGuardCtrl_TabGuardCtrl extends beanStub_BeanStub {
             this.focusInnerElement(fromBottom);
         }
     }
-    forceFocusOutWhenTabGuardsAreEmpty(up) {
+    findNextElementOutsideAndFocus(up) {
         const eDocument = this.gridOptionsService.getDocument();
         const focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
         const index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);
@@ -38065,7 +38077,8 @@ class tabGuardComp_TabGuardComp extends component_Component {
             focusInnerElement: params.focusInnerElement,
             handleKeyDown: params.handleKeyDown,
             onTabKeyDown: params.onTabKeyDown,
-            shouldStopEventPropagation: params.shouldStopEventPropagation
+            shouldStopEventPropagation: params.shouldStopEventPropagation,
+            forceFocusOutWhenTabGuardsAreEmpty: params.forceFocusOutWhenTabGuardsAreEmpty
         }));
     }
     createTabGuard(side) {
@@ -39446,12 +39459,16 @@ let rowRenderer_RowRenderer = class RowRenderer extends beanStub_BeanStub {
         this.redrawAfterModelUpdate(params);
     }
     redrawRow(rowNode, suppressEvent = false) {
+        var _a;
         if (rowNode.sticky) {
             this.stickyRowFeature.refreshStickyNode(rowNode);
         }
-        else if (rowNode.detail && this.cachedRowCtrls.has(rowNode)) {
+        else if ((_a = this.cachedRowCtrls) === null || _a === void 0 ? void 0 : _a.has(rowNode)) {
             // delete row from cache if it needs redrawn
+            // if it's in the cache no updates need fired, as nothing
+            // has been rendered
             this.cachedRowCtrls.removeRow(rowNode);
+            return;
         }
         else {
             const destroyAndRecreateCtrl = (dataStruct) => {
@@ -43352,7 +43369,7 @@ class agMenuItemComponent_AgMenuItemComponent extends beanStub_BeanStub {
         }
         (_b = (_a = this.menuItemComp).setActive) === null || _b === void 0 ? void 0 : _b.call(_a, true);
         if (!this.suppressFocus) {
-            this.eGui.focus();
+            this.eGui.focus({ preventScroll: true });
         }
         if (openSubMenu && this.params.subMenu) {
             window.setTimeout(() => {
@@ -47014,7 +47031,8 @@ class gridComp_GridComp extends tabGuardComp_TabGuardComp {
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: () => undefined,
-            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom)
+            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom),
+            forceFocusOutWhenTabGuardsAreEmpty: true
         });
     }
     insertGridIntoDom() {
@@ -47910,13 +47928,17 @@ let columnAnimationService_ColumnAnimationService = class ColumnAnimationService
         this.executeNextFuncs = [];
         this.executeLaterFuncs = [];
         this.active = false;
+        this.suppressAnimation = false;
         this.animationThreadCount = 0;
     }
     postConstruct() {
         this.ctrlsService.whenReady(p => this.gridBodyCtrl = p.gridBodyCtrl);
     }
     isActive() {
-        return this.active;
+        return this.active && !this.suppressAnimation;
+    }
+    setSuppressAnimation(suppress) {
+        this.suppressAnimation = suppress;
     }
     start() {
         if (this.active) {
@@ -52196,6 +52218,7 @@ let dataTypeService_DataTypeService = class DataTypeService extends beanStub_Bea
                 else {
                     mergeFilterParams({
                         maxNumConditions: 1,
+                        debounceMs: 0,
                         filterOptions: [
                             'empty',
                             {
@@ -53128,8 +53151,7 @@ let stateService_StateService = class StateService extends beanStub_BeanStub {
     }
     suppressEventsAndDispatchInitEvent(updateFunc) {
         this.suppressEvents = true;
-        const columnAnimation = this.gridOptionsService.get('suppressColumnMoveAnimation');
-        this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: true } });
+        this.columnAnimationService.setSuppressAnimation(true);
         updateFunc();
         // We want to suppress any grid events, but not user events.
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
@@ -53141,7 +53163,7 @@ let stateService_StateService = class StateService extends beanStub_BeanStub {
                 // Ensure the grid is still alive before dispatching the event.
                 return;
             }
-            this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: columnAnimation } });
+            this.columnAnimationService.setSuppressAnimation(false);
             this.dispatchStateUpdateEvent(['gridInitializing']);
         });
     }
@@ -53176,6 +53198,9 @@ stateService_decorate([
 stateService_decorate([
     Autowired('expansionService')
 ], stateService_StateService.prototype, "expansionService", void 0);
+stateService_decorate([
+    Autowired('columnAnimationService')
+], stateService_StateService.prototype, "columnAnimationService", void 0);
 stateService_decorate([
     PostConstruct
 ], stateService_StateService.prototype, "postConstruct", null);

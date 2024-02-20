@@ -42,7 +42,8 @@ class GridComp extends tabGuardComp_1.TabGuardComp {
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: () => undefined,
-            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom)
+            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom),
+            forceFocusOutWhenTabGuardsAreEmpty: true
         });
     }
     insertGridIntoDom() {

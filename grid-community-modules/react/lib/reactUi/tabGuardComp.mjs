@@ -3,7 +3,7 @@ import React, { forwardRef, memo, useCallback, useContext, useImperativeHandle, 
 import { TabGuardClassNames, TabGuardCtrl } from '@ag-grid-community/core';
 import { BeansContext } from './beansContext.mjs';
 const TabGuardCompRef = (props, forwardRef) => {
-    const { children, eFocusableElement, onTabKeyDown, gridCtrl } = props;
+    const { children, eFocusableElement, onTabKeyDown, gridCtrl, forceFocusOutWhenTabGuardsAreEmpty } = props;
     const { context } = useContext(BeansContext);
     const topTabGuardRef = useRef(null);
     const bottomTabGuardRef = useRef(null);
@@ -43,6 +43,7 @@ const TabGuardCompRef = (props, forwardRef) => {
                 eBottomGuard: bottomTabGuardRef.current,
                 eFocusableElement: eFocusableElement,
                 onTabKeyDown: onTabKeyDown,
+                forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
                 focusInnerElement: (fromBottom) => gridCtrl.focusInnerElement(fromBottom)
             }));
         }

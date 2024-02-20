@@ -144,7 +144,7 @@ export class ChartDataPanel extends Component {
             suppressOpenCloseIcons: false,
             cssIdentifier: 'charts-data'
         }));
-        const inputName = `chartDimension${this.getCompId()}`;
+        const inputName = `chartDimension${this.categoriesGroupComp.getCompId()}`;
         // Display either radio buttons or checkboxes
         // depending on whether the current chart type supports multiple category columns
         const chartType = this.chartController.getChartType();

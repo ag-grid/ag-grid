@@ -58,19 +58,30 @@ var CartesianAxisPanel = /** @class */ (function (_super) {
             .setTitle(this.translate("axis"))
             .toggleGroupExpand(this.isExpandedOnInit)
             .hideEnabledCheckbox(true);
+        // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line settings are
+        // changed, the value for `line.enabled` is inferred based on the current `line.width` value.
         this.axisColorInput
             .setLabel(this.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth("flex")
             .setValue(this.chartOptionsService.getAxisProperty("line.color"))
-            .onValueChange(function (newColor) { return _this.chartOptionsService.setAxisProperty("line.color", newColor); });
+            .onValueChange(function (newColor) {
+            var isLineEnabled = _this.chartOptionsService.getAxisProperty("line.width") > 0;
+            _this.chartOptionsService.setAxisProperties([
+                { expression: "line.enabled", value: isLineEnabled },
+                { expression: "line.color", value: newColor },
+            ]);
+        });
         var currentValue = this.chartOptionsService.getAxisProperty("line.width");
         this.axisLineWidthSlider
             .setMaxValue(getMaxValue(currentValue, 10))
             .setLabel(this.translate("thickness"))
             .setTextFieldWidth(45)
             .setValue("".concat(currentValue))
-            .onValueChange(function (newValue) { return _this.chartOptionsService.setAxisProperty("line.width", newValue); });
+            .onValueChange(function (newValue) { return _this.chartOptionsService.setAxisProperties([
+            { expression: "line.enabled", value: (newValue !== 0) },
+            { expression: "line.width", value: newValue },
+        ]); });
     };
     CartesianAxisPanel.prototype.initAxisTicks = function () {
         if (!this.hasConfigurableAxisTicks())

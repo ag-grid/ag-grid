@@ -207,7 +207,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
             suppressOpenCloseIcons: false,
             cssIdentifier: 'charts-data'
         }));
-        var inputName = "chartDimension".concat(this.getCompId());
+        var inputName = "chartDimension".concat(this.categoriesGroupComp.getCompId());
         // Display either radio buttons or checkboxes
         // depending on whether the current chart type supports multiple category columns
         var chartType = this.chartController.getChartType();

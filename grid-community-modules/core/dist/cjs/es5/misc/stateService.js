@@ -587,8 +587,7 @@ var StateService = /** @class */ (function (_super) {
     StateService.prototype.suppressEventsAndDispatchInitEvent = function (updateFunc) {
         var _this = this;
         this.suppressEvents = true;
-        var columnAnimation = this.gridOptionsService.get('suppressColumnMoveAnimation');
-        this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: true } });
+        this.columnAnimationService.setSuppressAnimation(true);
         updateFunc();
         // We want to suppress any grid events, but not user events.
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
@@ -600,7 +599,7 @@ var StateService = /** @class */ (function (_super) {
                 // Ensure the grid is still alive before dispatching the event.
                 return;
             }
-            _this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: columnAnimation } });
+            _this.columnAnimationService.setSuppressAnimation(false);
             _this.dispatchStateUpdateEvent(['gridInitializing']);
         });
     };
@@ -634,6 +633,9 @@ var StateService = /** @class */ (function (_super) {
     __decorate([
         (0, context_1.Autowired)('expansionService')
     ], StateService.prototype, "expansionService", void 0);
+    __decorate([
+        (0, context_1.Autowired)('columnAnimationService')
+    ], StateService.prototype, "columnAnimationService", void 0);
     __decorate([
         context_1.PostConstruct
     ], StateService.prototype, "postConstruct", null);

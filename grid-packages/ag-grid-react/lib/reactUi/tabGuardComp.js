@@ -24,7 +24,7 @@ var react_1 = __importStar(require("react"));
 var ag_grid_community_1 = require("ag-grid-community");
 var beansContext_1 = require("./beansContext");
 var TabGuardCompRef = function (props, forwardRef) {
-    var children = props.children, eFocusableElement = props.eFocusableElement, onTabKeyDown = props.onTabKeyDown, gridCtrl = props.gridCtrl;
+    var children = props.children, eFocusableElement = props.eFocusableElement, onTabKeyDown = props.onTabKeyDown, gridCtrl = props.gridCtrl, forceFocusOutWhenTabGuardsAreEmpty = props.forceFocusOutWhenTabGuardsAreEmpty;
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var topTabGuardRef = react_1.useRef(null);
     var bottomTabGuardRef = react_1.useRef(null);
@@ -64,6 +64,7 @@ var TabGuardCompRef = function (props, forwardRef) {
                 eBottomGuard: bottomTabGuardRef.current,
                 eFocusableElement: eFocusableElement,
                 onTabKeyDown: onTabKeyDown,
+                forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
                 focusInnerElement: function (fromBottom) { return gridCtrl.focusInnerElement(fromBottom); }
             }));
         }

@@ -135,13 +135,14 @@ var ReactComponent = /** @class */ (function () {
         var _this = this;
         if (!this.isStatelessComponent()) {
             // grab hold of the actual instance created
-            params.ref = function (element) {
+            this.ref = function (element) {
                 var _a;
                 _this.componentInstance = element;
                 _this.addParentContainerStyleAndClasses();
                 (_a = _this.resolveInstanceCreated) === null || _a === void 0 ? void 0 : _a.call(_this, true);
                 _this.resolveInstanceCreated = undefined;
             };
+            params.ref = this.ref;
         }
         this.reactElement = this.createElement(this.reactComponent, __assign(__assign({}, params), { key: this.key }));
         this.portal = react_dom_1.createPortal(this.reactElement, this.eParentElement, this.portalKey // fixed deltaRowModeRefreshCompRenderer

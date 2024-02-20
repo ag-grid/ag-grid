@@ -1,14 +1,7 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HeaderCellCtrl = void 0;
 const keyCode_1 = require("../../../constants/keyCode");
-const context_1 = require("../../../context/context");
 const dragAndDropService_1 = require("../../../dragAndDrop/dragAndDropService");
 const column_1 = require("../../../entities/column");
 const eventKeys_1 = require("../../../eventKeys");
@@ -70,32 +63,15 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
-    resizeHeader(direction, shiftKey) {
+    resizeHeader(delta, shiftKey) {
         var _a, _b;
         if (!this.column.isResizable()) {
             return;
         }
-        const pinned = this.column.getPinned();
-        const isRtl = this.gridOptionsService.get('enableRtl');
         const actualWidth = this.column.getActualWidth();
         const minWidth = (_a = this.column.getMinWidth()) !== null && _a !== void 0 ? _a : 0;
         const maxWidth = (_b = this.column.getMaxWidth()) !== null && _b !== void 0 ? _b : Number.MAX_SAFE_INTEGER;
-        let isLeft = direction === direction_1.HorizontalDirection.Left;
-        if (pinned) {
-            if (isRtl !== (pinned === 'right')) {
-                isLeft = !isLeft;
-            }
-        }
-        const diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
-        const newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
-        if (pinned) {
-            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            const bodyWidth = (0, dom_1.getInnerWidth)(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
-            if (leftWidth + rightWidth + diff > bodyWidth) {
-                return;
-            }
-        }
+        const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
         this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
     }
     moveHeader(hDirection) {
@@ -216,7 +192,9 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
             this.focusService.setFocusedHeader(rowIndex, this.column);
             this.announceAriaDescription();
         }
-        this.setActiveHeader(true);
+        if (this.focusService.isKeyboardMode()) {
+            this.setActiveHeader(true);
+        }
     }
     onFocusOut(e) {
         if (this.getGui().contains(e.relatedTarget)) {
@@ -649,7 +627,4 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
         this.ariaDescriptionProperties = null;
     }
 }
-__decorate([
-    (0, context_1.Autowired)('pinnedWidthService')
-], HeaderCellCtrl.prototype, "pinnedWidthService", void 0);
 exports.HeaderCellCtrl = HeaderCellCtrl;

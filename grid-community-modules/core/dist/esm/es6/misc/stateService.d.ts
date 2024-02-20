@@ -14,6 +14,7 @@ export declare class StateService extends BeanStub {
     private readonly rowModel;
     private readonly selectionService;
     private readonly expansionService;
+    private readonly columnAnimationService;
     private isClientSideRowModel;
     private cachedState;
     private suppressEvents;

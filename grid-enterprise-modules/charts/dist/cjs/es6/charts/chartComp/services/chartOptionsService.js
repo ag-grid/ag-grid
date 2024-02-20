@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartOptionsService = void 0;
 const core_1 = require("@ag-grid-community/core");
 const ag_charts_community_1 = require("ag-charts-community");
+const array_1 = require("../utils/array");
 const object_1 = require("../utils/object");
 const seriesTypeMapper_1 = require("../utils/seriesTypeMapper");
 class ChartOptionsService extends core_1.BeanStub {
@@ -28,7 +29,7 @@ class ChartOptionsService extends core_1.BeanStub {
             }));
         });
         if (!isSilent) {
-            this.updateChart(chartOptions, true);
+            this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
         }
     }
@@ -42,26 +43,30 @@ class ChartOptionsService extends core_1.BeanStub {
         return (0, object_1.get)((_a = this.getChart().axes) === null || _a === void 0 ? void 0 : _a[0], expression, undefined);
     }
     setAxisProperty(expression, value) {
-        var _a;
+        this.setAxisProperties([{ expression, value }]);
+    }
+    setAxisProperties(properties) {
         const chart = this.getChart();
-        let chartOptions = {};
-        const relevantAxes = (_a = chart.axes) === null || _a === void 0 ? void 0 : _a.filter((axis) => {
-            const parts = expression.split('.');
-            let current = axis;
-            for (const part of parts) {
-                if (!(part in current)) {
-                    return false;
+        const chartOptions = (0, array_1.flatMap)(properties, ({ expression, value }) => {
+            var _a;
+            // Only apply the property to axes that declare the property on their prototype chain
+            const relevantAxes = (_a = chart.axes) === null || _a === void 0 ? void 0 : _a.filter((axis) => {
+                const parts = expression.split('.');
+                let current = axis;
+                for (const part of parts) {
+                    if (!(part in current)) {
+                        return false;
+                    }
+                    current = current[part];
                 }
-                current = current[part];
-            }
-            return true;
-        });
-        relevantAxes === null || relevantAxes === void 0 ? void 0 : relevantAxes.forEach((axis) => {
-            const updateOptions = this.getUpdateAxisOptions(axis, expression, value);
-            if (updateOptions) {
-                chartOptions = (0, object_1.deepMerge)(chartOptions, updateOptions);
-            }
-        });
+                return true;
+            });
+            if (!relevantAxes)
+                return [];
+            return relevantAxes.map((axis) => this.getUpdateAxisOptions(axis, expression, value));
+        })
+            // Combine all property updates into a single merged object
+            .reduce((chartOptions, axisOptions) => (0, object_1.deepMerge)(chartOptions, axisOptions), {});
         if (Object.keys(chartOptions).length > 0) {
             this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
@@ -134,11 +139,9 @@ class ChartOptionsService extends core_1.BeanStub {
     getChart() {
         return this.chartController.getChartProxy().getChart();
     }
-    updateChart(chartOptions, quick = false) {
+    updateChart(chartOptions) {
         const chartRef = this.chartController.getChartProxy().getChartRef();
-        if (quick) {
-            chartRef.skipAnimations();
-        }
+        chartRef.skipAnimations();
         ag_charts_community_1.AgCharts.updateDelta(chartRef, chartOptions);
     }
     createChartOptions({ seriesType, expression, value }) {

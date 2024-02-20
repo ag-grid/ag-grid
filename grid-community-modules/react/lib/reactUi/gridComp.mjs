@@ -144,7 +144,7 @@ const GridComp = ({ context }) => {
     return (React.createElement("div", { ref: setRef, className: rootWrapperClasses, style: topStyle, role: "presentation" },
         React.createElement("div", { className: rootWrapperBodyClasses, ref: setGridBodyParent, role: "presentation" }, initialised && eGridBodyParent && beans &&
             React.createElement(BeansContext.Provider, { value: beans },
-                React.createElement(TabGuardComp, { ref: setTabGuardCompRef, eFocusableElement: eGridBodyParent, onTabKeyDown: onTabKeyDown, gridCtrl: gridCtrlRef.current }, // we wait for initialised before rending the children, so GridComp has created and registered with it's
+                React.createElement(TabGuardComp, { ref: setTabGuardCompRef, eFocusableElement: eGridBodyParent, onTabKeyDown: onTabKeyDown, gridCtrl: gridCtrlRef.current, forceFocusOutWhenTabGuardsAreEmpty: true }, // we wait for initialised before rending the children, so GridComp has created and registered with it's
                 // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,
                 // before we have set the the Layout CSS classes, causing the GridBodyComp to render rows to a grid that
                 // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,

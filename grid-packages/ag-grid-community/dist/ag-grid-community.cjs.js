@@ -14647,7 +14647,7 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         // 1) there is a type (user has configured filter wrong if not type)
         //  AND
         // 2) the default type is not 'inRange'
-        var editable = this.isTypeEditable(this.lastType);
+        var editable = this.isTypeEditable(this.optionsFactory.getDefaultOption());
         this.setEditable(editable);
     };
     SimpleFloatingFilter.prototype.onParamsUpdated = function (params) {
@@ -34644,12 +34644,43 @@ var AbstractHeaderCellCtrl = /** @class */ (function (_super) {
         if (e.altKey) {
             this.isResizing = true;
             this.resizeMultiplier += 1;
-            this.resizeHeader(direction, e.shiftKey);
+            var diff = this.getViewportAdjustedResizeDiff(e);
+            this.resizeHeader(diff, e.shiftKey);
             (_a = this.resizeFeature) === null || _a === void 0 ? void 0 : _a.toggleColumnResizing(true);
         }
         else {
             this.moveHeader(direction);
         }
+    };
+    AbstractHeaderCellCtrl.prototype.getViewportAdjustedResizeDiff = function (e) {
+        var diff = this.getResizeDiff(e);
+        var pinned = this.column.getPinned();
+        if (pinned) {
+            var leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+            var rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            var bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            if (leftWidth + rightWidth + diff > bodyWidth) {
+                if (bodyWidth > leftWidth + rightWidth) {
+                    // allow body width to ignore resize multiplier and fill space for last tick
+                    diff = bodyWidth - leftWidth - rightWidth;
+                }
+                else {
+                    return 0;
+                }
+            }
+        }
+        return diff;
+    };
+    AbstractHeaderCellCtrl.prototype.getResizeDiff = function (e) {
+        var isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
+        var pinned = this.column.getPinned();
+        var isRtl = this.gridOptionsService.get('enableRtl');
+        if (pinned) {
+            if (isRtl !== (pinned === 'right')) {
+                isLeft = !isLeft;
+            }
+        }
+        return (isLeft ? -1 : 1) * this.resizeMultiplier;
     };
     AbstractHeaderCellCtrl.prototype.onGuiKeyUp = function () {
         var _this = this;
@@ -34747,6 +34778,9 @@ var AbstractHeaderCellCtrl = /** @class */ (function (_super) {
         this.eGui = null;
     };
     AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
+    __decorate$1c([
+        Autowired('pinnedWidthService')
+    ], AbstractHeaderCellCtrl.prototype, "pinnedWidthService", void 0);
     __decorate$1c([
         Autowired('focusService')
     ], AbstractHeaderCellCtrl.prototype, "focusService", void 0);
@@ -35645,12 +35679,6 @@ var __extends$1E = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var HeaderCellCtrl = /** @class */ (function (_super) {
     __extends$1E(HeaderCellCtrl, _super);
     function HeaderCellCtrl(column, beans, parentRowCtrl) {
@@ -35699,32 +35727,15 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     };
-    HeaderCellCtrl.prototype.resizeHeader = function (direction, shiftKey) {
+    HeaderCellCtrl.prototype.resizeHeader = function (delta, shiftKey) {
         var _a, _b;
         if (!this.column.isResizable()) {
             return;
         }
-        var pinned = this.column.getPinned();
-        var isRtl = this.gridOptionsService.get('enableRtl');
         var actualWidth = this.column.getActualWidth();
         var minWidth = (_a = this.column.getMinWidth()) !== null && _a !== void 0 ? _a : 0;
         var maxWidth = (_b = this.column.getMaxWidth()) !== null && _b !== void 0 ? _b : Number.MAX_SAFE_INTEGER;
-        var isLeft = direction === exports.HorizontalDirection.Left;
-        if (pinned) {
-            if (isRtl !== (pinned === 'right')) {
-                isLeft = !isLeft;
-            }
-        }
-        var diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
-        var newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
-        if (pinned) {
-            var leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            var rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            var bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
-            if (leftWidth + rightWidth + diff > bodyWidth) {
-                return;
-            }
-        }
+        var newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
         this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth: newWidth }], shiftKey, true, 'uiColumnResized');
     };
     HeaderCellCtrl.prototype.moveHeader = function (hDirection) {
@@ -35846,7 +35857,9 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
             this.focusService.setFocusedHeader(rowIndex, this.column);
             this.announceAriaDescription();
         }
-        this.setActiveHeader(true);
+        if (this.focusService.isKeyboardMode()) {
+            this.setActiveHeader(true);
+        }
     };
     HeaderCellCtrl.prototype.onFocusOut = function (e) {
         if (this.getGui().contains(e.relatedTarget)) {
@@ -36291,9 +36304,6 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         this.userHeaderClasses = null;
         this.ariaDescriptionProperties = null;
     };
-    __decorate$1h([
-        Autowired('pinnedWidthService')
-    ], HeaderCellCtrl.prototype, "pinnedWidthService", void 0);
     return HeaderCellCtrl;
 }(AbstractHeaderCellCtrl));
 
@@ -36312,7 +36322,7 @@ var __extends$1F = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36499,16 +36509,16 @@ var GroupResizeFeature = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
         this.clearLocalValues();
     };
-    __decorate$1i([
+    __decorate$1h([
         Autowired('horizontalResizeService')
     ], GroupResizeFeature.prototype, "horizontalResizeService", void 0);
-    __decorate$1i([
+    __decorate$1h([
         Autowired('autoWidthCalculator')
     ], GroupResizeFeature.prototype, "autoWidthCalculator", void 0);
-    __decorate$1i([
+    __decorate$1h([
         Autowired('columnModel')
     ], GroupResizeFeature.prototype, "columnModel", void 0);
-    __decorate$1i([
+    __decorate$1h([
         PostConstruct
     ], GroupResizeFeature.prototype, "postConstruct", null);
     return GroupResizeFeature;
@@ -36529,7 +36539,7 @@ var __extends$1G = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36584,7 +36594,7 @@ var GroupWidthFeature = /** @class */ (function (_super) {
         this.comp.setWidth("".concat(columnWidth, "px"));
         this.comp.addOrRemoveCssClass('ag-hidden', columnWidth === 0);
     };
-    __decorate$1j([
+    __decorate$1i([
         PostConstruct
     ], GroupWidthFeature.prototype, "postConstruct", null);
     return GroupWidthFeature;
@@ -36659,15 +36669,13 @@ var HeaderGroupCellCtrl = /** @class */ (function (_super) {
         this.addManagedPropertyListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners();
     };
-    HeaderGroupCellCtrl.prototype.resizeHeader = function (direction, shiftKey) {
+    HeaderGroupCellCtrl.prototype.resizeHeader = function (delta, shiftKey) {
         // check to avoid throwing when a component has not been setup yet (React 18)
         if (!this.resizeFeature) {
             return;
         }
-        var isLeft = direction === exports.HorizontalDirection.Left;
-        var diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
         var initialValues = this.resizeFeature.getInitialValues(shiftKey);
-        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + diff, 'uiColumnResized', true);
+        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + delta, 'uiColumnResized', true);
     };
     HeaderGroupCellCtrl.prototype.moveHeader = function (hDirection) {
         var _a = this, beans = _a.beans, eGui = _a.eGui, column = _a.column, gridOptionsService = _a.gridOptionsService, ctrlsService = _a.ctrlsService;
@@ -36941,7 +36949,7 @@ var __extends$1I = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37254,10 +37262,10 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
         this.headerCellCtrls = undefined;
         _super.prototype.destroy.call(this);
     };
-    __decorate$1k([
+    __decorate$1j([
         Autowired('beans')
     ], HeaderRowCtrl.prototype, "beans", void 0);
-    __decorate$1k([
+    __decorate$1j([
         PostConstruct
     ], HeaderRowCtrl.prototype, "postConstruct", null);
     return HeaderRowCtrl;
@@ -37278,7 +37286,7 @@ var __extends$1J = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37515,22 +37523,22 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
         }
         _super.prototype.destroy.call(this);
     };
-    __decorate$1l([
+    __decorate$1k([
         Autowired('ctrlsService')
     ], HeaderRowContainerCtrl.prototype, "ctrlsService", void 0);
-    __decorate$1l([
+    __decorate$1k([
         Autowired('scrollVisibleService')
     ], HeaderRowContainerCtrl.prototype, "scrollVisibleService", void 0);
-    __decorate$1l([
+    __decorate$1k([
         Autowired('pinnedWidthService')
     ], HeaderRowContainerCtrl.prototype, "pinnedWidthService", void 0);
-    __decorate$1l([
+    __decorate$1k([
         Autowired('columnModel')
     ], HeaderRowContainerCtrl.prototype, "columnModel", void 0);
-    __decorate$1l([
+    __decorate$1k([
         Autowired('focusService')
     ], HeaderRowContainerCtrl.prototype, "focusService", void 0);
-    __decorate$1l([
+    __decorate$1k([
         Autowired('filterManager')
     ], HeaderRowContainerCtrl.prototype, "filterManager", void 0);
     return HeaderRowContainerCtrl;
@@ -37551,7 +37559,7 @@ var __extends$1K = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37634,13 +37642,13 @@ var HeaderRowContainerComp = /** @class */ (function (_super) {
     HeaderRowContainerComp.PINNED_LEFT_TEMPLATE = "<div class=\"ag-pinned-left-header\" role=\"rowgroup\"></div>";
     HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE = "<div class=\"ag-pinned-right-header\" role=\"rowgroup\"></div>";
     HeaderRowContainerComp.CENTER_TEMPLATE = "<div class=\"ag-header-viewport\" role=\"presentation\">\n            <div class=\"ag-header-container\" ref=\"eCenterContainer\" role=\"rowgroup\"></div>\n        </div>";
-    __decorate$1m([
+    __decorate$1l([
         RefSelector('eCenterContainer')
     ], HeaderRowContainerComp.prototype, "eCenterContainer", void 0);
-    __decorate$1m([
+    __decorate$1l([
         PostConstruct
     ], HeaderRowContainerComp.prototype, "init", null);
-    __decorate$1m([
+    __decorate$1l([
         PreDestroy
     ], HeaderRowContainerComp.prototype, "destroyRowComps", null);
     return HeaderRowContainerComp;
@@ -37661,7 +37669,7 @@ var __extends$1L = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37819,19 +37827,19 @@ var HeaderNavigationService = /** @class */ (function (_super) {
         }
         this.gridBodyCon.getScrollFeature().ensureColumnVisible(columnToScrollTo);
     };
-    __decorate$1n([
+    __decorate$1m([
         Autowired('focusService')
     ], HeaderNavigationService.prototype, "focusService", void 0);
-    __decorate$1n([
+    __decorate$1m([
         Autowired('headerPositionUtils')
     ], HeaderNavigationService.prototype, "headerPositionUtils", void 0);
-    __decorate$1n([
+    __decorate$1m([
         Autowired('ctrlsService')
     ], HeaderNavigationService.prototype, "ctrlsService", void 0);
-    __decorate$1n([
+    __decorate$1m([
         PostConstruct
     ], HeaderNavigationService.prototype, "postConstruct", null);
-    HeaderNavigationService = __decorate$1n([
+    HeaderNavigationService = __decorate$1m([
         Bean('headerNavigationService')
     ], HeaderNavigationService);
     return HeaderNavigationService;
@@ -37852,7 +37860,7 @@ var __extends$1M = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38002,22 +38010,22 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
         this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
         this.addDestroyFunc(function () { return touchListener.destroy(); });
     };
-    __decorate$1o([
+    __decorate$1n([
         Autowired('headerNavigationService')
     ], GridHeaderCtrl.prototype, "headerNavigationService", void 0);
-    __decorate$1o([
+    __decorate$1n([
         Autowired('focusService')
     ], GridHeaderCtrl.prototype, "focusService", void 0);
-    __decorate$1o([
+    __decorate$1n([
         Autowired('columnModel')
     ], GridHeaderCtrl.prototype, "columnModel", void 0);
-    __decorate$1o([
+    __decorate$1n([
         Autowired('ctrlsService')
     ], GridHeaderCtrl.prototype, "ctrlsService", void 0);
-    __decorate$1o([
+    __decorate$1n([
         Autowired('filterManager')
     ], GridHeaderCtrl.prototype, "filterManager", void 0);
-    __decorate$1o([
+    __decorate$1n([
         Autowired('menuService')
     ], GridHeaderCtrl.prototype, "menuService", void 0);
     return GridHeaderCtrl;
@@ -38038,7 +38046,7 @@ var __extends$1N = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38069,7 +38077,7 @@ var GridHeaderComp = /** @class */ (function (_super) {
         addContainer(new HeaderRowContainerComp('right'));
     };
     GridHeaderComp.TEMPLATE = "<div class=\"ag-header\" role=\"presentation\"/>";
-    __decorate$1p([
+    __decorate$1o([
         PostConstruct
     ], GridHeaderComp.prototype, "postConstruct", null);
     return GridHeaderComp;
@@ -38090,7 +38098,7 @@ var __extends$1O = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38144,13 +38152,13 @@ var HorizontalResizeService = /** @class */ (function (_super) {
         this.resizeAmount = mouseEvent.clientX - this.dragStartX;
         params.onResizing(this.resizeAmount);
     };
-    __decorate$1q([
+    __decorate$1p([
         Autowired('dragService')
     ], HorizontalResizeService.prototype, "dragService", void 0);
-    __decorate$1q([
+    __decorate$1p([
         Autowired('ctrlsService')
     ], HorizontalResizeService.prototype, "ctrlsService", void 0);
-    HorizontalResizeService = __decorate$1q([
+    HorizontalResizeService = __decorate$1p([
         Bean('horizontalResizeService')
     ], HorizontalResizeService);
     return HorizontalResizeService;
@@ -38171,7 +38179,7 @@ var __extends$1P = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38309,22 +38317,22 @@ var StandardMenuFactory = /** @class */ (function (_super) {
     StandardMenuFactory.prototype.showMenuAfterContextMenuEvent = function () {
         // not supported in standard menu
     };
-    __decorate$1r([
+    __decorate$1q([
         Autowired('filterManager')
     ], StandardMenuFactory.prototype, "filterManager", void 0);
-    __decorate$1r([
+    __decorate$1q([
         Autowired('popupService')
     ], StandardMenuFactory.prototype, "popupService", void 0);
-    __decorate$1r([
+    __decorate$1q([
         Autowired('focusService')
     ], StandardMenuFactory.prototype, "focusService", void 0);
-    __decorate$1r([
+    __decorate$1q([
         Autowired('ctrlsService')
     ], StandardMenuFactory.prototype, "ctrlsService", void 0);
-    __decorate$1r([
+    __decorate$1q([
         Autowired('menuService')
     ], StandardMenuFactory.prototype, "menuService", void 0);
-    StandardMenuFactory = __decorate$1r([
+    StandardMenuFactory = __decorate$1q([
         Bean('filterMenuFactory')
     ], StandardMenuFactory);
     return StandardMenuFactory;
@@ -38345,7 +38353,7 @@ var __extends$1Q = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38362,13 +38370,14 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.skipTabGuardFocus = false;
         _this.forcingFocusOut = false;
-        var comp = params.comp, eTopGuard = params.eTopGuard, eBottomGuard = params.eBottomGuard, focusTrapActive = params.focusTrapActive, focusInnerElement = params.focusInnerElement, onFocusIn = params.onFocusIn, onFocusOut = params.onFocusOut, shouldStopEventPropagation = params.shouldStopEventPropagation, onTabKeyDown = params.onTabKeyDown, handleKeyDown = params.handleKeyDown, eFocusableElement = params.eFocusableElement;
+        var comp = params.comp, eTopGuard = params.eTopGuard, eBottomGuard = params.eBottomGuard, focusTrapActive = params.focusTrapActive, forceFocusOutWhenTabGuardsAreEmpty = params.forceFocusOutWhenTabGuardsAreEmpty, focusInnerElement = params.focusInnerElement, onFocusIn = params.onFocusIn, onFocusOut = params.onFocusOut, shouldStopEventPropagation = params.shouldStopEventPropagation, onTabKeyDown = params.onTabKeyDown, handleKeyDown = params.handleKeyDown, eFocusableElement = params.eFocusableElement;
         _this.comp = comp;
         _this.eTopGuard = eTopGuard;
         _this.eBottomGuard = eBottomGuard;
         _this.providedFocusInnerElement = focusInnerElement;
         _this.eFocusableElement = eFocusableElement;
         _this.focusTrapActive = !!focusTrapActive;
+        _this.forceFocusOutWhenTabGuardsAreEmpty = !!forceFocusOutWhenTabGuardsAreEmpty;
         _this.providedFocusIn = onFocusIn;
         _this.providedFocusOut = onFocusOut;
         _this.providedShouldStopEventPropagation = shouldStopEventPropagation;
@@ -38421,9 +38430,12 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         // when there are no focusable items within the TabGuard, focus gets stuck
         // in the TabGuard itself and has nowhere to go, so we need to manually find
         // the closest element to focus by calling `forceFocusOutWhenTabGuardAreEmpty`.
-        if (this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0) {
-            this.forceFocusOutWhenTabGuardsAreEmpty(e.target === this.eBottomGuard);
-            return;
+        if (this.forceFocusOutWhenTabGuardsAreEmpty) {
+            var isEmpty = this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0;
+            if (isEmpty) {
+                this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+                return;
+            }
         }
         var fromBottom = e.target === this.eBottomGuard;
         if (this.providedFocusInnerElement) {
@@ -38433,7 +38445,7 @@ var TabGuardCtrl = /** @class */ (function (_super) {
             this.focusInnerElement(fromBottom);
         }
     };
-    TabGuardCtrl.prototype.forceFocusOutWhenTabGuardsAreEmpty = function (up) {
+    TabGuardCtrl.prototype.findNextElementOutsideAndFocus = function (up) {
         var eDocument = this.gridOptionsService.getDocument();
         var focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
         var index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);
@@ -38556,10 +38568,10 @@ var TabGuardCtrl = /** @class */ (function (_super) {
     TabGuardCtrl.prototype.isTabGuard = function (element) {
         return element === this.eTopGuard || element === this.eBottomGuard;
     };
-    __decorate$1s([
+    __decorate$1r([
         Autowired('focusService')
     ], TabGuardCtrl.prototype, "focusService", void 0);
-    __decorate$1s([
+    __decorate$1r([
         PostConstruct
     ], TabGuardCtrl.prototype, "postConstruct", null);
     return TabGuardCtrl;
@@ -38632,7 +38644,8 @@ var TabGuardComp = /** @class */ (function (_super) {
             focusInnerElement: params.focusInnerElement,
             handleKeyDown: params.handleKeyDown,
             onTabKeyDown: params.onTabKeyDown,
-            shouldStopEventPropagation: params.shouldStopEventPropagation
+            shouldStopEventPropagation: params.shouldStopEventPropagation,
+            forceFocusOutWhenTabGuardsAreEmpty: params.forceFocusOutWhenTabGuardsAreEmpty
         }));
     };
     TabGuardComp.prototype.createTabGuard = function (side) {
@@ -38685,7 +38698,7 @@ var __extends$1S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38859,16 +38872,16 @@ var TabbedLayout = /** @class */ (function (_super) {
         eHeaderButton.classList.add('ag-tab-selected');
         this.activeItem = wrapper;
     };
-    __decorate$1t([
+    __decorate$1s([
         Autowired('focusService')
     ], TabbedLayout.prototype, "focusService", void 0);
-    __decorate$1t([
+    __decorate$1s([
         RefSelector('eHeader')
     ], TabbedLayout.prototype, "eHeader", void 0);
-    __decorate$1t([
+    __decorate$1s([
         RefSelector('eBody')
     ], TabbedLayout.prototype, "eBody", void 0);
-    __decorate$1t([
+    __decorate$1s([
         PostConstruct
     ], TabbedLayout.prototype, "postConstruct", null);
     return TabbedLayout;
@@ -38889,7 +38902,7 @@ var __extends$1T = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38963,7 +38976,7 @@ var ResizeObserverService = /** @class */ (function (_super) {
         this.polyfillScheduled = true;
         window.setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
     };
-    ResizeObserverService = __decorate$1u([
+    ResizeObserverService = __decorate$1t([
         Bean('resizeObserverService')
     ], ResizeObserverService);
     return ResizeObserverService;
@@ -38984,7 +38997,7 @@ var __extends$1U = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39173,16 +39186,16 @@ var AnimationFrameService = /** @class */ (function (_super) {
             });
         };
     };
-    __decorate$1v([
+    __decorate$1u([
         Autowired('ctrlsService')
     ], AnimationFrameService.prototype, "ctrlsService", void 0);
-    __decorate$1v([
+    __decorate$1u([
         Autowired('paginationProxy')
     ], AnimationFrameService.prototype, "paginationProxy", void 0);
-    __decorate$1v([
+    __decorate$1u([
         PostConstruct
     ], AnimationFrameService.prototype, "init", null);
-    AnimationFrameService = __decorate$1v([
+    AnimationFrameService = __decorate$1u([
         Bean('animationFrameService')
     ], AnimationFrameService);
     return AnimationFrameService;
@@ -39214,7 +39227,7 @@ var __extends$1V = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39275,13 +39288,13 @@ var ExpansionService = /** @class */ (function (_super) {
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
         this.rowModel.refreshModel({ step: exports.ClientSideRowModelSteps.MAP });
     };
-    __decorate$1w([
+    __decorate$1v([
         Autowired('rowModel')
     ], ExpansionService.prototype, "rowModel", void 0);
-    __decorate$1w([
+    __decorate$1v([
         PostConstruct
     ], ExpansionService.prototype, "postConstruct", null);
-    ExpansionService = __decorate$1w([
+    ExpansionService = __decorate$1v([
         Bean('expansionService')
     ], ExpansionService);
     return ExpansionService;
@@ -39302,7 +39315,7 @@ var __extends$1W = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39435,31 +39448,31 @@ var MenuService = /** @class */ (function (_super) {
             });
         }
     };
-    __decorate$1x([
+    __decorate$1w([
         Optional('enterpriseMenuFactory')
     ], MenuService.prototype, "enterpriseMenuFactory", void 0);
-    __decorate$1x([
+    __decorate$1w([
         Autowired('filterMenuFactory')
     ], MenuService.prototype, "filterMenuFactory", void 0);
-    __decorate$1x([
+    __decorate$1w([
         Optional('contextMenuFactory')
     ], MenuService.prototype, "contextMenuFactory", void 0);
-    __decorate$1x([
+    __decorate$1w([
         Autowired('ctrlsService')
     ], MenuService.prototype, "ctrlsService", void 0);
-    __decorate$1x([
+    __decorate$1w([
         Autowired('animationFrameService')
     ], MenuService.prototype, "animationFrameService", void 0);
-    __decorate$1x([
+    __decorate$1w([
         Optional('columnChooserFactory')
     ], MenuService.prototype, "columnChooserFactory", void 0);
-    __decorate$1x([
+    __decorate$1w([
         Autowired('filterManager')
     ], MenuService.prototype, "filterManager", void 0);
-    __decorate$1x([
+    __decorate$1w([
         PostConstruct
     ], MenuService.prototype, "postConstruct", null);
-    MenuService = __decorate$1x([
+    MenuService = __decorate$1w([
         Bean('menuService')
     ], MenuService);
     return MenuService;
@@ -39480,7 +39493,7 @@ var __extends$1X = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39608,19 +39621,19 @@ var AutoWidthCalculator = /** @class */ (function (_super) {
         eCloneParent.appendChild(eCellClone);
         eDummyContainer.appendChild(eCloneParent);
     };
-    __decorate$1y([
+    __decorate$1x([
         Autowired('rowRenderer')
     ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
-    __decorate$1y([
+    __decorate$1x([
         Autowired('ctrlsService')
     ], AutoWidthCalculator.prototype, "ctrlsService", void 0);
-    __decorate$1y([
+    __decorate$1x([
         Autowired('rowCssClassCalculator')
     ], AutoWidthCalculator.prototype, "rowCssClassCalculator", void 0);
-    __decorate$1y([
+    __decorate$1x([
         PostConstruct
     ], AutoWidthCalculator.prototype, "postConstruct", null);
-    AutoWidthCalculator = __decorate$1y([
+    AutoWidthCalculator = __decorate$1x([
         Bean('autoWidthCalculator')
     ], AutoWidthCalculator);
     return AutoWidthCalculator;
@@ -39641,7 +39654,7 @@ var __extends$1Y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39849,16 +39862,16 @@ var StickyRowFeature = /** @class */ (function (_super) {
         }
         return stickyRowsChanged;
     };
-    __decorate$1z([
+    __decorate$1y([
         Autowired("rowModel")
     ], StickyRowFeature.prototype, "rowModel", void 0);
-    __decorate$1z([
+    __decorate$1y([
         Autowired("rowRenderer")
     ], StickyRowFeature.prototype, "rowRenderer", void 0);
-    __decorate$1z([
+    __decorate$1y([
         Autowired("ctrlsService")
     ], StickyRowFeature.prototype, "ctrlsService", void 0);
-    __decorate$1z([
+    __decorate$1y([
         PostConstruct
     ], StickyRowFeature.prototype, "postConstruct", null);
     return StickyRowFeature;
@@ -39879,7 +39892,7 @@ var __extends$1Z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -40213,13 +40226,17 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.redrawRow = function (rowNode, suppressEvent) {
         var _this = this;
+        var _a;
         if (suppressEvent === void 0) { suppressEvent = false; }
         if (rowNode.sticky) {
             this.stickyRowFeature.refreshStickyNode(rowNode);
         }
-        else if (rowNode.detail && this.cachedRowCtrls.has(rowNode)) {
+        else if ((_a = this.cachedRowCtrls) === null || _a === void 0 ? void 0 : _a.has(rowNode)) {
             // delete row from cache if it needs redrawn
+            // if it's in the cache no updates need fired, as nothing
+            // has been rendered
             this.cachedRowCtrls.removeRow(rowNode);
+            return;
         }
         else {
             var destroyAndRecreateCtrl = function (dataStruct) {
@@ -41066,37 +41083,37 @@ var RowRenderer = /** @class */ (function (_super) {
         var blockInsideViewport = !blockBeforeViewport && !blockAfterViewport;
         return blockInsideViewport;
     };
-    __decorate$1A([
+    __decorate$1z([
         Autowired("animationFrameService")
     ], RowRenderer.prototype, "animationFrameService", void 0);
-    __decorate$1A([
+    __decorate$1z([
         Autowired("paginationProxy")
     ], RowRenderer.prototype, "paginationProxy", void 0);
-    __decorate$1A([
+    __decorate$1z([
         Autowired("columnModel")
     ], RowRenderer.prototype, "columnModel", void 0);
-    __decorate$1A([
+    __decorate$1z([
         Autowired("pinnedRowModel")
     ], RowRenderer.prototype, "pinnedRowModel", void 0);
-    __decorate$1A([
+    __decorate$1z([
         Autowired("rowModel")
     ], RowRenderer.prototype, "rowModel", void 0);
-    __decorate$1A([
+    __decorate$1z([
         Autowired("focusService")
     ], RowRenderer.prototype, "focusService", void 0);
-    __decorate$1A([
+    __decorate$1z([
         Autowired("beans")
     ], RowRenderer.prototype, "beans", void 0);
-    __decorate$1A([
+    __decorate$1z([
         Autowired("rowContainerHeightService")
     ], RowRenderer.prototype, "rowContainerHeightService", void 0);
-    __decorate$1A([
+    __decorate$1z([
         Autowired("ctrlsService")
     ], RowRenderer.prototype, "ctrlsService", void 0);
-    __decorate$1A([
+    __decorate$1z([
         PostConstruct
     ], RowRenderer.prototype, "postConstruct", null);
-    RowRenderer = __decorate$1A([
+    RowRenderer = __decorate$1z([
         Bean("rowRenderer")
     ], RowRenderer);
     return RowRenderer;
@@ -41170,7 +41187,7 @@ var __extends$1_ = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41217,10 +41234,10 @@ var ValueFormatterService = /** @class */ (function (_super) {
         }
         return result;
     };
-    __decorate$1B([
+    __decorate$1A([
         Autowired('expressionService')
     ], ValueFormatterService.prototype, "expressionService", void 0);
-    ValueFormatterService = __decorate$1B([
+    ValueFormatterService = __decorate$1A([
         Bean('valueFormatterService')
     ], ValueFormatterService);
     return ValueFormatterService;
@@ -41241,7 +41258,7 @@ var __extends$1$ = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41361,13 +41378,13 @@ var PinnedRowModel = /** @class */ (function (_super) {
         var lastNode = last(rowNodes);
         return lastNode.rowTop + lastNode.rowHeight;
     };
-    __decorate$1C([
+    __decorate$1B([
         Autowired('beans')
     ], PinnedRowModel.prototype, "beans", void 0);
-    __decorate$1C([
+    __decorate$1B([
         PostConstruct
     ], PinnedRowModel.prototype, "init", null);
-    PinnedRowModel = __decorate$1C([
+    PinnedRowModel = __decorate$1B([
         Bean('pinnedRowModel')
     ], PinnedRowModel);
     return PinnedRowModel;
@@ -41676,7 +41693,7 @@ var __extends$21 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41791,16 +41808,16 @@ var RowNodeBlockLoader = /** @class */ (function (_super) {
     var RowNodeBlockLoader_1;
     RowNodeBlockLoader.BLOCK_LOADED_EVENT = 'blockLoaded';
     RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
-    __decorate$1D([
+    __decorate$1C([
         Autowired('rowModel')
     ], RowNodeBlockLoader.prototype, "rowModel", void 0);
-    __decorate$1D([
+    __decorate$1C([
         PostConstruct
     ], RowNodeBlockLoader.prototype, "postConstruct", null);
-    __decorate$1D([
+    __decorate$1C([
         __param$3(0, Qualifier('loggerFactory'))
     ], RowNodeBlockLoader.prototype, "setBeans", null);
-    RowNodeBlockLoader = RowNodeBlockLoader_1 = __decorate$1D([
+    RowNodeBlockLoader = RowNodeBlockLoader_1 = __decorate$1C([
         Bean('rowNodeBlockLoader')
     ], RowNodeBlockLoader);
     return RowNodeBlockLoader;
@@ -41821,7 +41838,7 @@ var __extends$22 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42193,13 +42210,13 @@ var PaginationProxy = /** @class */ (function (_super) {
         this.topDisplayedRowIndex = 0;
         this.bottomDisplayedRowIndex = this.rowModel.getRowCount() - 1;
     };
-    __decorate$1E([
+    __decorate$1D([
         Autowired('rowModel')
     ], PaginationProxy.prototype, "rowModel", void 0);
-    __decorate$1E([
+    __decorate$1D([
         PostConstruct
     ], PaginationProxy.prototype, "postConstruct", null);
-    PaginationProxy = __decorate$1E([
+    PaginationProxy = __decorate$1D([
         Bean('paginationProxy')
     ], PaginationProxy);
     return PaginationProxy;
@@ -42220,7 +42237,7 @@ var __extends$23 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42310,10 +42327,10 @@ var StylingService = /** @class */ (function (_super) {
             onApplicableClass(cssClassItem);
         });
     };
-    __decorate$1F([
+    __decorate$1E([
         Autowired('expressionService')
     ], StylingService.prototype, "expressionService", void 0);
-    StylingService = __decorate$1F([
+    StylingService = __decorate$1E([
         Bean('stylingService')
     ], StylingService);
     return StylingService;
@@ -42546,7 +42563,7 @@ var __extends$28 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42664,10 +42681,10 @@ var RichSelectRow = /** @class */ (function (_super) {
         };
         parent === null || parent === void 0 ? void 0 : parent.dispatchEvent(event);
     };
-    __decorate$1G([
+    __decorate$1F([
         Autowired('userComponentFactory')
     ], RichSelectRow.prototype, "userComponentFactory", void 0);
-    __decorate$1G([
+    __decorate$1F([
         PostConstruct
     ], RichSelectRow.prototype, "postConstruct", null);
     return RichSelectRow;
@@ -42688,7 +42705,7 @@ var __extends$29 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42991,16 +43008,16 @@ var VirtualList = /** @class */ (function (_super) {
         this.clearVirtualRows();
         _super.prototype.destroy.call(this);
     };
-    __decorate$1H([
+    __decorate$1G([
         Autowired('resizeObserverService')
     ], VirtualList.prototype, "resizeObserverService", void 0);
-    __decorate$1H([
+    __decorate$1G([
         Autowired('animationFrameService')
     ], VirtualList.prototype, "animationFrameService", void 0);
-    __decorate$1H([
+    __decorate$1G([
         RefSelector('eContainer')
     ], VirtualList.prototype, "eContainer", void 0);
-    __decorate$1H([
+    __decorate$1G([
         PostConstruct
     ], VirtualList.prototype, "postConstruct", null);
     return VirtualList;
@@ -43032,7 +43049,7 @@ var __assign$h = (undefined && undefined.__assign) || function () {
     };
     return __assign$h.apply(this, arguments);
 };
-var __decorate$1I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -43565,10 +43582,10 @@ var AgRichSelect = /** @class */ (function (_super) {
         this.eLoading = undefined;
         _super.prototype.destroy.call(this);
     };
-    __decorate$1I([
+    __decorate$1H([
         Autowired('userComponentFactory')
     ], AgRichSelect.prototype, "userComponentFactory", void 0);
-    __decorate$1I([
+    __decorate$1H([
         RefSelector('eInput')
     ], AgRichSelect.prototype, "eInput", void 0);
     return AgRichSelect;
@@ -43589,7 +43606,7 @@ var __extends$2b = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -43656,16 +43673,16 @@ var AgSlider = /** @class */ (function (_super) {
         return this;
     };
     AgSlider.TEMPLATE = "<div class=\"ag-slider\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper ag-slider-wrapper\">\n                <ag-input-range ref=\"eSlider\"></ag-input-range>\n                <ag-input-number-field ref=\"eText\"></ag-input-number-field>\n            </div>\n        </div>";
-    __decorate$1J([
+    __decorate$1I([
         RefSelector('eLabel')
     ], AgSlider.prototype, "eLabel", void 0);
-    __decorate$1J([
+    __decorate$1I([
         RefSelector('eSlider')
     ], AgSlider.prototype, "eSlider", void 0);
-    __decorate$1J([
+    __decorate$1I([
         RefSelector('eText')
     ], AgSlider.prototype, "eText", void 0);
-    __decorate$1J([
+    __decorate$1I([
         PostConstruct
     ], AgSlider.prototype, "init", null);
     return AgSlider;
@@ -43686,7 +43703,7 @@ var __extends$2c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -43875,28 +43892,28 @@ var AgGroupComponent = /** @class */ (function (_super) {
     };
     AgGroupComponent.EVENT_EXPANDED = 'expanded';
     AgGroupComponent.EVENT_COLLAPSED = 'collapsed';
-    __decorate$1K([
+    __decorate$1J([
         RefSelector('eTitleBar')
     ], AgGroupComponent.prototype, "eTitleBar", void 0);
-    __decorate$1K([
+    __decorate$1J([
         RefSelector('eGroupOpenedIcon')
     ], AgGroupComponent.prototype, "eGroupOpenedIcon", void 0);
-    __decorate$1K([
+    __decorate$1J([
         RefSelector('eGroupClosedIcon')
     ], AgGroupComponent.prototype, "eGroupClosedIcon", void 0);
-    __decorate$1K([
+    __decorate$1J([
         RefSelector('eToolbar')
     ], AgGroupComponent.prototype, "eToolbar", void 0);
-    __decorate$1K([
+    __decorate$1J([
         RefSelector('cbGroupEnabled')
     ], AgGroupComponent.prototype, "cbGroupEnabled", void 0);
-    __decorate$1K([
+    __decorate$1J([
         RefSelector('eTitle')
     ], AgGroupComponent.prototype, "eTitle", void 0);
-    __decorate$1K([
+    __decorate$1J([
         RefSelector('eContainer')
     ], AgGroupComponent.prototype, "eContainer", void 0);
-    __decorate$1K([
+    __decorate$1J([
         PostConstruct
     ], AgGroupComponent.prototype, "postConstruct", null);
     return AgGroupComponent;
@@ -43917,7 +43934,7 @@ var __extends$2d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44136,10 +44153,10 @@ var AgMenuList = /** @class */ (function (_super) {
         this.clearActiveItem();
         _super.prototype.destroy.call(this);
     };
-    __decorate$1L([
+    __decorate$1K([
         Autowired('focusService')
     ], AgMenuList.prototype, "focusService", void 0);
-    __decorate$1L([
+    __decorate$1K([
         PostConstruct
     ], AgMenuList.prototype, "postConstruct", null);
     return AgMenuList;
@@ -44160,7 +44177,7 @@ var __extends$2e = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44198,7 +44215,7 @@ var AgMenuPanel = /** @class */ (function (_super) {
         menuItem.closeSubMenu();
         setTimeout(function () { return menuItem.getGui().focus(); }, 0);
     };
-    __decorate$1M([
+    __decorate$1L([
         PostConstruct
     ], AgMenuPanel.prototype, "postConstruct", null);
     return AgMenuPanel;
@@ -44230,7 +44247,7 @@ var __assign$i = (undefined && undefined.__assign) || function () {
     };
     return __assign$i.apply(this, arguments);
 };
-var __decorate$1N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44401,7 +44418,7 @@ var AgMenuItemComponent = /** @class */ (function (_super) {
         }
         (_b = (_a = this.menuItemComp).setActive) === null || _b === void 0 ? void 0 : _b.call(_a, true);
         if (!this.suppressFocus) {
-            this.eGui.focus();
+            this.eGui.focus({ preventScroll: true });
         }
         if (openSubMenu && this.params.subMenu) {
             window.setTimeout(function () {
@@ -44568,13 +44585,13 @@ var AgMenuItemComponent = /** @class */ (function (_super) {
     AgMenuItemComponent.EVENT_CLOSE_MENU = 'closeMenu';
     AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
     AgMenuItemComponent.ACTIVATION_DELAY = 80;
-    __decorate$1N([
+    __decorate$1M([
         Autowired('popupService')
     ], AgMenuItemComponent.prototype, "popupService", void 0);
-    __decorate$1N([
+    __decorate$1M([
         Autowired('userComponentFactory')
     ], AgMenuItemComponent.prototype, "userComponentFactory", void 0);
-    __decorate$1N([
+    __decorate$1M([
         Autowired('beans')
     ], AgMenuItemComponent.prototype, "beans", void 0);
     return AgMenuItemComponent;
@@ -44595,7 +44612,7 @@ var __extends$2g = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44753,19 +44770,19 @@ var AgPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     AgPanel.CLOSE_BTN_TEMPLATE = "<div class=\"ag-button\"></div>";
-    __decorate$1O([
+    __decorate$1N([
         RefSelector('eContentWrapper')
     ], AgPanel.prototype, "eContentWrapper", void 0);
-    __decorate$1O([
+    __decorate$1N([
         RefSelector('eTitleBar')
     ], AgPanel.prototype, "eTitleBar", void 0);
-    __decorate$1O([
+    __decorate$1N([
         RefSelector('eTitleBarButtons')
     ], AgPanel.prototype, "eTitleBarButtons", void 0);
-    __decorate$1O([
+    __decorate$1N([
         RefSelector('eTitle')
     ], AgPanel.prototype, "eTitle", void 0);
-    __decorate$1O([
+    __decorate$1N([
         PostConstruct
     ], AgPanel.prototype, "postConstruct", null);
     return AgPanel;
@@ -44797,7 +44814,7 @@ var __assign$j = (undefined && undefined.__assign) || function () {
     };
     return __assign$j.apply(this, arguments);
 };
-var __decorate$1P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44944,7 +44961,7 @@ var AgDialog = /** @class */ (function (_super) {
         this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
         return maximizeButtonComp;
     };
-    __decorate$1P([
+    __decorate$1O([
         Autowired('popupService')
     ], AgDialog.prototype, "popupService", void 0);
     return AgDialog;
@@ -44976,7 +44993,7 @@ var __assign$k = (undefined && undefined.__assign) || function () {
     };
     return __assign$k.apply(this, arguments);
 };
-var __decorate$1Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -45624,19 +45641,19 @@ var PopupService = /** @class */ (function (_super) {
     };
     var PopupService_1;
     PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE = 200;
-    __decorate$1Q([
+    __decorate$1P([
         Autowired('focusService')
     ], PopupService.prototype, "focusService", void 0);
-    __decorate$1Q([
+    __decorate$1P([
         Autowired('ctrlsService')
     ], PopupService.prototype, "ctrlsService", void 0);
-    __decorate$1Q([
+    __decorate$1P([
         Autowired('resizeObserverService')
     ], PopupService.prototype, "resizeObserverService", void 0);
-    __decorate$1Q([
+    __decorate$1P([
         PostConstruct
     ], PopupService.prototype, "postConstruct", null);
-    PopupService = PopupService_1 = __decorate$1Q([
+    PopupService = PopupService_1 = __decorate$1P([
         Bean('popupService')
     ], PopupService);
     return PopupService;
@@ -45715,7 +45732,7 @@ var __extends$2k = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -45866,10 +45883,10 @@ var AgAutocompleteList = /** @class */ (function (_super) {
         return (_a = this.selectedValue) !== null && _a !== void 0 ? _a : null;
     };
     AgAutocompleteList.TEMPLATE = "<div class=\"ag-autocomplete-list-popup\">\n            <div ref=\"eList\" class=\"ag-autocomplete-list\"></div>\n        <div>";
-    __decorate$1R([
+    __decorate$1Q([
         RefSelector('eList')
     ], AgAutocompleteList.prototype, "eList", void 0);
-    __decorate$1R([
+    __decorate$1Q([
         PostConstruct
     ], AgAutocompleteList.prototype, "init", null);
     return AgAutocompleteList;
@@ -45890,7 +45907,7 @@ var __extends$2l = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -46170,13 +46187,13 @@ var AgAutocomplete = /** @class */ (function (_super) {
     AgAutocomplete.EVENT_VALUE_CONFIRMED = 'eventValueConfirmed';
     AgAutocomplete.EVENT_OPTION_SELECTED = 'eventOptionSelected';
     AgAutocomplete.EVENT_VALID_CHANGED = 'eventValidChanged';
-    __decorate$1S([
+    __decorate$1R([
         Autowired('popupService')
     ], AgAutocomplete.prototype, "popupService", void 0);
-    __decorate$1S([
+    __decorate$1R([
         RefSelector('eAutocompleteInput')
     ], AgAutocomplete.prototype, "eAutocompleteInput", void 0);
-    __decorate$1S([
+    __decorate$1R([
         PostConstruct
     ], AgAutocomplete.prototype, "postConstruct", null);
     return AgAutocomplete;
@@ -46235,7 +46252,7 @@ var __extends$2m = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -46576,22 +46593,22 @@ var CellNavigationService = /** @class */ (function (_super) {
         }
         return { rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating };
     };
-    __decorate$1T([
+    __decorate$1S([
         Autowired('columnModel')
     ], CellNavigationService.prototype, "columnModel", void 0);
-    __decorate$1T([
+    __decorate$1S([
         Autowired('rowModel')
     ], CellNavigationService.prototype, "rowModel", void 0);
-    __decorate$1T([
+    __decorate$1S([
         Autowired('rowRenderer')
     ], CellNavigationService.prototype, "rowRenderer", void 0);
-    __decorate$1T([
+    __decorate$1S([
         Autowired('pinnedRowModel')
     ], CellNavigationService.prototype, "pinnedRowModel", void 0);
-    __decorate$1T([
+    __decorate$1S([
         Autowired('paginationProxy')
     ], CellNavigationService.prototype, "paginationProxy", void 0);
-    CellNavigationService = __decorate$1T([
+    CellNavigationService = __decorate$1S([
         Bean('cellNavigationService')
     ], CellNavigationService);
     return CellNavigationService;
@@ -46612,7 +46629,7 @@ var __extends$2n = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -46856,19 +46873,19 @@ var AlignedGridsService = /** @class */ (function (_super) {
             api.setGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);
         });
     };
-    __decorate$1U([
+    __decorate$1T([
         Autowired('columnModel')
     ], AlignedGridsService.prototype, "columnModel", void 0);
-    __decorate$1U([
+    __decorate$1T([
         Autowired('ctrlsService')
     ], AlignedGridsService.prototype, "ctrlsService", void 0);
-    __decorate$1U([
+    __decorate$1T([
         __param$4(0, Qualifier('loggerFactory'))
     ], AlignedGridsService.prototype, "setBeans", null);
-    __decorate$1U([
+    __decorate$1T([
         PostConstruct
     ], AlignedGridsService.prototype, "init", null);
-    AlignedGridsService = __decorate$1U([
+    AlignedGridsService = __decorate$1T([
         Bean('alignedGridsService')
     ], AlignedGridsService);
     return AlignedGridsService;
@@ -46889,7 +46906,7 @@ var __extends$2o = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -47407,22 +47424,22 @@ var SelectionService = /** @class */ (function (_super) {
             source: source
         });
     };
-    __decorate$1V([
+    __decorate$1U([
         Autowired('rowModel')
     ], SelectionService.prototype, "rowModel", void 0);
-    __decorate$1V([
+    __decorate$1U([
         Autowired('paginationProxy')
     ], SelectionService.prototype, "paginationProxy", void 0);
-    __decorate$1V([
+    __decorate$1U([
         PostConstruct
     ], SelectionService.prototype, "init", null);
-    SelectionService = __decorate$1V([
+    SelectionService = __decorate$1U([
         Bean('selectionService')
     ], SelectionService);
     return SelectionService;
 }(BeanStub));
 
-var __decorate$1W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -47608,10 +47625,10 @@ var ColumnApi = /** @class */ (function () {
     ColumnApi.prototype.setPivotResultColumns = function (colDefs) { this.viaApi('setPivotResultColumns', colDefs); };
     /** @deprecated v31 use `api.getPivotResultColumns() instead. */
     ColumnApi.prototype.getPivotResultColumns = function () { return this.viaApi('getPivotResultColumns'); };
-    __decorate$1W([
+    __decorate$1V([
         Autowired('gridApi')
     ], ColumnApi.prototype, "api", void 0);
-    ColumnApi = __decorate$1W([
+    ColumnApi = __decorate$1V([
         Bean('columnApi')
     ], ColumnApi);
     return ColumnApi;
@@ -47632,7 +47649,7 @@ var __extends$2p = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -47945,22 +47962,22 @@ var ValueService = /** @class */ (function (_super) {
         }
         return result;
     };
-    __decorate$1X([
+    __decorate$1W([
         Autowired('expressionService')
     ], ValueService.prototype, "expressionService", void 0);
-    __decorate$1X([
+    __decorate$1W([
         Autowired('columnModel')
     ], ValueService.prototype, "columnModel", void 0);
-    __decorate$1X([
+    __decorate$1W([
         Autowired('valueCache')
     ], ValueService.prototype, "valueCache", void 0);
-    __decorate$1X([
+    __decorate$1W([
         Autowired('dataTypeService')
     ], ValueService.prototype, "dataTypeService", void 0);
-    __decorate$1X([
+    __decorate$1W([
         PostConstruct
     ], ValueService.prototype, "init", null);
-    ValueService = __decorate$1X([
+    ValueService = __decorate$1W([
         Bean('valueService')
     ], ValueService);
     return ValueService;
@@ -47981,7 +47998,7 @@ var __extends$2q = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -48053,10 +48070,10 @@ var ExpressionService = /** @class */ (function (_super) {
             return 'return ' + expression + ';';
         }
     };
-    __decorate$1Y([
+    __decorate$1X([
         __param$5(0, Qualifier('loggerFactory'))
     ], ExpressionService.prototype, "setBeans", null);
-    ExpressionService = __decorate$1Y([
+    ExpressionService = __decorate$1X([
         Bean('expressionService')
     ], ExpressionService);
     return ExpressionService;
@@ -48077,7 +48094,7 @@ var __extends$2r = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -48137,7 +48154,7 @@ var TemplateService = /** @class */ (function (_super) {
             callback();
         }
     };
-    TemplateService = __decorate$1Z([
+    TemplateService = __decorate$1Y([
         Bean('templateService')
     ], TemplateService);
     return TemplateService;
@@ -48158,7 +48175,7 @@ var __extends$2s = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -48181,10 +48198,10 @@ var LoggerFactory = /** @class */ (function (_super) {
     LoggerFactory.prototype.isLogging = function () {
         return this.logging;
     };
-    __decorate$1_([
+    __decorate$1Z([
         __param$6(0, Qualifier('gridOptionsService'))
     ], LoggerFactory.prototype, "setBeans", null);
-    LoggerFactory = __decorate$1_([
+    LoggerFactory = __decorate$1Z([
         Bean('loggerFactory')
     ], LoggerFactory);
     return LoggerFactory;
@@ -48221,7 +48238,7 @@ var __extends$2t = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -48331,22 +48348,22 @@ var GridCtrl = /** @class */ (function (_super) {
         if (up === void 0) { up = false; }
         this.view.forceFocusOutOfContainer(up);
     };
-    __decorate$1$([
+    __decorate$1_([
         Autowired('focusService')
     ], GridCtrl.prototype, "focusService", void 0);
-    __decorate$1$([
+    __decorate$1_([
         Autowired('resizeObserverService')
     ], GridCtrl.prototype, "resizeObserverService", void 0);
-    __decorate$1$([
+    __decorate$1_([
         Autowired('columnModel')
     ], GridCtrl.prototype, "columnModel", void 0);
-    __decorate$1$([
+    __decorate$1_([
         Autowired('ctrlsService')
     ], GridCtrl.prototype, "ctrlsService", void 0);
-    __decorate$1$([
+    __decorate$1_([
         Autowired('mouseEventService')
     ], GridCtrl.prototype, "mouseEventService", void 0);
-    __decorate$1$([
+    __decorate$1_([
         Autowired('dragAndDropService')
     ], GridCtrl.prototype, "dragAndDropService", void 0);
     return GridCtrl;
@@ -48367,7 +48384,7 @@ var __extends$2u = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$20 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -48405,7 +48422,8 @@ var GridComp = /** @class */ (function (_super) {
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: function () { return undefined; },
-            focusInnerElement: function (fromBottom) { return _this.ctrl.focusInnerElement(fromBottom); }
+            focusInnerElement: function (fromBottom) { return _this.ctrl.focusInnerElement(fromBottom); },
+            forceFocusOutWhenTabGuardsAreEmpty: true
         });
     };
     GridComp.prototype.insertGridIntoDom = function () {
@@ -48446,19 +48464,19 @@ var GridComp = /** @class */ (function (_super) {
         }
         return focusableContainers.filter(function (el) { return isVisible(el); });
     };
-    __decorate$20([
+    __decorate$1$([
         Autowired('loggerFactory')
     ], GridComp.prototype, "loggerFactory", void 0);
-    __decorate$20([
+    __decorate$1$([
         RefSelector('gridBody')
     ], GridComp.prototype, "gridBodyComp", void 0);
-    __decorate$20([
+    __decorate$1$([
         RefSelector('sideBar')
     ], GridComp.prototype, "sideBarComp", void 0);
-    __decorate$20([
+    __decorate$1$([
         RefSelector('rootWrapperBody')
     ], GridComp.prototype, "eRootWrapperBody", void 0);
-    __decorate$20([
+    __decorate$1$([
         PostConstruct
     ], GridComp.prototype, "postConstruct", null);
     return GridComp;
@@ -48479,7 +48497,7 @@ var __extends$2v = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$21 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$20 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -48752,10 +48770,10 @@ var SortController = /** @class */ (function (_super) {
     };
     var SortController_1;
     SortController.DEFAULT_SORTING_ORDER = ['asc', 'desc', null];
-    __decorate$21([
+    __decorate$20([
         Autowired('columnModel')
     ], SortController.prototype, "columnModel", void 0);
-    SortController = SortController_1 = __decorate$21([
+    SortController = SortController_1 = __decorate$20([
         Bean('sortController')
     ], SortController);
     return SortController;
@@ -48787,7 +48805,7 @@ var __assign$l = (undefined && undefined.__assign) || function () {
     };
     return __assign$l.apply(this, arguments);
 };
-var __decorate$22 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$21 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -49272,46 +49290,46 @@ var FocusService = /** @class */ (function (_super) {
     var FocusService_1;
     FocusService.keyboardModeActive = false;
     FocusService.instanceCount = 0;
-    __decorate$22([
+    __decorate$21([
         Autowired('eGridDiv')
     ], FocusService.prototype, "eGridDiv", void 0);
-    __decorate$22([
+    __decorate$21([
         Autowired('columnModel')
     ], FocusService.prototype, "columnModel", void 0);
-    __decorate$22([
+    __decorate$21([
         Autowired('headerNavigationService')
     ], FocusService.prototype, "headerNavigationService", void 0);
-    __decorate$22([
+    __decorate$21([
         Autowired('headerPositionUtils')
     ], FocusService.prototype, "headerPositionUtils", void 0);
-    __decorate$22([
+    __decorate$21([
         Autowired('rowRenderer')
     ], FocusService.prototype, "rowRenderer", void 0);
-    __decorate$22([
+    __decorate$21([
         Autowired('rowPositionUtils')
     ], FocusService.prototype, "rowPositionUtils", void 0);
-    __decorate$22([
+    __decorate$21([
         Autowired('cellPositionUtils')
     ], FocusService.prototype, "cellPositionUtils", void 0);
-    __decorate$22([
+    __decorate$21([
         Optional('rangeService')
     ], FocusService.prototype, "rangeService", void 0);
-    __decorate$22([
+    __decorate$21([
         Autowired('navigationService')
     ], FocusService.prototype, "navigationService", void 0);
-    __decorate$22([
+    __decorate$21([
         Autowired('ctrlsService')
     ], FocusService.prototype, "ctrlsService", void 0);
-    __decorate$22([
+    __decorate$21([
         Autowired('filterManager')
     ], FocusService.prototype, "filterManager", void 0);
-    __decorate$22([
+    __decorate$21([
         Optional('advancedFilterService')
     ], FocusService.prototype, "advancedFilterService", void 0);
-    __decorate$22([
+    __decorate$21([
         PostConstruct
     ], FocusService.prototype, "init", null);
-    FocusService = FocusService_1 = __decorate$22([
+    FocusService = FocusService_1 = __decorate$21([
         Bean('focusService')
     ], FocusService);
     return FocusService;
@@ -49332,7 +49350,7 @@ var __extends$2x = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$23 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$22 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -49360,7 +49378,7 @@ var ColumnHoverService = /** @class */ (function (_super) {
     ColumnHoverService.prototype.isHovered = function (column) {
         return !!this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
     };
-    ColumnHoverService = __decorate$23([
+    ColumnHoverService = __decorate$22([
         Bean('columnHoverService')
     ], ColumnHoverService);
     return ColumnHoverService;
@@ -49381,7 +49399,7 @@ var __extends$2y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$24 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$23 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -49394,6 +49412,7 @@ var ColumnAnimationService = /** @class */ (function (_super) {
         _this.executeNextFuncs = [];
         _this.executeLaterFuncs = [];
         _this.active = false;
+        _this.suppressAnimation = false;
         _this.animationThreadCount = 0;
         return _this;
     }
@@ -49402,7 +49421,10 @@ var ColumnAnimationService = /** @class */ (function (_super) {
         this.ctrlsService.whenReady(function (p) { return _this.gridBodyCtrl = p.gridBodyCtrl; });
     };
     ColumnAnimationService.prototype.isActive = function () {
-        return this.active;
+        return this.active && !this.suppressAnimation;
+    };
+    ColumnAnimationService.prototype.setSuppressAnimation = function (suppress) {
+        this.suppressAnimation = suppress;
     };
     ColumnAnimationService.prototype.start = function () {
         if (this.active) {
@@ -49479,13 +49501,13 @@ var ColumnAnimationService = /** @class */ (function (_super) {
             }, 200);
         });
     };
-    __decorate$24([
+    __decorate$23([
         Autowired('ctrlsService')
     ], ColumnAnimationService.prototype, "ctrlsService", void 0);
-    __decorate$24([
+    __decorate$23([
         PostConstruct
     ], ColumnAnimationService.prototype, "postConstruct", null);
-    ColumnAnimationService = __decorate$24([
+    ColumnAnimationService = __decorate$23([
         Bean('columnAnimationService')
     ], ColumnAnimationService);
     return ColumnAnimationService;
@@ -49506,7 +49528,7 @@ var __extends$2z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$25 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$24 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -49562,16 +49584,16 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
             this.isBodyRendered = false;
         }
     };
-    __decorate$25([
+    __decorate$24([
         Autowired('ctrlsService')
     ], PaginationAutoPageSizeService.prototype, "ctrlsService", void 0);
-    __decorate$25([
+    __decorate$24([
         Autowired('paginationProxy')
     ], PaginationAutoPageSizeService.prototype, "paginationProxy", void 0);
-    __decorate$25([
+    __decorate$24([
         PostConstruct
     ], PaginationAutoPageSizeService.prototype, "postConstruct", null);
-    PaginationAutoPageSizeService = __decorate$25([
+    PaginationAutoPageSizeService = __decorate$24([
         Bean('paginationAutoPageSizeService')
     ], PaginationAutoPageSizeService);
     return PaginationAutoPageSizeService;
@@ -49592,7 +49614,7 @@ var __extends$2A = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$26 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$25 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -49633,10 +49655,10 @@ var ValueCache = /** @class */ (function (_super) {
         }
         return rowNode.__cacheData[colId];
     };
-    __decorate$26([
+    __decorate$25([
         PostConstruct
     ], ValueCache.prototype, "init", null);
-    ValueCache = __decorate$26([
+    ValueCache = __decorate$25([
         Bean('valueCache')
     ], ValueCache);
     return ValueCache;
@@ -49657,7 +49679,7 @@ var __extends$2B = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$27 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$26 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -49707,16 +49729,16 @@ var ChangeDetectionService = /** @class */ (function (_super) {
         // step 2 of change detection is to refresh the cells
         this.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
     };
-    __decorate$27([
+    __decorate$26([
         Autowired('rowModel')
     ], ChangeDetectionService.prototype, "rowModel", void 0);
-    __decorate$27([
+    __decorate$26([
         Autowired('rowRenderer')
     ], ChangeDetectionService.prototype, "rowRenderer", void 0);
-    __decorate$27([
+    __decorate$26([
         PostConstruct
     ], ChangeDetectionService.prototype, "init", null);
-    ChangeDetectionService = __decorate$27([
+    ChangeDetectionService = __decorate$26([
         Bean('changeDetectionService')
     ], ChangeDetectionService);
     return ChangeDetectionService;
@@ -49737,7 +49759,7 @@ var __extends$2C = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$28 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$27 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -49788,10 +49810,10 @@ var AgComponentUtils = /** @class */ (function (_super) {
         }
         return candidate.prototype && 'getGui' in candidate.prototype;
     };
-    __decorate$28([
+    __decorate$27([
         Autowired("componentMetadataProvider")
     ], AgComponentUtils.prototype, "componentMetadataProvider", void 0);
-    AgComponentUtils = __decorate$28([
+    AgComponentUtils = __decorate$27([
         Bean("agComponentUtils")
     ], AgComponentUtils);
     return AgComponentUtils;
@@ -49812,7 +49834,7 @@ var __extends$2D = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$29 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$28 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -49907,13 +49929,13 @@ var ComponentMetadataProvider = /** @class */ (function (_super) {
     ComponentMetadataProvider.prototype.retrieve = function (name) {
         return this.componentMetaData[name];
     };
-    __decorate$29([
+    __decorate$28([
         Autowired("agComponentUtils")
     ], ComponentMetadataProvider.prototype, "agComponentUtils", void 0);
-    __decorate$29([
+    __decorate$28([
         PostConstruct
     ], ComponentMetadataProvider.prototype, "postConstruct", null);
-    ComponentMetadataProvider = __decorate$29([
+    ComponentMetadataProvider = __decorate$28([
         Bean("componentMetadataProvider")
     ], ComponentMetadataProvider);
     return ComponentMetadataProvider;
@@ -49934,7 +49956,7 @@ var __extends$2E = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$29 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -50175,13 +50197,13 @@ var Environment = /** @class */ (function (_super) {
         }
         _super.prototype.destroy.call(this);
     };
-    __decorate$2a([
+    __decorate$29([
         Autowired('eGridDiv')
     ], Environment.prototype, "eGridDiv", void 0);
-    __decorate$2a([
+    __decorate$29([
         PostConstruct
     ], Environment.prototype, "postConstruct", null);
-    Environment = __decorate$2a([
+    Environment = __decorate$29([
         Bean('environment')
     ], Environment);
     return Environment;
@@ -50202,7 +50224,7 @@ var __extends$2F = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -50314,16 +50336,16 @@ var RowContainerHeightService = /** @class */ (function (_super) {
         var scrollPixel = this.maxScrollY * scrollPercent;
         return scrollPixel;
     };
-    __decorate$2b([
+    __decorate$2a([
         Autowired('ctrlsService')
     ], RowContainerHeightService.prototype, "ctrlsService", void 0);
-    __decorate$2b([
+    __decorate$2a([
         __param$7(0, Qualifier("loggerFactory"))
     ], RowContainerHeightService.prototype, "agWire", null);
-    __decorate$2b([
+    __decorate$2a([
         PostConstruct
     ], RowContainerHeightService.prototype, "postConstruct", null);
-    RowContainerHeightService = __decorate$2b([
+    RowContainerHeightService = __decorate$2a([
         Bean('rowContainerHeightService')
     ], RowContainerHeightService);
     return RowContainerHeightService;
@@ -50344,7 +50366,7 @@ var __extends$2G = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -50409,16 +50431,16 @@ var SelectableService = /** @class */ (function (_super) {
             this.selectionService.updateGroupsFromChildrenSelections('selectableChanged');
         }
     };
-    __decorate$2c([
+    __decorate$2b([
         Autowired('rowModel')
     ], SelectableService.prototype, "rowModel", void 0);
-    __decorate$2c([
+    __decorate$2b([
         Autowired('selectionService')
     ], SelectableService.prototype, "selectionService", void 0);
-    __decorate$2c([
+    __decorate$2b([
         PostConstruct
     ], SelectableService.prototype, "init", null);
-    SelectableService = __decorate$2c([
+    SelectableService = __decorate$2b([
         Bean('selectableService')
     ], SelectableService);
     return SelectableService;
@@ -50439,7 +50461,7 @@ var __extends$2H = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -50642,43 +50664,43 @@ var PaginationComp = /** @class */ (function (_super) {
         this.lbTotal.textContent = this.formatNumber(0);
         this.lbRecordCount.textContent = this.formatNumber(0);
     };
-    __decorate$2d([
+    __decorate$2c([
         Autowired('paginationProxy')
     ], PaginationComp.prototype, "paginationProxy", void 0);
-    __decorate$2d([
+    __decorate$2c([
         Autowired('rowNodeBlockLoader')
     ], PaginationComp.prototype, "rowNodeBlockLoader", void 0);
-    __decorate$2d([
+    __decorate$2c([
         RefSelector('btFirst')
     ], PaginationComp.prototype, "btFirst", void 0);
-    __decorate$2d([
+    __decorate$2c([
         RefSelector('btPrevious')
     ], PaginationComp.prototype, "btPrevious", void 0);
-    __decorate$2d([
+    __decorate$2c([
         RefSelector('btNext')
     ], PaginationComp.prototype, "btNext", void 0);
-    __decorate$2d([
+    __decorate$2c([
         RefSelector('btLast')
     ], PaginationComp.prototype, "btLast", void 0);
-    __decorate$2d([
+    __decorate$2c([
         RefSelector('lbRecordCount')
     ], PaginationComp.prototype, "lbRecordCount", void 0);
-    __decorate$2d([
+    __decorate$2c([
         RefSelector('lbFirstRowOnPage')
     ], PaginationComp.prototype, "lbFirstRowOnPage", void 0);
-    __decorate$2d([
+    __decorate$2c([
         RefSelector('lbLastRowOnPage')
     ], PaginationComp.prototype, "lbLastRowOnPage", void 0);
-    __decorate$2d([
+    __decorate$2c([
         RefSelector('lbCurrent')
     ], PaginationComp.prototype, "lbCurrent", void 0);
-    __decorate$2d([
+    __decorate$2c([
         RefSelector('lbTotal')
     ], PaginationComp.prototype, "lbTotal", void 0);
-    __decorate$2d([
+    __decorate$2c([
         RefSelector('pageSizeComp')
     ], PaginationComp.prototype, "pageSizeComp", void 0);
-    __decorate$2d([
+    __decorate$2c([
         PostConstruct
     ], PaginationComp.prototype, "postConstruct", null);
     return PaginationComp;
@@ -50699,7 +50721,7 @@ var __extends$2I = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -50777,13 +50799,13 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
     };
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     OverlayWrapperComponent.TEMPLATE = "\n        <div class=\"ag-overlay\" role=\"presentation\">\n            <div class=\"ag-overlay-panel\" role=\"presentation\">\n                <div class=\"ag-overlay-wrapper\" ref=\"eOverlayWrapper\" role=\"presentation\"></div>\n            </div>\n        </div>";
-    __decorate$2e([
+    __decorate$2d([
         Autowired('overlayService')
     ], OverlayWrapperComponent.prototype, "overlayService", void 0);
-    __decorate$2e([
+    __decorate$2d([
         RefSelector('eOverlayWrapper')
     ], OverlayWrapperComponent.prototype, "eOverlayWrapper", void 0);
-    __decorate$2e([
+    __decorate$2d([
         PostConstruct
     ], OverlayWrapperComponent.prototype, "postConstruct", null);
     return OverlayWrapperComponent;
@@ -50804,7 +50826,7 @@ var __extends$2J = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -50915,16 +50937,16 @@ var RowPositionUtils = /** @class */ (function (_super) {
         });
         return min;
     };
-    __decorate$2f([
+    __decorate$2e([
         Autowired('rowModel')
     ], RowPositionUtils.prototype, "rowModel", void 0);
-    __decorate$2f([
+    __decorate$2e([
         Autowired('pinnedRowModel')
     ], RowPositionUtils.prototype, "pinnedRowModel", void 0);
-    __decorate$2f([
+    __decorate$2e([
         Autowired('paginationProxy')
     ], RowPositionUtils.prototype, "paginationProxy", void 0);
-    RowPositionUtils = __decorate$2f([
+    RowPositionUtils = __decorate$2e([
         Bean('rowPositionUtils')
     ], RowPositionUtils);
     return RowPositionUtils;
@@ -50945,7 +50967,7 @@ var __extends$2K = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -50970,7 +50992,7 @@ var CellPositionUtils = /** @class */ (function (_super) {
         var indexMatch = cellA.rowIndex === cellB.rowIndex;
         return colsMatch && floatingMatch && indexMatch;
     };
-    CellPositionUtils = __decorate$2g([
+    CellPositionUtils = __decorate$2f([
         Bean('cellPositionUtils')
     ], CellPositionUtils);
     return CellPositionUtils;
@@ -51063,7 +51085,7 @@ var __assign$m = (undefined && undefined.__assign) || function () {
     };
     return __assign$m.apply(this, arguments);
 };
-var __decorate$2h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -51366,34 +51388,34 @@ var UndoRedoService = /** @class */ (function (_super) {
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
     };
-    __decorate$2h([
+    __decorate$2g([
         Autowired('focusService')
     ], UndoRedoService.prototype, "focusService", void 0);
-    __decorate$2h([
+    __decorate$2g([
         Autowired('ctrlsService')
     ], UndoRedoService.prototype, "ctrlsService", void 0);
-    __decorate$2h([
+    __decorate$2g([
         Autowired('rowModel')
     ], UndoRedoService.prototype, "rowModel", void 0);
-    __decorate$2h([
+    __decorate$2g([
         Autowired('pinnedRowModel')
     ], UndoRedoService.prototype, "pinnedRowModel", void 0);
-    __decorate$2h([
+    __decorate$2g([
         Autowired('cellPositionUtils')
     ], UndoRedoService.prototype, "cellPositionUtils", void 0);
-    __decorate$2h([
+    __decorate$2g([
         Autowired('rowPositionUtils')
     ], UndoRedoService.prototype, "rowPositionUtils", void 0);
-    __decorate$2h([
+    __decorate$2g([
         Autowired('columnModel')
     ], UndoRedoService.prototype, "columnModel", void 0);
-    __decorate$2h([
+    __decorate$2g([
         Optional('rangeService')
     ], UndoRedoService.prototype, "rangeService", void 0);
-    __decorate$2h([
+    __decorate$2g([
         PostConstruct
     ], UndoRedoService.prototype, "init", null);
-    UndoRedoService = __decorate$2h([
+    UndoRedoService = __decorate$2g([
         Bean('undoRedoService')
     ], UndoRedoService);
     return UndoRedoService;
@@ -51414,7 +51436,7 @@ var __extends$2N = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -51560,19 +51582,19 @@ var HeaderPositionUtils = /** @class */ (function (_super) {
             column: column
         };
     };
-    __decorate$2i([
+    __decorate$2h([
         Autowired('columnModel')
     ], HeaderPositionUtils.prototype, "columnModel", void 0);
-    __decorate$2i([
+    __decorate$2h([
         Autowired('ctrlsService')
     ], HeaderPositionUtils.prototype, "ctrlsService", void 0);
-    HeaderPositionUtils = __decorate$2i([
+    HeaderPositionUtils = __decorate$2h([
         Bean('headerPositionUtils')
     ], HeaderPositionUtils);
     return HeaderPositionUtils;
 }(BeanStub));
 
-var __decorate$2j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -51652,13 +51674,13 @@ var ColumnDefFactory = /** @class */ (function () {
         colDefCloned.sortIndex = col.getSortIndex() != null ? col.getSortIndex() : null;
         return colDefCloned;
     };
-    ColumnDefFactory = __decorate$2j([
+    ColumnDefFactory = __decorate$2i([
         Bean('columnDefFactory')
     ], ColumnDefFactory);
     return ColumnDefFactory;
 }());
 
-var __decorate$2k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -51778,13 +51800,13 @@ var RowCssClassCalculator = /** @class */ (function () {
         // if a leaf, and a parent exists, put a level of the parent, else put level of 0 for top level item
         return rowNode.parent ? (rowNode.parent.level + 1) : 0;
     };
-    __decorate$2k([
+    __decorate$2j([
         Autowired('stylingService')
     ], RowCssClassCalculator.prototype, "stylingService", void 0);
-    __decorate$2k([
+    __decorate$2j([
         Autowired('gridOptionsService')
     ], RowCssClassCalculator.prototype, "gridOptionsService", void 0);
-    RowCssClassCalculator = __decorate$2k([
+    RowCssClassCalculator = __decorate$2j([
         Bean('rowCssClassCalculator')
     ], RowCssClassCalculator);
     return RowCssClassCalculator;
@@ -51805,7 +51827,7 @@ var __extends$2O = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -51908,16 +51930,16 @@ var RowNodeSorter = /** @class */ (function (_super) {
         }
         return this.valueService.getValue(column, node, false, false);
     };
-    __decorate$2l([
+    __decorate$2k([
         Autowired('valueService')
     ], RowNodeSorter.prototype, "valueService", void 0);
-    __decorate$2l([
+    __decorate$2k([
         Autowired('columnModel')
     ], RowNodeSorter.prototype, "columnModel", void 0);
-    __decorate$2l([
+    __decorate$2k([
         PostConstruct
     ], RowNodeSorter.prototype, "init", null);
-    RowNodeSorter = __decorate$2l([
+    RowNodeSorter = __decorate$2k([
         Bean('rowNodeSorter')
     ], RowNodeSorter);
     return RowNodeSorter;
@@ -51938,7 +51960,7 @@ var __extends$2P = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -52134,7 +52156,7 @@ var CtrlsService = /** @class */ (function (_super) {
     };
     var CtrlsService_1;
     CtrlsService.NAME = 'ctrlsService';
-    CtrlsService = CtrlsService_1 = __decorate$2m([
+    CtrlsService = CtrlsService_1 = __decorate$2l([
         Bean(CtrlsService_1.NAME)
     ], CtrlsService);
     return CtrlsService;
@@ -52155,7 +52177,7 @@ var __extends$2Q = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -52178,7 +52200,7 @@ var CtrlsFactory = /** @class */ (function (_super) {
         }
         return new ControllerClass();
     };
-    CtrlsFactory = __decorate$2n([
+    CtrlsFactory = __decorate$2m([
         Bean('ctrlsFactory')
     ], CtrlsFactory);
     return CtrlsFactory;
@@ -52199,7 +52221,7 @@ var __extends$2R = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -52278,19 +52300,19 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
     AbstractFakeScrollComp.prototype.onScrollCallback = function (fn) {
         this.addManagedListener(this.getViewport(), 'scroll', fn);
     };
-    __decorate$2o([
+    __decorate$2n([
         RefSelector('eViewport')
     ], AbstractFakeScrollComp.prototype, "eViewport", void 0);
-    __decorate$2o([
+    __decorate$2n([
         RefSelector('eContainer')
     ], AbstractFakeScrollComp.prototype, "eContainer", void 0);
-    __decorate$2o([
+    __decorate$2n([
         Autowired('scrollVisibleService')
     ], AbstractFakeScrollComp.prototype, "scrollVisibleService", void 0);
-    __decorate$2o([
+    __decorate$2n([
         Autowired('ctrlsService')
     ], AbstractFakeScrollComp.prototype, "ctrlsService", void 0);
-    __decorate$2o([
+    __decorate$2n([
         Autowired('animationFrameService')
     ], AbstractFakeScrollComp.prototype, "animationFrameService", void 0);
     return AbstractFakeScrollComp;
@@ -52311,7 +52333,7 @@ var __extends$2S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -52404,19 +52426,19 @@ var FakeHScrollComp = /** @class */ (function (_super) {
         setScrollLeft(this.getViewport(), value, this.enableRtl);
     };
     FakeHScrollComp.TEMPLATE = "<div class=\"ag-body-horizontal-scroll\" aria-hidden=\"true\">\n            <div class=\"ag-horizontal-left-spacer\" ref=\"eLeftSpacer\"></div>\n            <div class=\"ag-body-horizontal-scroll-viewport\" ref=\"eViewport\">\n                <div class=\"ag-body-horizontal-scroll-container\" ref=\"eContainer\"></div>\n            </div>\n            <div class=\"ag-horizontal-right-spacer\" ref=\"eRightSpacer\"></div>\n        </div>";
-    __decorate$2p([
+    __decorate$2o([
         RefSelector('eLeftSpacer')
     ], FakeHScrollComp.prototype, "eLeftSpacer", void 0);
-    __decorate$2p([
+    __decorate$2o([
         RefSelector('eRightSpacer')
     ], FakeHScrollComp.prototype, "eRightSpacer", void 0);
-    __decorate$2p([
+    __decorate$2o([
         Autowired('columnModel')
     ], FakeHScrollComp.prototype, "columnModel", void 0);
-    __decorate$2p([
+    __decorate$2o([
         Autowired('pinnedRowModel')
     ], FakeHScrollComp.prototype, "pinnedRowModel", void 0);
-    __decorate$2p([
+    __decorate$2o([
         PostConstruct
     ], FakeHScrollComp.prototype, "postConstruct", null);
     return FakeHScrollComp;
@@ -52437,7 +52459,7 @@ var __extends$2T = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -52473,13 +52495,13 @@ var PinnedWidthService = /** @class */ (function (_super) {
     PinnedWidthService.prototype.getPinnedLeftWidth = function () {
         return this.leftWidth;
     };
-    __decorate$2q([
+    __decorate$2p([
         Autowired('columnModel')
     ], PinnedWidthService.prototype, "columnModel", void 0);
-    __decorate$2q([
+    __decorate$2p([
         PostConstruct
     ], PinnedWidthService.prototype, "postConstruct", null);
-    PinnedWidthService = __decorate$2q([
+    PinnedWidthService = __decorate$2p([
         Bean('pinnedWidthService')
     ], PinnedWidthService);
     return PinnedWidthService;
@@ -52500,7 +52522,7 @@ var __extends$2U = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -52549,16 +52571,16 @@ var RowNodeEventThrottle = /** @class */ (function (_super) {
         }
         this.dispatchExpandedDebounced();
     };
-    __decorate$2r([
+    __decorate$2q([
         Autowired('animationFrameService')
     ], RowNodeEventThrottle.prototype, "animationFrameService", void 0);
-    __decorate$2r([
+    __decorate$2q([
         Autowired('rowModel')
     ], RowNodeEventThrottle.prototype, "rowModel", void 0);
-    __decorate$2r([
+    __decorate$2q([
         PostConstruct
     ], RowNodeEventThrottle.prototype, "postConstruct", null);
-    RowNodeEventThrottle = __decorate$2r([
+    RowNodeEventThrottle = __decorate$2q([
         Bean('rowNodeEventThrottle')
     ], RowNodeEventThrottle);
     return RowNodeEventThrottle;
@@ -52980,7 +53002,7 @@ var GRID_OPTIONS_VALIDATORS = {
     validations: GRID_OPTION_VALIDATIONS,
 };
 
-var __decorate$2s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -53422,34 +53444,34 @@ var GridOptionsService = /** @class */ (function () {
         ['viewportRowModelBufferSize', GridOptionsService_1.toConstrainedNum(0, Number.MAX_VALUE)],
     ], false));
     GridOptionsService.changeSetId = 0;
-    __decorate$2s([
+    __decorate$2r([
         Autowired('gridOptions')
     ], GridOptionsService.prototype, "gridOptions", void 0);
-    __decorate$2s([
+    __decorate$2r([
         Autowired('eventService')
     ], GridOptionsService.prototype, "eventService", void 0);
-    __decorate$2s([
+    __decorate$2r([
         Autowired('environment')
     ], GridOptionsService.prototype, "environment", void 0);
-    __decorate$2s([
+    __decorate$2r([
         Autowired('frameworkOverrides')
     ], GridOptionsService.prototype, "frameworkOverrides", void 0);
-    __decorate$2s([
+    __decorate$2r([
         Autowired('eGridDiv')
     ], GridOptionsService.prototype, "eGridDiv", void 0);
-    __decorate$2s([
+    __decorate$2r([
         Autowired('validationService')
     ], GridOptionsService.prototype, "validationService", void 0);
-    __decorate$2s([
+    __decorate$2r([
         Autowired('gridApi')
     ], GridOptionsService.prototype, "api", void 0);
-    __decorate$2s([
+    __decorate$2r([
         PostConstruct
     ], GridOptionsService.prototype, "init", null);
-    __decorate$2s([
+    __decorate$2r([
         PreDestroy
     ], GridOptionsService.prototype, "destroy", null);
-    GridOptionsService = GridOptionsService_1 = __decorate$2s([
+    GridOptionsService = GridOptionsService_1 = __decorate$2r([
         Bean('gridOptionsService')
     ], GridOptionsService);
     return GridOptionsService;
@@ -53470,7 +53492,7 @@ var __extends$2V = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -53513,7 +53535,7 @@ var LocaleService = /** @class */ (function (_super) {
             return localisedText !== null && localisedText !== void 0 ? localisedText : defaultValue;
         };
     };
-    LocaleService = __decorate$2t([
+    LocaleService = __decorate$2s([
         Bean('localeService')
     ], LocaleService);
     return LocaleService;
@@ -53534,7 +53556,7 @@ var __extends$2W = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -53582,7 +53604,7 @@ var FakeVScrollComp = /** @class */ (function (_super) {
         this.getViewport().scrollTop = value;
     };
     FakeVScrollComp.TEMPLATE = "<div class=\"ag-body-vertical-scroll\" aria-hidden=\"true\">\n            <div class=\"ag-body-vertical-scroll-viewport\" ref=\"eViewport\">\n                <div class=\"ag-body-vertical-scroll-container\" ref=\"eContainer\"></div>\n            </div>\n        </div>";
-    __decorate$2u([
+    __decorate$2t([
         PostConstruct
     ], FakeVScrollComp.prototype, "postConstruct", null);
     return FakeVScrollComp;
@@ -53614,7 +53636,7 @@ var __assign$n = (undefined && undefined.__assign) || function () {
     };
     return __assign$n.apply(this, arguments);
 };
-var __decorate$2v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -54161,6 +54183,7 @@ var DataTypeService = /** @class */ (function (_super) {
                 else {
                     mergeFilterParams({
                         maxNumConditions: 1,
+                        debounceMs: 0,
                         filterOptions: [
                             'empty',
                             {
@@ -54347,25 +54370,25 @@ var DataTypeService = /** @class */ (function (_super) {
             }
         };
     };
-    __decorate$2v([
+    __decorate$2u([
         Autowired('rowModel')
     ], DataTypeService.prototype, "rowModel", void 0);
-    __decorate$2v([
+    __decorate$2u([
         Autowired('columnModel')
     ], DataTypeService.prototype, "columnModel", void 0);
-    __decorate$2v([
+    __decorate$2u([
         Autowired('columnUtils')
     ], DataTypeService.prototype, "columnUtils", void 0);
-    __decorate$2v([
+    __decorate$2u([
         Autowired('valueService')
     ], DataTypeService.prototype, "valueService", void 0);
-    __decorate$2v([
+    __decorate$2u([
         Autowired('valueFormatterService')
     ], DataTypeService.prototype, "valueFormatterService", void 0);
-    __decorate$2v([
+    __decorate$2u([
         PostConstruct
     ], DataTypeService.prototype, "init", null);
-    DataTypeService = __decorate$2v([
+    DataTypeService = __decorate$2u([
         Bean('dataTypeService')
     ], DataTypeService);
     return DataTypeService;
@@ -54386,7 +54409,7 @@ var __extends$2Y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -54416,10 +54439,10 @@ var ValueParserService = /** @class */ (function (_super) {
         }
         return newValue;
     };
-    __decorate$2w([
+    __decorate$2v([
         Autowired('expressionService')
     ], ValueParserService.prototype, "expressionService", void 0);
-    ValueParserService = __decorate$2w([
+    ValueParserService = __decorate$2v([
         Bean('valueParserService')
     ], ValueParserService);
     return ValueParserService;
@@ -54440,7 +54463,7 @@ var __extends$2Z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -54500,19 +54523,19 @@ var SyncService = /** @class */ (function (_super) {
         }
         this.columnModel.setColumnDefs(columnDefs, convertSourceType(event.source));
     };
-    __decorate$2x([
+    __decorate$2w([
         Autowired('ctrlsService')
     ], SyncService.prototype, "ctrlsService", void 0);
-    __decorate$2x([
+    __decorate$2w([
         Autowired('columnModel')
     ], SyncService.prototype, "columnModel", void 0);
-    __decorate$2x([
+    __decorate$2w([
         Autowired('rowModel')
     ], SyncService.prototype, "rowModel", void 0);
-    __decorate$2x([
+    __decorate$2w([
         PostConstruct
     ], SyncService.prototype, "postConstruct", null);
-    SyncService = __decorate$2x([
+    SyncService = __decorate$2w([
         Bean('syncService')
     ], SyncService);
     return SyncService;
@@ -54544,7 +54567,7 @@ var __assign$o = (undefined && undefined.__assign) || function () {
     };
     return __assign$o.apply(this, arguments);
 };
-var __decorate$2y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -54625,19 +54648,19 @@ var OverlayService = /** @class */ (function (_super) {
             this.hideOverlay();
         }
     };
-    __decorate$2y([
+    __decorate$2x([
         Autowired('userComponentFactory')
     ], OverlayService.prototype, "userComponentFactory", void 0);
-    __decorate$2y([
+    __decorate$2x([
         Autowired('paginationProxy')
     ], OverlayService.prototype, "paginationProxy", void 0);
-    __decorate$2y([
+    __decorate$2x([
         Autowired('columnModel')
     ], OverlayService.prototype, "columnModel", void 0);
-    __decorate$2y([
+    __decorate$2x([
         PostConstruct
     ], OverlayService.prototype, "postConstruct", null);
-    OverlayService = __decorate$2y([
+    OverlayService = __decorate$2x([
         Bean('overlayService')
     ], OverlayService);
     return OverlayService;
@@ -54669,7 +54692,7 @@ var __assign$p = (undefined && undefined.__assign) || function () {
     };
     return __assign$p.apply(this, arguments);
 };
-var __decorate$2z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -55224,8 +55247,7 @@ var StateService = /** @class */ (function (_super) {
     StateService.prototype.suppressEventsAndDispatchInitEvent = function (updateFunc) {
         var _this = this;
         this.suppressEvents = true;
-        var columnAnimation = this.gridOptionsService.get('suppressColumnMoveAnimation');
-        this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: true } });
+        this.columnAnimationService.setSuppressAnimation(true);
         updateFunc();
         // We want to suppress any grid events, but not user events.
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
@@ -55237,44 +55259,47 @@ var StateService = /** @class */ (function (_super) {
                 // Ensure the grid is still alive before dispatching the event.
                 return;
             }
-            _this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: columnAnimation } });
+            _this.columnAnimationService.setSuppressAnimation(false);
             _this.dispatchStateUpdateEvent(['gridInitializing']);
         });
     };
-    __decorate$2z([
+    __decorate$2y([
         Autowired('filterManager')
     ], StateService.prototype, "filterManager", void 0);
-    __decorate$2z([
+    __decorate$2y([
         Optional('rangeService')
     ], StateService.prototype, "rangeService", void 0);
-    __decorate$2z([
+    __decorate$2y([
         Autowired('ctrlsService')
     ], StateService.prototype, "ctrlsService", void 0);
-    __decorate$2z([
+    __decorate$2y([
         Optional('sideBarService')
     ], StateService.prototype, "sideBarService", void 0);
-    __decorate$2z([
+    __decorate$2y([
         Autowired('focusService')
     ], StateService.prototype, "focusService", void 0);
-    __decorate$2z([
+    __decorate$2y([
         Autowired('columnModel')
     ], StateService.prototype, "columnModel", void 0);
-    __decorate$2z([
+    __decorate$2y([
         Autowired('paginationProxy')
     ], StateService.prototype, "paginationProxy", void 0);
-    __decorate$2z([
+    __decorate$2y([
         Autowired('rowModel')
     ], StateService.prototype, "rowModel", void 0);
-    __decorate$2z([
+    __decorate$2y([
         Autowired('selectionService')
     ], StateService.prototype, "selectionService", void 0);
-    __decorate$2z([
+    __decorate$2y([
         Autowired('expansionService')
     ], StateService.prototype, "expansionService", void 0);
-    __decorate$2z([
+    __decorate$2y([
+        Autowired('columnAnimationService')
+    ], StateService.prototype, "columnAnimationService", void 0);
+    __decorate$2y([
         PostConstruct
     ], StateService.prototype, "postConstruct", null);
-    StateService = __decorate$2z([
+    StateService = __decorate$2y([
         Bean('stateService')
     ], StateService);
     return StateService;
@@ -55295,7 +55320,7 @@ var __extends$30 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -55462,13 +55487,13 @@ var ValidationService = /** @class */ (function (_super) {
             warnOnce("to see all the valid ".concat(containerName, " properties please check: ").concat(url));
         }
     };
-    __decorate$2A([
+    __decorate$2z([
         Autowired('gridOptions')
     ], ValidationService.prototype, "gridOptions", void 0);
-    __decorate$2A([
+    __decorate$2z([
         PostConstruct
     ], ValidationService.prototype, "init", null);
-    ValidationService = __decorate$2A([
+    ValidationService = __decorate$2z([
         Bean('validationService')
     ], ValidationService);
     return ValidationService;
@@ -55489,7 +55514,7 @@ var __extends$31 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -55563,10 +55588,10 @@ var ApiEventService = /** @class */ (function (_super) {
         this.destroyGlobalListeners(this.syncGlobalEventListeners, false);
         this.destroyGlobalListeners(this.asyncGlobalEventListeners, true);
     };
-    __decorate$2B([
+    __decorate$2A([
         PostConstruct
     ], ApiEventService.prototype, "postConstruct", null);
-    ApiEventService = __decorate$2B([
+    ApiEventService = __decorate$2A([
         Bean('apiEventService')
     ], ApiEventService);
     return ApiEventService;
@@ -55587,7 +55612,7 @@ var __extends$32 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -55769,16 +55794,16 @@ var PageSizeSelectorComp = /** @class */ (function (_super) {
         this.toggleSelectDisplay(false);
         _super.prototype.destroy.call(this);
     };
-    __decorate$2C([
+    __decorate$2B([
         Autowired('localeService')
     ], PageSizeSelectorComp.prototype, "localeService", void 0);
-    __decorate$2C([
+    __decorate$2B([
         Autowired('gridOptionsService')
     ], PageSizeSelectorComp.prototype, "gridOptionsService", void 0);
-    __decorate$2C([
+    __decorate$2B([
         Autowired('paginationProxy')
     ], PageSizeSelectorComp.prototype, "paginationProxy", void 0);
-    __decorate$2C([
+    __decorate$2B([
         PostConstruct
     ], PageSizeSelectorComp.prototype, "init", null);
     return PageSizeSelectorComp;
@@ -55799,7 +55824,7 @@ var __extends$33 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -55846,13 +55871,13 @@ var AriaAnnouncementService = /** @class */ (function (_super) {
         this.descriptionContainer = null;
         this.eGridDiv = null;
     };
-    __decorate$2D([
+    __decorate$2C([
         Autowired('eGridDiv')
     ], AriaAnnouncementService.prototype, "eGridDiv", void 0);
-    __decorate$2D([
+    __decorate$2C([
         PostConstruct
     ], AriaAnnouncementService.prototype, "postConstruct", null);
-    AriaAnnouncementService = __decorate$2D([
+    AriaAnnouncementService = __decorate$2C([
         Bean('ariaAnnouncementService')
     ], AriaAnnouncementService);
     return AriaAnnouncementService;
@@ -56606,7 +56631,7 @@ var __extends$34 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -57661,46 +57686,46 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.isRowDataLoaded = function () {
         return this.rowCountReady;
     };
-    __decorate$2E([
+    __decorate$2D([
         Autowired('columnModel')
     ], ClientSideRowModel.prototype, "columnModel", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Autowired('selectionService')
     ], ClientSideRowModel.prototype, "selectionService", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Autowired('filterManager')
     ], ClientSideRowModel.prototype, "filterManager", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Autowired('valueCache')
     ], ClientSideRowModel.prototype, "valueCache", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Autowired('beans')
     ], ClientSideRowModel.prototype, "beans", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Autowired('filterStage')
     ], ClientSideRowModel.prototype, "filterStage", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Autowired('sortStage')
     ], ClientSideRowModel.prototype, "sortStage", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Autowired('flattenStage')
     ], ClientSideRowModel.prototype, "flattenStage", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Optional('groupStage')
     ], ClientSideRowModel.prototype, "groupStage", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Optional('aggregationStage')
     ], ClientSideRowModel.prototype, "aggregationStage", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Optional('pivotStage')
     ], ClientSideRowModel.prototype, "pivotStage", void 0);
-    __decorate$2E([
+    __decorate$2D([
         Optional('filterAggregatesStage')
     ], ClientSideRowModel.prototype, "filterAggregatesStage", void 0);
-    __decorate$2E([
+    __decorate$2D([
         PostConstruct
     ], ClientSideRowModel.prototype, "init", null);
-    ClientSideRowModel = __decorate$2E([
+    ClientSideRowModel = __decorate$2D([
         Bean('rowModel')
     ], ClientSideRowModel);
     return ClientSideRowModel;
@@ -57721,7 +57746,7 @@ var __extends$35 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -57736,10 +57761,10 @@ var FilterStage = /** @class */ (function (_super) {
         var changedPath = params.changedPath;
         this.filterService.filter(changedPath);
     };
-    __decorate$2F([
+    __decorate$2E([
         Autowired('filterService')
     ], FilterStage.prototype, "filterService", void 0);
-    FilterStage = __decorate$2F([
+    FilterStage = __decorate$2E([
         Bean('filterStage')
     ], FilterStage);
     return FilterStage;
@@ -57760,7 +57785,7 @@ var __extends$36 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -57791,13 +57816,13 @@ var SortStage = /** @class */ (function (_super) {
         });
         this.sortService.sort(sortOptions, sortActive, deltaSort, params.rowNodeTransactions, params.changedPath, sortContainsGroupColumns);
     };
-    __decorate$2G([
+    __decorate$2F([
         Autowired('sortService')
     ], SortStage.prototype, "sortService", void 0);
-    __decorate$2G([
+    __decorate$2F([
         Autowired('sortController')
     ], SortStage.prototype, "sortController", void 0);
-    SortStage = __decorate$2G([
+    SortStage = __decorate$2F([
         Bean('sortStage')
     ], SortStage);
     return SortStage;
@@ -57818,7 +57843,7 @@ var __extends$37 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -57942,13 +57967,13 @@ var FlattenStage = /** @class */ (function (_super) {
         masterNode.detailNode = detailNode;
         return detailNode;
     };
-    __decorate$2H([
+    __decorate$2G([
         Autowired('columnModel')
     ], FlattenStage.prototype, "columnModel", void 0);
-    __decorate$2H([
+    __decorate$2G([
         Autowired('beans')
     ], FlattenStage.prototype, "beans", void 0);
-    FlattenStage = __decorate$2H([
+    FlattenStage = __decorate$2G([
         Bean('flattenStage')
     ], FlattenStage);
     return FlattenStage;
@@ -57969,7 +57994,7 @@ var __extends$38 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -58181,13 +58206,13 @@ var SortService = /** @class */ (function (_super) {
             });
         });
     };
-    __decorate$2I([
+    __decorate$2H([
         Autowired('columnModel')
     ], SortService.prototype, "columnModel", void 0);
-    __decorate$2I([
+    __decorate$2H([
         Autowired('rowNodeSorter')
     ], SortService.prototype, "rowNodeSorter", void 0);
-    SortService = __decorate$2I([
+    SortService = __decorate$2H([
         Bean('sortService')
     ], SortService);
     return SortService;
@@ -58208,7 +58233,7 @@ var __extends$39 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -58285,10 +58310,10 @@ var FilterService = /** @class */ (function (_super) {
     FilterService.prototype.doingTreeDataFiltering = function () {
         return this.gridOptionsService.get('treeData') && !this.gridOptionsService.get('excludeChildrenWhenTreeDataFiltering');
     };
-    __decorate$2J([
+    __decorate$2I([
         Autowired('filterManager')
     ], FilterService.prototype, "filterManager", void 0);
-    FilterService = __decorate$2J([
+    FilterService = __decorate$2I([
         Bean("filterService")
     ], FilterService);
     return FilterService;
@@ -58309,7 +58334,7 @@ var __extends$3a = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -58427,19 +58452,19 @@ var ImmutableService = /** @class */ (function (_super) {
             this.clientSideRowModel.setRowData(rowData);
         }
     };
-    __decorate$2K([
+    __decorate$2J([
         Autowired('rowModel')
     ], ImmutableService.prototype, "rowModel", void 0);
-    __decorate$2K([
+    __decorate$2J([
         Autowired('rowRenderer')
     ], ImmutableService.prototype, "rowRenderer", void 0);
-    __decorate$2K([
+    __decorate$2J([
         Autowired('selectionService')
     ], ImmutableService.prototype, "selectionService", void 0);
-    __decorate$2K([
+    __decorate$2J([
         PostConstruct
     ], ImmutableService.prototype, "postConstruct", null);
-    ImmutableService = __decorate$2K([
+    ImmutableService = __decorate$2J([
         Bean('immutableService')
     ], ImmutableService);
     return ImmutableService;
@@ -58470,7 +58495,7 @@ var __extends$3b = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -58611,13 +58636,13 @@ var InfiniteBlock = /** @class */ (function (_super) {
             rowNode.clearRowTopAndRowIndex();
         });
     };
-    __decorate$2L([
+    __decorate$2K([
         Autowired('beans')
     ], InfiniteBlock.prototype, "beans", void 0);
-    __decorate$2L([
+    __decorate$2K([
         PostConstruct
     ], InfiniteBlock.prototype, "postConstruct", null);
-    __decorate$2L([
+    __decorate$2K([
         PreDestroy
     ], InfiniteBlock.prototype, "destroyRowNodes", null);
     return InfiniteBlock;
@@ -58638,7 +58663,7 @@ var __extends$3c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -58910,16 +58935,16 @@ var InfiniteCache = /** @class */ (function (_super) {
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
     // scrolled over are not needed to be loaded.
     InfiniteCache.MAX_EMPTY_BLOCKS_TO_KEEP = 2;
-    __decorate$2M([
+    __decorate$2L([
         Autowired('rowRenderer')
     ], InfiniteCache.prototype, "rowRenderer", void 0);
-    __decorate$2M([
+    __decorate$2L([
         Autowired("focusService")
     ], InfiniteCache.prototype, "focusService", void 0);
-    __decorate$2M([
+    __decorate$2L([
         __param$8(0, Qualifier('loggerFactory'))
     ], InfiniteCache.prototype, "setBeans", null);
-    __decorate$2M([
+    __decorate$2L([
         PreDestroy
     ], InfiniteCache.prototype, "destroyAllBlocks", null);
     return InfiniteCache;
@@ -58940,7 +58965,7 @@ var __extends$3d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -59193,28 +59218,28 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             this.infiniteCache.setRowCount(rowCount, lastRowIndexKnown);
         }
     };
-    __decorate$2N([
+    __decorate$2M([
         Autowired('filterManager')
     ], InfiniteRowModel.prototype, "filterManager", void 0);
-    __decorate$2N([
+    __decorate$2M([
         Autowired('sortController')
     ], InfiniteRowModel.prototype, "sortController", void 0);
-    __decorate$2N([
+    __decorate$2M([
         Autowired('selectionService')
     ], InfiniteRowModel.prototype, "selectionService", void 0);
-    __decorate$2N([
+    __decorate$2M([
         Autowired('rowRenderer')
     ], InfiniteRowModel.prototype, "rowRenderer", void 0);
-    __decorate$2N([
+    __decorate$2M([
         Autowired('rowNodeBlockLoader')
     ], InfiniteRowModel.prototype, "rowNodeBlockLoader", void 0);
-    __decorate$2N([
+    __decorate$2M([
         PostConstruct
     ], InfiniteRowModel.prototype, "init", null);
-    __decorate$2N([
+    __decorate$2M([
         PreDestroy
     ], InfiniteRowModel.prototype, "destroyDatasource", null);
-    InfiniteRowModel = __decorate$2N([
+    InfiniteRowModel = __decorate$2M([
         Bean('rowModel')
     ], InfiniteRowModel);
     return InfiniteRowModel;
@@ -59557,7 +59582,7 @@ var __extends$3f = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -59624,28 +59649,28 @@ var CsvCreator = /** @class */ (function (_super) {
     CsvCreator.prototype.isExportSuppressed = function () {
         return this.gridOptionsService.get('suppressCsvExport');
     };
-    __decorate$2O([
+    __decorate$2N([
         Autowired('columnModel')
     ], CsvCreator.prototype, "columnModel", void 0);
-    __decorate$2O([
+    __decorate$2N([
         Autowired('valueService')
     ], CsvCreator.prototype, "valueService", void 0);
-    __decorate$2O([
+    __decorate$2N([
         Autowired('gridSerializer')
     ], CsvCreator.prototype, "gridSerializer", void 0);
-    __decorate$2O([
+    __decorate$2N([
         Autowired('gridOptionsService')
     ], CsvCreator.prototype, "gridOptionsService", void 0);
-    __decorate$2O([
+    __decorate$2N([
         Autowired('valueFormatterService')
     ], CsvCreator.prototype, "valueFormatterService", void 0);
-    __decorate$2O([
+    __decorate$2N([
         Autowired('valueParserService')
     ], CsvCreator.prototype, "valueParserService", void 0);
-    __decorate$2O([
+    __decorate$2N([
         PostConstruct
     ], CsvCreator.prototype, "postConstruct", null);
-    CsvCreator = __decorate$2O([
+    CsvCreator = __decorate$2N([
         Bean('csvCreator')
     ], CsvCreator);
     return CsvCreator;
@@ -59666,7 +59691,7 @@ var __extends$3g = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$2P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -59982,28 +60007,28 @@ var GridSerializer = /** @class */ (function (_super) {
             gridRowIterator.onColumn(columnGroup, name || '', columnIndex++, columnGroup.getLeafColumns().length - 1, collapsibleGroupRanges);
         });
     };
-    __decorate$2P([
+    __decorate$2O([
         Autowired('displayedGroupCreator')
     ], GridSerializer.prototype, "displayedGroupCreator", void 0);
-    __decorate$2P([
+    __decorate$2O([
         Autowired('columnModel')
     ], GridSerializer.prototype, "columnModel", void 0);
-    __decorate$2P([
+    __decorate$2O([
         Autowired('rowModel')
     ], GridSerializer.prototype, "rowModel", void 0);
-    __decorate$2P([
+    __decorate$2O([
         Autowired('pinnedRowModel')
     ], GridSerializer.prototype, "pinnedRowModel", void 0);
-    __decorate$2P([
+    __decorate$2O([
         Autowired('selectionService')
     ], GridSerializer.prototype, "selectionService", void 0);
-    __decorate$2P([
+    __decorate$2O([
         Autowired('rowNodeSorter')
     ], GridSerializer.prototype, "rowNodeSorter", void 0);
-    __decorate$2P([
+    __decorate$2O([
         Autowired('sortController')
     ], GridSerializer.prototype, "sortController", void 0);
-    GridSerializer = __decorate$2P([
+    GridSerializer = __decorate$2O([
         Bean("gridSerializer")
     ], GridSerializer);
     return GridSerializer;

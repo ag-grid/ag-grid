@@ -22,6 +22,10 @@ export declare class TabGuardComp extends Component {
          * Set to true to create a circular focus pattern when keyboard tabbing.
          */
         focusTrapActive?: boolean;
+        /**
+         * Set to true to find a focusable element outside of the TabGuards to focus
+         */
+        forceFocusOutWhenTabGuardsAreEmpty?: boolean;
     }): void;
     private createTabGuard;
     private addTabGuards;

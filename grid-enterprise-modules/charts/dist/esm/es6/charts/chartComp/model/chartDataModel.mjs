@@ -53,7 +53,7 @@ export class ChartDataModel extends BeanStub {
         this.suppressChartRanges = suppressChartRanges;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
-        this.updateSelectedDimension(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
+        this.updateSelectedDimensions(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
         this.updateCellRanges();
         const shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
         if (shouldUpdateComboModel) {
@@ -333,11 +333,24 @@ export class ChartDataModel extends BeanStub {
             this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
         }
     }
-    updateSelectedDimension(columns) {
+    updateSelectedDimensions(columns) {
         const colIdSet = new Set(columns.map((column) => column.getColId()));
-        // if no dimension found in supplied columns use the default category (always index = 0)
-        const foundColState = this.dimensionColState.find((colState) => colIdSet.has(colState.colId)) || this.dimensionColState[0];
-        this.dimensionColState = this.dimensionColState.map((colState) => (Object.assign(Object.assign({}, colState), { selected: colState.colId === foundColState.colId })));
+        // For non-hierarchical chart types, only one dimension can be selected
+        const supportsMultipleDimensions = isHierarchical(this.chartType);
+        if (!supportsMultipleDimensions) {
+            // Determine which column should end up selected, if any
+            // if no dimension found in supplied columns use the default category (always index = 0)
+            const foundColState = this.dimensionColState.find((colState) => colIdSet.has(colState.colId)) || this.dimensionColState[0];
+            const selectedColumnId = foundColState.colId;
+            // Update the selection state of all dimension columns
+            this.dimensionColState = this.dimensionColState.map((colState) => (Object.assign(Object.assign({}, colState), { selected: colState.colId === selectedColumnId })));
+        }
+        else {
+            // Update the selection state of all dimension columns, selecting only the provided columns from the chart model
+            const foundColStates = this.dimensionColState.filter((colState) => colIdSet.has(colState.colId));
+            const selectedColumnIds = new Set(foundColStates.map((colState) => colState.colId));
+            this.dimensionColState = this.dimensionColState.map((colState) => (Object.assign(Object.assign({}, colState), { selected: selectedColumnIds.has(colState.colId) })));
+        }
     }
     syncDimensionCellRange() {
         const selectedDimensions = this.getSelectedDimensions();

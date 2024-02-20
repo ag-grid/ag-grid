@@ -31,6 +31,7 @@ var direction_1 = require("../../../constants/direction");
 var cssClassApplier_1 = require("../cssClassApplier");
 var aria_1 = require("../../../utils/aria");
 var eventKeys_1 = require("../../../eventKeys");
+var dom_1 = require("../../../utils/dom");
 var instanceIdSequence = 0;
 var AbstractHeaderCellCtrl = /** @class */ (function (_super) {
     __extends(AbstractHeaderCellCtrl, _super);
@@ -128,12 +129,43 @@ var AbstractHeaderCellCtrl = /** @class */ (function (_super) {
         if (e.altKey) {
             this.isResizing = true;
             this.resizeMultiplier += 1;
-            this.resizeHeader(direction, e.shiftKey);
+            var diff = this.getViewportAdjustedResizeDiff(e);
+            this.resizeHeader(diff, e.shiftKey);
             (_a = this.resizeFeature) === null || _a === void 0 ? void 0 : _a.toggleColumnResizing(true);
         }
         else {
             this.moveHeader(direction);
         }
+    };
+    AbstractHeaderCellCtrl.prototype.getViewportAdjustedResizeDiff = function (e) {
+        var diff = this.getResizeDiff(e);
+        var pinned = this.column.getPinned();
+        if (pinned) {
+            var leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+            var rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            var bodyWidth = (0, dom_1.getInnerWidth)(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            if (leftWidth + rightWidth + diff > bodyWidth) {
+                if (bodyWidth > leftWidth + rightWidth) {
+                    // allow body width to ignore resize multiplier and fill space for last tick
+                    diff = bodyWidth - leftWidth - rightWidth;
+                }
+                else {
+                    return 0;
+                }
+            }
+        }
+        return diff;
+    };
+    AbstractHeaderCellCtrl.prototype.getResizeDiff = function (e) {
+        var isLeft = (e.key === keyCode_1.KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
+        var pinned = this.column.getPinned();
+        var isRtl = this.gridOptionsService.get('enableRtl');
+        if (pinned) {
+            if (isRtl !== (pinned === 'right')) {
+                isLeft = !isLeft;
+            }
+        }
+        return (isLeft ? -1 : 1) * this.resizeMultiplier;
     };
     AbstractHeaderCellCtrl.prototype.onGuiKeyUp = function () {
         var _this = this;
@@ -231,6 +263,9 @@ var AbstractHeaderCellCtrl = /** @class */ (function (_super) {
         this.eGui = null;
     };
     AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
+    __decorate([
+        (0, context_1.Autowired)('pinnedWidthService')
+    ], AbstractHeaderCellCtrl.prototype, "pinnedWidthService", void 0);
     __decorate([
         (0, context_1.Autowired)('focusService')
     ], AbstractHeaderCellCtrl.prototype, "focusService", void 0);

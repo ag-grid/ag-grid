@@ -206,7 +206,7 @@ var AgMenuItemComponent = /** @class */ (function (_super) {
         }
         (_b = (_a = this.menuItemComp).setActive) === null || _b === void 0 ? void 0 : _b.call(_a, true);
         if (!this.suppressFocus) {
-            this.eGui.focus();
+            this.eGui.focus({ preventScroll: true });
         }
         if (openSubMenu && this.params.subMenu) {
             window.setTimeout(function () {

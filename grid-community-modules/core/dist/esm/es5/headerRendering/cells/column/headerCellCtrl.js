@@ -13,14 +13,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired } from "../../../context/context";
 import { DragAndDropService, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
 import { Events } from "../../../eventKeys";
@@ -34,7 +27,7 @@ import { HoverFeature } from "../hoverFeature";
 import { HeaderComp } from "./headerComp";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
-import { getElementSize, getInnerWidth } from "../../../utils/dom";
+import { getElementSize } from "../../../utils/dom";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
 var HeaderCellCtrl = /** @class */ (function (_super) {
@@ -85,32 +78,15 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     };
-    HeaderCellCtrl.prototype.resizeHeader = function (direction, shiftKey) {
+    HeaderCellCtrl.prototype.resizeHeader = function (delta, shiftKey) {
         var _a, _b;
         if (!this.column.isResizable()) {
             return;
         }
-        var pinned = this.column.getPinned();
-        var isRtl = this.gridOptionsService.get('enableRtl');
         var actualWidth = this.column.getActualWidth();
         var minWidth = (_a = this.column.getMinWidth()) !== null && _a !== void 0 ? _a : 0;
         var maxWidth = (_b = this.column.getMaxWidth()) !== null && _b !== void 0 ? _b : Number.MAX_SAFE_INTEGER;
-        var isLeft = direction === HorizontalDirection.Left;
-        if (pinned) {
-            if (isRtl !== (pinned === 'right')) {
-                isLeft = !isLeft;
-            }
-        }
-        var diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
-        var newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
-        if (pinned) {
-            var leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            var rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            var bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
-            if (leftWidth + rightWidth + diff > bodyWidth) {
-                return;
-            }
-        }
+        var newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
         this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth: newWidth }], shiftKey, true, 'uiColumnResized');
     };
     HeaderCellCtrl.prototype.moveHeader = function (hDirection) {
@@ -232,7 +208,9 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
             this.focusService.setFocusedHeader(rowIndex, this.column);
             this.announceAriaDescription();
         }
-        this.setActiveHeader(true);
+        if (this.focusService.isKeyboardMode()) {
+            this.setActiveHeader(true);
+        }
     };
     HeaderCellCtrl.prototype.onFocusOut = function (e) {
         if (this.getGui().contains(e.relatedTarget)) {
@@ -677,9 +655,6 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         this.userHeaderClasses = null;
         this.ariaDescriptionProperties = null;
     };
-    __decorate([
-        Autowired('pinnedWidthService')
-    ], HeaderCellCtrl.prototype, "pinnedWidthService", void 0);
     return HeaderCellCtrl;
 }(AbstractHeaderCellCtrl));
 export { HeaderCellCtrl };

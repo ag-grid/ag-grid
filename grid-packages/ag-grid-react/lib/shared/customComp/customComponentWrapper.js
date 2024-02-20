@@ -96,7 +96,7 @@ var CustomComponentWrapper = /** @class */ (function (_super) {
         return [];
     };
     CustomComponentWrapper.prototype.getProps = function () {
-        return __assign(__assign({}, this.sourceParams), { key: this.key });
+        return __assign(__assign({}, this.sourceParams), { key: this.key, ref: this.ref });
     };
     CustomComponentWrapper.prototype.refreshProps = function () {
         var _this = this;

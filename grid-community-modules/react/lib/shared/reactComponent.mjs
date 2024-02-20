@@ -113,13 +113,14 @@ export class ReactComponent {
     createOrUpdatePortal(params) {
         if (!this.isStatelessComponent()) {
             // grab hold of the actual instance created
-            params.ref = (element) => {
+            this.ref = (element) => {
                 var _a;
                 this.componentInstance = element;
                 this.addParentContainerStyleAndClasses();
                 (_a = this.resolveInstanceCreated) === null || _a === void 0 ? void 0 : _a.call(this, true);
                 this.resolveInstanceCreated = undefined;
             };
+            params.ref = this.ref;
         }
         this.reactElement = this.createElement(this.reactComponent, Object.assign(Object.assign({}, params), { key: this.key }));
         this.portal = createPortal(this.reactElement, this.eParentElement, this.portalKey // fixed deltaRowModeRefreshCompRenderer

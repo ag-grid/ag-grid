@@ -106,7 +106,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.suppressChartRanges = suppressChartRanges;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
-        this.updateSelectedDimension(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
+        this.updateSelectedDimensions(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
         this.updateCellRanges();
         var shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
         if (shouldUpdateComboModel) {
@@ -403,11 +403,24 @@ var ChartDataModel = /** @class */ (function (_super) {
             this.valueCellRange = this.createCellRange.apply(this, __spreadArray([CellRangeType.VALUE], __read(selectedValueCols), false));
         }
     };
-    ChartDataModel.prototype.updateSelectedDimension = function (columns) {
+    ChartDataModel.prototype.updateSelectedDimensions = function (columns) {
         var colIdSet = new Set(columns.map(function (column) { return column.getColId(); }));
-        // if no dimension found in supplied columns use the default category (always index = 0)
-        var foundColState = this.dimensionColState.find(function (colState) { return colIdSet.has(colState.colId); }) || this.dimensionColState[0];
-        this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign(__assign({}, colState), { selected: colState.colId === foundColState.colId })); });
+        // For non-hierarchical chart types, only one dimension can be selected
+        var supportsMultipleDimensions = isHierarchical(this.chartType);
+        if (!supportsMultipleDimensions) {
+            // Determine which column should end up selected, if any
+            // if no dimension found in supplied columns use the default category (always index = 0)
+            var foundColState = this.dimensionColState.find(function (colState) { return colIdSet.has(colState.colId); }) || this.dimensionColState[0];
+            var selectedColumnId_1 = foundColState.colId;
+            // Update the selection state of all dimension columns
+            this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign(__assign({}, colState), { selected: colState.colId === selectedColumnId_1 })); });
+        }
+        else {
+            // Update the selection state of all dimension columns, selecting only the provided columns from the chart model
+            var foundColStates = this.dimensionColState.filter(function (colState) { return colIdSet.has(colState.colId); });
+            var selectedColumnIds_1 = new Set(foundColStates.map(function (colState) { return colState.colId; }));
+            this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign(__assign({}, colState), { selected: selectedColumnIds_1.has(colState.colId) })); });
+        }
     };
     ChartDataModel.prototype.syncDimensionCellRange = function () {
         var selectedDimensions = this.getSelectedDimensions();

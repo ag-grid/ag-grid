@@ -7,8 +7,9 @@ export interface TabGuardCompCallback {
 interface TabGuardProps {
     children: React.ReactNode;
     eFocusableElement: HTMLDivElement;
-    onTabKeyDown: (e: KeyboardEvent) => void;
+    forceFocusOutWhenTabGuardsAreEmpty?: boolean;
     gridCtrl: GridCtrl;
+    onTabKeyDown: (e: KeyboardEvent) => void;
 }
 declare const _default: React.MemoExoticComponent<React.ForwardRefExoticComponent<TabGuardProps & React.RefAttributes<TabGuardCompCallback>>>;
 export default _default;

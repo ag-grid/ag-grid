@@ -19,13 +19,14 @@ export class TabGuardCtrl extends BeanStub {
         super();
         this.skipTabGuardFocus = false;
         this.forcingFocusOut = false;
-        const { comp, eTopGuard, eBottomGuard, focusTrapActive, focusInnerElement, onFocusIn, onFocusOut, shouldStopEventPropagation, onTabKeyDown, handleKeyDown, eFocusableElement } = params;
+        const { comp, eTopGuard, eBottomGuard, focusTrapActive, forceFocusOutWhenTabGuardsAreEmpty, focusInnerElement, onFocusIn, onFocusOut, shouldStopEventPropagation, onTabKeyDown, handleKeyDown, eFocusableElement } = params;
         this.comp = comp;
         this.eTopGuard = eTopGuard;
         this.eBottomGuard = eBottomGuard;
         this.providedFocusInnerElement = focusInnerElement;
         this.eFocusableElement = eFocusableElement;
         this.focusTrapActive = !!focusTrapActive;
+        this.forceFocusOutWhenTabGuardsAreEmpty = !!forceFocusOutWhenTabGuardsAreEmpty;
         this.providedFocusIn = onFocusIn;
         this.providedFocusOut = onFocusOut;
         this.providedShouldStopEventPropagation = shouldStopEventPropagation;
@@ -76,9 +77,12 @@ export class TabGuardCtrl extends BeanStub {
         // when there are no focusable items within the TabGuard, focus gets stuck
         // in the TabGuard itself and has nowhere to go, so we need to manually find
         // the closest element to focus by calling `forceFocusOutWhenTabGuardAreEmpty`.
-        if (this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0) {
-            this.forceFocusOutWhenTabGuardsAreEmpty(e.target === this.eBottomGuard);
-            return;
+        if (this.forceFocusOutWhenTabGuardsAreEmpty) {
+            const isEmpty = this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0;
+            if (isEmpty) {
+                this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+                return;
+            }
         }
         const fromBottom = e.target === this.eBottomGuard;
         if (this.providedFocusInnerElement) {
@@ -88,7 +92,7 @@ export class TabGuardCtrl extends BeanStub {
             this.focusInnerElement(fromBottom);
         }
     }
-    forceFocusOutWhenTabGuardsAreEmpty(up) {
+    findNextElementOutsideAndFocus(up) {
         const eDocument = this.gridOptionsService.getDocument();
         const focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
         const index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);

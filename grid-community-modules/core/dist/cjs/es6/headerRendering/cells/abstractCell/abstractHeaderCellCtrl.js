@@ -16,6 +16,7 @@ const direction_1 = require("../../../constants/direction");
 const cssClassApplier_1 = require("../cssClassApplier");
 const aria_1 = require("../../../utils/aria");
 const eventKeys_1 = require("../../../eventKeys");
+const dom_1 = require("../../../utils/dom");
 let instanceIdSequence = 0;
 class AbstractHeaderCellCtrl extends beanStub_1.BeanStub {
     constructor(columnGroupChild, beans, parentRowCtrl) {
@@ -110,12 +111,43 @@ class AbstractHeaderCellCtrl extends beanStub_1.BeanStub {
         if (e.altKey) {
             this.isResizing = true;
             this.resizeMultiplier += 1;
-            this.resizeHeader(direction, e.shiftKey);
+            const diff = this.getViewportAdjustedResizeDiff(e);
+            this.resizeHeader(diff, e.shiftKey);
             (_a = this.resizeFeature) === null || _a === void 0 ? void 0 : _a.toggleColumnResizing(true);
         }
         else {
             this.moveHeader(direction);
         }
+    }
+    getViewportAdjustedResizeDiff(e) {
+        let diff = this.getResizeDiff(e);
+        const pinned = this.column.getPinned();
+        if (pinned) {
+            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            const bodyWidth = (0, dom_1.getInnerWidth)(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            if (leftWidth + rightWidth + diff > bodyWidth) {
+                if (bodyWidth > leftWidth + rightWidth) {
+                    // allow body width to ignore resize multiplier and fill space for last tick
+                    diff = bodyWidth - leftWidth - rightWidth;
+                }
+                else {
+                    return 0;
+                }
+            }
+        }
+        return diff;
+    }
+    getResizeDiff(e) {
+        let isLeft = (e.key === keyCode_1.KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
+        const pinned = this.column.getPinned();
+        const isRtl = this.gridOptionsService.get('enableRtl');
+        if (pinned) {
+            if (isRtl !== (pinned === 'right')) {
+                isLeft = !isLeft;
+            }
+        }
+        return (isLeft ? -1 : 1) * this.resizeMultiplier;
     }
     onGuiKeyUp() {
         if (!this.isResizing) {
@@ -212,6 +244,9 @@ class AbstractHeaderCellCtrl extends beanStub_1.BeanStub {
     }
 }
 AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
+__decorate([
+    (0, context_1.Autowired)('pinnedWidthService')
+], AbstractHeaderCellCtrl.prototype, "pinnedWidthService", void 0);
 __decorate([
     (0, context_1.Autowired)('focusService')
 ], AbstractHeaderCellCtrl.prototype, "focusService", void 0);

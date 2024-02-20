@@ -66,7 +66,7 @@ export declare class ChartDataModel extends BeanStub {
     private reorderColState;
     private setDimensionCellRange;
     private setValueCellRange;
-    private updateSelectedDimension;
+    private updateSelectedDimensions;
     private syncDimensionCellRange;
     isComboChart(): boolean;
 }

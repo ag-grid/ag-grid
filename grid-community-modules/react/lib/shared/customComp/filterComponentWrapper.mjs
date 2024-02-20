@@ -32,7 +32,10 @@ export class FilterComponentWrapper extends CustomComponentWrapper {
         this.setModel(model).then(() => this.sourceParams.filterChangedCallback());
     }
     getProps() {
-        const props = Object.assign(Object.assign({}, this.sourceParams), { model: this.model, onModelChange: this.onModelChange, onUiChange: this.onUiChange, key: this.key });
+        const props = super.getProps();
+        props.model = this.model;
+        props.onModelChange = this.onModelChange;
+        props.onUiChange = this.onUiChange;
         // remove props in IFilterParams but not CustomFilterProps
         delete props.filterChangedCallback;
         delete props.filterModifiedCallback;

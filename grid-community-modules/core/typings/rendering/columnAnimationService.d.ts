@@ -5,9 +5,11 @@ export declare class ColumnAnimationService extends BeanStub {
     private executeNextFuncs;
     private executeLaterFuncs;
     private active;
+    private suppressAnimation;
     private animationThreadCount;
     private postConstruct;
     isActive(): boolean;
+    setSuppressAnimation(suppress: boolean): void;
     start(): void;
     finish(): void;
     executeNextVMTurn(func: Function): void;

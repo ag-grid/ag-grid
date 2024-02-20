@@ -15,17 +15,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FloatingFilterComponentWrapper = void 0;
 var customComponentWrapper_1 = require("./customComponentWrapper");
@@ -57,7 +46,10 @@ var FloatingFilterComponentWrapper = /** @class */ (function (_super) {
         floatingFilterComponentProxy_1.updateFloatingFilterParent(this.sourceParams, model);
     };
     FloatingFilterComponentWrapper.prototype.getProps = function () {
-        return __assign(__assign({}, this.sourceParams), { model: this.model, onModelChange: this.onModelChange, key: this.key });
+        var props = _super.prototype.getProps.call(this);
+        props.model = this.model;
+        props.onModelChange = this.onModelChange;
+        return props;
     };
     return FloatingFilterComponentWrapper;
 }(customComponentWrapper_1.CustomComponentWrapper));

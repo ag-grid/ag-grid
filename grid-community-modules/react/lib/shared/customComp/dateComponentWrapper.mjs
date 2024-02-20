@@ -26,7 +26,9 @@ export class DateComponentWrapper extends CustomComponentWrapper {
         this.sourceParams.onDateChanged();
     }
     getProps() {
-        const props = Object.assign(Object.assign({}, this.sourceParams), { date: this.date, onDateChange: this.onDateChange, key: this.key });
+        const props = super.getProps();
+        props.date = this.date;
+        props.onDateChange = this.onDateChange;
         // remove props in IDataParams but not BaseDateParams
         delete props.onDateChanged;
         return props;

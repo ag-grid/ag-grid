@@ -28,6 +28,7 @@ var ColumnAnimationService = /** @class */ (function (_super) {
         _this.executeNextFuncs = [];
         _this.executeLaterFuncs = [];
         _this.active = false;
+        _this.suppressAnimation = false;
         _this.animationThreadCount = 0;
         return _this;
     }
@@ -36,7 +37,10 @@ var ColumnAnimationService = /** @class */ (function (_super) {
         this.ctrlsService.whenReady(function (p) { return _this.gridBodyCtrl = p.gridBodyCtrl; });
     };
     ColumnAnimationService.prototype.isActive = function () {
-        return this.active;
+        return this.active && !this.suppressAnimation;
+    };
+    ColumnAnimationService.prototype.setSuppressAnimation = function (suppress) {
+        this.suppressAnimation = suppress;
     };
     ColumnAnimationService.prototype.start = function () {
         if (this.active) {

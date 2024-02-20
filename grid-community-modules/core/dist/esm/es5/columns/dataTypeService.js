@@ -583,6 +583,7 @@ var DataTypeService = /** @class */ (function (_super) {
                 else {
                     mergeFilterParams({
                         maxNumConditions: 1,
+                        debounceMs: 0,
                         filterOptions: [
                             'empty',
                             {

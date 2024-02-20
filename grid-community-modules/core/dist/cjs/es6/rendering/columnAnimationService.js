@@ -15,13 +15,17 @@ let ColumnAnimationService = class ColumnAnimationService extends beanStub_1.Bea
         this.executeNextFuncs = [];
         this.executeLaterFuncs = [];
         this.active = false;
+        this.suppressAnimation = false;
         this.animationThreadCount = 0;
     }
     postConstruct() {
         this.ctrlsService.whenReady(p => this.gridBodyCtrl = p.gridBodyCtrl);
     }
     isActive() {
-        return this.active;
+        return this.active && !this.suppressAnimation;
+    }
+    setSuppressAnimation(suppress) {
+        this.suppressAnimation = suppress;
     }
     start() {
         if (this.active) {

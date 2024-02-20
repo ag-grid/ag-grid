@@ -15844,7 +15844,7 @@ class SimpleFloatingFilter extends _widgets_component_mjs__WEBPACK_IMPORTED_MODU
         // 1) there is a type (user has configured filter wrong if not type)
         //  AND
         // 2) the default type is not 'inRange'
-        const editable = this.isTypeEditable(this.lastType);
+        const editable = this.isTypeEditable(this.optionsFactory.getDefaultOption());
         this.setEditable(editable);
     }
     onParamsUpdated(params) {
@@ -36132,12 +36132,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _cssClassApplier_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(143);
 /* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(38);
 /* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(23);
+/* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(42);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -36241,12 +36243,43 @@ class AbstractHeaderCellCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MOD
         if (e.altKey) {
             this.isResizing = true;
             this.resizeMultiplier += 1;
-            this.resizeHeader(direction, e.shiftKey);
+            const diff = this.getViewportAdjustedResizeDiff(e);
+            this.resizeHeader(diff, e.shiftKey);
             (_a = this.resizeFeature) === null || _a === void 0 ? void 0 : _a.toggleColumnResizing(true);
         }
         else {
             this.moveHeader(direction);
         }
+    }
+    getViewportAdjustedResizeDiff(e) {
+        let diff = this.getResizeDiff(e);
+        const pinned = this.column.getPinned();
+        if (pinned) {
+            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            const bodyWidth = Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_9__["getInnerWidth"])(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            if (leftWidth + rightWidth + diff > bodyWidth) {
+                if (bodyWidth > leftWidth + rightWidth) {
+                    // allow body width to ignore resize multiplier and fill space for last tick
+                    diff = bodyWidth - leftWidth - rightWidth;
+                }
+                else {
+                    return 0;
+                }
+            }
+        }
+        return diff;
+    }
+    getResizeDiff(e) {
+        let isLeft = (e.key === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].LEFT) !== this.gridOptionsService.get('enableRtl');
+        const pinned = this.column.getPinned();
+        const isRtl = this.gridOptionsService.get('enableRtl');
+        if (pinned) {
+            if (isRtl !== (pinned === 'right')) {
+                isLeft = !isLeft;
+            }
+        }
+        return (isLeft ? -1 : 1) * this.resizeMultiplier;
     }
     onGuiKeyUp() {
         if (!this.isResizing) {
@@ -36343,6 +36376,9 @@ class AbstractHeaderCellCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MOD
     }
 }
 AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('pinnedWidthService')
+], AbstractHeaderCellCtrl.prototype, "pinnedWidthService", void 0);
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('focusService')
 ], AbstractHeaderCellCtrl.prototype, "focusService", void 0);
@@ -36555,29 +36591,22 @@ __decorate([
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HeaderCellCtrl", function() { return HeaderCellCtrl; });
 /* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(46);
-/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
-/* harmony import */ var _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(99);
-/* harmony import */ var _entities_column_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8);
-/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(23);
-/* harmony import */ var _rendering_features_setLeftFeature_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(169);
-/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(38);
-/* harmony import */ var _widgets_managedFocusFeature_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(62);
-/* harmony import */ var _widgets_tooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(138);
-/* harmony import */ var _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(168);
-/* harmony import */ var _cssClassApplier_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(143);
-/* harmony import */ var _hoverFeature_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(170);
-/* harmony import */ var _headerComp_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(83);
-/* harmony import */ var _resizeFeature_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(172);
-/* harmony import */ var _selectAllFeature_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(173);
-/* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(42);
-/* harmony import */ var _columnMoveHelper_mjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(160);
-/* harmony import */ var _constants_direction_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(100);
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
+/* harmony import */ var _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(99);
+/* harmony import */ var _entities_column_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8);
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(23);
+/* harmony import */ var _rendering_features_setLeftFeature_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(169);
+/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(38);
+/* harmony import */ var _widgets_managedFocusFeature_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(62);
+/* harmony import */ var _widgets_tooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(138);
+/* harmony import */ var _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(168);
+/* harmony import */ var _cssClassApplier_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(143);
+/* harmony import */ var _hoverFeature_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(170);
+/* harmony import */ var _headerComp_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(83);
+/* harmony import */ var _resizeFeature_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(172);
+/* harmony import */ var _selectAllFeature_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(173);
+/* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(42);
+/* harmony import */ var _columnMoveHelper_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(160);
+/* harmony import */ var _constants_direction_mjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(100);
 
 
 
@@ -36595,8 +36624,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
-
-class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_IMPORTED_MODULE_9__["AbstractHeaderCellCtrl"] {
+class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_IMPORTED_MODULE_8__["AbstractHeaderCellCtrl"] {
     constructor(column, beans, parentRowCtrl) {
         super(column, beans, parentRowCtrl);
         this.refreshFunctions = [];
@@ -36623,10 +36651,10 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         this.setupSelectAll();
         this.setupUserComp();
         this.refreshAria();
-        this.resizeFeature = this.createManagedBean(new _resizeFeature_mjs__WEBPACK_IMPORTED_MODULE_13__["ResizeFeature"](this.getPinned(), this.column, eResize, comp, this));
-        this.createManagedBean(new _hoverFeature_mjs__WEBPACK_IMPORTED_MODULE_11__["HoverFeature"]([this.column], eGui));
-        this.createManagedBean(new _rendering_features_setLeftFeature_mjs__WEBPACK_IMPORTED_MODULE_5__["SetLeftFeature"](this.column, eGui, this.beans));
-        this.createManagedBean(new _widgets_managedFocusFeature_mjs__WEBPACK_IMPORTED_MODULE_7__["ManagedFocusFeature"](eGui, {
+        this.resizeFeature = this.createManagedBean(new _resizeFeature_mjs__WEBPACK_IMPORTED_MODULE_12__["ResizeFeature"](this.getPinned(), this.column, eResize, comp, this));
+        this.createManagedBean(new _hoverFeature_mjs__WEBPACK_IMPORTED_MODULE_10__["HoverFeature"]([this.column], eGui));
+        this.createManagedBean(new _rendering_features_setLeftFeature_mjs__WEBPACK_IMPORTED_MODULE_4__["SetLeftFeature"](this.column, eGui, this.beans));
+        this.createManagedBean(new _widgets_managedFocusFeature_mjs__WEBPACK_IMPORTED_MODULE_6__["ManagedFocusFeature"](eGui, {
             shouldStopEventPropagation: e => this.shouldStopEventPropagation(e),
             onTabKeyDown: () => null,
             handleKeyDown: this.handleKeyDown.bind(this),
@@ -36635,38 +36663,21 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         }));
         this.addResizeAndMoveKeyboardListeners();
         this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'], this.refresh.bind(this));
-        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_3__["Column"].EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
-        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
-        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_2__["Column"].EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
+        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
+        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
+        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
-    resizeHeader(direction, shiftKey) {
+    resizeHeader(delta, shiftKey) {
         var _a, _b;
         if (!this.column.isResizable()) {
             return;
         }
-        const pinned = this.column.getPinned();
-        const isRtl = this.gridOptionsService.get('enableRtl');
         const actualWidth = this.column.getActualWidth();
         const minWidth = (_a = this.column.getMinWidth()) !== null && _a !== void 0 ? _a : 0;
         const maxWidth = (_b = this.column.getMaxWidth()) !== null && _b !== void 0 ? _b : Number.MAX_SAFE_INTEGER;
-        let isLeft = direction === _constants_direction_mjs__WEBPACK_IMPORTED_MODULE_17__["HorizontalDirection"].Left;
-        if (pinned) {
-            if (isRtl !== (pinned === 'right')) {
-                isLeft = !isLeft;
-            }
-        }
-        const diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
-        const newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
-        if (pinned) {
-            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            const bodyWidth = Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_15__["getInnerWidth"])(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
-            if (leftWidth + rightWidth + diff > bodyWidth) {
-                return;
-            }
-        }
+        const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
         this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true, 'uiColumnResized');
     }
     moveHeader(hDirection) {
@@ -36675,9 +36686,9 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         const left = eGui.getBoundingClientRect().left;
         const width = column.getActualWidth();
         const isRtl = gridOptionsService.get('enableRtl');
-        const isLeft = hDirection === _constants_direction_mjs__WEBPACK_IMPORTED_MODULE_17__["HorizontalDirection"].Left !== isRtl;
-        const xPosition = _columnMoveHelper_mjs__WEBPACK_IMPORTED_MODULE_16__["ColumnMoveHelper"].normaliseX(isLeft ? (left - 20) : (left + width + 20), pinned, true, gridOptionsService, ctrlsService);
-        _columnMoveHelper_mjs__WEBPACK_IMPORTED_MODULE_16__["ColumnMoveHelper"].attemptMoveColumns({
+        const isLeft = hDirection === _constants_direction_mjs__WEBPACK_IMPORTED_MODULE_16__["HorizontalDirection"].Left !== isRtl;
+        const xPosition = _columnMoveHelper_mjs__WEBPACK_IMPORTED_MODULE_15__["ColumnMoveHelper"].normaliseX(isLeft ? (left - 20) : (left + width + 20), pinned, true, gridOptionsService, ctrlsService);
+        _columnMoveHelper_mjs__WEBPACK_IMPORTED_MODULE_15__["ColumnMoveHelper"].attemptMoveColumns({
             allMovingColumns: [column],
             isFromHeader: true,
             hDirection,
@@ -36744,7 +36755,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         return params;
     }
     setupSelectAll() {
-        this.selectAllFeature = this.createManagedBean(new _selectAllFeature_mjs__WEBPACK_IMPORTED_MODULE_14__["SelectAllFeature"](this.column));
+        this.selectAllFeature = this.createManagedBean(new _selectAllFeature_mjs__WEBPACK_IMPORTED_MODULE_13__["SelectAllFeature"](this.column));
         this.selectAllFeature.setComp(this);
     }
     getSelectAllGui() {
@@ -36773,7 +36784,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
     }
     showMenuOnKeyPress(e, isFilterShortcut) {
         const headerComp = this.comp.getUserCompInstance();
-        if (!headerComp || !(headerComp instanceof _headerComp_mjs__WEBPACK_IMPORTED_MODULE_12__["HeaderComp"])) {
+        if (!headerComp || !(headerComp instanceof _headerComp_mjs__WEBPACK_IMPORTED_MODULE_11__["HeaderComp"])) {
             return;
         }
         // the header comp knows what features are enabled, so let it handle the shortcut
@@ -36787,7 +36798,9 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
             this.focusService.setFocusedHeader(rowIndex, this.column);
             this.announceAriaDescription();
         }
-        this.setActiveHeader(true);
+        if (this.focusService.isKeyboardMode()) {
+            this.setActiveHeader(true);
+        }
     }
     onFocusOut(e) {
         if (this.getGui().contains(e.relatedTarget)) {
@@ -36806,14 +36819,14 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
                 return res;
             },
         };
-        const tooltipFeature = this.createManagedBean(new _widgets_tooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_8__["TooltipFeature"](tooltipCtrl, this.beans));
+        const tooltipFeature = this.createManagedBean(new _widgets_tooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_7__["TooltipFeature"](tooltipCtrl, this.beans));
         tooltipFeature.setComp(this.eGui);
         this.refreshFunctions.push(() => tooltipFeature.refreshToolTip());
     }
     setupClassesFromColDef() {
         const refreshHeaderClasses = () => {
             const colDef = this.column.getColDef();
-            const classes = _cssClassApplier_mjs__WEBPACK_IMPORTED_MODULE_10__["CssClassApplier"].getHeaderClassesFromColDef(colDef, this.gridOptionsService, this.column, null);
+            const classes = _cssClassApplier_mjs__WEBPACK_IMPORTED_MODULE_9__["CssClassApplier"].getHeaderClassesFromColDef(colDef, this.gridOptionsService, this.column, null);
             const oldClasses = this.userHeaderClasses;
             this.userHeaderClasses = new Set(classes);
             classes.forEach(c => {
@@ -36842,9 +36855,9 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         const { columnModel } = beans;
         let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         const dragSource = this.dragSource = {
-            type: _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_2__["DragSourceType"].HeaderCell,
+            type: _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_1__["DragSourceType"].HeaderCell,
             eElement: eSource,
-            getDefaultIconName: () => hideColumnOnExit ? _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_2__["DragAndDropService"].ICON_HIDE : _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_2__["DragAndDropService"].ICON_NOT_ALLOWED,
+            getDefaultIconName: () => hideColumnOnExit ? _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_1__["DragAndDropService"].ICON_HIDE : _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_1__["DragAndDropService"].ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(column),
             dragItemName: displayName,
             onDragStarted: () => {
@@ -36952,7 +36965,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
             const columnWidth = this.column.getActualWidth();
             this.comp.setWidth(`${columnWidth}px`);
         };
-        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_3__["Column"].EVENT_WIDTH_CHANGED, listener);
+        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_2__["Column"].EVENT_WIDTH_CHANGED, listener);
         listener();
     }
     setupMovingCss() {
@@ -36961,14 +36974,14 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
             // user that the column was picked up).
             this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
         };
-        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_3__["Column"].EVENT_MOVING_CHANGED, listener);
+        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_2__["Column"].EVENT_MOVING_CHANGED, listener);
         listener();
     }
     setupMenuClass() {
         const listener = () => {
             this.comp.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
         };
-        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_3__["Column"].EVENT_MENU_VISIBLE_CHANGED, listener);
+        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_2__["Column"].EVENT_MENU_VISIBLE_CHANGED, listener);
         listener();
     }
     setupSortableClass() {
@@ -36977,7 +36990,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         };
         updateSortableCssClass();
         this.addRefreshFunction(updateSortableCssClass);
-        this.addManagedListener(this.eventService, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_3__["Column"].EVENT_SORT_CHANGED, this.refreshAriaSort.bind(this));
+        this.addManagedListener(this.eventService, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_2__["Column"].EVENT_SORT_CHANGED, this.refreshAriaSort.bind(this));
     }
     setupFilterClass() {
         const listener = () => {
@@ -36985,7 +36998,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
             this.comp.addOrRemoveCssClass('ag-header-cell-filtered', isFilterActive);
             this.refreshAria();
         };
-        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_3__["Column"].EVENT_FILTER_ACTIVE_CHANGED, listener);
+        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_2__["Column"].EVENT_FILTER_ACTIVE_CHANGED, listener);
         listener();
     }
     setupWrapTextClass() {
@@ -37041,7 +37054,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
             if (!this.isAlive()) {
                 return;
             }
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_15__["getElementSize"])(this.getGui());
+            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_14__["getElementSize"])(this.getGui());
             const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
             const wrapperHeight = wrapperElement.offsetHeight;
             const autoHeight = wrapperHeight + extraHeight;
@@ -37090,9 +37103,9 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         // In theory we could rely on the resize observer for everything - but since it's debounced
         // it can be a little janky for smooth movement. in this case its better to react to our own events
         // And unfortunately we cant _just_ rely on our own events, since custom components can change whenever
-        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_3__["Column"].EVENT_WIDTH_CHANGED, () => isMeasuring && measureHeight(0));
+        this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_2__["Column"].EVENT_WIDTH_CHANGED, () => isMeasuring && measureHeight(0));
         // Displaying the sort icon changes the available area for text, so sort changes can affect height
-        this.addManagedListener(this.eventService, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_3__["Column"].EVENT_SORT_CHANGED, () => {
+        this.addManagedListener(this.eventService, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_2__["Column"].EVENT_SORT_CHANGED, () => {
             // Rendering changes for sort, happen after the event... not ideal
             if (isMeasuring) {
                 window.setTimeout(() => measureHeight(0));
@@ -37104,7 +37117,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         if (this.sortable) {
             const translate = this.localeService.getLocaleTextFunc();
             const sort = this.beans.sortController.getDisplaySortForColumn(this.column) || null;
-            this.comp.setAriaSort(Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_6__["getAriaSortState"])(sort));
+            this.comp.setAriaSort(Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__["getAriaSortState"])(sort));
             this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
         }
         else {
@@ -37174,7 +37187,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
             const isHovered = this.beans.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
         };
-        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_COLUMN_HOVER_CHANGED, listener);
+        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_COLUMN_HOVER_CHANGED, listener);
         listener();
     }
     getColId() {
@@ -37182,7 +37195,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
     }
     addActiveHeaderMouseListeners() {
         const listener = (e) => this.handleMouseOverChange(e.type === 'mouseenter');
-        const clickListener = () => this.dispatchColumnMouseEvent(_eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_COLUMN_HEADER_CLICKED, this.column);
+        const clickListener = () => this.dispatchColumnMouseEvent(_eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_COLUMN_HEADER_CLICKED, this.column);
         const contextMenuListener = (event) => this.handleContextMenuMouseEvent(event, undefined, this.column);
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
@@ -37192,8 +37205,8 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
     handleMouseOverChange(isMouseOver) {
         this.setActiveHeader(isMouseOver);
         const eventType = isMouseOver ?
-            _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_COLUMN_HEADER_MOUSE_OVER :
-            _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_COLUMN_HEADER_MOUSE_LEAVE;
+            _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_COLUMN_HEADER_MOUSE_OVER :
+            _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_COLUMN_HEADER_MOUSE_LEAVE;
         const event = {
             type: eventType,
             column: this.column,
@@ -37205,7 +37218,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
     }
     getAnchorElementForMenu(isFilter) {
         const headerComp = this.comp.getUserCompInstance();
-        if (headerComp instanceof _headerComp_mjs__WEBPACK_IMPORTED_MODULE_12__["HeaderComp"]) {
+        if (headerComp instanceof _headerComp_mjs__WEBPACK_IMPORTED_MODULE_11__["HeaderComp"]) {
             return headerComp.getAnchorElementForMenu(isFilter);
         }
         return this.getGui();
@@ -37220,9 +37233,6 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         this.ariaDescriptionProperties = null;
     }
 }
-__decorate([
-    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('pinnedWidthService')
-], HeaderCellCtrl.prototype, "pinnedWidthService", void 0);
 
 
 /***/ }),
@@ -37644,15 +37654,13 @@ class HeaderGroupCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBP
         this.addManagedPropertyListener(_events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners();
     }
-    resizeHeader(direction, shiftKey) {
+    resizeHeader(delta, shiftKey) {
         // check to avoid throwing when a component has not been setup yet (React 18)
         if (!this.resizeFeature) {
             return;
         }
-        const isLeft = direction === _constants_direction_mjs__WEBPACK_IMPORTED_MODULE_14__["HorizontalDirection"].Left;
-        const diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
         const initialValues = this.resizeFeature.getInitialValues(shiftKey);
-        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + diff, 'uiColumnResized', true);
+        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + delta, 'uiColumnResized', true);
     }
     moveHeader(hDirection) {
         const { beans, eGui, column, gridOptionsService, ctrlsService } = this;
@@ -39104,7 +39112,8 @@ class TabGuardComp extends _component_mjs__WEBPACK_IMPORTED_MODULE_0__["Componen
             focusInnerElement: params.focusInnerElement,
             handleKeyDown: params.handleKeyDown,
             onTabKeyDown: params.onTabKeyDown,
-            shouldStopEventPropagation: params.shouldStopEventPropagation
+            shouldStopEventPropagation: params.shouldStopEventPropagation,
+            forceFocusOutWhenTabGuardsAreEmpty: params.forceFocusOutWhenTabGuardsAreEmpty
         }));
     }
     createTabGuard(side) {
@@ -39173,13 +39182,14 @@ class TabGuardCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["B
         super();
         this.skipTabGuardFocus = false;
         this.forcingFocusOut = false;
-        const { comp, eTopGuard, eBottomGuard, focusTrapActive, focusInnerElement, onFocusIn, onFocusOut, shouldStopEventPropagation, onTabKeyDown, handleKeyDown, eFocusableElement } = params;
+        const { comp, eTopGuard, eBottomGuard, focusTrapActive, forceFocusOutWhenTabGuardsAreEmpty, focusInnerElement, onFocusIn, onFocusOut, shouldStopEventPropagation, onTabKeyDown, handleKeyDown, eFocusableElement } = params;
         this.comp = comp;
         this.eTopGuard = eTopGuard;
         this.eBottomGuard = eBottomGuard;
         this.providedFocusInnerElement = focusInnerElement;
         this.eFocusableElement = eFocusableElement;
         this.focusTrapActive = !!focusTrapActive;
+        this.forceFocusOutWhenTabGuardsAreEmpty = !!forceFocusOutWhenTabGuardsAreEmpty;
         this.providedFocusIn = onFocusIn;
         this.providedFocusOut = onFocusOut;
         this.providedShouldStopEventPropagation = shouldStopEventPropagation;
@@ -39230,9 +39240,12 @@ class TabGuardCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["B
         // when there are no focusable items within the TabGuard, focus gets stuck
         // in the TabGuard itself and has nowhere to go, so we need to manually find
         // the closest element to focus by calling `forceFocusOutWhenTabGuardAreEmpty`.
-        if (this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0) {
-            this.forceFocusOutWhenTabGuardsAreEmpty(e.target === this.eBottomGuard);
-            return;
+        if (this.forceFocusOutWhenTabGuardsAreEmpty) {
+            const isEmpty = this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0;
+            if (isEmpty) {
+                this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+                return;
+            }
         }
         const fromBottom = e.target === this.eBottomGuard;
         if (this.providedFocusInnerElement) {
@@ -39242,7 +39255,7 @@ class TabGuardCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["B
             this.focusInnerElement(fromBottom);
         }
     }
-    forceFocusOutWhenTabGuardsAreEmpty(up) {
+    findNextElementOutsideAndFocus(up) {
         const eDocument = this.gridOptionsService.getDocument();
         const focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
         const index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);
@@ -40420,12 +40433,16 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
         this.redrawAfterModelUpdate(params);
     }
     redrawRow(rowNode, suppressEvent = false) {
+        var _a;
         if (rowNode.sticky) {
             this.stickyRowFeature.refreshStickyNode(rowNode);
         }
-        else if (rowNode.detail && this.cachedRowCtrls.has(rowNode)) {
+        else if ((_a = this.cachedRowCtrls) === null || _a === void 0 ? void 0 : _a.has(rowNode)) {
             // delete row from cache if it needs redrawn
+            // if it's in the cache no updates need fired, as nothing
+            // has been rendered
             this.cachedRowCtrls.removeRow(rowNode);
+            return;
         }
         else {
             const destroyAndRecreateCtrl = (dataStruct) => {
@@ -44431,7 +44448,7 @@ class AgMenuItemComponent extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE
         }
         (_b = (_a = this.menuItemComp).setActive) === null || _b === void 0 ? void 0 : _b.call(_a, true);
         if (!this.suppressFocus) {
-            this.eGui.focus();
+            this.eGui.focus({ preventScroll: true });
         }
         if (openSubMenu && this.params.subMenu) {
             window.setTimeout(() => {
@@ -48925,7 +48942,8 @@ class GridComp extends _widgets_tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_5__["T
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: () => undefined,
-            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom)
+            focusInnerElement: fromBottom => this.ctrl.focusInnerElement(fromBottom),
+            forceFocusOutWhenTabGuardsAreEmpty: true
         });
     }
     insertGridIntoDom() {
@@ -50016,13 +50034,17 @@ let ColumnAnimationService = class ColumnAnimationService extends _context_beanS
         this.executeNextFuncs = [];
         this.executeLaterFuncs = [];
         this.active = false;
+        this.suppressAnimation = false;
         this.animationThreadCount = 0;
     }
     postConstruct() {
         this.ctrlsService.whenReady(p => this.gridBodyCtrl = p.gridBodyCtrl);
     }
     isActive() {
-        return this.active;
+        return this.active && !this.suppressAnimation;
+    }
+    setSuppressAnimation(suppress) {
+        this.suppressAnimation = suppress;
     }
     start() {
         if (this.active) {
@@ -54634,6 +54656,7 @@ let DataTypeService = class DataTypeService extends _context_beanStub_mjs__WEBPA
                 else {
                     mergeFilterParams({
                         maxNumConditions: 1,
+                        debounceMs: 0,
                         filterOptions: [
                             'empty',
                             {
@@ -55612,8 +55635,7 @@ let StateService = class StateService extends _context_beanStub_mjs__WEBPACK_IMP
     }
     suppressEventsAndDispatchInitEvent(updateFunc) {
         this.suppressEvents = true;
-        const columnAnimation = this.gridOptionsService.get('suppressColumnMoveAnimation');
-        this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: true } });
+        this.columnAnimationService.setSuppressAnimation(true);
         updateFunc();
         // We want to suppress any grid events, but not user events.
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
@@ -55625,7 +55647,7 @@ let StateService = class StateService extends _context_beanStub_mjs__WEBPACK_IMP
                 // Ensure the grid is still alive before dispatching the event.
                 return;
             }
-            this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: columnAnimation } });
+            this.columnAnimationService.setSuppressAnimation(false);
             this.dispatchStateUpdateEvent(['gridInitializing']);
         });
     }
@@ -55660,6 +55682,9 @@ __decorate([
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('expansionService')
 ], StateService.prototype, "expansionService", void 0);
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('columnAnimationService')
+], StateService.prototype, "columnAnimationService", void 0);
 __decorate([
     _context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["PostConstruct"]
 ], StateService.prototype, "postConstruct", null);

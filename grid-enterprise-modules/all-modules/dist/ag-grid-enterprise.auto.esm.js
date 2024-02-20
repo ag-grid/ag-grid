@@ -17452,6 +17452,117 @@ __export(time_exports, {
   year: () => year
 });
 
+// packages/ag-charts-community/src/util/function.ts
+var doOnceState = /* @__PURE__ */ new Map();
+function doOnce$1(func, key) {
+  if (doOnceState.has(key))
+    return;
+  doOnceState.set(key, true);
+  func();
+}
+doOnce$1.clear = () => doOnceState.clear();
+function identity(x) {
+  return x;
+}
+function debounce(callback, waitMs = 0, options) {
+  const { leading = false, trailing = true, maxWait = Infinity } = options != null ? options : {};
+  let timerId;
+  let startTime;
+  if (maxWait < waitMs) {
+    throw new Error("Value of maxWait cannot be lower than waitMs.");
+  }
+  function debounceCallback(...args) {
+    if (leading && !startTime) {
+      startTime = Date.now();
+      timerId = setTimeout(() => startTime = null, waitMs);
+      callback(...args);
+      return;
+    }
+    let adjustedWaitMs = waitMs;
+    if (maxWait !== Infinity && startTime) {
+      const elapsedTime = Date.now() - startTime;
+      if (waitMs > maxWait - elapsedTime) {
+        adjustedWaitMs = maxWait - elapsedTime;
+      }
+    }
+    clearTimeout(timerId);
+    startTime != null ? startTime : startTime = Date.now();
+    timerId = setTimeout(() => {
+      startTime = null;
+      if (trailing) {
+        callback(...args);
+      }
+    }, adjustedWaitMs);
+  }
+  return Object.assign(debounceCallback, {
+    cancel() {
+      clearTimeout(timerId);
+      startTime = null;
+    }
+  });
+}
+function throttle(callback, waitMs = 0, options) {
+  const { leading = true, trailing = true } = options != null ? options : {};
+  let timerId;
+  let lastArgs;
+  let shouldWait = false;
+  function timeoutHandler() {
+    if (trailing && lastArgs) {
+      timerId = setTimeout(timeoutHandler, waitMs);
+      callback(...lastArgs);
+    } else {
+      shouldWait = false;
+    }
+    lastArgs = null;
+  }
+  function throttleCallback(...args) {
+    if (shouldWait) {
+      lastArgs = args;
+    } else {
+      shouldWait = true;
+      timerId = setTimeout(timeoutHandler, waitMs);
+      if (leading) {
+        callback(...args);
+      } else {
+        lastArgs = args;
+      }
+    }
+  }
+  return Object.assign(throttleCallback, {
+    cancel() {
+      clearTimeout(timerId);
+      shouldWait = false;
+      lastArgs = null;
+    }
+  });
+}
+
+// packages/ag-charts-community/src/util/logger.ts
+var Logger = {
+  log(...logContent) {
+    console.log(...logContent);
+  },
+  warn(message, ...logContent) {
+    console.warn(`AG Charts - ${message}`, ...logContent);
+  },
+  error(message, ...logContent) {
+    if (typeof message === "object") {
+      console.error(`AG Charts error`, message, ...logContent);
+    } else {
+      console.error(`AG Charts - ${message}`, ...logContent);
+    }
+  },
+  table(...logContent) {
+    console.table(...logContent);
+  },
+  warnOnce(message, ...logContent) {
+    doOnce$1(() => Logger.warn(message, ...logContent), `Logger.warn: ${message}`);
+  },
+  errorOnce(message, ...logContent) {
+    doOnce$1(() => Logger.error(message, ...logContent), `Logger.error: ${message}`);
+  }
+};
+
 // packages/ag-charts-community/src/util/time/interval.ts
 var TimeInterval = class {
   constructor(_encode, _decode, _rangeCallback) {
@@ -17515,6 +17626,11 @@ var CountableTimeInterval = class extends TimeInterval {
   every(step, options) {
     let offset4 = 0;
     let rangeCallback;
+    const unsafeStep = step;
+    step = Math.max(1, Math.round(step));
+    if (unsafeStep !== step) {
+      Logger.warnOnce(`interval step of [${unsafeStep}] rounded to [${step}].`);
+    }
     const { snapTo = "start" } = options != null ? options : {};
     if (typeof snapTo === "string") {
       const initialOffset = offset4;
@@ -18114,117 +18230,6 @@ function getUnusedExpectedModules() {
   return EXPECTED_ENTERPRISE_MODULES.filter(({ useCount }) => useCount == null || useCount === 0);
 }
 
-// packages/ag-charts-community/src/util/function.ts
-var doOnceState = /* @__PURE__ */ new Map();
-function doOnce$1(func, key) {
-  if (doOnceState.has(key))
-    return;
-  doOnceState.set(key, true);
-  func();
-}
-doOnce$1.clear = () => doOnceState.clear();
-function identity(x) {
-  return x;
-}
-function debounce(callback, waitMs = 0, options) {
-  const { leading = false, trailing = true, maxWait = Infinity } = options != null ? options : {};
-  let timerId;
-  let startTime;
-  if (maxWait < waitMs) {
-    throw new Error("Value of maxWait cannot be lower than waitMs.");
-  }
-  function debounceCallback(...args) {
-    if (leading && !startTime) {
-      startTime = Date.now();
-      timerId = setTimeout(() => startTime = null, waitMs);
-      callback(...args);
-      return;
-    }
-    let adjustedWaitMs = waitMs;
-    if (maxWait !== Infinity && startTime) {
-      const elapsedTime = Date.now() - startTime;
-      if (waitMs > maxWait - elapsedTime) {
-        adjustedWaitMs = maxWait - elapsedTime;
-      }
-    }
-    clearTimeout(timerId);
-    startTime != null ? startTime : startTime = Date.now();
-    timerId = setTimeout(() => {
-      startTime = null;
-      if (trailing) {
-        callback(...args);
-      }
-    }, adjustedWaitMs);
-  }
-  return Object.assign(debounceCallback, {
-    cancel() {
-      clearTimeout(timerId);
-      startTime = null;
-    }
-  });
-}
-function throttle(callback, waitMs = 0, options) {
-  const { leading = true, trailing = true } = options != null ? options : {};
-  let timerId;
-  let lastArgs;
-  let shouldWait = false;
-  function timeoutHandler() {
-    if (trailing && lastArgs) {
-      timerId = setTimeout(timeoutHandler, waitMs);
-      callback(...lastArgs);
-    } else {
-      shouldWait = false;
-    }
-    lastArgs = null;
-  }
-  function throttleCallback(...args) {
-    if (shouldWait) {
-      lastArgs = args;
-    } else {
-      shouldWait = true;
-      timerId = setTimeout(timeoutHandler, waitMs);
-      if (leading) {
-        callback(...args);
-      } else {
-        lastArgs = args;
-      }
-    }
-  }
-  return Object.assign(throttleCallback, {
-    cancel() {
-      clearTimeout(timerId);
-      shouldWait = false;
-      lastArgs = null;
-    }
-  });
-}
-
-// packages/ag-charts-community/src/util/logger.ts
-var Logger = {
-  log(...logContent) {
-    console.log(...logContent);
-  },
-  warn(message, ...logContent) {
-    console.warn(`AG Charts - ${message}`, ...logContent);
-  },
-  error(message, ...logContent) {
-    if (typeof message === "object") {
-      console.error(`AG Charts error`, message, ...logContent);
-    } else {
-      console.error(`AG Charts - ${message}`, ...logContent);
-    }
-  },
-  table(...logContent) {
-    console.table(...logContent);
-  },
-  warnOnce(message, ...logContent) {
-    doOnce$1(() => Logger.warn(message, ...logContent), `Logger.warn: ${message}`);
-  },
-  errorOnce(message, ...logContent) {
-    doOnce$1(() => Logger.error(message, ...logContent), `Logger.error: ${message}`);
-  }
-};
-
 // packages/ag-charts-community/src/chart/mapping/types.ts
 function optionsType(input) {
   var _a, _b, _c;
@@ -18262,6 +18267,10 @@ function isAgPolarChartOptions(input) {
     return true;
   }
   return CHART_TYPES.isPolar(specifiedType) || isEnterprisePolar(specifiedType);
+}
+function isAgPolarChartOptionsWithSeriesBasedLegend(input) {
+  const specifiedType = optionsType(input);
+  return isAgPolarChartOptions(input) && specifiedType !== "pie" && specifiedType !== "donut";
 }
 function isSeriesOptionType(input) {
   if (input == null) {
@@ -20344,7 +20353,7 @@ var ChartOptions = class {
     );
     this.processAxesOptions(this.processedOptions, axesThemes);
     this.processSeriesOptions(this.processedOptions);
-    if (isAgCartesianChartOptions(this.processedOptions) && ((_b = this.processedOptions.legend) == null ? void 0 : _b.enabled) == null) {
+    if ((isAgCartesianChartOptions(this.processedOptions) || isAgPolarChartOptionsWithSeriesBasedLegend(this.processedOptions)) && ((_b = this.processedOptions.legend) == null ? void 0 : _b.enabled) == null) {
       (_d = (_c = this.processedOptions).legend) != null ? _d : _c.legend = {};
       this.processedOptions.legend.enabled = this.processedOptions.series.length > 1;
     }
@@ -29789,6 +29798,10 @@ var Scene = class {
   download(fileName, fileFormat) {
     this.canvas.download(fileName, fileFormat);
   }
+  /** NOTE: Integrated Charts undocumented image download method. */
+  getDataURL(type) {
+    return this.canvas.getDataURL(type);
+  }
   get width() {
     return this.pendingSize ? this.pendingSize[0] : this.canvas.width;
   }
@@ -31561,10 +31574,7 @@ var DataService = class extends Listeners {
     this.isLoadingInitialData = false;
     this.freshRequests = [];
     this.requestCounter = 0;
-    this.debugExtraMap = /* @__PURE__ */ new Map();
-    // TODO: remove before release
     this.debug = Debug.create(true, "data-model", "data-source");
-    this.debugExtra = Debug.create("data-lazy-extra");
     this.throttledFetch = this.createThrottledFetch(this.requestThrottle);
     this.throttledDispatch = this.createThrottledDispatch(this.dispatchThrottle);
   }
@@ -31599,8 +31609,6 @@ var DataService = class extends Listeners {
     return throttle(
       (id, data) => {
         this.debug(`DataService - dispatching 'data-load' | ${id}`);
-        this.debugExtraValues(id, { redrawEnd: performance.now() });
-        this.debugExtra(this.getDebugExtraString());
         this.dispatch("data-load", { type: "data-load", data });
       },
       dispatchThrottle,
@@ -31613,45 +31621,33 @@ var DataService = class extends Listeners {
   fetch(params) {
     return __async(this, null, function* () {
       if (!this.dataSourceCallback) {
-        throw new Error("lazy data loading callback not initialised");
+        throw new Error("DataService - [dataSource.getData] callback not initialised");
       }
       const start = performance.now();
       const id = this.requestCounter++;
       this.debug(`DataService - requesting | ${id}`);
       this.freshRequests.push(id);
-      this.debugExtraValues(id, { id, start });
+      let response;
       try {
-        const response = yield this.dataSourceCallback(params);
+        response = yield this.dataSourceCallback(params);
         this.debug(`DataService - response | ${performance.now() - start}ms | ${id}`);
-        this.debugExtraValues(id, { end: performance.now() });
-        this.isLoadingInitialData = false;
-        const requestIndex = this.freshRequests.findIndex((rid) => rid === id);
-        if (requestIndex === -1 || this.dispatchOnlyLatest && requestIndex !== this.freshRequests.length - 1) {
-          this.debug(`DataService - discarding stale request | ${id}`);
-          this.debugExtra(this.getDebugExtraString());
-          return;
-        }
-        this.freshRequests = this.freshRequests.slice(requestIndex + 1);
-        if (!Array.isArray(response)) {
-          throw new Error(`lazy data was bad: ${response}`);
-        }
-        this.debugExtraValues(id, { redrawStart: performance.now() });
-        this.throttledDispatch(id, response);
       } catch (error) {
-        throw new Error(`lazy data errored: ${error}`);
+        this.debug(`DataService - request failed | ${id}`);
+        Logger.errorOnce(`DataService - request failed | [${error}]`);
+      }
+      this.isLoadingInitialData = false;
+      const requestIndex = this.freshRequests.findIndex((rid) => rid === id);
+      if (requestIndex === -1 || this.dispatchOnlyLatest && requestIndex !== this.freshRequests.length - 1) {
+        this.debug(`DataService - discarding stale request | ${id}`);
+        return;
+      }
+      this.freshRequests = this.freshRequests.slice(requestIndex + 1);
+      if (Array.isArray(response)) {
+        this.throttledDispatch(id, response);
+      } else {
+        this.dispatch("data-error");
       }
     });
-  }
-  debugExtraValues(id, info) {
-    var _a;
-    if (!this.debugExtra.check())
-      return;
-    this.debugExtraMap.set(id, __spreadValues(__spreadValues({}, (_a = this.debugExtraMap.get(id)) != null ? _a : {}), info));
-  }
-  getDebugExtraString() {
-    if (!this.debugExtra.check())
-      return;
-    return JSON.stringify(Array.from(this.debugExtraMap.values()));
   }
 };
 __decorateClass([
@@ -34012,11 +34008,11 @@ __decorateClass([
   Validate(POSITIVE_NUMBER)
 ], PaginationMarker.prototype, "padding", 2);
 var Pagination = class extends BaseProperties {
-  constructor(chartUpdateCallback, pageUpdateCallback, interactionManager, cursorManager) {
+  constructor(chartUpdateCallback, pageUpdateCallback, regionManager, cursorManager) {
     super();
     this.chartUpdateCallback = chartUpdateCallback;
     this.pageUpdateCallback = pageUpdateCallback;
-    this.interactionManager = interactionManager;
+    this.regionManager = regionManager;
     this.cursorManager = cursorManager;
     this.id = createId$1(this);
     this.marker = new PaginationMarker(this);
@@ -34046,9 +34042,10 @@ var Pagination = class extends BaseProperties {
       y: HdpiCanvas.has.textMetrics ? 1 : 0
     });
     this.group.append([this.nextButton, this.previousButton, this.labelNode]);
+    const region = this.regionManager.addRegion("pagination", this.group);
     this.destroyFns.push(
-      this.interactionManager.addListener("click", (event) => this.onPaginationClick(event)),
-      this.interactionManager.addListener("hover", (event) => this.onPaginationMouseMove(event))
+      region.addListener("click", (event) => this.onPaginationClick(event)),
+      region.addListener("hover", (event) => this.onPaginationMouseMove(event))
     );
     this.update();
     this.updateMarkers();
@@ -34399,7 +34396,7 @@ var Legend = class extends BaseProperties {
     this.pagination = new Pagination(
       (type) => ctx.updateService.update(type),
       (page) => this.updatePageNumber(page),
-      ctx.interactionManager,
+      ctx.regionManager,
       ctx.cursorManager
     );
     this.pagination.attachPagination(this.group);
@@ -35205,6 +35202,9 @@ var Overlay = class {
         groupId: "opacity",
         onUpdate(value) {
           element2.style.opacity = String(value);
+        },
+        onStop() {
+          element2.style.opacity = "1";
         }
       });
     }
@@ -35295,7 +35295,7 @@ var _ChartOverlays = class _ChartOverlays {
     container.style.boxSizing = "border-box";
     container.style.font = "13px Verdana, sans-serif";
     container.style.userSelect = "none";
-    container.style.animation = `ag-charts-loading ${ADD_PHASE.animationDuration * animationManager.defaultDuration}ms linear 0ms both`;
+    container.style.animation = `ag-charts-loading ${ADD_PHASE.animationDuration * animationManager.defaultDuration}ms linear 50ms both`;
     const matrix = this.createElement(container, "span");
     matrix.style.width = "45px";
     matrix.style.height = "40px";
@@ -36572,6 +36572,7 @@ var DataWindowProcessor = class {
     this.destroyFns.push(
       this.dataService.addListener("data-source-change", () => this.onDataSourceChange()),
       this.dataService.addListener("data-load", () => this.onDataLoad()),
+      this.dataService.addListener("data-error", () => this.onDataError()),
       this.updateService.addListener("update-complete", () => this.onUpdateComplete()),
       this.zoomManager.addListener("zoom-change", () => this.onZoomChange())
     );
@@ -36581,6 +36582,9 @@ var DataWindowProcessor = class {
   }
   onDataLoad() {
     this.updateService.update(1 /* UPDATE_DATA */);
+  }
+  onDataError() {
+    this.updateService.update(3 /* PERFORM_LAYOUT */);
   }
   onDataSourceChange() {
     this.dirtyDataSource = true;
@@ -36835,6 +36839,7 @@ var _Chart = class _Chart extends Observable {
     this.container = container;
     this.attachLegend("category", Legend);
     this.legend = this.legends.get("category");
+    const { All } = InteractionState;
     SizeMonitor.observe(this.element, (size) => this.rawResize(size));
     this._destroyFns.push(
       this.dataService.addListener("data-load", (event) => {
@@ -36847,7 +36852,7 @@ var _Chart = class _Chart extends Observable {
       this.interactionManager.addListener("page-left", () => this.destroy()),
       this.interactionManager.addListener("wheel", () => this.resetPointer()),
       this.interactionManager.addListener("drag", () => this.resetPointer()),
-      this.interactionManager.addListener("contextmenu", () => this.resetPointer()),
+      this.interactionManager.addListener("contextmenu", (event) => this.onContextMenu(event), All),
       this.animationManager.addListener("animation-frame", () => {
         this.update(6 /* SCENE_RENDER */);
       }),
@@ -37439,6 +37444,15 @@ var _Chart = class _Chart extends Observable {
       this.update(6 /* SCENE_RENDER */);
     }
   }
+  onContextMenu(event) {
+    this.tooltipManager.removeTooltip(this.id);
+    const { Default: Default2, ContextMenu } = InteractionState;
+    if (this.interactionManager.getState() & (Default2 | ContextMenu)) {
+      this.checkSeriesNodeRange(event, (_series, datum) => {
+        this.highlightManager.updateHighlight(this.id, datum);
+      });
+    }
+  }
   handlePointer(event) {
     if (this.interactionManager.getState() !== 8 /* Default */) {
       return;
@@ -37796,6 +37810,9 @@ var _Chart = class _Chart extends Observable {
       this.applySeriesValues(series, diff2);
       series.markNodeDataDirty();
       seriesInstances.push(series);
+    }
+    for (let idx = 0; idx < seriesInstances.length; idx++) {
+      seriesInstances[idx]._declarationOrder = idx;
     }
     debug(`AgChartV2.applySeries() - final series instances`, seriesInstances);
     chart.series = seriesInstances;
@@ -40266,7 +40283,7 @@ var RangeMask = class extends Path {
     this.y = 0;
     this.width = 200;
     this.height = 30;
-    this.minRange = 0.05;
+    this.minRange = 1e-3;
     this._min = 0;
     this._max = 1;
   }
@@ -40375,7 +40392,7 @@ var _RangeSelector = class _RangeSelector extends Group {
       minHandle.centerX = x;
       maxHandle.centerX = x + width;
       minHandle.centerY = maxHandle.centerY = y + height / 2;
-      minHandle.zIndex = 3;
+      minHandle.zIndex = 4;
       maxHandle.zIndex = 3;
       this.append([mask, minHandle, maxHandle]);
       mask.onRangeChange = () => {
@@ -44631,7 +44648,7 @@ var _LineSeries = class _LineSeries extends CartesianSeries {
     if (contextData.length === 0 || (previousContextData == null ? void 0 : previousContextData.length) === 0) {
       update();
       markerFadeInAnimation(this, animationManager, markerSelections, "added");
-      pathFadeInAnimation(this, "path_properties", animationManager, path);
+      pathFadeInAnimation(this, "path_properties", animationManager, path != null ? path : []);
       seriesLabelFadeInAnimation(this, "labels", animationManager, labelSelections);
       seriesLabelFadeInAnimation(this, "annotations", animationManager, annotationSelections);
       return;
@@ -46792,35 +46809,32 @@ var DonutSeries = class extends PolarSeries {
           fillOpacity: this.properties.fillOpacity,
           strokeOpacity: this.properties.strokeOpacity,
           strokeWidth: this.properties.strokeWidth
-        }
+        },
+        legendItemName: legendItemKey != null ? datum[legendItemKey] : void 0
       });
     }
     return legendData;
   }
   onLegendItemClick(event) {
-    const { enabled, itemId, series } = event;
+    const { enabled, itemId, series, legendItemName } = event;
     if (series.id === this.id) {
       this.toggleSeriesItem(itemId, enabled);
-    } else if (series.type === "donut") {
-      this.toggleOtherSeriesItems(series, itemId, enabled);
+    } else if (legendItemName != null) {
+      this.toggleOtherSeriesItems(legendItemName, enabled);
     }
   }
   toggleSeriesItem(itemId, enabled) {
     this.seriesItemEnabled[itemId] = enabled;
     this.nodeDataRefresh = true;
   }
-  toggleOtherSeriesItems(series, itemId, enabled) {
-    var _a, _b;
+  toggleOtherSeriesItems(legendItemName, enabled) {
+    var _a;
     if (!this.properties.legendItemKey || !this.dataModel) {
       return;
     }
-    const datumToggledLegendItemValue = series.properties.legendItemKey && ((_a = series.data) == null ? void 0 : _a.find((_, index) => index === itemId)[series.properties.legendItemKey]);
-    if (!datumToggledLegendItemValue) {
-      return;
-    }
     const legendItemIdx = this.dataModel.resolveProcessedDataIndexById(this, `legendItemValue`).index;
-    (_b = this.processedData) == null ? void 0 : _b.data.forEach(({ values }, datumItemId) => {
-      if (values[legendItemIdx] === datumToggledLegendItemValue) {
+    (_a = this.processedData) == null ? void 0 : _a.data.forEach(({ values }, datumItemId) => {
+      if (values[legendItemIdx] === legendItemName) {
         this.toggleSeriesItem(datumItemId, enabled);
       }
     });
@@ -48227,8 +48241,9 @@ var PieSeries = class extends PolarSeries {
       return [];
     }
     const { angleKey, calloutLabelKey, sectorLabelKey, legendItemKey } = this.properties;
-    if (!legendItemKey && (!calloutLabelKey || calloutLabelKey === angleKey) && (!sectorLabelKey || sectorLabelKey === angleKey))
+    if (!legendItemKey && (!calloutLabelKey || calloutLabelKey === angleKey) && (!sectorLabelKey || sectorLabelKey === angleKey)) {
       return [];
+    }
     const { calloutLabelIdx, sectorLabelIdx, legendItemIdx } = this.getProcessedDataIndexes(dataModel);
     const titleText = ((_a = this.properties.title) == null ? void 0 : _a.showInLegend) && this.properties.title.text;
     const legendData = [];
@@ -48272,35 +48287,32 @@ var PieSeries = class extends PolarSeries {
           fillOpacity: this.properties.fillOpacity,
           strokeOpacity: this.properties.strokeOpacity,
           strokeWidth: this.properties.strokeWidth
-        }
+        },
+        legendItemName: legendItemKey != null ? datum[legendItemKey] : void 0
       });
     }
     return legendData;
   }
   onLegendItemClick(event) {
-    const { enabled, itemId, series } = event;
+    const { enabled, itemId, series, legendItemName } = event;
     if (series.id === this.id) {
       this.toggleSeriesItem(itemId, enabled);
-    } else if (series.type === "pie") {
-      this.toggleOtherSeriesItems(series, itemId, enabled);
+    } else if (legendItemName != null) {
+      this.toggleOtherSeriesItems(legendItemName, enabled);
     }
   }
   toggleSeriesItem(itemId, enabled) {
     this.seriesItemEnabled[itemId] = enabled;
     this.nodeDataRefresh = true;
   }
-  toggleOtherSeriesItems(series, itemId, enabled) {
-    var _a, _b;
+  toggleOtherSeriesItems(legendItemName, enabled) {
+    var _a;
     if (!this.properties.legendItemKey || !this.dataModel) {
       return;
     }
-    const datumToggledLegendItemValue = series.properties.legendItemKey && ((_a = series.data) == null ? void 0 : _a.find((_, index) => index === itemId)[series.properties.legendItemKey]);
-    if (!datumToggledLegendItemValue) {
-      return;
-    }
     const legendItemIdx = this.dataModel.resolveProcessedDataIndexById(this, `legendItemValue`).index;
-    (_b = this.processedData) == null ? void 0 : _b.data.forEach(({ values }, datumItemId) => {
-      if (values[legendItemIdx] === datumToggledLegendItemValue) {
+    (_a = this.processedData) == null ? void 0 : _a.data.forEach(({ values }, datumItemId) => {
+      if (values[legendItemIdx] === legendItemName) {
         this.toggleSeriesItem(datumItemId, enabled);
       }
     });
@@ -48947,6 +48959,10 @@ var _AgChartsInternal = class _AgChartsInternal {
         chart.userOptions
       );
       const cloneProxy = _AgChartsInternal.createOrUpdate(options);
+      cloneProxy.chart.zoomManager.updateZoom(chartProxy.chart.zoomManager.getZoom());
+      chartProxy.chart.series.forEach((series, index) => {
+        cloneProxy.chart.series[index].visible = series.visible;
+      });
       yield cloneProxy.chart.waitForUpdate();
       return cloneProxy;
     });
@@ -48973,7 +48989,7 @@ _AgChartsInternal.initialised = false;
 var AgChartsInternal = _AgChartsInternal;
 
 // packages/ag-charts-community/src/version.ts
-var VERSION$b = "9.0.2-beta.20240216.1549";
+var VERSION$b = "9.1.0-beta.20240219.1847";
 
 // packages/ag-charts-community/src/integrated-charts-scene.ts
 var integrated_charts_scene_exports = {};
@@ -51557,7 +51573,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
             suppressOpenCloseIcons: false,
             cssIdentifier: 'charts-data'
         }));
-        var inputName = "chartDimension".concat(this.getCompId());
+        var inputName = "chartDimension".concat(this.categoriesGroupComp.getCompId());
         // Display either radio buttons or checkboxes
         // depending on whether the current chart type supports multiple category columns
         var chartType = this.chartController.getChartType();
@@ -52594,19 +52610,30 @@ var CartesianAxisPanel = /** @class */ (function (_super) {
             .setTitle(this.translate("axis"))
             .toggleGroupExpand(this.isExpandedOnInit)
             .hideEnabledCheckbox(true);
+        // Note that there is no separate checkbox for enabling/disabling the axis line. Whenever the line settings are
+        // changed, the value for `line.enabled` is inferred based on the current `line.width` value.
         this.axisColorInput
             .setLabel(this.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth("flex")
             .setValue(this.chartOptionsService.getAxisProperty("line.color"))
-            .onValueChange(function (newColor) { return _this.chartOptionsService.setAxisProperty("line.color", newColor); });
+            .onValueChange(function (newColor) {
+            var isLineEnabled = _this.chartOptionsService.getAxisProperty("line.width") > 0;
+            _this.chartOptionsService.setAxisProperties([
+                { expression: "line.enabled", value: isLineEnabled },
+                { expression: "line.color", value: newColor },
+            ]);
+        });
         var currentValue = this.chartOptionsService.getAxisProperty("line.width");
         this.axisLineWidthSlider
             .setMaxValue(getMaxValue(currentValue, 10))
             .setLabel(this.translate("thickness"))
             .setTextFieldWidth(45)
             .setValue("".concat(currentValue))
-            .onValueChange(function (newValue) { return _this.chartOptionsService.setAxisProperty("line.width", newValue); });
+            .onValueChange(function (newValue) { return _this.chartOptionsService.setAxisProperties([
+            { expression: "line.enabled", value: (newValue !== 0) },
+            { expression: "line.width", value: newValue },
+        ]); });
     };
     CartesianAxisPanel.prototype.initAxisTicks = function () {
         if (!this.hasConfigurableAxisTicks())
@@ -57375,8 +57402,9 @@ function zigzag(options) {
         var patternInflectionPoints = [0, 0.5];
         var inflectionPoints = patternInflectionPoints
             .map(function (x) { return x - scaledOffset; })
+            // Clamp offset points to the unit range [0, 1)
             .map(getRemainderAbs)
-            .sort();
+            .sort(function (a, b) { return a - b; });
         var repeatedPoints = Array.from({ length: Math.floor(inflectionPoints.length * (period / length)) }, function (_, i) { return inflectionPoints[i % inflectionPoints.length] + Math.floor(i / inflectionPoints.length); });
         return repeatedPoints.map(function (x) { return x * period; }).map(function (x) { return getZigzagPoint(x, offset, pattern); });
     }
@@ -59977,7 +60005,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         this.suppressChartRanges = suppressChartRanges;
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
-        this.updateSelectedDimension(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
+        this.updateSelectedDimensions(cellRange === null || cellRange === void 0 ? void 0 : cellRange.columns);
         this.updateCellRanges();
         var shouldUpdateComboModel = this.isComboChart() || seriesChartTypes;
         if (shouldUpdateComboModel) {
@@ -60274,11 +60302,24 @@ var ChartDataModel = /** @class */ (function (_super) {
             this.valueCellRange = this.createCellRange.apply(this, __spreadArray$c([CellRangeType.VALUE], __read$v(selectedValueCols), false));
         }
     };
-    ChartDataModel.prototype.updateSelectedDimension = function (columns) {
+    ChartDataModel.prototype.updateSelectedDimensions = function (columns) {
         var colIdSet = new Set(columns.map(function (column) { return column.getColId(); }));
-        // if no dimension found in supplied columns use the default category (always index = 0)
-        var foundColState = this.dimensionColState.find(function (colState) { return colIdSet.has(colState.colId); }) || this.dimensionColState[0];
-        this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign$p(__assign$p({}, colState), { selected: colState.colId === foundColState.colId })); });
+        // For non-hierarchical chart types, only one dimension can be selected
+        var supportsMultipleDimensions = isHierarchical(this.chartType);
+        if (!supportsMultipleDimensions) {
+            // Determine which column should end up selected, if any
+            // if no dimension found in supplied columns use the default category (always index = 0)
+            var foundColState = this.dimensionColState.find(function (colState) { return colIdSet.has(colState.colId); }) || this.dimensionColState[0];
+            var selectedColumnId_1 = foundColState.colId;
+            // Update the selection state of all dimension columns
+            this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign$p(__assign$p({}, colState), { selected: colState.colId === selectedColumnId_1 })); });
+        }
+        else {
+            // Update the selection state of all dimension columns, selecting only the provided columns from the chart model
+            var foundColStates = this.dimensionColState.filter(function (colState) { return colIdSet.has(colState.colId); });
+            var selectedColumnIds_1 = new Set(foundColStates.map(function (colState) { return colState.colId; }));
+            this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign$p(__assign$p({}, colState), { selected: selectedColumnIds_1.has(colState.colId) })); });
+        }
     };
     ChartDataModel.prototype.syncDimensionCellRange = function () {
         var selectedDimensions = this.getSelectedDimensions();
@@ -62280,7 +62321,7 @@ var ChartOptionsService = /** @class */ (function (_super) {
             }));
         });
         if (!isSilent) {
-            this.updateChart(chartOptions, true);
+            this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
         }
     };
@@ -62294,38 +62335,43 @@ var ChartOptionsService = /** @class */ (function (_super) {
         return get((_a = this.getChart().axes) === null || _a === void 0 ? void 0 : _a[0], expression, undefined);
     };
     ChartOptionsService.prototype.setAxisProperty = function (expression, value) {
+        this.setAxisProperties([{ expression: expression, value: value }]);
+    };
+    ChartOptionsService.prototype.setAxisProperties = function (properties) {
         var _this = this;
-        var _a;
         var chart = this.getChart();
-        var chartOptions = {};
-        var relevantAxes = (_a = chart.axes) === null || _a === void 0 ? void 0 : _a.filter(function (axis) {
-            var e_1, _a;
-            var parts = expression.split('.');
-            var current = axis;
-            try {
-                for (var parts_1 = __values$6(parts), parts_1_1 = parts_1.next(); !parts_1_1.done; parts_1_1 = parts_1.next()) {
-                    var part = parts_1_1.value;
-                    if (!(part in current)) {
-                        return false;
-                    }
-                    current = current[part];
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
+        var chartOptions = flatMap(properties, function (_a) {
+            var _b;
+            var expression = _a.expression, value = _a.value;
+            // Only apply the property to axes that declare the property on their prototype chain
+            var relevantAxes = (_b = chart.axes) === null || _b === void 0 ? void 0 : _b.filter(function (axis) {
+                var e_1, _a;
+                var parts = expression.split('.');
+                var current = axis;
                 try {
-                    if (parts_1_1 && !parts_1_1.done && (_a = parts_1.return)) _a.call(parts_1);
+                    for (var parts_1 = __values$6(parts), parts_1_1 = parts_1.next(); !parts_1_1.done; parts_1_1 = parts_1.next()) {
+                        var part = parts_1_1.value;
+                        if (!(part in current)) {
+                            return false;
+                        }
+                        current = current[part];
+                    }
                 }
-                finally { if (e_1) throw e_1.error; }
-            }
-            return true;
-        });
-        relevantAxes === null || relevantAxes === void 0 ? void 0 : relevantAxes.forEach(function (axis) {
-            var updateOptions = _this.getUpdateAxisOptions(axis, expression, value);
-            if (updateOptions) {
-                chartOptions = deepMerge(chartOptions, updateOptions);
-            }
-        });
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (parts_1_1 && !parts_1_1.done && (_a = parts_1.return)) _a.call(parts_1);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+                return true;
+            });
+            if (!relevantAxes)
+                return [];
+            return relevantAxes.map(function (axis) { return _this.getUpdateAxisOptions(axis, expression, value); });
+        })
+            // Combine all property updates into a single merged object
+            .reduce(function (chartOptions, axisOptions) { return deepMerge(chartOptions, axisOptions); }, {});
         if (Object.keys(chartOptions).length > 0) {
             this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
@@ -62399,12 +62445,9 @@ var ChartOptionsService = /** @class */ (function (_super) {
     ChartOptionsService.prototype.getChart = function () {
         return this.chartController.getChartProxy().getChart();
     };
-    ChartOptionsService.prototype.updateChart = function (chartOptions, quick) {
-        if (quick === void 0) { quick = false; }
+    ChartOptionsService.prototype.updateChart = function (chartOptions) {
         var chartRef = this.chartController.getChartProxy().getChartRef();
-        if (quick) {
-            chartRef.skipAnimations();
-        }
+        chartRef.skipAnimations();
         AgCharts.updateDelta(chartRef, chartOptions);
     };
     ChartOptionsService.prototype.createChartOptions = function (_a) {

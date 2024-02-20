@@ -1,5 +1,6 @@
 import { BeanStub, Events } from "@ag-grid-community/core";
 import { AgCharts } from "ag-charts-community";
+import { flatMap } from '../utils/array.mjs';
 import { deepMerge, get, set } from "../utils/object.mjs";
 import { VALID_SERIES_TYPES } from "../utils/seriesTypeMapper.mjs";
 export class ChartOptionsService extends BeanStub {
@@ -25,7 +26,7 @@ export class ChartOptionsService extends BeanStub {
             }));
         });
         if (!isSilent) {
-            this.updateChart(chartOptions, true);
+            this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
         }
     }
@@ -39,26 +40,30 @@ export class ChartOptionsService extends BeanStub {
         return get((_a = this.getChart().axes) === null || _a === void 0 ? void 0 : _a[0], expression, undefined);
     }
     setAxisProperty(expression, value) {
-        var _a;
+        this.setAxisProperties([{ expression, value }]);
+    }
+    setAxisProperties(properties) {
         const chart = this.getChart();
-        let chartOptions = {};
-        const relevantAxes = (_a = chart.axes) === null || _a === void 0 ? void 0 : _a.filter((axis) => {
-            const parts = expression.split('.');
-            let current = axis;
-            for (const part of parts) {
-                if (!(part in current)) {
-                    return false;
+        const chartOptions = flatMap(properties, ({ expression, value }) => {
+            var _a;
+            // Only apply the property to axes that declare the property on their prototype chain
+            const relevantAxes = (_a = chart.axes) === null || _a === void 0 ? void 0 : _a.filter((axis) => {
+                const parts = expression.split('.');
+                let current = axis;
+                for (const part of parts) {
+                    if (!(part in current)) {
+                        return false;
+                    }
+                    current = current[part];
                 }
-                current = current[part];
-            }
-            return true;
-        });
-        relevantAxes === null || relevantAxes === void 0 ? void 0 : relevantAxes.forEach((axis) => {
-            const updateOptions = this.getUpdateAxisOptions(axis, expression, value);
-            if (updateOptions) {
-                chartOptions = deepMerge(chartOptions, updateOptions);
-            }
-        });
+                return true;
+            });
+            if (!relevantAxes)
+                return [];
+            return relevantAxes.map((axis) => this.getUpdateAxisOptions(axis, expression, value));
+        })
+            // Combine all property updates into a single merged object
+            .reduce((chartOptions, axisOptions) => deepMerge(chartOptions, axisOptions), {});
         if (Object.keys(chartOptions).length > 0) {
             this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
@@ -131,11 +136,9 @@ export class ChartOptionsService extends BeanStub {
     getChart() {
         return this.chartController.getChartProxy().getChart();
     }
-    updateChart(chartOptions, quick = false) {
+    updateChart(chartOptions) {
         const chartRef = this.chartController.getChartProxy().getChartRef();
-        if (quick) {
-            chartRef.skipAnimations();
-        }
+        chartRef.skipAnimations();
         AgCharts.updateDelta(chartRef, chartOptions);
     }
     createChartOptions({ seriesType, expression, value }) {

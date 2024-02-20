@@ -90,7 +90,7 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         // 1) there is a type (user has configured filter wrong if not type)
         //  AND
         // 2) the default type is not 'inRange'
-        var editable = this.isTypeEditable(this.lastType);
+        var editable = this.isTypeEditable(this.optionsFactory.getDefaultOption());
         this.setEditable(editable);
     };
     SimpleFloatingFilter.prototype.onParamsUpdated = function (params) {

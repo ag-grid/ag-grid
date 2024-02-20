@@ -83,15 +83,13 @@ var HeaderGroupCellCtrl = /** @class */ (function (_super) {
         this.addManagedPropertyListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners();
     };
-    HeaderGroupCellCtrl.prototype.resizeHeader = function (direction, shiftKey) {
+    HeaderGroupCellCtrl.prototype.resizeHeader = function (delta, shiftKey) {
         // check to avoid throwing when a component has not been setup yet (React 18)
         if (!this.resizeFeature) {
             return;
         }
-        var isLeft = direction === HorizontalDirection.Left;
-        var diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
         var initialValues = this.resizeFeature.getInitialValues(shiftKey);
-        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + diff, 'uiColumnResized', true);
+        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + delta, 'uiColumnResized', true);
     };
     HeaderGroupCellCtrl.prototype.moveHeader = function (hDirection) {
         var _a = this, beans = _a.beans, eGui = _a.eGui, column = _a.column, gridOptionsService = _a.gridOptionsService, ctrlsService = _a.ctrlsService;

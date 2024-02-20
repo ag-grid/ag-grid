@@ -519,6 +519,7 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
                 else {
                     mergeFilterParams({
                         maxNumConditions: 1,
+                        debounceMs: 0,
                         filterOptions: [
                             'empty',
                             {

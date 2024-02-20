@@ -127,7 +127,7 @@ const GridComp = (props) => {
             // doesn't have it's height specified, which would result if all the rows getting rendered (and if many rows,
             // hangs the UI)
             <BeansContext.Provider value={beans}>
-                        <TabGuardComp ref={setTabGuardRef} eFocusableElement={eGui} onTabKeyDown={onTabKeyDown} gridCtrl={gridCtrl}>
+                        <TabGuardComp ref={setTabGuardRef} eFocusableElement={eGui} onTabKeyDown={onTabKeyDown} gridCtrl={gridCtrl} forceFocusOutWhenTabGuardsAreEmpty={true}>
                             <GridBodyComp />
                         </TabGuardComp>
                     </BeansContext.Provider>}

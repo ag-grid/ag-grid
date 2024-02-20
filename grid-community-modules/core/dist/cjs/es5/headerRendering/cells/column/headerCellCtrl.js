@@ -14,16 +14,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HeaderCellCtrl = void 0;
 var keyCode_1 = require("../../../constants/keyCode");
-var context_1 = require("../../../context/context");
 var dragAndDropService_1 = require("../../../dragAndDrop/dragAndDropService");
 var column_1 = require("../../../entities/column");
 var eventKeys_1 = require("../../../eventKeys");
@@ -88,32 +81,15 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
     };
-    HeaderCellCtrl.prototype.resizeHeader = function (direction, shiftKey) {
+    HeaderCellCtrl.prototype.resizeHeader = function (delta, shiftKey) {
         var _a, _b;
         if (!this.column.isResizable()) {
             return;
         }
-        var pinned = this.column.getPinned();
-        var isRtl = this.gridOptionsService.get('enableRtl');
         var actualWidth = this.column.getActualWidth();
         var minWidth = (_a = this.column.getMinWidth()) !== null && _a !== void 0 ? _a : 0;
         var maxWidth = (_b = this.column.getMaxWidth()) !== null && _b !== void 0 ? _b : Number.MAX_SAFE_INTEGER;
-        var isLeft = direction === direction_1.HorizontalDirection.Left;
-        if (pinned) {
-            if (isRtl !== (pinned === 'right')) {
-                isLeft = !isLeft;
-            }
-        }
-        var diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
-        var newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
-        if (pinned) {
-            var leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            var rightWidth = this.pinnedWidthService.getPinnedRightWidth();
-            var bodyWidth = (0, dom_1.getInnerWidth)(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
-            if (leftWidth + rightWidth + diff > bodyWidth) {
-                return;
-            }
-        }
+        var newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
         this.beans.columnModel.setColumnWidths([{ key: this.column, newWidth: newWidth }], shiftKey, true, 'uiColumnResized');
     };
     HeaderCellCtrl.prototype.moveHeader = function (hDirection) {
@@ -235,7 +211,9 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
             this.focusService.setFocusedHeader(rowIndex, this.column);
             this.announceAriaDescription();
         }
-        this.setActiveHeader(true);
+        if (this.focusService.isKeyboardMode()) {
+            this.setActiveHeader(true);
+        }
     };
     HeaderCellCtrl.prototype.onFocusOut = function (e) {
         if (this.getGui().contains(e.relatedTarget)) {
@@ -680,9 +658,6 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         this.userHeaderClasses = null;
         this.ariaDescriptionProperties = null;
     };
-    __decorate([
-        (0, context_1.Autowired)('pinnedWidthService')
-    ], HeaderCellCtrl.prototype, "pinnedWidthService", void 0);
     return HeaderCellCtrl;
 }(abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl));
 exports.HeaderCellCtrl = HeaderCellCtrl;

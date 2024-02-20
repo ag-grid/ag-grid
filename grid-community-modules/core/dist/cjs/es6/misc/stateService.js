@@ -504,8 +504,7 @@ let StateService = class StateService extends beanStub_1.BeanStub {
     }
     suppressEventsAndDispatchInitEvent(updateFunc) {
         this.suppressEvents = true;
-        const columnAnimation = this.gridOptionsService.get('suppressColumnMoveAnimation');
-        this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: true } });
+        this.columnAnimationService.setSuppressAnimation(true);
         updateFunc();
         // We want to suppress any grid events, but not user events.
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
@@ -517,7 +516,7 @@ let StateService = class StateService extends beanStub_1.BeanStub {
                 // Ensure the grid is still alive before dispatching the event.
                 return;
             }
-            this.gridOptionsService.updateGridOptions({ options: { suppressColumnMoveAnimation: columnAnimation } });
+            this.columnAnimationService.setSuppressAnimation(false);
             this.dispatchStateUpdateEvent(['gridInitializing']);
         });
     }
@@ -552,6 +551,9 @@ __decorate([
 __decorate([
     (0, context_1.Autowired)('expansionService')
 ], StateService.prototype, "expansionService", void 0);
+__decorate([
+    (0, context_1.Autowired)('columnAnimationService')
+], StateService.prototype, "columnAnimationService", void 0);
 __decorate([
     context_1.PostConstruct
 ], StateService.prototype, "postConstruct", null);

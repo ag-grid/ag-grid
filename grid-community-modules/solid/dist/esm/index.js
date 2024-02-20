@@ -1875,7 +1875,8 @@ const TabGuardComp = props => {
     children,
     eFocusableElement,
     onTabKeyDown,
-    gridCtrl
+    gridCtrl,
+    forceFocusOutWhenTabGuardsAreEmpty
   } = props;
   const [tabIndex, setTabIndex] = createSignal();
   let eTopGuard;
@@ -1894,6 +1895,7 @@ const TabGuardComp = props => {
       eBottomGuard: eBottomGuard,
       eFocusableElement: eFocusableElement,
       onTabKeyDown: onTabKeyDown,
+      forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
       focusInnerElement: fromBottom => gridCtrl.focusInnerElement(fromBottom)
     }));
     props.ref({
@@ -2078,6 +2080,7 @@ const GridComp = props => {
             eFocusableElement: eGui,
             onTabKeyDown: onTabKeyDown,
             gridCtrl: gridCtrl,
+            forceFocusOutWhenTabGuardsAreEmpty: true,
             get children() {
               return createComponent(GridBodyComp, {});
             }

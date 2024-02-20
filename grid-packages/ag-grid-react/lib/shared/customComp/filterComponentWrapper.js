@@ -15,17 +15,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FilterComponentWrapper = void 0;
 var customComponentWrapper_1 = require("./customComponentWrapper");
@@ -64,7 +53,10 @@ var FilterComponentWrapper = /** @class */ (function (_super) {
         this.setModel(model).then(function () { return _this.sourceParams.filterChangedCallback(); });
     };
     FilterComponentWrapper.prototype.getProps = function () {
-        var props = __assign(__assign({}, this.sourceParams), { model: this.model, onModelChange: this.onModelChange, onUiChange: this.onUiChange, key: this.key });
+        var props = _super.prototype.getProps.call(this);
+        props.model = this.model;
+        props.onModelChange = this.onModelChange;
+        props.onUiChange = this.onUiChange;
         // remove props in IFilterParams but not CustomFilterProps
         delete props.filterChangedCallback;
         delete props.filterModifiedCallback;

@@ -26,6 +26,9 @@ export class FloatingFilterComponentWrapper extends CustomComponentWrapper {
         updateFloatingFilterParent(this.sourceParams, model);
     }
     getProps() {
-        return Object.assign(Object.assign({}, this.sourceParams), { model: this.model, onModelChange: this.onModelChange, key: this.key });
+        const props = super.getProps();
+        props.model = this.model;
+        props.onModelChange = this.onModelChange;
+        return props;
     }
 }

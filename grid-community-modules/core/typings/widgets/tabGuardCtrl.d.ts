@@ -14,6 +14,7 @@ export declare class TabGuardCtrl extends BeanStub {
     private readonly eBottomGuard;
     private readonly eFocusableElement;
     private readonly focusTrapActive;
+    private readonly forceFocusOutWhenTabGuardsAreEmpty;
     private readonly providedFocusInnerElement?;
     private readonly providedFocusIn?;
     private readonly providedFocusOut?;
@@ -28,6 +29,7 @@ export declare class TabGuardCtrl extends BeanStub {
         eBottomGuard: HTMLElement;
         eFocusableElement: HTMLElement;
         focusTrapActive?: boolean;
+        forceFocusOutWhenTabGuardsAreEmpty?: boolean;
         focusInnerElement?: (fromBottom: boolean) => void;
         onFocusIn?: (event: FocusEvent) => void;
         onFocusOut?: (event: FocusEvent) => void;
@@ -42,7 +44,7 @@ export declare class TabGuardCtrl extends BeanStub {
     private activateTabGuards;
     private deactivateTabGuards;
     private onFocus;
-    private forceFocusOutWhenTabGuardsAreEmpty;
+    private findNextElementOutsideAndFocus;
     private onFocusIn;
     private onFocusOut;
     onTabKeyDown(e: KeyboardEvent): void;

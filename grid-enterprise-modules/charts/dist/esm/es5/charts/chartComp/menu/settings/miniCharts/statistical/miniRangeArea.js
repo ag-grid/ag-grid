@@ -167,8 +167,9 @@ function zigzag(options) {
         var patternInflectionPoints = [0, 0.5];
         var inflectionPoints = patternInflectionPoints
             .map(function (x) { return x - scaledOffset; })
+            // Clamp offset points to the unit range [0, 1)
             .map(getRemainderAbs)
-            .sort();
+            .sort(function (a, b) { return a - b; });
         var repeatedPoints = Array.from({ length: Math.floor(inflectionPoints.length * (period / length)) }, function (_, i) { return inflectionPoints[i % inflectionPoints.length] + Math.floor(i / inflectionPoints.length); });
         return repeatedPoints.map(function (x) { return x * period; }).map(function (x) { return getZigzagPoint(x, offset, pattern); });
     }

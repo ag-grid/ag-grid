@@ -18,7 +18,6 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
 }
 declare type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton';
 export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Column, ResizeFeature> {
-    private pinnedWidthService;
     private refreshFunctions;
     private selectAllFeature;
     private sortable;
@@ -32,7 +31,7 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellCo
     private ariaDescriptionProperties;
     constructor(column: Column, beans: Beans, parentRowCtrl: HeaderRowCtrl);
     setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement, eHeaderCompWrapper: HTMLElement): void;
-    protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void;
+    protected resizeHeader(delta: number, shiftKey: boolean): void;
     protected moveHeader(hDirection: HorizontalDirection): void;
     private setupUserComp;
     private setCompDetails;

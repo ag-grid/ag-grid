@@ -57,7 +57,8 @@ var GridComp = /** @class */ (function (_super) {
         this.initialiseTabGuard({
             // we want to override the default behaviour to do nothing for onTabKeyDown
             onTabKeyDown: function () { return undefined; },
-            focusInnerElement: function (fromBottom) { return _this.ctrl.focusInnerElement(fromBottom); }
+            focusInnerElement: function (fromBottom) { return _this.ctrl.focusInnerElement(fromBottom); },
+            forceFocusOutWhenTabGuardsAreEmpty: true
         });
     };
     GridComp.prototype.insertGridIntoDom = function () {

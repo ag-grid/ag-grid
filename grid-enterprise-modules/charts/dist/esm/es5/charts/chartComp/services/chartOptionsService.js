@@ -26,6 +26,7 @@ var __values = (this && this.__values) || function(o) {
 };
 import { BeanStub, Events } from "@ag-grid-community/core";
 import { AgCharts } from "ag-charts-community";
+import { flatMap } from '../utils/array';
 import { deepMerge, get, set } from "../utils/object";
 import { VALID_SERIES_TYPES } from "../utils/seriesTypeMapper";
 var ChartOptionsService = /** @class */ (function (_super) {
@@ -54,7 +55,7 @@ var ChartOptionsService = /** @class */ (function (_super) {
             }));
         });
         if (!isSilent) {
-            this.updateChart(chartOptions, true);
+            this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
         }
     };
@@ -68,38 +69,43 @@ var ChartOptionsService = /** @class */ (function (_super) {
         return get((_a = this.getChart().axes) === null || _a === void 0 ? void 0 : _a[0], expression, undefined);
     };
     ChartOptionsService.prototype.setAxisProperty = function (expression, value) {
+        this.setAxisProperties([{ expression: expression, value: value }]);
+    };
+    ChartOptionsService.prototype.setAxisProperties = function (properties) {
         var _this = this;
-        var _a;
         var chart = this.getChart();
-        var chartOptions = {};
-        var relevantAxes = (_a = chart.axes) === null || _a === void 0 ? void 0 : _a.filter(function (axis) {
-            var e_1, _a;
-            var parts = expression.split('.');
-            var current = axis;
-            try {
-                for (var parts_1 = __values(parts), parts_1_1 = parts_1.next(); !parts_1_1.done; parts_1_1 = parts_1.next()) {
-                    var part = parts_1_1.value;
-                    if (!(part in current)) {
-                        return false;
-                    }
-                    current = current[part];
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
+        var chartOptions = flatMap(properties, function (_a) {
+            var _b;
+            var expression = _a.expression, value = _a.value;
+            // Only apply the property to axes that declare the property on their prototype chain
+            var relevantAxes = (_b = chart.axes) === null || _b === void 0 ? void 0 : _b.filter(function (axis) {
+                var e_1, _a;
+                var parts = expression.split('.');
+                var current = axis;
                 try {
-                    if (parts_1_1 && !parts_1_1.done && (_a = parts_1.return)) _a.call(parts_1);
+                    for (var parts_1 = __values(parts), parts_1_1 = parts_1.next(); !parts_1_1.done; parts_1_1 = parts_1.next()) {
+                        var part = parts_1_1.value;
+                        if (!(part in current)) {
+                            return false;
+                        }
+                        current = current[part];
+                    }
                 }
-                finally { if (e_1) throw e_1.error; }
-            }
-            return true;
-        });
-        relevantAxes === null || relevantAxes === void 0 ? void 0 : relevantAxes.forEach(function (axis) {
-            var updateOptions = _this.getUpdateAxisOptions(axis, expression, value);
-            if (updateOptions) {
-                chartOptions = deepMerge(chartOptions, updateOptions);
-            }
-        });
+                catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                finally {
+                    try {
+                        if (parts_1_1 && !parts_1_1.done && (_a = parts_1.return)) _a.call(parts_1);
+                    }
+                    finally { if (e_1) throw e_1.error; }
+                }
+                return true;
+            });
+            if (!relevantAxes)
+                return [];
+            return relevantAxes.map(function (axis) { return _this.getUpdateAxisOptions(axis, expression, value); });
+        })
+            // Combine all property updates into a single merged object
+            .reduce(function (chartOptions, axisOptions) { return deepMerge(chartOptions, axisOptions); }, {});
         if (Object.keys(chartOptions).length > 0) {
             this.updateChart(chartOptions);
             this.raiseChartOptionsChangedEvent();
@@ -173,12 +179,9 @@ var ChartOptionsService = /** @class */ (function (_super) {
     ChartOptionsService.prototype.getChart = function () {
         return this.chartController.getChartProxy().getChart();
     };
-    ChartOptionsService.prototype.updateChart = function (chartOptions, quick) {
-        if (quick === void 0) { quick = false; }
+    ChartOptionsService.prototype.updateChart = function (chartOptions) {
         var chartRef = this.chartController.getChartProxy().getChartRef();
-        if (quick) {
-            chartRef.skipAnimations();
-        }
+        chartRef.skipAnimations();
         AgCharts.updateDelta(chartRef, chartOptions);
     };
     ChartOptionsService.prototype.createChartOptions = function (_a) {

@@ -59,7 +59,7 @@ export class CustomComponentWrapper extends ReactComponent {
         return [];
     }
     getProps() {
-        return Object.assign(Object.assign({}, this.sourceParams), { key: this.key });
+        return Object.assign(Object.assign({}, this.sourceParams), { key: this.key, ref: this.ref });
     }
     refreshProps() {
         if (this.updateCallback) {

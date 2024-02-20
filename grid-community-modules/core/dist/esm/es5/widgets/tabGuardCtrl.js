@@ -35,13 +35,14 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.skipTabGuardFocus = false;
         _this.forcingFocusOut = false;
-        var comp = params.comp, eTopGuard = params.eTopGuard, eBottomGuard = params.eBottomGuard, focusTrapActive = params.focusTrapActive, focusInnerElement = params.focusInnerElement, onFocusIn = params.onFocusIn, onFocusOut = params.onFocusOut, shouldStopEventPropagation = params.shouldStopEventPropagation, onTabKeyDown = params.onTabKeyDown, handleKeyDown = params.handleKeyDown, eFocusableElement = params.eFocusableElement;
+        var comp = params.comp, eTopGuard = params.eTopGuard, eBottomGuard = params.eBottomGuard, focusTrapActive = params.focusTrapActive, forceFocusOutWhenTabGuardsAreEmpty = params.forceFocusOutWhenTabGuardsAreEmpty, focusInnerElement = params.focusInnerElement, onFocusIn = params.onFocusIn, onFocusOut = params.onFocusOut, shouldStopEventPropagation = params.shouldStopEventPropagation, onTabKeyDown = params.onTabKeyDown, handleKeyDown = params.handleKeyDown, eFocusableElement = params.eFocusableElement;
         _this.comp = comp;
         _this.eTopGuard = eTopGuard;
         _this.eBottomGuard = eBottomGuard;
         _this.providedFocusInnerElement = focusInnerElement;
         _this.eFocusableElement = eFocusableElement;
         _this.focusTrapActive = !!focusTrapActive;
+        _this.forceFocusOutWhenTabGuardsAreEmpty = !!forceFocusOutWhenTabGuardsAreEmpty;
         _this.providedFocusIn = onFocusIn;
         _this.providedFocusOut = onFocusOut;
         _this.providedShouldStopEventPropagation = shouldStopEventPropagation;
@@ -94,9 +95,12 @@ var TabGuardCtrl = /** @class */ (function (_super) {
         // when there are no focusable items within the TabGuard, focus gets stuck
         // in the TabGuard itself and has nowhere to go, so we need to manually find
         // the closest element to focus by calling `forceFocusOutWhenTabGuardAreEmpty`.
-        if (this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0) {
-            this.forceFocusOutWhenTabGuardsAreEmpty(e.target === this.eBottomGuard);
-            return;
+        if (this.forceFocusOutWhenTabGuardsAreEmpty) {
+            var isEmpty = this.focusService.findFocusableElements(this.eFocusableElement, '.ag-tab-guard').length === 0;
+            if (isEmpty) {
+                this.findNextElementOutsideAndFocus(e.target === this.eBottomGuard);
+                return;
+            }
         }
         var fromBottom = e.target === this.eBottomGuard;
         if (this.providedFocusInnerElement) {
@@ -106,7 +110,7 @@ var TabGuardCtrl = /** @class */ (function (_super) {
             this.focusInnerElement(fromBottom);
         }
     };
-    TabGuardCtrl.prototype.forceFocusOutWhenTabGuardsAreEmpty = function (up) {
+    TabGuardCtrl.prototype.findNextElementOutsideAndFocus = function (up) {
         var eDocument = this.gridOptionsService.getDocument();
         var focusableEls = this.focusService.findFocusableElements(eDocument.body, null, true);
         var index = focusableEls.indexOf(up ? this.eTopGuard : this.eBottomGuard);

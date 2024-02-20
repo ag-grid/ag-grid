@@ -11,6 +11,7 @@ export declare class ReactComponent implements IComponent<any>, WrappableInterfa
     protected statelessComponent: boolean;
     protected componentType: ComponentType;
     protected key: string;
+    protected ref?: (element: any) => void;
     private portalKey;
     private oldPortal;
     private reactElement;

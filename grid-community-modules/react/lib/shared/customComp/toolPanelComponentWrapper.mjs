@@ -20,6 +20,9 @@ export class ToolPanelComponentWrapper extends CustomComponentWrapper {
         this.sourceParams.onStateUpdated();
     }
     getProps() {
-        return Object.assign(Object.assign({}, this.sourceParams), { key: this.key, state: this.state, onStateChange: this.onStateChange });
+        const props = super.getProps();
+        props.state = this.state;
+        props.onStateChange = this.onStateChange;
+        return props;
     }
 }

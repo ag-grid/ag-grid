@@ -20,7 +20,7 @@ export declare class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderG
     private displayName;
     constructor(columnGroup: ColumnGroup, beans: Beans, parentRowCtrl: HeaderRowCtrl);
     setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void;
-    protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void;
+    protected resizeHeader(delta: number, shiftKey: boolean): void;
     protected moveHeader(hDirection: HorizontalDirection): void;
     private restoreFocus;
     private findGroupWidthId;
