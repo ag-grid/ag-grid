@@ -82,7 +82,7 @@ const Price = ({ priceFullDollars, launchPrice }) => {
             { hasCost && <span className={styles.fromText}>From</span> }
 
             <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '' )}>
-                <span>{ hasCost ? `$${ price }` : 'Free' }</span>
+                <span className={styles.priceCost}>{ hasCost ? `$${ price }` : 'Free' }</span>
 
                 { launchPrice && (
                     <>
