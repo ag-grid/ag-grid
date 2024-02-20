@@ -26,12 +26,12 @@ import { Styles } from './lib/Styles';
 import { Scripts } from './lib/Scripts';
 import { SITE_BASE_URL } from '@constants';
 import { pathJoin } from '@utils/pathJoin';
-import { getCacheBustingUrl, getChartEnterpriseScriptPath, getChartScriptPath } from '@utils/chartLibraryPaths';
+import { getCacheBustingUrl, getGridEnterpriseScriptPath, getGridScriptPath } from '@utils/gridLibraryPaths';
 
 const siteUrl = Astro.site ? pathJoin(Astro.site, SITE_BASE_URL) : '/';
 
-const chartScriptPath = getCacheBustingUrl(getChartScriptPath(siteUrl), modifiedTimeMs);
-const chartScriptEnterprisePath = getCacheBustingUrl(getChartEnterpriseScriptPath(siteUrl), modifiedTimeMs);
+const gridScriptPath = getCacheBustingUrl(getGridScriptPath(siteUrl), modifiedTimeMs);
+const gridScriptEnterprisePath = getCacheBustingUrl(getGridEnterpriseScriptPath(siteUrl), modifiedTimeMs);
 ---
 
 <html lang="en">
@@ -58,7 +58,7 @@ const chartScriptEnterprisePath = getCacheBustingUrl(getChartEnterpriseScriptPat
         >
             window.__basePath = appLocation;
         </script>
-        <script src={isEnterprise ? chartScriptEnterprisePath : chartScriptPath}></script>
+        <script src={isEnterprise ? gridScriptEnterprisePath : gridScriptPath}></script>
         <Scripts baseUrl={appLocation} files={scriptFiles} />
         <Styles
             baseUrl={appLocation}

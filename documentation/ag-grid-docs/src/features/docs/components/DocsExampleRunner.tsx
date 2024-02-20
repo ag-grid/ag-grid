@@ -1,4 +1,4 @@
-import type { Framework } from '@ag-grid-types';
+import type { Framework, ImportType } from '@ag-grid-types';
 import type { ExampleType } from '@features/example-generator/types';
 import { ExampleRunner } from '@features/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@features/example-runner/components/ExternalLinks';
@@ -25,6 +25,7 @@ interface Props {
     options?: ExampleOptions;
     framework: Framework;
     pageName: string;
+    importType: ImportType;
 }
 
 // NOTE: Not on the layout level, as that is generated at build time, and queryClient needs to be
@@ -54,7 +55,7 @@ const queryOptions = {
     refetchOnReconnect: false,
 };
 
-const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, pageName }: Props) => {
+const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, pageName, importType }: Props) => {
     const internalFramework = useStore($internalFramework);
     const [initialSelectedFile, setInitialSelectedFile] = useState();
     const [exampleUrl, setExampleUrl] = useState<string>();
@@ -69,32 +70,32 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, 
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
 
-    const {
-        isLoading: contentsIsLoading,
-        isError: contentsIsError,
-        data: [contents, exampleFileHtml] = [],
-    } = useQuery(
-        ['docsExampleContents', internalFramework, pageName, exampleName],
-        () => {
-            const getContents = fetch(
-                getExampleContentsUrl({
-                    internalFramework,
-                    pageName,
-                    exampleName,
-                })
-            ).then((res) => res.json());
+    // const {
+    //     isLoading: contentsIsLoading,
+    //     isError: contentsIsError,
+    //     data: [contents, exampleFileHtml] = [],
+    // } = useQuery(
+    //     ['docsExampleContents', internalFramework, pageName, exampleName],
+    //     () => {
+    //         const getContents = fetch(
+    //             getExampleContentsUrl({
+    //                 internalFramework,
+    //                 pageName,
+    //                 exampleName,
+    //             })
+    //         ).then((res) => res.json());
 
-            const getExampleFileHtml = fetch(
-                getExampleUrl({
-                    internalFramework,
-                    pageName,
-                    exampleName,
-                })
-            ).then((res) => res.text());
-            return Promise.all([getContents, getExampleFileHtml]);
-        },
-        queryOptions
-    );
+    //         const getExampleFileHtml = fetch(
+    //             getExampleUrl({
+    //                 internalFramework,
+    //                 pageName,
+    //                 exampleName,
+    //             })
+    //         ).then((res) => res.text());
+    //         return Promise.all([getContents, getExampleFileHtml]);
+    //     },
+    //     queryOptions
+    // );
 
     useEffect(() => {
         if (!exampleName) {
@@ -106,6 +107,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleType, options, framework, 
                 internalFramework,
                 pageName,
                 exampleName,
+                importType,
             })
         );
         setExampleRunnerExampleUrl(
