@@ -32,7 +32,7 @@ The Figma file contains comprehensive documentation for how to use the design sy
 
 ## Customising the Design System
 
-The AG Grid design system utilises [Figma's native variables feature](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma) for all of it's customisable attributes. All of the [CSS variables](/global-style-customisation-variables/) used by the Quartz and Alpine themes are referenced within Figma and can be extended to your own theme.
+The AG Grid design system utilises [Figma's native variables feature](https://help.figma.com/hc/en-us/articles/15339657135383-Guide-to-variables-in-Figma) for all of its customisable attributes. All of the [CSS variables](/global-style-customisation-variables/) used by the Quartz and Alpine themes are referenced within Figma and can be extended to your own theme.
 
 You can find more information about how to create and manage themes within the Figma file under the **Create your own theme** page in the Figma file.
 

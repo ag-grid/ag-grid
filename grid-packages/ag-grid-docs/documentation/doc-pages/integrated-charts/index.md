@@ -26,4 +26,9 @@ An ever-expanding selection of chart types are provided.
 
 ## Next Up
 
-Continue to the next section to learn about: [Installing Integrated Charts](/integrated-charts-installation/).
+Explore how to chart grid data with Integrated Charts:
+
+- [User Created Charts](/integrated-charts-user-created/): charts created by users through the grid's UI.
+- [Application Created Charts](/integrated-charts-application-created/): charts created programmatically via the Grid API.
+
+Alternatively, continue to the next section to learn how to: [Install Integrated Charts](/integrated-charts-installation/).

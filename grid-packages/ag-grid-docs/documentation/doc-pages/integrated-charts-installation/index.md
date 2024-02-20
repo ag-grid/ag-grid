@@ -1,14 +1,15 @@
 ---
-title: "Charts Enterprise Installation"
+title: "Install Integrated Charts"
 enterprise: true
 ---
+This section shows how to install Integrated Charts using Modules or Packages. 
 
-## Charts Module
+## Integrated Charts Module
 
-To minimise bundle sizes for applications that do not require charting, charts are contained in a separate [AG Grid Module](/modules/),
-and has been built from the ground up with zero dependencies on any third party libraries.
+To reduce bundle sizes in applications that do not require charts, AG Grid provides a dedicated charts [AG Grid Module](/modules/),
+free from third-party library dependencies. This approach is recommended for most applications.
  
-The Charts module can be imported as follows:
+The Integrated Enterprise Charts module, which includes AG Charts Enterprise, can be imported as follows: 
 
 ```ts
 // Import minimal modules required for charts
@@ -19,15 +20,20 @@ import { GridChartsModule } from "@ag-grid-enterprise/charts-enterprise";
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule]);
 ```
 
-## Charts Package
+<note>
+| Integrated Community Charts can be imported from `@ag-grid-enterprise/charts`.
+</note>
 
-If you are not using ES6 Modules and are instead using the [bundled](/packages/) version of AG Grid Enterprise: 
+## Integrated Charts Package
+
+Applications that are not using ES6 Modules and are instead using the [bundled](/packages/) version of AG Grid Enterprise
+can install Integrated Enterprise Charts as follows:
 
 ```bash
-npm install --save ag-grid-enterprise-charts-enterpise
+npm install --save ag-grid-charts-enterpise
 ```
 
-Usage:
+Then in your code you can import the charts module as shown below:
 
 ```ts
 // import the AG Grid Enteprise package - this includes all enterprise features and performs all 
@@ -36,6 +42,12 @@ import  "ag-grid-charts-enterprise";
 
 // rest of your code 
 ```
+
+The `ag-grid-charts-enterpise` package includes AG Grid Enterprise and AG Charts Enterprise.
+
+<note>
+| Integrated Community Charts is included in the `ag-grid-enterprise` package.
+</note>
 
 ## Next Up
 

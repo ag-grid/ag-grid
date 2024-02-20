@@ -55,14 +55,14 @@
     "exported": "LicenseManager"
   },
   {
-    "title": "Charts<enterprise-icon></enterprise-icon>",
+    "title": "Integrated Community Charts<enterprise-icon></enterprise-icon>",
     "shortname": "charts",
     "module": "@ag-grid-enterprise/charts",
     "enterprise": true,
     "exported": "GridChartsModule"
   },
   {
-    "title": "Charts Enterprise<enterprise-icon></enterprise-icon>",
+    "title": "Integrated Enterprise Charts<enterprise-icon></enterprise-icon>",
     "shortname": "charts-enterprise",
     "module": "@ag-grid-enterprise/charts-enterprise",
     "enterprise": true,

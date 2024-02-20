@@ -33,7 +33,7 @@ The following artifacts are "`packages`" and are designed to work together:
     </tr>
     <tr>
         <td><code>ag-grid-charts-enterprise</code></td>
-        <td>All AG Grid & AG Charts Enterprise Features</td>
+        <td>AG Grid Enterprise & AG Charts Enterprise</td>
     </tr>
     </tbody>
 </table>
@@ -55,6 +55,10 @@ The following artifacts are "`packages`" and are designed to work together:
     <tr>
         <td><code>ag-grid-enterprise</code></td>
         <td>All Enterprise Features</td>
+    </tr>
+    <tr>
+        <td><code>ag-grid-charts-enterprise</code></td>
+        <td>AG Grid Enterprise & AG Charts Enterprise</td>
     </tr>
     <tr>
         <td><code>ag-grid-angular</code></td>
@@ -82,6 +86,10 @@ The following artifacts are "`packages`" and are designed to work together:
         <td>All Enterprise Features</td>
     </tr>
     <tr>
+        <td><code>ag-grid-charts-enterprise</code></td>
+        <td>AG Grid Enterprise & AG Charts Enterprise</td>
+    </tr>
+    <tr>
         <td><code>ag-grid-react</code></td>
         <td>React Support</td>
     </tr>
@@ -105,6 +113,10 @@ The following artifacts are "`packages`" and are designed to work together:
     <tr>
         <td><code>ag-grid-enterprise</code></td>
         <td>All Enterprise Features</td>
+    </tr>
+    <tr>
+        <td><code>ag-grid-charts-enterprise</code></td>
+        <td>AG Grid Enterprise & AG Charts Enterprise</td>
     </tr>
     <tr>
         <td><code>ag-grid-vue3</code></td>
