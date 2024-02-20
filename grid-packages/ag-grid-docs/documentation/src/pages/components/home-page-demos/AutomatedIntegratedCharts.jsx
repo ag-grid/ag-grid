@@ -16,7 +16,13 @@ import {
     trackHomepageExampleIntegratedCharts,
     trackOnceHomepageExampleIntegratedCharts,
 } from '../../../utils/analytics';
-import {agGridEnterpriseVersion, hostPrefix, isProductionBuild, localPrefix} from '../../../utils/consts';
+import {
+    agGridEnterpriseVersion,
+    hostPrefix,
+    integratedChartsUsesChartsEnterprise,
+    isProductionBuild,
+    localPrefix
+} from '../../../utils/consts';
 import { useIntersectionObserver } from '../../../utils/use-intersection-observer';
 import styles from './AutomatedIntegratedCharts.module.scss';
 
@@ -45,7 +51,7 @@ if (!isProductionBuild()) {
     helmet.push(
         <script
             key="enterprise-lib"
-            src={`https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`}
+            src={`https://cdn.jsdelivr.net/npm/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridEnterpriseVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.min.js`}
             type="text/javascript"
         />
     );

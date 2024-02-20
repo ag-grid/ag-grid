@@ -16,6 +16,9 @@ git reset grid-packages/ag-grid-react/lib
 git reset grid-packages/ag-grid-react/bundles/
 git reset grid-packages/ag-grid-enterprise/main.d.ts
 git reset grid-packages/ag-grid-enterprise/dist
+git reset grid-packages/ag-grid-charts-enterprise/main.d.ts
+git reset grid-packages/ag-grid-charts-enterprise/dist
+git reset grid-packages/ag-grid-charts-enterprise/styles
 git reset grid-packages/ag-grid-community/src/styles
 git reset grid-packages/ag-grid-vue3/dist
 git reset grid-packages/ag-grid-community/dist
