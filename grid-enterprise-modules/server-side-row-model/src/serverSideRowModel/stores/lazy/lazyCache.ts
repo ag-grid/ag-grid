@@ -2,11 +2,11 @@ import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSe
 import { BlockUtils } from "../../blocks/blockUtils";
 import { NodeManager } from "../../nodeManager";
 import { LazyStore } from "./lazyStore";
-import { LazyBlockLoader } from "./lazyBlockLoader";
 import { MultiIndexMap } from "./multiIndexMap";
 import { ServerSideRowModel } from "src/serverSideRowModel/serverSideRowModel";
 import { RowNodeSorter } from "@ag-grid-community/core";
 import { SortController } from "@ag-grid-community/core";
+import { LazyBlockLoadingService } from "./lazyBlockLoadingService";
 
 interface LazyStoreNode {
     id: string;
@@ -22,6 +22,7 @@ export class LazyCache extends BeanStub {
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
+    @Autowired('lazyBlockLoadingService') private lazyBlockLoadingService: LazyBlockLoadingService;
 
     /**
      * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
@@ -58,7 +59,6 @@ export class LazyCache extends BeanStub {
      * Sibling services - 1-1 relationships.
      */
     private store: LazyStore;
-    private rowLoader: LazyBlockLoader;
     private storeParams: ServerSideGroupLevelParams;
 
     /**
@@ -84,6 +84,7 @@ export class LazyCache extends BeanStub {
 
     @PostConstruct
     private init() {
+        this.lazyBlockLoadingService.subscribe(this);
         // initiate the node map to be indexed at 'index', 'id' and 'node' for quick look-up.
         // it's important id isn't first, as stub nodes overwrite each-other, and the first index is
         // used for iteration.
@@ -93,13 +94,13 @@ export class LazyCache extends BeanStub {
         this.nodesToRefresh = new Set();
 
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
-        this.rowLoader = this.createManagedBean(new LazyBlockLoader(this, this.store.getParentNode(), this.storeParams));
         this.getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
         this.isMasterDetail = this.gridOptionsService.get('masterDetail');
     }
 
     @PreDestroy
     private destroyRowNodes() {
+        this.lazyBlockLoadingService.unsubscribe(this);
         this.numberOfRows = 0;
         this.nodeMap.forEach(node => this.blockUtils.destroyRowNode(node.node));
         this.nodeMap.clear();
@@ -124,7 +125,7 @@ export class LazyCache extends BeanStub {
         if (node) {
             // if we have the node, check if it needs refreshed when rendered
             if (node.stub || node.__needsRefreshWhenVisible) {
-                this.rowLoader.queueLoadCheck();
+                this.lazyBlockLoadingService.queueLoadCheck();
             }
             return node;
         }
@@ -193,7 +194,7 @@ export class LazyCache extends BeanStub {
             node.setRowTop(rowBounds!.rowTop);
             this.nodeDisplayIndexMap.set(displayIndex, node);
         });
-        this.rowLoader.queueLoadCheck();
+        this.lazyBlockLoadingService.queueLoadCheck();
         return newNode;
     }
 
@@ -434,7 +435,7 @@ export class LazyCache extends BeanStub {
                 });
                 this.nodesToRefresh.delete(node);
 
-                if (this.rowLoader.getBlockStartIndexForIndex(index) === this.rowLoader.getBlockStartIndexForIndex(atStoreIndex)) {
+                if (this.getBlockStartIndex(index) === this.getBlockStartIndex(atStoreIndex)) {
                     // if the block hasn't changed and we have a nodes map, we don't need to refresh the original block, as this block
                     // has just been refreshed.
                     return node;
@@ -453,7 +454,12 @@ export class LazyCache extends BeanStub {
         if (data != null) {
             const defaultId = this.getPrefixedId(this.store.getIdSequence().next());
             this.blockUtils.setDataIntoRowNode(newNode, data, defaultId, undefined);
+
+            // don't allow the SSRM to listen to the dispatched row event, as it will
+            // compute extra unnecessary row updates
+            this.serverSideRowModel.setPaused(true);
             this.blockUtils.checkOpenByDefault(newNode);
+            this.serverSideRowModel.setPaused(false);
             this.nodeManager.addRowNode(newNode);
         }
 
@@ -476,7 +482,7 @@ export class LazyCache extends BeanStub {
         const blockStates: { [key: string]: Set<string> } = {};
 
         this.nodeMap.forEach(({ node, index }) => {
-            const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
+            const blockStart = this.getBlockStartIndex(index);
 
             if (!node.stub && !node.failedLoad) {
                 blockCounts[blockStart] = (blockCounts[blockStart] ?? 0) + 1;
@@ -485,7 +491,7 @@ export class LazyCache extends BeanStub {
             let rowState = 'loaded';
             if (node.failedLoad) {
                 rowState = 'failed';
-            } else if (this.rowLoader.isRowLoading(blockStart)) {
+            } else if (this.lazyBlockLoadingService.isRowLoading(this, blockStart)) {
                 rowState = 'loading';
             } else if (this.nodesToRefresh.has(node) || node.stub) {
                 rowState = 'needsLoading';
@@ -511,13 +517,13 @@ export class LazyCache extends BeanStub {
             const sortedStates = [...uniqueStates].sort((a, b) => (statePriorityMap[a] ?? 0) - (statePriorityMap[b] ?? 0));
             const priorityState = sortedStates[0];
 
-            const blockNumber = Number(blockStart) / this.rowLoader.getBlockSize();
+            const blockNumber = Number(blockStart) / this.getBlockSize();
 
             const blockId = blockPrefix ? `${blockPrefix}-${blockNumber}` : String(blockNumber);
             results[blockId] = {
                 blockNumber,
                 startRow: Number(blockStart),
-                endRow: Number(blockStart) + this.rowLoader.getBlockSize(),
+                endRow: Number(blockStart) + this.getBlockSize(),
                 pageStatus: priorityState,
                 loadedRowCount: blockCounts[blockStart] ?? 0,
             };
@@ -561,7 +567,7 @@ export class LazyCache extends BeanStub {
     }
 
     private markBlockForVerify(rowIndex: number) {
-        const [start, end] = this.rowLoader.getBlockBoundsForIndex(rowIndex);
+        const [start, end] = this.getBlockBounds(rowIndex);
         const lazyNodesInRange = this.nodeMap.filter((lazyNode) => lazyNode.index >= start && lazyNode.index < end);
         lazyNodesInRange.forEach(({ node }) => {
             node.__needsRefreshWhenVisible = true;
@@ -586,12 +592,12 @@ export class LazyCache extends BeanStub {
     public purgeStubsOutsideOfViewport() {
         const firstRow = this.api.getFirstDisplayedRowIndex();
         const lastRow = this.api.getLastDisplayedRowIndex();
-        const firstRowBlockStart = this.rowLoader.getBlockStartIndexForIndex(firstRow);
-        const [_, lastRowBlockEnd] = this.rowLoader.getBlockBoundsForIndex(lastRow);
+        const firstRowBlockStart = this.getBlockStartIndex(firstRow);
+        const [_, lastRowBlockEnd] = this.getBlockBounds(lastRow);
 
         this.nodeMap.forEach(lazyNode => {
             // failed loads are still useful, so we don't purge them
-            if (this.rowLoader.isRowLoading(lazyNode.index) || lazyNode.node.failedLoad) {
+            if (this.lazyBlockLoadingService.isRowLoading(this, lazyNode.index) || lazyNode.node.failedLoad) {
                 return;
             }
             if (lazyNode.node.stub && (lazyNode.index < firstRowBlockStart || lazyNode.index > lastRowBlockEnd)) {
@@ -603,7 +609,7 @@ export class LazyCache extends BeanStub {
     private getBlocksDistanceFromRow(nodes: LazyStoreNode[], otherDisplayIndex: number) {
         const blockDistanceToMiddle: { [key: number]: number } = {};
         nodes.forEach(({ node, index }) => {
-            const [blockStart, blockEnd] = this.rowLoader.getBlockBoundsForIndex(index);
+            const [blockStart, blockEnd] = this.getBlockBounds(index);
             if (blockStart in blockDistanceToMiddle) {
                 return;
             }
@@ -636,7 +642,7 @@ export class LazyCache extends BeanStub {
         // the start storeIndex of every displayed block in this store
         const blocksInViewport: Set<number> = new Set();
         this.nodeMap.forEach(({ index, node }) => {
-            const blockStart = this.rowLoader.getBlockStartIndexForIndex(index);
+            const blockStart = this.getBlockStartIndex(index);
             allLoadedBlocks.add(blockStart);
 
             const isInViewport = node.rowIndex! >= firstRowInViewport && node.rowIndex! <= lastRowInViewport;
@@ -670,7 +676,7 @@ export class LazyCache extends BeanStub {
 
         // all nodes which aren't cached or in the viewport, and so can be removed
         const disposableNodes = this.nodeMap.filter(({ node, index }) => {
-            const rowBlockStart = this.rowLoader.getBlockStartIndexForIndex(index);
+            const rowBlockStart = this.getBlockStartIndex(index);
             const rowBlockInViewport = rowBlockStart >= firstRowBlockStart && rowBlockStart <= lastRowBlockStart;
 
             return !rowBlockInViewport && !this.isNodeCached(node);
@@ -682,7 +688,7 @@ export class LazyCache extends BeanStub {
 
         const midViewportRow = firstRowInViewport + ((lastRowInViewport - firstRowInViewport) / 2);
         const blockDistanceArray = this.getBlocksDistanceFromRow(disposableNodes, midViewportRow);
-        const blockSize = this.rowLoader.getBlockSize();
+        const blockSize = this.getBlockSize();
 
         // sort the blocks by distance from middle of viewport
         blockDistanceArray.sort((a, b) => Math.sign(b[1] - a[1]));
@@ -898,7 +904,7 @@ export class LazyCache extends BeanStub {
             }
             this.nodesToRefresh.add(lazyNode.node);
         });
-        this.rowLoader.queueLoadCheck();
+        this.lazyBlockLoadingService.queueLoadCheck();
 
         if (this.isLastRowKnown && this.numberOfRows === 0) {
             this.numberOfRows = 1;
@@ -1099,9 +1105,33 @@ export class LazyCache extends BeanStub {
 
         if (remainingIdsToRemove.length > 0 && nodesToVerify.length > 0) {
             nodesToVerify.forEach(node => node.__needsRefreshWhenVisible = true);
-            this.rowLoader.queueLoadCheck();
+            this.lazyBlockLoadingService.queueLoadCheck();
         }
 
         return removedNodes;
+    }
+
+    /**
+     * Return the block size configured for this cache
+     */
+    public getBlockSize() {
+        return this.storeParams.cacheBlockSize || LazyBlockLoadingService.DEFAULT_BLOCK_SIZE;
+    }
+
+    /**
+     * Get the start index of the loading block for a given index
+     */
+    public getBlockStartIndex(storeIndex: number): number {
+        const blockSize = this.getBlockSize();
+        return storeIndex - (storeIndex % blockSize);
+    }
+
+    /**
+     * Get the start and end index of a block, given a row store index
+     */
+    public getBlockBounds(storeIndex: number): [number, number] {
+        const startOfBlock = this.getBlockStartIndex(storeIndex);
+        const blockSize = this.getBlockSize();
+        return [startOfBlock, startOfBlock + blockSize];
     }
 }

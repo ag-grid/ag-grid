@@ -58,7 +58,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('ssrmSortService') private sortListener: SortListener;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
     @Autowired('beans') private beans: Beans;
@@ -419,6 +418,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const rootStore = this.getRootStore();
         if (!rootStore) { return undefined; }
         return rootStore.getRowUsingDisplayIndex(index) as RowNode;
+    }
+
+    /**
+     * Pauses the store, to prevent it updating the UI. This is used when doing batch updates to the store.
+     */
+    public setPaused(paused: boolean): void {
+        this.pauseStoreUpdateListening = paused;
     }
 
     public expandAll(value: boolean): void {
