@@ -38,7 +38,7 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
     if (library === 'grid') {
         if (options.enterprise) {
             scriptPath = isUsingPublishedPackages()
-                ? `https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`
+                ? `https://cdn.jsdelivr.net/npm/ag-grid-${integratedChartsUsesChartsEnterprise && options.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise@${agGridEnterpriseVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise && options.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise.min.js`
                 : isDevelopment()
                     ? `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-${integratedChartsUsesChartsEnterprise && options.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise.js`
                     : `${localPrefix}/ag-grid-enterprise/dist/ag-grid-${integratedChartsUsesChartsEnterprise && options.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise.min.js`;

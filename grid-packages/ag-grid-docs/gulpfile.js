@@ -41,7 +41,7 @@ const populateDevFolder = () => {
         .concat(gridEnterpriseModules)
         .map(module => createCopyTask(`${module.rootDir}/**/*.*`, `${module.rootDir}/`, module.publishedName));
 
-    const chartsCommmunity = createChartsCopyTask('./node_modules/ag-charts-community/**/*.*', './node_modules/ag-charts-community', 'ag-charts-community');
+    const chartsCommunity = createChartsCopyTask('./node_modules/ag-charts-community/**/*.*', './node_modules/ag-charts-community', 'ag-charts-community');
     const chartsReact = createChartsCopyTask('./node_modules/ag-charts-react/**/*.*', './node_modules/ag-charts-react/', 'ag-charts-react');
     const chartsAngular = createChartsCopyTask('./node_modules/ag-charts-angular/**/*.*', './node_modules/ag-charts-angular/', 'ag-charts-angular');
     const chartsVue = createChartsCopyTask('./node_modules/ag-charts-vue/**/*.*', './node_modules/ag-charts-vue/', 'ag-charts-vue');
@@ -67,7 +67,7 @@ const populateDevFolder = () => {
         ...moduleCopyTasks,
         react, angular, vue, vue3,
         styles,
-        chartsCommmunity, chartsEnterprise, chartsReact, chartsAngular, chartsVue, chartsVue3,
+        chartsCommunity, chartsEnterprise, chartsReact, chartsAngular, chartsVue, chartsVue3,
         packageCommunity, packageEnterprise, packageGridChartsEnterprise, packageAngular, packageReact, packageVue, packageVue3
     );
 };

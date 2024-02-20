@@ -122,8 +122,9 @@ p.name {
     font-weight: var(--text-bold);
     letter-spacing: -0.05em;
 
+
     &.freePrice {
-        margin-bottom: 12px;
+        margin-bottom: 18px;
     }
 
     .developerText {
@@ -174,6 +175,7 @@ p.name {
         transform: translateX(5px);
     }
 }
+
 
 .fromText {
     margin-top: -25px;
