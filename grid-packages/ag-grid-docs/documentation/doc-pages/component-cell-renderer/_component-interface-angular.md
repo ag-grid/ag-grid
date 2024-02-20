@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="angular">
-|The interface for the cell renderer component is as follows:
+|The interface for the Cell Component is as follows:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -17,5 +17,22 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-The interface for the cell renderer parameters is as follows:
+|The Component is provided `props` containing, amoungst other things, the value to be rendered.
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+
+```ts
+class CustomButtonComponent implements ICellRendererAngularComp {
+  // ...
+  agInit(props: ICellRendererParams): void {
+    this.cellValue = props.value;
+  }
+  // ...
+```
+
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+|The provided `props` (interface ICellRendererParams) are:
 </framework-specific-section>

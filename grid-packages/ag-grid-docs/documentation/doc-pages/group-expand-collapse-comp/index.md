@@ -1,0 +1,79 @@
+---
+title: "Group Cell Component"
+enterprise: true
+---
+
+The Group Cell Component provides the expand and collapse functionatly when using Row Grouping, Master Detail or Tree Data. The Group Cell Component can be the [Provided Component](/group-cell-renderer/) that comes with the grid or a [Custom Component](/group-custom-group-comp/) that you provide youself.
+
+Where the Group Cell Component is configured depends on the [Display Type](/grouping-display-types/).
+
+## Single Column & Multi Column
+
+Display types [Single Column](/grouping-single-group-column/) and [Multiple Columns](/grouping-multiple-group-columns/) configure the Group Column Definition via the Grid Option `autoGroupColumnDef`. Part of this Column Definition is the Cell Component (`cellRenderer`).
+
+<snippet>
+const gridOptions = {
+    autoGroupColumnDef: {
+        headerName: 'My Group',
+        minWidth: 220,
+        cellRenderer: MyGroupCellRenderer,
+        cellRendererParams: {
+        }
+    },
+}
+</snippet>
+
+## Row Group Column
+
+Display type [Group Rows](/grouping-group-rows/) configures the Group Cell Component
+on the Grid Option `groupRowRenderer`. Note there is no Group Column, hence there is no Column Definition involved.
+
+<snippet>
+const gridOptions = {
+    groupRowRenderer: MyGroupCellRenderer,
+    groupRowRendererParams: {},
+    groupDisplayType: 'groupRows'
+}
+</snippet>
+
+## Custom Column
+
+Display type [Custom Column](/grouping-custom-group-columns/) configures the Group Cell Component on the Column Definitions.
+
+<snippet spaceBetweenProperties="true">
+const gridOptions = {
+    columnDefs: [
+        // Group Column (Custom)
+        { 
+            cellRenderer: 'agGroupCellRenderer', 
+            showRowGroup: true 
+        }
+    ], 
+    groupDisplayType: 'custom',
+};
+</snippet>
+
+## Dynamic Selection
+
+Dynamic selection is achieved using `cellRendererSelector`. This can be used to conditionally show the expand and collapse functionality.
+
+<snippet>
+const gridOptions = { 
+    autoGroupColumnDef: {
+        cellRendererSelector: (params) => {
+          if (['Australia', 'Norway'].includes(params.node.key)) {
+            return; // use Default Cell Renderer
+          }
+          return { component: 'agGroupCellRenderer' };      
+        },
+    },
+};
+</snippet>
+
+This example demonstrates Dynamic Selection.
+
+- The `autoGroupColumnDef` contains a `cellRendererSelector` to conditionally select the Group Cell Component.
+- The **Australia** and **Norway** group cells are using the Default Group Cell Component.
+
+<grid-example title='Conditionally Show Group Cell Renderer' name='custom-expand-collapse-cell' type='mixed' options='{"enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>
+

@@ -1,11 +1,11 @@
 <framework-specific-section frameworks="javascript">
-|## Cell Renderer Function
+|## Cell Component Function
 |
-|Instead of using a component, it's possible to use a simple function for a cell renderer. The function takes the same parameters as the cell renderer `init` method in the component variant. The function should return back  either a) a string of HTML or b) a DOM object.
+|Instead of using a class component, it's possible to use a function for a Cell Component. The function takes the same parameters as the Cell Component `init` method in the class variant. The function should return back  either a) a string of HTML or b) a DOM object.
 |
-|Use the function variant of a cell renderer if you have no refresh or cleanup requirements (ie you don't need to implement the refresh or destroy functions).
+|Use the function variant of a Cell Component if you have no refresh or cleanup requirements (ie you don't need to implement the refresh or destroy functions).
 |
-|Below are some simple examples of cell renderers provided as simple functions:
+|Below are some simple examples of Cell Components provided as simple functions:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">

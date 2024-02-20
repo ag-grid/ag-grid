@@ -1,13 +1,12 @@
 <framework-specific-section frameworks="javascript">
-|The interface for the cell renderer component is as follows:
-|
+|The interface for the Cell Component is as follows:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false} language="ts">
 |interface ICellRendererComp {
-|    // Optional - Params for rendering. The same params that are passed to the cellRenderer function.
-|    init?(params: ICellRendererParams): void;
+|    // Optional - props for rendering.
+|    init?(props: ICellRendererParams): void;
 |
 |    // Mandatory - Return the DOM element of the component, this is what the grid puts into the cell
 |    getGui(): HTMLElement;
@@ -25,5 +24,25 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-|The interface for the cell renderer parameters is as follows:
+|The Component is provided `props` containing, amoungst other things, the value to be rendered.
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+
+```ts
+class CustomButtonComponent {
+    // ...
+    init(props) {
+        // create the cell
+        this.eGui = document.createElement('div');
+        this.eGui.innerHTML = props.value;
+    }
+    // ...
+}
+```
+
+</framework-specific-section>
+
+<framework-specific-section frameworks="javascript">
+|The provided `props` (interface ICellRendererParams) are:
 </framework-specific-section>

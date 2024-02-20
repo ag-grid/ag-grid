@@ -2,11 +2,9 @@
 title: "Column Groups"
 ---
 
-Grouping columns allows you to have multiple levels of columns in your header and the ability, if you want, to 'open and close' column groups to show and hide additional columns.
+Columns can be grouped in the grid's header using Column Groups. This can be complimented with Open and Close functionality to show / hide Columns.
 
-Grouping columns is done by providing the columns in a tree hierarchy to the grid. There is no limit to the number of levels you can provide.
-
-Here is a code snippet of providing two groups of columns.
+Column Groups are configured by providing a hierachy of Column Definitions. If a Column Definition contains the `children` attribute then the grid treats it as a Column Group.
 
 <snippet>
 const gridOptions = {
@@ -33,41 +31,67 @@ const gridOptions = {
 }
 </snippet>
 
-Below shows an example of column group configuration.
-
-<grid-example title='Basic Grouping' name='basic-grouping' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
-
-## Column Definitions vs Column Group Definitions
-
-The list of Columns in `gridOptions.columnDefs` can be a mix of Columns and Column Groups.
-You can mix and match at will, every level can have any number of Columns and Column Groups and in any order.
-The difference in Column vs Column Group definitions is as follows:
-
-- The `children` attribute is mandatory for Column Groups and not applicable for Columns.
-- If a definition has a `children` attribute, it is treated as a Column Group. If it does not have a `children` attribute, it is treated as a Column.
-- Most other attributes are not common across groups and columns (eg `groupId` is only used for groups). If you provide attributes that are not applicable (eg you give a column a `groupId`) they will be ignored.
-
-## Showing / Hiding Columns
-
-A group can have children shown or hidden based on the open / closed state of the group. This is controlled by setting `columnGroupShow` on one or more of the children. When a child has `columnGroupShow` set, it behaves in the following way:
+Set the attribute `columnGroupShow` on groups children to set the expand and collapse policy as follows:
 
 - **`open`:** The child is only shown when the group is open.
 - **`closed`:** The child is only shown when the group is closed.
 - **`null`, `undefined`:** The child is always shown.
 
-If a group has any child with `columnGroupShow` set as `open` / `closed`, then the open / close icon will appear in the group header. Otherwise the icon will not be shown.
+<grid-example title='Basic Grouping' name='basic-grouping' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
-Having columns only show when closed is useful when you want to replace a column with others. For example, in the code snippet above (and the example below), the 'Total' column is replaced with other columns when the group is opened.
 
-If a group has an 'incompatible' set of children, then the group opening / closing will not be activated. An incompatible set is one which will have no columns visible at some point (i.e. all are set to 'open' or 'closed').
+## Selecting Components
 
-## Pinning and Groups
+By default the grid provided Header Group Component is used. To use a Custom Group Component set `headerGroupComponent` on the Column Definition.
+
+md-include:column-def-javascript.md
+md-include:column-def-vue.md
+
+See [Registering Components](../components/) for an overview of registering componnets.
+
+## Custom Group Component
+
+The example below shows a Custom Column Group Component.
+
+<grid-example title='Header Group' name='header-group-component' type='generated' options='{ "extras": ["fontawesome"] }'></grid-example>
+
+As with Column Headers, the grid will always handle resize and column moving. The Custom Component is responsible for the following:
+
+- **Group Open / Close:** If the group can expand (one or more columns visibility depends on the open / closed state of the group) then the Custom Component should handle the interaction with the user for opening and closing groups.
+
+md-include:group-component-interface-javascript.md
+md-include:group-component-interface-angular.md
+md-include:group-component-interface-react.md
+md-include:group-component-interface-vue.md
+
+<framework-specific-section frameworks="javascript,angular,vue">
+<interface-documentation interfaceName='IHeaderGroupParams' ></interface-documentation>
+</framework-specific-section>
+<framework-specific-section frameworks="react">
+<interface-documentation interfaceName='CustomHeaderGroupProps' ></interface-documentation>
+</framework-specific-section>
+
+md-include:open-close-javascript.md
+md-include:open-close-angular.md
+md-include:open-close-react.md
+md-include:open-close-vue.md
+
+## Groups & Column Pinning
 
 Pinned columns break groups. So if you have a group with 10 columns, 4 of which are inside the pinned area, two groups will be created, one with 4 (pinned) and one with 6 (not pinned).
 
-## Moving Columns and Groups
+## Groups & Column Moving
 
 If you move columns so that columns in a group are no longer adjacent, then the group will again be broken and displayed as one or more groups in the grid.
+
+Sometimes you want columns of the group to always stick together. To achieve this, set the column group property `marryChildren=true`. The example below demonstrates the following:
+
+- Both 'Athlete Details' and 'Sports Results' have `marryChildren=true`.
+- If you move columns inside these groups, you will not be able to move the column out of the group. For example, if you drag 'Athlete', it is not possible to drag it out of the 'Athlete Details' group.
+- If you move a non group column, e.g. Age, it will not be possible to place it in the middle of a group and hence impossible to break the group apart.
+- It is possible to place a column between groups (e.g. you can place 'Age' between the 'Athlete Details' and 'Sports Results').
+
+<grid-example title='Marry Children' name='marry-children' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
 ## Resizing Groups
 
@@ -89,7 +113,7 @@ const gridOptions = {
 }
 </snippet>
 
-## Align the Header Group Label To The Right
+## Text Alignment
 
 The labels in the grouping headers are positioned with `display: flex`. To make the group headers right-aligned, add the following rule set in your application, after the grid's stylesheets. Change the theme class to the one you use.
 
@@ -99,18 +123,7 @@ The labels in the grouping headers are positioned with `display: flex`. To make 
 }
 ```
 
-## Marry Children
-
-Sometimes you want columns of the group to always stick together. To achieve this, set the column group property `marryChildren=true`. The example below demonstrates the following:
-
-- Both 'Athlete Details' and 'Sports Results' have `marryChildren=true`.
-- If you move columns inside these groups, you will not be able to move the column out of the group. For example, if you drag 'Athlete', it is not possible to drag it out of the 'Athlete Details' group.
-- If you move a non group column, e.g. Age, it will not be possible to place it in the middle of a group and hence impossible to break the group apart.
-- It is possible to place a column between groups (e.g. you can place 'Age' between the 'Athlete Details' and 'Sports Results').
-
-<grid-example title='Marry Children' name='marry-children' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
-
-## Suppressing Sticky Label
+## Sticky Label
 
 When Column Groups are too wide, the **Header Label** is always visible while scrolling the grid horizontally. To suppress this behaviour, set the column group property `suppressStickyLabel=true`. The example below demonstrates the following:
 
@@ -119,9 +132,9 @@ When Column Groups are too wide, the **Header Label** is always visible while sc
 
 <grid-example title='Sticky Label' name='suppress-sticky-label' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 
-## Advanced Grouping Example
+## Mulitiple Levels
 
-And here, to hammer in the 'no limit to the number of levels or groups', we have a more complex example. The grid here doesn't make much sense, it's just using the same Olympic Winners data and going crazy with the column groups. The example also demonstrates the following features:
+This example demonstrates a grid with many levels. The example doesn't make sense, it's contrieved to demonstrate multip group levels. Note the following:
 
 - Using the API to open and close groups. To do this, you will need to provide your groups with an ID during the definition, or look up the groups ID via the API (as an ID is generated if you don't provide one).
 - Demonstrates `colDef.openByDefault` property, where it sets this on E and F groups, resulting in these groups appearing as open by default.
@@ -151,7 +164,7 @@ The example above shows adding and removing groups. It is also possible to add a
 
 <grid-example title='Group Changes 2' name='group-changes-2' type='generated'></grid-example>
 
-## Suppress Span Header Height
+## Column Height
 
 By default the grid will resize the header cell to span the whole height of the header container, as shown in the example below.
 
