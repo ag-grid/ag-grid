@@ -1,7 +1,18 @@
 <framework-specific-section frameworks="react">
-|When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
-|row values available to you via `props`.  
-|
-|The interface for values available on both the initial `props` value, as well as on future `props` updates or subsequent `refresh` calls
-|(see below for details on `refresh`) are as follows:
+|The Component is provided `props` containing, amoungst other things, the value to be rendered.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+
+```ts
+// this comp gets inserted into the Cell
+const CustomButtonComp = props => {
+    return <>{props.value}</>;
+};
+```
+
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|The provided `props` (interface CustomCellRendererProps) are:
 </framework-specific-section>

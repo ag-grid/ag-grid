@@ -136,6 +136,9 @@
             position: absolute;
             inset: 0;
             background-color: var(--color-util-brand-400);
+            #{$selector-darkmode} & {
+                background-color: color-mix(in srgb, var(--color-util-brand-700), var(--color-bg-primary) 20%);
+            }
             opacity: 0.15;
             pointer-events: none;
         }

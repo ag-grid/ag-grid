@@ -1,11 +1,11 @@
 <framework-specific-section frameworks="angular">
 <snippet transform={false}>
-|// define cellRenderer to be reused
+|// define Cell Component to be reused
 |@Component({
 |    selector: 'colour-cell',
 |    template: `&lt;span [style.colour]="params.color">{{params.value}}&lt;/span>`
 |})
-|class ColourCellRenderer implements ICellRendererAngularComp {
+|class ColourCellComp implements ICellRendererAngularComp {
 |    params!: ICellRendererParams;
 |
 |    agInit(params: ICellRendererParams) {
@@ -34,7 +34,7 @@
 |        {
 |            headerName: "Colour 1",
 |            field: "value",
-|            cellRenderer: ColourCellRenderer,
+|            cellRenderer: ColourCellComp,
 |            cellRendererParams: {
 |               color: 'guinnessBlack'
 |            }
@@ -42,14 +42,14 @@
 |        {
 |            headerName: "Colour 2",
 |            field: "value",
-|            cellRenderer: ColourCellRenderer,
+|            cellRenderer: ColourCellComp,
 |            cellRendererParams: {
 |               color: 'irishGreen'
 |            }
 |        }
 |    ];
 |
-|   ..other methods
+|   //...
 |}
 |
 </snippet>

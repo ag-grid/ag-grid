@@ -1,12 +1,11 @@
 <framework-specific-section frameworks="angular">
-|## Cell Renderer Function
+|## Cell Component Function
 |
-|Instead of using an Angular component, it's possible to use a simple function for a cell renderer.
+|Instead of using an Angular component, it's possible to use a function for a Cell Component.
 |
-|This is probably most useful if you have a simple String value to render and want to avoid the overhead of an actual Angular
-|component.
+|This is useful if you have a simple String value to render and want to avoid the overhead of an Angular component.
 |
-|In the example below we're outputting a simple string value that depends on the cell value:
+|In the example below we're outputting a string value that depends on the cell value:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -27,11 +26,11 @@
 |            cellRenderer: params => params.value > 1000 ? "LARGE VALUE" : "SMALL VALUE"
 |        }
 |     ];
-|     ..other methods
+|     //...
 |}
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-| It is also possible to write a JavaScript-based cell renderer function - refer to the [docs here](../../javascript-data-grid/component-cell-renderer/#cell-renderer-function) for more information
+| It is also possible to write a JavaScript-based Cell Renderer Component - refer to the [docs here](../../javascript-data-grid/component-cell-renderer/#cell-renderer-function) for more information
 </framework-specific-section>

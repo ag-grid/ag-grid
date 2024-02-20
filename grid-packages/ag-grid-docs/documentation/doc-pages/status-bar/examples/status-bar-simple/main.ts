@@ -24,8 +24,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowSelection: 'multiple',
   statusBar: {
     statusPanels: [
-      { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
-      { statusPanel: 'agTotalRowCountComponent', align: 'center' },
+      { statusPanel: 'agTotalAndFilteredRowCountComponent' },
+      { statusPanel: 'agTotalRowCountComponent' },
       { statusPanel: 'agFilteredRowCountComponent' },
       { statusPanel: 'agSelectedRowCountComponent' },
       { statusPanel: 'agAggregationComponent' },
