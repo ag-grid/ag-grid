@@ -2,16 +2,42 @@
 title: "Upgrading to AG Grid 31.1"
 ---
 
-TODO
+## What's New
+
+See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31-1/) for details of what's new in this minor version.
+
+## Codemods
+
+Follow these steps to upgrade your project's AG Grid version to `31.1.0`:
+
+1. Open a terminal and navigate to your project's root folder.
+
+2. Update any AG Grid dependencies listed in your project's `package.json` to version `31.1.0`.
+
+3. Run the `migrate` command of version `31.1` of the AG Grid codemod runner:
+
+    ```
+    npx @ag-grid-community/cli@31.1 migrate
+    ```
+
+    This will update your project's source files to prepare for the new release.
+
+    By default the Codemod runner will locate all source files within the current directory. For projects with more specific requirements, pass a list of input files to the `migrate` command, or specify the `--help` argument to see more fine-grained usage instructions.
+
+<note>
+The Codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
+</note>
+
+See the [Codemods](/codemods/) documentation for more details.
 
 <framework-specific-section frameworks="react">
 <h2 id="migrating-to-use-reactivecustomcomponents">Migrating Custom Components to Use reactiveCustomComponents Option</h2>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-|Custom components created without `reactiveCustomComponents` may require some changes in order to work with the setting enabled.
+|Custom components can now be created more easily by setting `reactiveCustomComponents`. Custom components built in an imperative way (without setting `reactiveCustomComponents`) may need to be rebuilt in order to work with the setting enabled. Using custom components built in an imperative way is now deprecated, and in AG Grid v32 the `reactiveCustomComponents` option will be `true` by default, and custom components built in an imperative way will still be supported as an optional behaviour.
 |
-|The following five component types require changes in order to migrate.
+|Please note that enabling this setting affects all custom components and you cannot use a mix of reactive custom components and imperative custom components in the same grid instance. 
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -69,3 +95,87 @@ TODO
 <framework-specific-section frameworks="react">
 |- If using `api.getStatusPanel`, the instance returned will now be a wrapper. To get the React custom status bar panel component, use the helper function `getInstance` with the returned wrapper instance. See [Accessing Status Bar Panel Instances](/component-status-bar/#accessing-status-bar-panel-instances).
 </framework-specific-section>
+
+## Deprecations
+
+This release includes the following deprecations:
+
+<framework-specific-section frameworks="react">
+<h3 id="react">React</h2>
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|- `AgReactUiProps` - deprecated, use `AgGridReactProps` instead.
+|- `AgGridReactProps.disableStaticMarkup`, `AgGridReactProps.legacyComponentRendering` - deprecated, as they are no longer used.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+The following React custom component interfaces are deprecated along with their methods:
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|- `getReactContainerStyle` and `getReactContainerClasses` - deprecated, apply styling directly to the CSS class `.ag-react-container` if needed. 
+|- `IHeaderGroupReactComp` - deprecated, use `IHeaderGroup` instead. 
+|- `IHeaderReactComp` - deprecated, use `IHeader` instead. 
+|- `IDateReactComp` - deprecated, use `IDate` instead. 
+|- `IFilterReactComp` - deprecated, use `IFilter` instead. 
+|- `IFloatingFilterReactComp` - deprecated, use `IFloatingFilter` instead.
+|- `ICellRendererReactComp` - deprecated, use `ICellRenderer` instead.
+|- `ICellEditorReactComp` - deprecated, use `ICellEditor` instead.
+|- `ILoadingCellRendererReactComp` - deprecated, no interface needed.
+|- `ILoadingOverlayReactComp` - deprecated, use `ILoadingOverlay` instead.
+|- `INoRowsOverlayReactComp` - deprecated, use `INoRowsOverlay` instead.
+|- `IStatusPanelReactComp` - deprecated, use `IStatusPanel` instead.
+|- `IToolPanelReactComp` - deprecated, use `IToolPanel` instead.
+|- `ITooltipReactComp` - deprecated, no interface needed.
+</framework-specific-section>
+
+### GridOptions
+
+* `gridOptions.cellFlashDelay` - deprecated, use `gridOptions.cellFlashDuration` instead.
+* `gridOptions.cellFadeDelay` - deprecated, use `gridOptions.cellFadeDuration` instead.
+* `colDef.floatingFilterComponentParams.suppressFilterButton` - deprecated, use `colDef.suppressFloatingFilterButton` instead.
+* `suppressServerSideInfiniteScroll` - deprecated without replacement.
+* `serverSideSortOnServer` - deprecated without replacement.
+* `serverSideFilterOnServer` - deprecated without replacement.
+
+### Column Filters
+
+* `api.getFilterInstance` - deprecated, use `api.getColumnFilterInstance` instead. To get/set individual filter models, use `api.getColumnFilterModel` or `api.setColumnFilterModel` instead. 
+
+### Column API
+
+* `suppressMenu` - deprecated, use `suppressHeaderMenuButton` instead.
+* `columnsMenuParams` - deprecated, use `columnChooserParams` instead. 
+* `column.getMenuTabs` - deprecated, use `columns.getColDef.menuTabs ?? defaultValues` instead.
+
+### Grid API 
+
+* `getModel` - deprecated.
+* `getModel().getRow(index)` - deprecated, use `api.getDisplayedRowAtIndex(index)` instead.
+* `getModel().getRowNode(id)` - deprecated, use `api.getRowNode(id)` instead.
+* `getModel().getRowCount()` - deprecated, use `api.getDisplayedRowCount()` instead.
+* `getModel().isEmpty()` - deprecated, use `!!api.getDisplayedRowCount()` instead.
+* `getModel().forEachNode()` - deprecated, use `api.forEachNode()` instead.
+* `getFirstDisplayedRow`  - deprecated, use `api.getFirstDisplayedRowIndex` instead. 
+* `getLastDisplayedRow`  - deprecated, use `api.getLastDisplayedRowIndex` instead.
+* `flashCells`, `flashDelay` and `fadeDelay` params are deprecated in favor of `flashDuration` and `fadeDuration` params.
+* `showColumnMenuAfterButtonClick` - deprecated, use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere.
+* `showColumnMenuAfterMouseClick` - deprecated, use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere.
+* `removeRowGroupColumn` - deprecated, use  `removeRowGroupColumns` providing the single string input param in an array instead.
+* `addRowGroupColumn` - deprecated, use `addRowGroupColumns` providing the single string input param in an array instead.
+* `setColumnPinned` - deprecated, use `setColumnsPinned` providing the single string input param in an array instead.
+* `removePivotColumn` - deprecated, use `removePivotColumns` providing the single string input param in an array instead.
+* `addPivotColumn` - deprecated, use `addPivotColumns` providing the single string input param in an array instead.
+* `addAggFunc` - deprecated, use `addAggFuncs` providing the single string input param in an array instead.
+* `removeValueColumn` - deprecated, use `removeValueColumns` providing the single string input param in an array instead.
+* `addValueColumn` - deprecated, use `addValueColumns` providing the single string input param in an array instead.
+* `autoSizeColumn` - deprecated, use `autoSizeColumns` providing the single string input param in an array instead.
+* `moveColumn` - deprecated, use `moveColumns` providing the single string input param in an array instead.
+* `setColumnWidth` - deprecated, use `setColumnWidths` providing the single string input param in an array instead.
+* `setColumnVisible` - deprecated, use `setColumnsVisible` providing the single string input param in an array instead.
+
+### Custom Components
+
+* When implementing a custom date component, `IDate.onParamsUpdated` has been deprecated in favour of `IDate.refresh`.
+* When implementing a custom floating filter component, `IFloatingFilter.onParamsUpdated` has been deprecated in favour of `IFloatingFilter.refresh`.

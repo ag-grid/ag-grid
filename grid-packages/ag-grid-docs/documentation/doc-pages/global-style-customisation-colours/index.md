@@ -36,30 +36,14 @@ Some of the most important colour variables are listed below. For the full list 
 There are a lot of colour variables - the easiest way to find the variable that colours a specific element is often to inspect the element in your browser's developer tools and check the value of its `color` or `background-color` properties.
 </note>
 
-## Colour blending, Sass and CSS
+## Colour blending
 
-The Sass API [Colour Blending](/global-style-customisation-sass/#colour-blending) feature will automatically generate a few default values for colour variables based on the ones that you define. If you're using CSS you may want to set these values yourself for a consistent colour scheme:
+The Quartz theme automatically generates semi-transparent versions of colour variables based on the ones that you define. For example if you set `--ag-active-color` to `red` then `--ag-range-selection-background-color` will default to a 20% opaque red.
 
-- Setting `--ag-alpine-active-color` in the Sass API will:
-    - Set `--ag-selected-row-background-color` to a **10%** opaque version
-    - Set `--ag-range-selection-background-color` to a **20%** opaque version
-    - Set `--ag-row-hover-color` to a **10%** opaque version
-    - Set `--ag-column-hover-color` to a **10%** opaque version
-    - Set `--ag-input-focus-border-color` to a **40%** opaque version
+If you're on a theme other than Quartz, you can achieve this effect yourself using the CSS [color-mix()](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix) function. Here is how you would set the range selection background to a 20% opaque red when using the Alpine theme:
 
-- Setting `--ag-balham-active-color` in the Sass API will:
-    - Set `--ag-selected-row-background-color` to a **10%** opaque version
-    - Set `--ag-range-selection-background-color` to a **20%** opaque version
-
-<note>
-|**Generating semi-transparent colours**
-|
-|To make a semi-transparent version of a colour, you can use one of these techniques. If your colour is defined as a 6-digit hex value (`#RRGGBB`) convert it to an 8-digit hex value (`#RRGGBBAA`). If your colour is defined as a rgb value (`rgb(R, G, B)`) add a fourth value to specificy opactity (`rgb(R, G, B, A)`).
-|
-|So for example, the color `deeppink` is hex `#FF1493` or rgb `rgb(255, 20, 147)`.
-|- 10% opaque: `#8800EE1A` or `rgb(255, 20, 147, 0.1)`
-|- 20% opaque: `#8800EE33` or `rgb(255, 20, 147, 0.2)`
-|- 30% opaque: `#8800EE4D` or `rgb(255, 20, 147, 0.3)`
-|- 40% opaque: `#8800EE66` or `rgb(255, 20, 147, 0.4)`
-|- 50% opaque: `#8800EE80` or `rgb(255, 20, 147, 0.5)`
-</note>
+```css
+.ag-theme-alpine {
+    --ag-range-selection-background-color: color-mix(in srgb, transparent, red 20%);
+}
+```

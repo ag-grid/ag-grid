@@ -148,6 +148,9 @@ function inbuiltStockThemeOverrides(params: ChartProxyParams, titleEnabled: bool
     const extraPadding = params.getExtraPaddingDirections();
     return {
         common: {
+            animation: {
+                duration: 500,
+            },
             axes: STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES,
             padding: {
                 // don't add extra padding when a title is present!

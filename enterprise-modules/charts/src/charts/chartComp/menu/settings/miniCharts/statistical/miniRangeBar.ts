@@ -62,7 +62,7 @@ export class MiniRangeBar extends MiniChartWithAxes {
             rect.y = barAlongX ? x : y;
             rect.width = barAlongX ? height : width;
             rect.height = barAlongX ? width : height;
-            rect.strokeWidth = 1;
+            rect.strokeWidth = 0;
             rect.crisp = true;
 
             return rect;

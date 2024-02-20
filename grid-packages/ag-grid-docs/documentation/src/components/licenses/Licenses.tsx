@@ -1,9 +1,7 @@
 import classnames from 'classnames';
 import React, { FunctionComponent, useState } from 'react';
 import { trackBuyButton } from '../../utils/analytics';
-import GridCommunity from '../../images/inline-svgs/pricing-community.svg';
-import GridEnterprise from '../../images/inline-svgs/pricing-enterprise.svg';
-import ChartsGrid from '../../images/inline-svgs/pricing-grid-charts.svg';
+
 // @ts-ignore
 import styles from '@design-system/modules/Licenses.module.scss';
 import { ComparisonTable } from '../../components/comparison-table/ComparisonTable';
@@ -27,17 +25,17 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         className: styles.gridLicense,
         id: 'community',
         subHeading: 'AG Grid Community',
-        description: 'Community support',
+        description: '',
         priceFullDollars: '0',
         launchPrice: null,
-        buyLink: 'https://ag-grid.com/javascript-data-grid/getting-started/',
+        buyLink: '/javascript-data-grid/getting-started/',
         tabGroup: 'grid'
     },
     {
         className: styles.gridLicense,
         id: 'enterprise-grid',
         subHeading: 'AG Grid Enterprise',
-        description: 'Enterprise support',
+        description: '',
         priceFullDollars: '999',
         launchPrice: null,
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
@@ -47,7 +45,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         className: styles.gridLicense,
         id: 'community',
         subHeading: 'AG Charts Community',
-        description: 'Community support',
+        description: '',
         priceFullDollars: '0',
         launchPrice: null,
         buyLink: 'https://charts.ag-grid.com/javascript/quick-start/',
@@ -57,7 +55,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         className: styles.gridLicense,
         id: 'enterprise-charts',
         subHeading: 'AG Charts Enterprise',
-        description: 'Enterprise support',
+        description: '',
         priceFullDollars: '399',
         launchPrice: '199',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
@@ -65,9 +63,9 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     },
     {
         className: styles.chartsLicense,
-        id: 'togther',
-        subHeading: 'AG Grid Bundle',
-        description: 'AG Grid + AG Charts Enterprise',
+        id: 'together',
+        subHeading: 'Enterprise Bundle',
+        description: 'AG Grid Enterprise &<br />AG Charts Enterprise',
         priceFullDollars: '1398',
         launchPrice: '1198',
         buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both',
@@ -81,10 +79,10 @@ const Price = ({ priceFullDollars, launchPrice }) => {
 
     return (
         <div className={styles.price}>
-            { hasCost && <span className={styles.developerText}>From</span> }
+            { hasCost && <span className={styles.fromText}>From</span> }
 
             <p className={classnames(styles.priceFullDollars, !hasCost ? styles.freePrice : '' )}>
-                <span>{ hasCost ? `$${ price }` : 'Free' }</span>
+                <span className={styles.priceCost}>{ hasCost ? `$${ price }` : 'Free' }</span>
 
                 { launchPrice && (
                     <>
@@ -94,7 +92,6 @@ const Price = ({ priceFullDollars, launchPrice }) => {
                     </>
                 )}
             </p>
-
             { hasCost && <p className={styles.developerText}>per developer</p> }
         </div>
     );
@@ -105,13 +102,13 @@ const License = (props: LicenseData) => {
 
     return (
         <>
-            <div className={styles.top} id={id}>
+            <div className={styles.top}>
                 { launchPrice && <span className={styles.limitedTimePill}>Limited time offer</span> }
                 { !launchPrice && <span className={styles.limitedTimeSpacer}></span> }
 
                 <div className={styles.licenseMeta}>
-                    <h2 className="">{subHeading}</h2>
-                    <p className="">{description}</p>
+                    <h2>{subHeading}</h2>
+                    <p dangerouslySetInnerHTML={{ __html: description }}></p>
                 </div>
 
                 <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
@@ -175,7 +172,7 @@ export const Licenses: FunctionComponent<{ isChecked: boolean }> = ({ isChecked 
                 };
 
                 return (
-                    <div key={data.id} className={classnames(styles.license, data.className)}>
+                    <div key={data.id} id={data.id} className={classnames(styles.license, data.className)}>
                         <License {...data} />
                         
                         <span className={styles.toggleFeatureBreakdownButton} onClick={toggleFeatureBreakdown}>

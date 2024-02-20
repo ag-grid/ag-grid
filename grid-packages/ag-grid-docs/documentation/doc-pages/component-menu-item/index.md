@@ -185,7 +185,7 @@ It is also possible to disable certain parts of the behaviour by returning an ob
 
 <interface-documentation interfaceName='IMenuConfigParams' config='{ "description": "" }'></interface-documentation>
 
-The following example demonstrates providing custom behaviour (in the column menu only). To allow for a full-width custom menu item alongside grid-provided ones, the default menu styling is overridden (see [Default Styling](/component-menu-item/#default-styling)).
+The following example demonstrates providing custom behaviour (in the column menu only) by including a filter as a menu item. To allow for a full-width custom menu item alongside grid-provided ones, the default menu styling is overridden (see [Default Styling](/component-menu-item/#default-styling)).
 
 <grid-example title='Menu Item Component Without Defaults' name='menu-item-without-defaults' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "clipboard", "range"] }'></grid-example>
 

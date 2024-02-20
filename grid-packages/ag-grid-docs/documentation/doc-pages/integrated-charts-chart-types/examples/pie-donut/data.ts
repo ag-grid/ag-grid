@@ -3,17 +3,18 @@ export async function getData(delay: number = 100): Promise<any[]> {
 }
 
 function generateData(): any[] {
-    const countries = [
-        'Ireland', 'Spain', 'United Kingdom', 'France', 'Germany',
-        'Luxembourg', 'Sweden', 'Norway', 'Italy', 'Greece',
-        'Iceland', 'Portugal', 'Malta', 'Brazil', 'Argentina',
-        'Colombia', 'Peru', 'Venezuela', 'Uruguay', 'Belgium',
+    return [
+        { "period": "Q1 2021", "recurring": 485829, "individual": 237438 },
+        { "period": "Q2 2021", "recurring": 512743, "individual": 245672 },
+        { "period": "Q3 2021", "recurring": 521938, "individual": 259371 },
+        { "period": "Q4 2021", "recurring": 535421, "individual": 271839 },
+        { "period": "Q1 2022", "recurring": 558329, "individual": 284738 },
+        { "period": "Q2 2022", "recurring": 572843, "individual": 298472 },
+        { "period": "Q3 2022", "recurring": 589372, "individual": 312849 },
+        { "period": "Q4 2022", "recurring": 601234, "individual": 327195 },
+        { "period": "Q1 2023", "recurring": 615928, "individual": 342839 },
+        { "period": "Q2 2023", "recurring": 628472, "individual": 358293 },
+        { "period": "Q3 2023", "recurring": 642839, "individual": 374829 },
+        { "period": "Q4 2023", "recurring": 657382, "individual": 391829 }
     ];
-
-    return countries.map((country, index) => ({
-        country,
-        gold: Math.floor(((index + 1 / 7) * 333) % 100),
-        silver: Math.floor(((index + 1 / 3) * 555) % 100),
-        bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
-    }));
 }

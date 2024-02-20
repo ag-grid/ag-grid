@@ -1,15 +1,24 @@
-import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ChartRef, ChartType} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ChartRef} from '@ag-grid-community/core';
 import {getData} from "./data";
 
 let gridApi: GridApi;
-let chartRef: ChartRef | undefined;
+let chartRef: ChartRef;
+
+
+const chartConfig: Record<'pie' | 'donut', { chartColumns: string[] }> = {
+  pie: {
+    chartColumns: ['period', 'individual'],
+  },
+  donut: {
+    chartColumns: ['period', 'recurring', 'individual'],
+  },
+};
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'country', width: 150, chartDataType: 'category' },
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze', chartDataType: 'series' },
+    { field: 'period', chartDataType: 'category', headerName: 'Financial Period', width: 150 },
+    { field: 'recurring', chartDataType: 'series', headerName: 'Recurring revenue' },
+    { field: 'individual', chartDataType: 'series', headerName: 'Individual sales' },
   ],
   defaultColDef: {
     flex: 1,
@@ -28,21 +37,28 @@ const gridOptions: GridOptions = {
 };
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
+  const chartType = 'pie';
   chartRef = params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as any,
+    chartType,
     cellRange: {
-      rowStartIndex: 6,
-      rowEndIndex: 7,
-      columns: ['country', 'gold', 'silver', 'bronze'],
+      rowStartIndex: 0,
+      rowEndIndex: 3,
+      columns: chartConfig[chartType].chartColumns,
     },
-    chartType: 'pie',
-  });
+  })!;
 }
 
-function updateChart(chartType: ChartType) {
+function updateChart(chartType: 'pie' | 'donut') {
   gridApi.updateChart({
     type: 'rangeChartUpdate',
-    chartId: `${chartRef?.chartId}`,
-    chartType: chartType
+    chartId: `${chartRef.chartId}`,
+    chartType,
+    cellRange: {
+      rowStartIndex: 0,
+      rowEndIndex: 3,
+      columns: chartConfig[chartType].chartColumns,
+    },
   });
 }
 

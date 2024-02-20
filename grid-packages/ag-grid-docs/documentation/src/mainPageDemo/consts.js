@@ -54,7 +54,7 @@ export const games = ["Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN"
     "Lost Cities", "Mad Gab", "Master Mind", "Nine Men's Morris", "Obsession", "Othello"
 ];
 
-export const booleanValues = [true, "true", false, "false"];
+export const booleanValues = [true, true, false, false];
 
 export const firstNames = ["Tony", "Andrew", "Kevin", "Bricker", "Dimple", "Gil", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
     "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
@@ -67,3 +67,8 @@ export const lastNames = ["Smith", "Connell", "Flanagan", "McGee", "Unalkat", "L
     "Keating", "Keegan", "Kingston", "Kobe"];
 
 export const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+export const LANGUAGES = ['English', 'Spanish', 'French', 'Portuguese', 'German', 'Swedish', 'Norwegian', 'Italian', 'Greek', 'Icelandic', 'Portuguese', 'Maltese'];
+
+export const COUNTRY_NAMES = ['Argentina', 'Brazil', 'Colombia', 'France', 'Germany', 'Greece', 'Iceland', 'Ireland', 'Italy',
+    'Malta', 'Portugal', 'Norway', 'Peru', 'Spain', 'Sweden', 'United Kingdom', 'Uruguay', 'Venezuela', 'Belgium', 'Luxembourg'];

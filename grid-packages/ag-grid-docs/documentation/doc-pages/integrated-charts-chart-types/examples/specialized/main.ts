@@ -1,16 +1,48 @@
-import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ChartRef, ChartType} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ChartRef, ChartType, ColDef} from '@ag-grid-community/core';
 import {getData} from "./data";
 
 let gridApi: GridApi;
-let chartRef: ChartRef | undefined;
+let chartRef: ChartRef;
+
+const heatmapColIds: string[] = [
+  'year',
+  'jan',
+  'feb',
+  'mar',
+  'apr',
+  'may',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'oct',
+  'nov',
+  'dec',
+];
+const heatmapColDefs: ColDef[] = [
+  { field: 'year', width: 150, chartDataType: 'category' },
+  { field: 'jan' },
+  { field: 'feb' },
+  { field: 'mar' },
+  { field: 'apr' },
+  { field: 'may' },
+  { field: 'jun' },
+  { field: 'jul' },
+  { field: 'aug' },
+  { field: 'sep' },
+  { field: 'oct' },
+  { field: 'nov' },
+  { field: 'dec' },
+];
+
+const waterfallColIds: string[] = ['financials', 'amount'];
+const waterfallColDefs: ColDef[] = [
+  { field: 'financials', width: 150, chartDataType: 'category' },
+  { field: 'amount', chartDataType: 'series' },
+];
 
 const gridOptions: GridOptions = {
-  columnDefs: [
-    { field: 'country', width: 150, chartDataType: 'category' },
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze', chartDataType: 'series' },
-  ],
+  columnDefs: heatmapColDefs,
   defaultColDef: {
     flex: 1,
     minWidth: 100,
@@ -22,25 +54,36 @@ const gridOptions: GridOptions = {
     defaultToolPanel: 'settings'
   },
   onGridReady : (params: GridReadyEvent) => {
-    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+    getData('heatmap').then(rowData => params.api.setGridOption('rowData', rowData));
   },
   onFirstDataRendered,
 };
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   chartRef = params.api.createRangeChart({
-    cellRange: {
-      columns: ['country', 'gold', 'silver', 'bronze'],
-    },
+    chartContainer: document.querySelector('#myChart') as any,
     chartType: 'heatmap',
-  });
+    cellRange: {
+      columns: heatmapColIds,
+    },
+  })!;
 }
 
-function updateChart(chartType: ChartType) {
-  gridApi.updateChart({
-    type: 'rangeChartUpdate',
-    chartId: `${chartRef?.chartId}`,
-    chartType: chartType
+function updateChart(chartType: 'heatmap' | 'waterfall') {
+  getData(chartType).then((rowData) => {
+    gridApi.setGridOption('rowData', rowData);
+    gridApi.setGridOption(
+        'columnDefs',
+        chartType === 'heatmap' ? heatmapColDefs : waterfallColDefs
+    );
+    gridApi.updateChart({
+      type: 'rangeChartUpdate',
+      chartId: chartRef.chartId,
+      chartType,
+      cellRange: {
+        columns: chartType === 'heatmap' ? heatmapColIds : waterfallColIds,
+      },
+    });
   });
 }
 

@@ -59,10 +59,10 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
                         { group &&
                             <h5>{group}</h5>
                         }
-                        
 
-                        {items.map(({title, items: childItems}) => (
-                            <MenuSection
+                        {items?.map((item) => {
+                            const {title, items: childItems} = item;
+                            return childItems ? <MenuSection
                                 key={`${title}-menu`}
                                 title={title}
                                 items={childItems}
@@ -75,8 +75,14 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
                                 setIsDocsButtonOpen={setIsDocsButtonOpen}
                                 hideChevrons={hideChevrons}
                                 expandAllGroups={expandAllGroups}
+                            /> : <MenuItem
+                                key={`${title}`}
+                                item={item}
+                                currentFramework={currentFramework}
+                                activeParentItems={activeParentItems}
+                                singleItem={true}
                             />
-                        ))}
+                        })}
                         {index < filteredMenuData.length - 1 && <hr/>}
                     </React.Fragment>
                 ))}
@@ -125,6 +131,7 @@ const MenuSection = ({title, items, currentFramework, activeParentItems, toggleA
                     {title}
                 </button>
             }
+
             <MenuGroup
                 group={{group: title, items}}
                 currentFramework={currentFramework}
@@ -145,7 +152,7 @@ const MenuGroup = ({group, currentFramework, isTopLevel, isActive, activeParentI
 
     // `useMemo` is worth it here as filtered items only change when switching frameworks.
     const filteredItems = useMemo(() => {
-        return items.filter(item => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)));
+        return items?.filter(item => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)));
     }, [items, currentFramework]);
 
     const topLevelElementId = isTopLevel ? toElementId(group.group) : null;
@@ -153,7 +160,7 @@ const MenuGroup = ({group, currentFramework, isTopLevel, isActive, activeParentI
     return (
         <Collapsible id={topLevelElementId} isDisabled={!isTopLevel} isOpen={isTopLevel && isActive}>
             <ul id={topLevelElementId} className={classnames(styles.menuGroup, 'list-style-none')}>
-                {filteredItems.map(item => (
+                {filteredItems?.map(item => (
                     <MenuItem
                         key={item.title}
                         item={item}
@@ -168,7 +175,7 @@ const MenuGroup = ({group, currentFramework, isTopLevel, isActive, activeParentI
     );
 }
 
-const MenuItem = ({item, currentFramework, activeParentItems}) => {
+const MenuItem = ({item, currentFramework, activeParentItems, singleItem}) => {
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
     const { width } = useWindowSize();
     const isDesktop = width >= SITE_HEADER_SMALL_WIDTH;
@@ -177,15 +184,10 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
         return parentItem.url ? parentItem.url === item.url : parentItem.title === item.title;
     }), [item, activeParentItems]);
 
-    const bootstrapCollapseProps = item.absoluteUrl ? {} : {
-        "data-toggle": "collapse",
-        "data-target": "#side-nav"
-    }
-
     return (
         <li>
             {item.url ? (
-                item.absoluteUrl ? 
+                item.absoluteUrl ?
                     (
                         <a href={item.url}>
                             {item.title}
@@ -202,7 +204,7 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
                             to={convertToFrameworkUrl(item.url, currentFramework)}
                             activeClassName={styles.activeMenuItem}
                             target={item.newWindow ? '_blank' : '_self'}
-                            className={isActiveParent ? styles.activeItemParent : undefined}
+                            className={classnames(isActiveParent ? styles.activeItemParent : undefined, singleItem ? styles.singleItem : undefined)}
                             onClick={(event) => {
                                 isDocsButtonOpen && setIsDocsButtonOpen(false);
 

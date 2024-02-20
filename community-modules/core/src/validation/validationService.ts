@@ -104,7 +104,7 @@ export class ValidationService extends BeanStub {
 
                 let allRegistered = true;
                 modules.forEach(m => {
-                    if (!ModuleRegistry.__assertRegistered(m, String(key), this.gridOptionsService.getGridId())) {
+                    if (!ModuleRegistry.__assertRegistered(m, String(key), this.context.getGridId())) {
                         allRegistered = false;
                         warnings.add(`${String(key)} is only available when ${m} is loaded.`);
                     }

@@ -312,9 +312,6 @@ export class GridOptionsService {
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
 
-    public getGridId(): string {
-        return this.api.getGridId();
-    }
 
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we

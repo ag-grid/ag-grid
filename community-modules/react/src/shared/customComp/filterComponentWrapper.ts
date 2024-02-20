@@ -39,13 +39,10 @@ export class FilterComponentWrapper extends CustomComponentWrapper<IFilterParams
     }
 
     protected getProps(): CustomFilterProps {
-        const props: CustomFilterProps = {
-            ...this.sourceParams,
-            model: this.model,
-            onModelChange: this.onModelChange,
-            onUiChange: this.onUiChange,
-            key: this.key
-        } as any;
+        const props = super.getProps();
+        props.model = this.model;
+        props.onModelChange = this.onModelChange;
+        props.onUiChange = this.onUiChange;
         // remove props in IFilterParams but not CustomFilterProps
         delete (props as any).filterChangedCallback;
         delete (props as any).filterModifiedCallback;

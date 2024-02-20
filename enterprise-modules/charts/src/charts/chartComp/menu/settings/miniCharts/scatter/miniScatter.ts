@@ -32,7 +32,7 @@ export class MiniScatter extends MiniChartWithAxes {
         data.forEach(series => {
             series.forEach(([x, y]) => {
                 const arc = new _Scene.Arc();
-                arc.strokeWidth = 1;
+                arc.strokeWidth = 0;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
                 arc.radius = 2.5;

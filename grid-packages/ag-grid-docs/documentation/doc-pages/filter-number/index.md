@@ -4,7 +4,7 @@ title: "Number Filter"
 
 Number Filters allow you to filter number data.
 
-<image-caption src="filter-number/resources/number-filter.png" alt="Number Filter" width="12.5rem" centered="true" toggleDarkMode="true"></image-caption>
+<image-caption src="filter-number/resources/number-filter.png" alt="Number Filter" centered="true" toggleDarkMode="true"></image-caption>
 
 ## Enabling Number Filters
 

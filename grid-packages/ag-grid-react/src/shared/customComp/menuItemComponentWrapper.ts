@@ -33,13 +33,10 @@ export class MenuItemComponentWrapper extends CustomComponentWrapper<IMenuItemPa
     }
 
     protected getProps(): CustomMenuItemProps {
-        const props: CustomMenuItemProps = {
-            ...this.sourceParams,
-            active: this.active,
-            expanded: this.expanded,
-            onActiveChange: this.onActiveChange,
-            key: this.key
-        } as any;
+        const props = super.getProps();
+        props.active = this.active;
+        props.expanded = this.expanded;
+        props.onActiveChange = this.onActiveChange;
         // remove props in IMenuItemParams but not CustomMenuItemProps
         delete (props as any).onItemActivated;
         return props;

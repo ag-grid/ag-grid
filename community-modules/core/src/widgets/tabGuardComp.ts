@@ -28,6 +28,10 @@ export class TabGuardComp extends Component {
          * Set to true to create a circular focus pattern when keyboard tabbing.
          */
         focusTrapActive?: boolean;
+        /**
+         * Set to true to find a focusable element outside of the TabGuards to focus
+         */
+        forceFocusOutWhenTabGuardsAreEmpty?: boolean;
     }) {
         this.eTopGuard = this.createTabGuard('top');
         this.eBottomGuard = this.createTabGuard('bottom');
@@ -54,8 +58,8 @@ export class TabGuardComp extends Component {
             focusInnerElement: params.focusInnerElement,
             handleKeyDown: params.handleKeyDown,
             onTabKeyDown: params.onTabKeyDown,
-            shouldStopEventPropagation: params.shouldStopEventPropagation
-            
+            shouldStopEventPropagation: params.shouldStopEventPropagation,
+            forceFocusOutWhenTabGuardsAreEmpty: params.forceFocusOutWhenTabGuardsAreEmpty
         }));
     }
 

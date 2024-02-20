@@ -6,6 +6,7 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
     private readonly stroke = 'gray';
     private gridLines: _Scene.Path[];
     protected showRadiusAxisLine: boolean = true;
+    protected showAngleAxisLines: boolean = true;
 
     constructor(container: HTMLElement, tooltipName: string) {
         super(container, tooltipName);
@@ -18,12 +19,12 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
         const combinedPadding = padding * 2;
 
         const axisLineRadius = (size - combinedPadding) / 2;
-        const gridRadii = [
+        const gridRadii = this.showAngleAxisLines ? [
             axisLineRadius,
             axisLineRadius * 0.8,
             axisLineRadius * 0.6,
             axisLineRadius * 0.4,
-        ];
+        ] : [];
 
         const radiusAxisLine = new _Scene.Line();
         radiusAxisLine.x1 = size / 2;
@@ -51,6 +52,6 @@ export abstract class MiniChartWithPolarAxes extends MiniChart {
         const root = this.root;
 
         root.append(radiusAxisLine);
-        root.append(this.gridLines);
+        if (this.gridLines.length > 0) root.append(this.gridLines);
     }
 }

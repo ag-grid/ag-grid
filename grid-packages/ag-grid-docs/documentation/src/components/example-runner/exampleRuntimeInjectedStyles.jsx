@@ -80,14 +80,6 @@ html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart se
     border: 1px solid rgb(0,0,0,0.1);
 }
 
-html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']):hover {
-    background-color: #2a343e;
-}
-
-html[data-color-scheme='light'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']):hover {
-    background-color: rgba(0,0,0, 0.1);
-}
-
 html[data-color-scheme='dark'] input:not(.ag-root-wrapper input):not(.ag-chart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']):not(.flatpickr-calendar input) {
     appearance: none;
     background-color: #202A34;
@@ -108,6 +100,25 @@ html[data-color-scheme='light'] input:not(.ag-root-wrapper input):not(.ag-chart 
 
 html[data-color-scheme='dark'] body {
   color: #fff;
+}
+
+html textarea {
+  padding: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: 8px;
+  color: #0c111d;
+  border: 1px solid rgba(0,0,0, 0.2);
+}
+
+html[data-color-scheme='dark'] textarea {
+  border: 1px solid rgba(255,255,255, 0.2);
+  background-color: #0c111d;
+  color: #fff;
+}
+
+html[data-color-scheme='dark'] textarea::placeholder {
+  color: #98a2b3;
 }
 
 #myChart, .my-chart {

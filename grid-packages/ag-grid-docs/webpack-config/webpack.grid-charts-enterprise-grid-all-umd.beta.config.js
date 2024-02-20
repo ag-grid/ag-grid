@@ -69,7 +69,7 @@ module.exports = merge(common, {
         extensions: [".ts", ".tsx", ".js"]
     },
     output: {
-        filename: 'ag-grid-enterprise-charts-enterprise.js',
+        filename: 'ag-grid-charts-enterprise.js',
         library: ['agGrid'],
         libraryTarget: 'umd',
         publicPath: '/',

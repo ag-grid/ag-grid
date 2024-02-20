@@ -26,19 +26,9 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
     public checkOpenByDefault(rowNode: RowNode): void {
         if (!rowNode.isExpandable()) { return; }
 
-        const expandRowNode = () => {
-            // we do this in a timeout, so that we don't expand a row node while in the middle
-            // of setting up rows, setting up rows is complex enough without another chunk of work
-            // getting added to the call stack. this is also helpful as openByDefault may or may
-            // not happen (so makes setting up rows more deterministic by expands never happening)
-            // and also checkOpenByDefault is shard with both store types, so easier control how it
-            // impacts things by keeping it in new VM turn.
-            window.setTimeout(() => rowNode.setExpanded(true), 0);
-        }
-
         if (this.queuedRowIds.has(rowNode.id!)) {
             this.queuedRowIds.delete(rowNode.id!);
-            expandRowNode();
+            rowNode.setExpanded(true);
             return;
         }
 
@@ -53,7 +43,7 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
         const userFuncRes = userFunc(params);
 
         if (userFuncRes) {
-            expandRowNode();
+            rowNode.setExpanded(true);
         }
     }
 

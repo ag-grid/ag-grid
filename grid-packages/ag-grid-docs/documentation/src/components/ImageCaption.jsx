@@ -22,7 +22,8 @@ const ImageCaption = ({
     minwidth: minWidth,
     width,
     toggledarkmode: toggleDarkMode,
-    filterdarkmode: filterDarkMode
+    filterdarkmode: filterDarkMode,
+    auto,
 }) => {
     const { fluidImages, images } = useImageFileNodes();
     const { darkMode } = useGlobalContext();
@@ -78,6 +79,7 @@ const ImageCaption = ({
         throw new Error(`Could not find requested image: ${src}`);
     }
 
+
     return (
         <div
             className={classnames(styles.imageCaption, {
@@ -89,7 +91,7 @@ const ImageCaption = ({
         >
             {descriptionTop && description}
             {src.endsWith('.gif') ? (
-                <Gif src={src} alt={alt} className={styles.image} wrapped={true} toggledarkmode={toggleDarkMode} />
+                <Gif src={src} alt={alt} className={styles.image} wrapped={true} toggledarkmode={toggleDarkMode} autoPlay={!!auto} />
             ) : (
                 <img src={imgSrc} className={styles.image} alt={alt} />
             )}

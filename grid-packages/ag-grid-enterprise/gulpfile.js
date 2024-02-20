@@ -123,6 +123,15 @@ const copyAndConcatMainTypings = () => {
         ...typingsDirs,
         './dist/lib/agGridCoreExtension.d.ts'
     ])
+        .pipe(replace('import { time, AgChart } from "ag-charts-community";', 'import * as AgCharts from "ag-charts-community"'))
+        .pipe(replace(`export declare const agCharts: {
+    time: typeof time;
+    AgChart: typeof AgChart;
+};`,
+            `export declare const agCharts: {
+    time: typeof AgCharts.time;
+    AgChart: typeof AgCharts.AgChart;
+};`))
         .pipe(replace(`import * as agCharts from 'ag-charts-community';
 declare module 'ag-grid-community' {
     interface AgChartThemeOverrides extends agCharts.AgChartThemeOverrides {
@@ -132,10 +141,24 @@ declare module 'ag-grid-community' {
     interface AgChartThemeDefinition extends agCharts.AgChartTheme {
     }
 }
-`, ''))
+`, `
+declare module 'ag-grid-community' {
+    interface AgChartThemeOverrides extends AgCharts.AgChartThemeOverrides {
+    }
+    interface AgChartThemePalette extends AgCharts.AgChartThemePalette {
+    }
+    interface AgChartThemeDefinition extends AgCharts.AgChartTheme {
+    }
+}
+`))
+        .pipe(replace("export * from './agGridCoreExtension';", ''))
+        .pipe(replace('export { EnterpriseCoreModule } from "./agGridEnterpriseModule";', ''))
+        .pipe(replace('export { ExcelExportModule } from "./excelExportModule";', ''))
+        .pipe(replace("export { SetFilterModule } from './setFilterModule';", ''))
+        .pipe(replace('export { GridChartsModule } from "./gridChartsModule";', ''))
         .pipe(replace('export * from "ag-charts-community";', 'export * from "./ag-charts-community/main";'))
-        .pipe(replace("\"ag-charts-community\"", '"./ag-charts-community"'))
-        .pipe(replace("'ag-charts-community'", "'./ag-charts-community'"))
+        .pipe(replace("\"ag-charts-community\"", '"./ag-charts-community/main"'))
+        .pipe(replace("'ag-charts-community'", "'./ag-charts-community/main'"))
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
 };
@@ -179,6 +202,7 @@ const copyGridAllUmdFiles = (done) => {
 
     return gulp.src([
         './node_modules/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise*.*js',
+        './node_modules/@ag-grid-enterprise/all-modules/dist/ag-grid-charts-enterprise*.*js',
         '!./node_modules/@ag-grid-enterprise/all-modules/dist/**/*.cjs*.js'])
         .pipe(gulp.dest('./dist/'));
 };

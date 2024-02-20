@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-dev",
-  "version": "31.0.2",
+  "version": "31.1.0",
   "description": "AG Grid Package Tests",
   "main": "index.js",
   "private": true,
@@ -24,7 +24,7 @@
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.4.2",
     "@types/jest": "^29.5.12",
-    "ag-grid-community": "^31.0.3",
+    "ag-grid-community": "~31.1.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "ts-jest": "^29.1.2",

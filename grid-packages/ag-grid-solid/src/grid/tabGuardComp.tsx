@@ -5,8 +5,9 @@ import { BeansContext } from "./core/beansContext";
 interface TabGuardProps {
     children: JSX.Element,
     eFocusableElement: HTMLDivElement,
-    onTabKeyDown: (e: KeyboardEvent) => void,
     gridCtrl: GridCtrl,
+    forceFocusOutWhenTabGuardsAreEmpty?: boolean;
+    onTabKeyDown: (e: KeyboardEvent) => void,
     ref: (ref: TabGuardRef)=>void
 }
 
@@ -16,7 +17,7 @@ export interface TabGuardRef {
 
 const TabGuardComp = (props: TabGuardProps)=> {
 
-    const { children, eFocusableElement, onTabKeyDown, gridCtrl } = props;
+    const { children, eFocusableElement, onTabKeyDown, gridCtrl, forceFocusOutWhenTabGuardsAreEmpty } = props;
     const [tabIndex, setTabIndex] = createSignal<number>();
 
     let eTopGuard: HTMLDivElement;
@@ -36,8 +37,8 @@ const TabGuardComp = (props: TabGuardProps)=> {
             eTopGuard: eTopGuard,
             eBottomGuard: eBottomGuard,
             eFocusableElement: eFocusableElement,
-            
             onTabKeyDown: onTabKeyDown,
+            forceFocusOutWhenTabGuardsAreEmpty: forceFocusOutWhenTabGuardsAreEmpty,
             focusInnerElement: fromBottom => gridCtrl.focusInnerElement(fromBottom)
         }));
 
@@ -48,7 +49,7 @@ const TabGuardComp = (props: TabGuardProps)=> {
         });
     });
 
-    onCleanup( ()=> context.destroyBean(ctrl) );
+    onCleanup(() => context.destroyBean(ctrl) );
 
     return (
         <>
