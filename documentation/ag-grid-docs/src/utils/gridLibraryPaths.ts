@@ -9,7 +9,7 @@ export const getGridScriptPath = (sitePrefix?: string) => {
     return pathJoin(sitePrefixUrl, '/dev/ag-grid-community/dist/umd/ag-grid-community.js');
 };
 
-export const getChartEnterpriseScriptPath = (sitePrefix?: string) => {
+export const getGridEnterpriseScriptPath = (sitePrefix?: string) => {
     if (USE_PUBLISHED_PACKAGES) {
         return PUBLISHED_UMD_URLS['ag-grid-enterprise'];
     }

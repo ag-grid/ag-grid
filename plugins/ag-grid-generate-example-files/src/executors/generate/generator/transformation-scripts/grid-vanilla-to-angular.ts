@@ -1,7 +1,7 @@
-import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput } from './angular-utils';
+import { integratedChartsUsesChartsEnterprise } from "../constants";
+import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getIntegratedDarkModeCode,getModuleRegistration,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
-import {integratedChartsUsesChartsEnterprise} from "../constants";
+import { addBindingImports, addGenericInterfaceImport, getActiveTheme, getIntegratedDarkModeCode, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi, removeFunctionKeyword, removeModuleRegistration, replaceGridReadyRowData } from './parser-utils';
 import { toTitleCase } from './string-utils';
 const path = require('path');
 
@@ -74,8 +74,6 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
         addBindingImports(bImports, imports, false, true);
     }
 
-    imports.push(...getModuleRegistration(bindings));
-
     return imports;
 }
 
@@ -84,7 +82,7 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
     if (gridSettings.enterprise) {
-        imports.push(`import 'ag-grid-enterprise${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? '-charts-enterprise' : ''}';`);
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
@@ -284,6 +282,10 @@ ${bindings.utils.join('\n')}
 
         // Until we support this cleanly.
         generatedOutput = handleRowGenericInterface(generatedOutput, tData);
+
+        if(importType === 'packages') {
+            generatedOutput = removeModuleRegistration(generatedOutput);
+        }
 
         return generatedOutput;
     };

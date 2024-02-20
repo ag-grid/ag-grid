@@ -1,7 +1,7 @@
-import { getActiveTheme, getIntegratedDarkModeCode, getModuleRegistration, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
-import { getImport, toOutput } from './vue-utils';
+import { integratedChartsUsesChartsEnterprise } from "../constants";
 import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
-import {integratedChartsUsesChartsEnterprise} from "../constants";
+import { getActiveTheme, getIntegratedDarkModeCode, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
+import { getImport, toOutput } from './vue-utils';
 const path = require('path');
 
 function getOnGridReadyCode(bindings: any): string {
@@ -67,8 +67,6 @@ function getModuleImports(bindings: any, componentFileNames: string[], allStyles
         imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));
     }
 
-    imports = [...imports, ...getModuleRegistration(bindings)]
-
     return imports;
 }
 
@@ -81,7 +79,7 @@ function getPackageImports(bindings: any, componentFileNames: string[], allStyle
     ];
 
     if (gridSettings.enterprise) {
-        imports.push(`import 'ag-grid-enterprise${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? '-charts-enterprise' : ''}';`);
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");

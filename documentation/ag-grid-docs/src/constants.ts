@@ -22,6 +22,27 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
 
 export const IMPORT_TYPES: ImportType[] = ['modules', 'packages'];
 
+export const agGridVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
+export const agGridEnterpriseVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
+export const agGridReactVersion = import.meta?.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
+export const agGridAngularVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
+export const agGridVueVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
+export const agGridVue3Version = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? 'unknown';
+
+export const NPM_CDN = 'https://cdn.jsdelivr.net/npm';
+export const PUBLISHED_URLS = {
+    'ag-grid-react': `${NPM_CDN}/ag-grid-react@${agGridReactVersion}/`,
+    'ag-grid-angular': `${NPM_CDN}/ag-grid-angular@${agGridAngularVersion}/`,
+    'ag-grid-vue': `${NPM_CDN}/ag-grid-vue@${agGridVueVersion}/`,
+    'ag-grid-vue3': `${NPM_CDN}/ag-grid-vue3@${agGridVueVersion}/`,
+    'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/package/main.cjs.js`,
+    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridVersion}/dist/package/main.cjs.js`,
+};
+export const PUBLISHED_UMD_URLS = {
+    'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/umd/ag-grid-community.js`,
+    'ag-grid-enterprise': `${NPM_CDN}/ag-grid-enterprise@${agGridVersion}/dist/umd/ag-grid-enterprise.js`,
+};
+
 export const DOCS_TAB_ITEM_ID_PREFIX = 'reference-';
 
 /**
@@ -46,6 +67,7 @@ export const SITE_URL = import.meta.env?.SITE_URL || import.meta.env?.PUBLIC_SIT
 
 export const STAGING_SITE_URL = 'https://grid-staging.ag-grid.com';
 export const PRODUCTION_SITE_URL = 'https://ag-grid.com';
+export const USE_PUBLISHED_PACKAGES = ['1', 'true'].includes(import.meta.env?.PUBLIC_USE_PUBLISHED_PACKAGES);
 
 /**
  * Number of URL segments in `SITE_BASE_URL`
@@ -53,6 +75,6 @@ export const PRODUCTION_SITE_URL = 'https://ag-grid.com';
 export const SITE_BASE_URL_SEGMENTS = SITE_BASE_URL?.split('/').filter(Boolean).length || 0;
 
 /**
- * URL prefix to serve files for dev server
+ * URL prefix to serve files
  */
-export const DEV_FILE_BASE_PATH = '/dev';
+export const FILES_BASE_PATH = '/files';

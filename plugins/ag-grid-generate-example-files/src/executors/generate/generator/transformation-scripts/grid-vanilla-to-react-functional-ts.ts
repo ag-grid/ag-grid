@@ -1,9 +1,10 @@
+import { basename } from "path";
+import { integratedChartsUsesChartsEnterprise } from "../constants";
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
-import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
-import {integratedChartsUsesChartsEnterprise} from "../constants";
-import { PropertyKeys } from "./eventKeys";
-const path = require('path');
+import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
+import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, EventAndCallbackNames, getImport, getValueType } from './react-utils';
+
+
 
 function getModuleImports(bindings: any, componentFilenames: string[], extraCoreTypes: string[], allStylesheets: string[]): string[] {
     let imports = [
@@ -20,7 +21,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
     imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
 
     if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+        allStylesheets.forEach(styleSheet => imports.push(`import './${basename(styleSheet)}';`));
     }
 
     let propertyInterfaces = getPropertyInterfaces(bindings.properties);
@@ -41,7 +42,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
-    imports = [...imports, ...getModuleRegistration(bindings)];
+   
 
     return imports;
 }
@@ -56,7 +57,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
     ];
 
     if (gridSettings.enterprise) {
-        imports.push(`import 'ag-grid-enterprise${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? '-charts-enterprise' : ''}';`);
+        imports.push(`import 'ag-grid-${integratedChartsUsesChartsEnterprise && bindings.gridSettings.modules.includes('charts-enterprise') ? 'charts-' : ''}enterprise';`);
     }
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
@@ -68,7 +69,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
     if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
+        allStylesheets.forEach(styleSheet => imports.push(`import './${basename(styleSheet)}';`));
     }
 
     let propertyInterfaces = getPropertyInterfaces(bindings.properties);
@@ -136,29 +137,13 @@ function extractComponentInformation(properties, componentFilenames: string[]): 
     return components;
 }
 
-function getEventAndCallbackNames() {
-    // const interfaces = require('../../documentation/doc-pages/grid-api/interfaces.AUTO.json');
-    // const docs = require('../../documentation/doc-pages/grid-api/doc-interfaces.AUTO.json');
-    // const gridOptions = docs['GridOptions'];
-    // const callbacksAndEvents = Object.entries(gridOptions).filter(([k, v]: [any, any]) => {
-    //     if (k == 'meta') { return false; }
-    //     const isCallback = v.type.arguments && !v.meta?.isEvent;
-    //     // Some callbacks use call signature interfaces and so do not have arguments like you might expect.
-    //     const isCallSigInterface = interfaces[v.type?.returnType]?.meta?.isCallSignature;
-    //     const isEvent = v.meta?.isEvent && !k.startsWith('on');
-    //     return isCallback || isCallSigInterface || isEvent;
-    // }).map(([k, v]) => k);
-    // return callbacksAndEvents;
-    // TODO validate this list
-    return PropertyKeys.CALLBACK_PROPERTIES;
-}
+
 
 
 
 export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: string[], allStylesheets: string[]): (importType: ImportType) => string {
     const { properties, data, tData, gridSettings, onGridReady, resizeToFit, typeDeclares, interfaces } = bindings;
 
-    const eventAndCallbackNames = getEventAndCallbackNames();
     const utilMethodNames = bindings.utils.map(getFunctionName);
     const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
         acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency))
@@ -267,7 +252,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
                         } else if (valueType === 'boolean' || valueType === 'number') {
                             componentProps.push(`${property.name}={${property.value}}`);
                         } else {
-                            if (eventAndCallbackNames.includes(property.name)) {
+                            if (EventAndCallbackNames.has(property.name)) {
                                 stateProperties.push(`const ${property.name} = useCallback(${property.value}, [${callbackDependencies[property.name] || ''}]);`);
                             } else {
                                 stateProperties.push(`const ${property.name} = useMemo<${property.typings.typeName}>(() => { return ${property.value} }, []);`);

@@ -4,7 +4,10 @@ import type { CreateDependencies } from 'nx/src/utils/nx-plugin';
 export function createTask(parentProject: string, srcRelativeInputPath: string): Record<string, TargetConfiguration> {
     return {
         'generate-example': {
-            dependsOn: [{ projects: 'ag-grid-generate-example-files', target: 'build' }],
+            dependsOn: [
+                { projects: 'ag-grid-generate-example-files', target: 'build' },
+                { projects: 'ag-grid-generate-example-files', target: "copySrc" }
+            ],
             executor: 'ag-grid-generate-example-files:generate',
             inputs: [
                 '{projectRoot}/**',

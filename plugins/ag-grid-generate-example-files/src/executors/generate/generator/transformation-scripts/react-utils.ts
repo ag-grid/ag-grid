@@ -1,4 +1,6 @@
 import * as JSON5 from 'json5';
+import { Events } from '../_copiedFromCore/eventKeys';
+import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
 
 import { getFunctionName, recognizedDomEvents } from './parser-utils';
 
@@ -102,3 +104,7 @@ export const convertFunctionToConstCallbackTs = (code: string, callbackDependenc
     const functionName = getFunctionName(code); //:(\s+[^\{]*)
     return `${code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)(:?\s+[^\{]*)/, 'const $1 = useCallback(($2) $3 =>')}, [${callbackDependencies[functionName] || ''}])`;
 };
+
+export const EventAndCallbackNames = new Set([
+    ...PropertyKeys.CALLBACK_PROPERTIES, ...PropertyKeys.FUNCTIONAL_PROPERTIES, ...Object.values(Events)
+]);

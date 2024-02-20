@@ -16,8 +16,6 @@ if (process.argv.length < 5) {
 
 const [exec, scriptPath, gridNewVersion, dependencyVersion, chartsDependencyVersion] = process.argv;
 
-console.log(gridNewVersion, dependencyVersion, chartsDependencyVersion);
-
 function main() {
     updatePackageJsonFiles();
     updateRootPackageJson();

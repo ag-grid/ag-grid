@@ -44,12 +44,12 @@ export class ValidationService extends BeanStub {
 
         const optionKeys = Object.keys(options) as (keyof T)[];
         optionKeys.forEach((key: keyof T) => {
-            const deprecation = deprecations[key] as any;
+            const deprecation = deprecations[key];
             if (deprecation) {
                 if ('renamed' in deprecation) {
                     const { renamed, version } = deprecation;
                     warnings.add(`As of v${version}, ${String(key)} is deprecated. Please use ${String(renamed)} instead.`);
-                    (options as any)[renamed] = options[key];
+                    options[renamed] = options[key];
                 } else {
                     const { message, version } = deprecation;
                     warnings.add(`As of v${version}, ${String(key)} is deprecated. ${message ?? ''}`);
