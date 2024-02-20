@@ -5,9 +5,12 @@
         "description": "AdapTable for AG Grid is a powerful, cutting-edge extension for the market-leading AG Grid Data Grid.",
         "open_source": false,
         "type": "Extension",
-        "tags": ["React", "Extension"],
         "ag_grid_usage": "Extends AG Grid functionality and exposes additional APIs",
-        "framework": ["React"]
+        "tags": ["Extension"],
+        "frameworks": ["React"],
+        "products": ["Grid", "Charts"],
+        "img": "adaptable.png",
+        "favourite": true
     },
     {
         "link": "https://openbb.co/products/pro",
@@ -16,7 +19,10 @@
         "description": "A sleek graphical interface that is intuitive and fully customizable, making it easier for you to access and analyze financial information with ease.",
         "open_source": true,
         "stars": 25600,
-        "type": "Product"
+        "type": "Product",
+        "tags": ["Finance"],
+        "img": "open-bb-terminal-pro.png",
+        "favourite": true
     },
     {
         "link": "https://tableflow.com/",
@@ -25,7 +31,8 @@
         "description": "TableFlow is a data import platform for companies to collect and transform customer data.",
         "open_source": true,
         "stars": 1600,
-        "type": "Product"
+        "type": "Product",
+        "img": "tableflow.png"
     },
     {
         "link": "https://marmelab.com/react-admin/",
@@ -34,7 +41,8 @@
         "description": "A frontend Framework for building data-driven applications running on top of REST/GraphQL APIs, using TypeScript, React and Material Design.",
         "open_source": true,
         "type": "Integration",
-        "stars": 23500
+        "stars": 23500,
+        "img": "react-admin.png"
     },
     {
         "link": "https://www.unavco.org/instrumentation/networks/status/all",
@@ -51,7 +59,9 @@
         "description": "The easiest way to explore and manipulate your data in all of your Prisma projects.",
         "open_source": true,
         "stars": 1700,
-        "type": "Product"
+        "type": "Product",
+        "favourite": true,
+        "img": "prisma-studio.png"
     },
     {
         "link": "https://enso.org/",
@@ -87,7 +97,9 @@
         "description": "Apache Traffic Control is an Open Source implementation of a Content Delivery Network",
         "open_source": true,
         "stars": 1000,
-        "type": "Product"
+        "type": "Product",
+        "favourite": true,
+        "img": "apache-traffic-control.png"
     },
     {
         "repo": "https://github.com/yobulkdev/yobulkdev",
@@ -211,7 +223,9 @@
         "link": "https://mlflow.org",
         "type": "Product",
         "open_source": true,
-        "stars": 16700
+        "stars": 16700,
+        "img": "ml-flow.png",
+        "favourite": true
     },
     {
         "link": "https://github.com/shawnbanasick/ken-q-analysis",
@@ -319,7 +333,8 @@
         "link": "https://www.saltdesignsystem.com/salt/index",
         "type": "Integration",
         "open_source": true,
-        "stars": 100
+        "stars": 100,
+        "favourite": true
     },
     {
         "repo": "https://github.com/sassoftware/vscode-sas-extension",
@@ -408,6 +423,7 @@
         "description": "Free and Open Source UI Library for Vue 3",
         "link": "https://ui.vuestic.dev/ui-elements/data-table",
         "type": "Integration",
+        "frameworks": ["Vue"],
         "open_source": true,
         "stars": 3200
     },
@@ -445,7 +461,9 @@
         "link": "https://www.syncfusion.com/angular-components",
         "type": "Integration",
         "open_source": true,
-        "stars": 270
+        "frameworks": ["Angular"],
+        "stars": 270,
+        "img": "syncfusion.png"
     },
     {
         "repo": "https://github.com/zauberzeug/nicegui/tree/main",
@@ -469,7 +487,8 @@
         "type": "Product",
         "open_source": true,
         "stars": 35,
-        "description": "Helps you build simulated devices that look and behave like the real thing enabling powerful testing scenarios"
+        "description": "Helps you build simulated devices that look and behave like the real thing enabling powerful testing scenarios",
+        "favourite": true
     },
     {
         "title": "Paladin Cloud CE",
@@ -515,7 +534,9 @@
         "open_source": true,
         "stars": 5,
         "type": "Integration",
-        "link": "https://bbj-plugins.github.io/BBjGridExWidget/"
+        "frameworks": ["JavaScript"],
+        "link": "https://bbj-plugins.github.io/BBjGridExWidget/",
+        "img": "bbjgridwidget.png"
     },
     {
         "title": "Coveo Search UI",
@@ -596,7 +617,8 @@
         "open_source": true,
         "stars": 45,
         "type": "Product",
-        "link": "https://irida.ca"
+        "link": "https://irida.ca",
+        "favourite": true
     },
     {
         "title": "OSharp",
@@ -821,7 +843,9 @@
         "open_source": true,
         "stars": 200,
         "type": "Integration",
-        "link": "allianz.github.io/ng-aquila/"
+        "link": "allianz.github.io/ng-aquila/",
+        "img": "allianz-ng.png",
+        "favourite": true
     },
     {
         "title": "Infineon Design System",
@@ -965,7 +989,8 @@
         "open_source": true,
         "stars": 15,
         "type": "Product",
-        "link": "https://microsoft.github.io/msrgamut/"
+        "link": "https://microsoft.github.io/msrgamut/",
+        "favourite": true
     },
     {
         "title": "Status Page",
@@ -1046,7 +1071,8 @@
         "open_source": true,
         "stars": 140,
         "type": "Integration",
-        "link": "https://ix.siemens.io/"
+        "link": "https://ix.siemens.io/",
+        "favourite": true
     },
     {
         "title": "NeuVector Manager",
@@ -1109,7 +1135,8 @@
         "open_source": true,
         "stars": 30,
         "type": "Product",
-        "link": "https://nasa-ammos.github.io/aerie-docs/"
+        "link": "https://nasa-ammos.github.io/aerie-docs/",
+        "favourite": true
     },
     {
         "title": "Distributed ATS",
@@ -1235,7 +1262,8 @@
         "open_source": true,
         "stars": 13100,
         "type": "Product",
-        "link": "https://pinpoint-apm.gitbook.io/"
+        "link": "https://pinpoint-apm.gitbook.io/",
+        "img": "pinpoint.png"
     },
     {
         "title": "Survey Solutions",
@@ -1415,7 +1443,8 @@
         "open_source": true,
         "stars": 100,
         "type": "Product",
-        "link": "https://aws.amazon.com/solutions/implementations/serverless-transit-network-orchestrator/"
+        "link": "https://aws.amazon.com/solutions/implementations/serverless-transit-network-orchestrator/",
+        "favourite": true
     },
     {
         "title": "Federal Geospatial Platform Visualiser (FGPV)",
@@ -1505,7 +1534,9 @@
         "open_source": true,
         "stars": 1000,
         "type": "Product",
-        "link": "https://mongodb.com/compass"
+        "link": "https://mongodb.com/compass",
+        "favourite": true,
+        "img": "mongodb-compass.png"
     },
     {
         "title": "Candilib V2",
@@ -1622,7 +1653,8 @@
         "open_source": true,
         "stars": 16900,
         "type": "Product",
-        "link": "https://cube.dev/"
+        "link": "https://cube.dev/",
+        "img": "cube-js.png"
     },
     {
         "title": "Krypto Trading Bot",
@@ -1640,7 +1672,9 @@
         "open_source": true,
         "stars": 370,
         "type": "Product",
-        "link": "https://code.nsa.gov/timely/"
+        "link": "https://code.nsa.gov/timely/",
+        "favourite": true,
+        "img": "nsa-timely.png"
     },
     {
         "title": "Hook0",
@@ -1733,13 +1767,13 @@
         "link": "https://docs.rs/ag-grid-rs/latest/ag_grid_rs/index.html#"
     },
     {
-        "title": "",
-        "description": "",
-        "repo": "",
+        "title": "Apex AG Grid Plugin",
+        "description": "Oracle APEX AG Grid Plugin",
+        "repo": "https://github.com/phartenfeller/apex-ag-grid-plugin",
         "open_source": true,
-        "stars": 0,
-        "type": "",
-        "link": ""
+        "stars": 5,
+        "type": "Wrapper",
+        "link": "https://apex.oracle.com/pls/apex/r/hartenfeller_dev/ag-grid-plugin-demo"
     },
     {
         "title": "",

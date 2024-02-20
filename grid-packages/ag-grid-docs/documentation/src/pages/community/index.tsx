@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from '@design-system/modules/GridDocs.module.scss';
-import aboutUsStyles from '@design-system/modules/about.module.scss';
 import classnames from 'classnames';
 import SEO from '../components/SEO';
 
@@ -19,10 +18,25 @@ const CommunityPage = () => {
                     </h1>
                 </header>
                 <span>
-                    AG Grid is used and trusted by a community of 100,000s of JavaScript developers from all different
-                    walks of life
+                    AG Grid is used and trusted by a community of 100,000s of JavaScript developers 
                 </span>
-                <div className={styles.pageSections} style={{ marginTop: '25px' }}>
+                <div>
+                    <h2>Whats New at AG Grid</h2>
+                    <span>Highlight of content from news & updates page</span>
+                </div>
+                <div>
+                    <h2>Community Showcase</h2>
+                    <span>Favourites from showcase</span>
+                </div>
+                <div>
+                    <h2>3rd Party Tools & Extensions</h2>
+                    <span>Favourites from tools & extensions</span>
+                </div>
+                <div>
+                    <h2>Champions Corner</h2>
+                    <span>Spotlight whomever is the best/biggest contributor</span>
+                </div>
+                {/* <div className={styles.pageSections} style={{ marginTop: '25px' }}>
                     <h2>Whats Happening at AG Grid?</h2>
                     <ul>                        
                         <li><a href="https://blog.ag-grid.com/ag-grid-a-look-back-on-2023/">[BLOG] Whats new in AG Grid v31</a></li>
@@ -30,7 +44,6 @@ const CommunityPage = () => {
                         <li><a href="https://www.youtube.com/watch?v=qR608qHWTCA">[VIDEO] React: Patterns for Performance</a></li>                     
                         <li><a href="https://www.youtube.com/watch?v=69d3QIDVKDc">[VIDEO] React: To Sync or Not to Sync?</a></li>
                         <li><a href="https://www.youtube.com/watch?v=ELRCT7ooNCU">[VIDEO] Angular: Typing the not so secret to customisation ngTemplateOutlet</a></li>
-
                     </ul>
                 </div>
                 <div className={styles.pageSections} style={{ marginTop: '25px' }}>
@@ -76,7 +89,7 @@ const CommunityPage = () => {
                         <li><a href="">YouTube</a></li>
                         <li><a href="">Newsletter</a></li>
                     </ul>
-                </div>
+                </div> */}
             </div>
         </div>
     );

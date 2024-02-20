@@ -2,7 +2,7 @@ import React from 'react';
 import styles from '@design-system/modules/GridDocs.module.scss';
 import aboutUsStyles from '@design-system/modules/about.module.scss';
 import classnames from 'classnames';
-import SEO from '../components/SEO';
+import SEO from '../../../components/SEO';
 
 const CommunityPage = () => {
     return (
@@ -13,13 +13,13 @@ const CommunityPage = () => {
                     <h1 id="top" className={styles.docsPageTitle}>
                         <div className={styles.pageTitleContainer}>
                             <div className={styles.pageTitleGroup}>
-                                <span>Videos</span>
+                                <span>Podcasts</span>
                             </div>
                         </div>
                     </h1>
                 </header>
                 <span>
-                    A collection of videos featuring AG Grid team members, e.g. conference talks, webinars, and more!
+                    Podcasts hosted or attended by AG Grid
                 </span>
                 <div className={styles.pageSections} style={{ marginTop: '25px' }}>
 

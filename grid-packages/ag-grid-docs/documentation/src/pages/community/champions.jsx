@@ -1,17 +1,10 @@
-import React from 'react';
+import React from "react";
 import styles from '@design-system/modules/GridDocs.module.scss';
-import showcaseStyles from '@design-system/modules/CommunityShowcase.module.scss';
-import 'ag-grid-community/styles/ag-grid.css'; // Core CSS
-import 'ag-grid-community/styles/ag-theme-quartz.css'; // Theme
-import { AgGridReact } from 'ag-grid-react';
 import classnames from 'classnames';
-import { Icon } from '../../components/Icon';
 import SEO from '../components/SEO';
-import showcase from './showcase.json';
-import ShowcaseContainer from '../../components/community/ShowcaseContainer';
 
-const Showcase = () => {
-    return (
+const Champions = () => {
+    return (<>
         <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
             <div id="doc-content" className={classnames('doc-content', styles['doc-page'])}>
                 <SEO title="Community" description="Explore the AG Grid community" />
@@ -19,16 +12,25 @@ const Showcase = () => {
                     <h1 id="top" className={styles.docsPageTitle}>
                         <div className={styles.pageTitleContainer}>
                             <div className={styles.pageTitleGroup}>
-                                <span>Showcase</span>
+                                <span>Champions</span>
                             </div>
                         </div>
                     </h1>
                 </header>
-                <h3>A collection of public examples that use AG Grid</h3>
-                <ShowcaseContainer tags={null} showcase={showcase} />
+                <span>Shining a light on our friends, partners, and stand-out collaborators, to say thank you...</span>
+                <div>
+                    <h2>Quarterly Spotlight</h2>
+                    <span>Joe meyers....</span>
+                </div>
+                <div>
+                    <h2>Community Champions</h2>
+                </div>
+                <div>
+                    <h2>Friends & Partners</h2>
+                </div>
             </div>
         </div>
-    );
-};
+    </>);
+}
 
-export default Showcase;
+export default Champions;

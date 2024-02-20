@@ -168,36 +168,76 @@
         "published": "04/2023"
     },
     {
-        "title": "",
-        "link": "",
-        "description": "",
-        "author": "",
-        "type": "",
-        "published": ""
+        "title": "Test AG Grid Table Using Cypress And Cypress-Map Plugin",
+        "link": "https://www.youtube.com/watch?v=QfOR5IwndiE",
+        "description": "This video shows how I would confirm the column of values in the AG Grid table component using Cypress with cypress-map plugin.",
+        "author": "Gleb Bahmutov",
+        "type": "Video",
+        "published": "07/2023"
     },
     {
-        "title": "",
-        "link": "",
-        "description": "",
-        "author": "",
-        "type": "",
-        "published": ""
+        "title": "React Ag-Grid Tutorial: Implementing Master-Detail Panel in Data Grid",
+        "link": "https://www.youtube.com/watch?v=So8CTAIWWzA",
+        "description": "In this video we will see how to show a details panel of each row in React to show adding row information. ",
+        "author": "Codenemy",
+        "type": "Video",
+        "published": "09/2022"
     },
     {
-        "title": "",
-        "link": "",
-        "description": "",
-        "author": "",
-        "type": "",
-        "published": ""
+        "title": "How to use ag grid in angular | From Setup to Advance",
+        "link": "https://www.youtube.com/watch?v=XqH7gXY0Rb8",
+        "description": "Learn how to use AG Grid in Angular",
+        "author": "Learning Partner",
+        "type": "Video",
+        "published": "01/2024"
     },
     {
-        "title": "",
-        "link": "",
+        "title": "Dash Ag Grid - Icons, Dropdowns, and Links",
+        "link": "https://www.youtube.com/watch?v=MzmefjD9Oow",
+        "description": "Learn to add Icons, Dropdowns and Links to the Dash Ag Grid Table. ",
+        "author": "Charming Data",
+        "type": "Video",
+        "published": "04/2023"
+    },
+    {
+        "title": "React Ag-Grid Tutorial: Server-Side Pagination, Filtering, Search, and Sorting | Codenemy Tutorial",
+        "link": "https://www.youtube.com/watch?v=qOTeoNheCEc",
+        "description": "Learn how to implement medium to advanced AG Grid functionality",
+        "author": "Codenemy",
+        "type": "Video",
+        "published": "07/2021"
+    },
+    {
+        "title": "Introduction to Dash Ag Grid",
+        "link": "https://www.youtube.com/watch?v=LSLNt6PFgIM",
+        "description": "Discover the power behind Dash Ag Grid, and learn to connect it to a Plotly histogram and a scatter plot.",
+        "author": "Charming Data",
+        "type": "Video",
+        "published": "05/2023"
+    },
+    {
+        "title": "High-Performance Data Tables with Dash AG Grid",
+        "link": "https://www.youtube.com/watch?v=dovf4FwtwPg",
+        "description": "Learn about Dash AG Grid from Co-founder & CTO, Alex Johnson",
+        "author": "Alex Johnson",
+        "type": "Video",
+        "published": "01/2023"
+    },
+    {
+        "title": "Dynamic Data-Tables in Wized & Webflow using AG Grid (Synched with Xano!)",
+        "link": "https://www.youtube.com/watch?v=tEpFaqRlxIw",
         "description": "",
-        "author": "",
-        "type": "",
-        "published": ""
+        "author": "WizedDev",
+        "type": "Video",
+        "published": "02/2024"
+    },
+    {
+        "title": "Ag-Grid-React: Implementing Infinite Row Scroll Table with Pagination (Community Version)",
+        "link": "https://medium.com/@99amitshinde/ag-grid-react-implementing-infinite-row-scroll-table-with-pagination-community-version-f9059a1c4f8e",
+        "description": "",
+        "author": "Amit",
+        "type": "Blog",
+        "published": "02/2024"
     },
     {
         "title": "",

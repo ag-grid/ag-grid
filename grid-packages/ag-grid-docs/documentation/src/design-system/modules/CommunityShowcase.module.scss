@@ -1,0 +1,132 @@
+.showcaseContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 12px;
+  }
+  
+  .projectCard {
+    text-decoration: none;
+    color: inherit;
+    background: #1f2836;
+    border-radius: 12px;
+  }
+  
+  .projectCard img {
+    width: 100%;
+    height: 150px; /* Fixed height */
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    object-position: top;
+    border-radius: 8px 8px 0px 0px;
+  }
+  
+  .projectCard h3, h4 {
+    margin: 8px 0px;
+    color: #55B2C6;
+  }
+
+  .projectCard p {
+    padding: 8px;
+    font-size: 10pt;
+    color: white;
+  }
+
+  .tagsContainer {
+    padding: 8px 0px;
+    margin-top: auto; /* Ensures buttons align at the bottom of the card */
+  }
+
+  .title {
+    margin-top: 16px !important;
+    font-weight: 400;
+    font-size: 16pt;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    margin: 0px 8px 0px 0px;
+    background-color: transparent;
+    border: 2px solid #445a60;
+    color: #FFF;
+    border-radius: 50px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 8pt;
+    font-weight: 500;
+  }
+  
+  .tagsContainer button {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    margin: 0px 8px 0px 0px;
+    background-color: transparent;
+    border: 2px solid #445a60;
+    color: #FFF;
+    border-radius: 50px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 8pt;
+    font-weight: 500;
+    /* text-transform: uppercase; */
+  }
+   
+  .tagsContainer button {
+    display: inline-block;
+    padding: 0.25em 0.5em;
+    margin: 0px 8px 0px 0px;
+    background-color: transparent;
+    border: 2px solid #4f585a;
+    color: #FFF;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 10pt;
+    font-weight: 500;
+    /* text-transform: uppercase; */
+  }
+  
+  .tagsContainer button:hover {
+    background-color: #357D91; /* Slight background color change on hover */
+    color: white; /* Text color change for better contrast */
+  }
+
+  .titleSection {
+    display: flex;
+    justify-content: space-between; /* Aligns title to the left and button to the right */
+    align-items: center; /* Centers the items vertically */
+    padding: 0 8px; /* Adds some padding around the container */
+  }
+  
+  .githubButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  
+  .githubButtonIcon {
+    height: 24px; /* Adjust based on your image size */
+    width: auto;
+  }
+
+  .cardBody {
+    padding: 8px;
+  }
+
+  .activeTag {
+    background: #458EA1 !important;
+    border: 2px solid #0d677f !important;
+  }
+
+//   .tagsContainer {
+//     display: grid;
+//     gap: 20px;
+//     margin-bottom: 12px;
+//   }
+
+//   .tagsContainer span {
+//     border: 1px white solid;
+//     border-radius: 8px;
+//   }
+  

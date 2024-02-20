@@ -34,6 +34,12 @@
             "url": "/community/content/",
             "absoluteUrl": true,
             "showInCollapsed": true
+          },
+          {
+            "title": "Champions Corner",
+            "url": "/community/champions/",
+            "absoluteUrl": true,
+            "showInCollapsed": true
           }
         ]
       }

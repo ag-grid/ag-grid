@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '@design-system/modules/GridDocs.module.scss';
 import classnames from 'classnames';
-import SEO from '../components/SEO';
+import SEO from '../../../components/SEO';
 
 const PastEvents = () => {
     return (
@@ -12,32 +12,33 @@ const PastEvents = () => {
                     <h1 id="top" className={styles.docsPageTitle}>
                         <div className={styles.pageTitleContainer}>
                             <div className={styles.pageTitleGroup}>
-                                <span>Sponsorships</span>
+                                <span>Past Events</span>
                             </div>
                         </div>
                     </h1>
                 </header>
                 <span>
-                    A list of community projects that are sponsored by AG Grid
+                    Browse events from years gone by that AG Grid has sponsored, hosted, attended and spoken at
                 </span>
                 <div className={styles.pageSections} style={{ marginTop: '25px' }}>
-                    <ul>
-                        <li>
-                            <span>Plunkr</span>
-                        </li>
-                        <li>
-                            <span>Webpack</span>
-                        </li>
-                        <li>
-                            <span>TanStack Table</span>
-                        </li>
-                        <li>
-                            <span>Webrush</span>
-                        </li>
-                        <li>
-                            <span>Angular Nation</span>
-                        </li>
-                    </ul>
+                    <h2>2024</h2>
+                    <span>We have a busy calendar of events planned for 2024 - we hope to see you at one!</span>
+                    <h3 style={{ marginTop: '25px' }}>NGConf - Salt Lake City, USA</h3>
+                    <span>
+                        ...
+                    </span>
+                    <h3 style={{ marginTop: '25px' }}>React Summit - Amsterdam, NL</h3>
+                    <span>
+                        ...
+                    </span>
+                    <h3 style={{ marginTop: '25px' }}>React Advanced - London, UK</h3>
+                    <span>
+                        ...
+                    </span>
+                    <h3 style={{ marginTop: '25px' }}>React Summit - New Jersey, USA</h3>
+                    <span>
+                        ...
+                    </span>
                 </div>
             </div>
         </div>
